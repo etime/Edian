@@ -326,7 +326,7 @@ class User extends Ci_Model
         $res = $this->db->query($sql);
         $res = $res->result_array();
         for($i = count($res)-1;$i>=0;$i--){
-            $sql2 = "select id from ord where seller = '$res[$i][user_id]'";
+            $sql2 = 'select id from ord where seller =' . $res[$i]['user_id'];
             $res2 = $this->db->query($sql2);
             $res[$i]["order"] = count($res2->result_array());
             /*********去掉秒，这个毫无意义*********/

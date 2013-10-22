@@ -48,9 +48,9 @@
 $active_group = 'default';
 $active_record = TRUE;
 
-$db['default']['hostname'] = '';
+$db['default']['hostname'] = 'localhost';
 $db['default']['username'] = 'root';
-$db['default']['password'] = 'douunasm';
+$db['default']['password'] = 'sakura';
 $db['default']['database'] = 'edian';
 $db['default']['dbdriver'] = 'mysql';
 $db['default']['dbprefix'] = '';
