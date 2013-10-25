@@ -1,0 +1,61 @@
+/*************************************************************************
+    > @File Name :  ../css/atten.css
+    > @Author  :      unasm < 1264310280@qq.com >
+    > @Mail :         douunasm@gmail.com
+    > @Last_Modified: 2013-10-25 19:29:14
+ ************************************************************************/
+.cont{
+    float:left;
+    width:790px;
+    margin:0;
+}
+ul{
+    padding:0;
+}
+.thumb{
+    border-radius:5px;
+    width:64px;
+    height:64px;
+    float:left;
+    margin:5px;
+}
+.dinfo{
+    width:500px;
+    background:green;
+    float:left;
+    overflow:hidden;
+}
+.dinfo img{
+    width:320px;
+    float:left;
+}
+.top{
+    background:blue;
+}
+.goods{
+    float:left;
+}
+.fels{
+    float:left;
+    margin-left:15px;
+    border-left:1px solid #000;
+    width:200px;
+    background:red;
+}
+.det{
+    float:left;
+}
+.det p{
+    margin:5px;
+}
+.det em{
+    font-size:2em;
+}
+textarea{
+    box-shadow:0 1px 0 rgba(255, 255, 255, .08), 0 1px 4px rgba(0, 0, 0, .3) inset;
+    border:1px solid #B8B8B8;
+    border-radius:3px;
+    resize:none;
+    width:100%;
+    margin:5px 0;
+}

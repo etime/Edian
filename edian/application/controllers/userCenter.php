@@ -42,7 +42,7 @@ class UserCenter extends MY_Controller
      */
     public function atten()
     {
-        $this->load->view("userCenter/atten");
+        $this->load->view("center/atten");
     }
 }
 ?>

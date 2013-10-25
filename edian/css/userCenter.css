@@ -1,0 +1,34 @@
+/*************************************************************************
+    > @File Name :  ../../css/userCenter.css
+    > @Author  :      unasm < 1264310280@qq.com >
+    > @Mail :         douunasm@gmail.com
+    > @Last_Modified: 2013-10-25 18:27:32
+ ************************************************************************/
+body{
+    width:960px;
+    margin:0px auto;
+    background:pink;
+}
+li{
+    list-style:none;
+}
+.clearfix:after {
+    DISPLAY: block; 
+    HEIGHT: 0px; 
+    VISIBILITY: hidden;
+    CLEAR: both;
+    overflow:hidden;
+    content:"";
+}
+a{
+    text-decoration:none;
+}
+a:hover{
+    text-decoration:underline;
+}
+.sidebar{
+    float:left;
+    width:150px;
+    background:grey;
+    padding:5px 0 5px 20px;
+}
