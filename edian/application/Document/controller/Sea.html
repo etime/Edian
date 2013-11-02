@@ -16,7 +16,7 @@
   <tr><td colspan="2" class="header-line"><img src="../media/empty.png" width="1" height="1" border="0" alt=""  /></td></tr>
   <tr>
     <td colspan="2" class="header-menu">
-                                                                  		[ <a href="../classtrees_controller.html" class="menu">class tree: controller</a> ]
+                                                                                		[ <a href="../classtrees_controller.html" class="menu">class tree: controller</a> ]
 		[ <a href="../elementindex_controller.html" class="menu">index: controller</a> ]
             [ <a href="../elementindex.html" class="menu">all elements</a> ]
     </td>
@@ -32,6 +32,7 @@
   <div class="package">
               <a href="../li_default.html">default</a><br />
               <a href="../li_controller.html">controller</a><br />
+              <a href="../li_model.html">model</a><br />
       	</div>
       <br />
                         <b>Files:</b><br />
@@ -67,9 +68,12 @@ Source Location: /controllers/sea.php<br /><br />
 		<table width="100%" border="0">
 		<tr><td valign="top" width="60%" class="class-overview">
 
-        		
+        		<p align="center" class="short-description"><strong>这里面继承了搜索的一切操作，因为没有对应的表，
+</strong></p>
+<span class="description"><p>所以没有对应的model文件，将来在数据库中添加关键词会添加相应的model，ast的代码比较挫，要不要拷贝一些呢。看看吧  目前的搜索方法是这样的，首先是通过查看关键字，是不是属于第一级菜单，如果是的话，就查询第二级菜单，然后在首页分列显示,  如果是第二级菜单，就从查询第三级菜单，然后分列显示，其他的则正常显示  如果不是第一级菜单，就正常显示，和搜索和其他没有任何区别，  但是这么处理，显然增大的工作量，几倍增大了搜索量，</p><p><ol><li><div class="src-line">&nbsp;<span class="src-php">&lt;?php&nbsp;</span>echo&nbsp;<span class="src-str">&quot;hello,world!!&quot;&nbsp;</span><span class="src-php">?&gt;</span></div></li>
+</ol></p></span>
 		<p class="notes">
-			Located in <a class="field" href="_controllers---sea.php.html">/controllers/sea.php</a> [<span class="field">line 16</span>]
+			Located in <a class="field" href="_controllers---sea.php.html">/controllers/sea.php</a> [<span class="field">line 17</span>]
 		</p>
 
 		
@@ -80,15 +84,11 @@ Source Location: /controllers/sea.php<br /><br />
 		
 				<strong>Author(s):</strong>
 		<ul>
-		  			 			 <li>unasm&lt;<a href="mailto:douunasm@gmail.com">douunasm@gmail.com</a>&gt;</li>
-			 		  			 		  			 		  			 		  		</ul>
+		  			 			 <li>unasm&lt;<a href="mailto:1264310280@qq.com">1264310280@qq.com</a>&gt;</li>
+			 		  			 		  			 		  		</ul>
 		
 		<strong>API Tags:</strong><br />
 <table border="0" cellspacing="0" cellpadding="0">
-  <tr>
-    <td class="indent"><strong>Deprecated:</strong>&nbsp;&nbsp;</td><td><p>这里面继承了搜索的一切操作，因为没有对应的表，所以没有对应的model文件，将来在数据库中添加关键词会添加相应的model，ast的代码比较挫，要不要拷贝一些呢。看看吧</p><p>目前的搜索方法是这样的，首先是通过查看关键字，是不是属于第一级菜单，如果是的话，就查询第二级菜单，然后在首页分列显示,  如果是第二级菜单，就从查询第三级菜单，然后分列显示，其他的则正常显示  如果不是第一级菜单，就正常显示，和搜索和其他没有任何区别，  但是这么处理，显然增大的工作量，几倍增大了搜索量，  <ol><li><div class="src-line">&nbsp;<span class="src-php">&lt;?php&nbsp;</span>echo&nbsp;<span class="src-str">&quot;hello,world!!&quot;&nbsp;</span><span class="src-php">?&gt;</span></div></li>
-</ol></p></td>
-  </tr>
   <tr>
     <td class="indent"><strong>Name:</strong>&nbsp;&nbsp;</td><td>sea.php</td>
   </tr>
@@ -231,7 +231,7 @@ Source Location: /controllers/sea.php<br /><br />
 		<span class="var-title">
 			<span class="var-type">mixed</span>&nbsp;&nbsp;
 			<span class="var-name">$pageNum</span>
-						<span class="smalllinenumber">[line 18]</span>
+						<span class="smalllinenumber">[line 19]</span>
 		</span>
 	</div>
 
@@ -259,7 +259,7 @@ Source Location: /controllers/sea.php<br /><br />
 <div class="evenrow">
 
 <div class="method-header">
-	<span class="method-title">Constructor __construct</span>&nbsp;&nbsp;<span class="smalllinenumber">[line 19]</span>
+	<span class="method-title">Constructor __construct</span>&nbsp;&nbsp;<span class="smalllinenumber">[line 20]</span>
 </div>
 <br />
 
@@ -283,7 +283,7 @@ Source Location: /controllers/sea.php<br /><br />
 <div class="oddrow">
 
 <div class="method-header">
-	<span class="method-title">getAnsBykey</span>&nbsp;&nbsp;<span class="smalllinenumber">[line 106]</span>
+	<span class="method-title">getAnsBykey</span>&nbsp;&nbsp;<span class="smalllinenumber">[line 117]</span>
 </div>
 <br />
 
@@ -338,7 +338,7 @@ $page&nbsp;
 <div class="evenrow">
 
 <div class="method-header">
-	<span class="method-title">getAppend</span>&nbsp;&nbsp;<span class="smalllinenumber">[line 129]</span>
+	<span class="method-title">getAppend</span>&nbsp;&nbsp;<span class="smalllinenumber">[line 140]</span>
 </div>
 <br />
 
@@ -381,7 +381,7 @@ $idx&nbsp;
 <div class="oddrow">
 
 <div class="method-header">
-	<span class="method-title">getIdArr</span>&nbsp;&nbsp;<span class="smalllinenumber">[line 222]</span>
+	<span class="method-title">getIdArr</span>&nbsp;&nbsp;<span class="smalllinenumber">[line 235]</span>
 </div>
 <br />
 
@@ -426,7 +426,7 @@ $key&nbsp;
 <div class="evenrow">
 
 <div class="method-header">
-	<span class="method-title">getSubItem</span>&nbsp;&nbsp;<span class="smalllinenumber">[line 199]</span>
+	<span class="method-title">getSubItem</span>&nbsp;&nbsp;<span class="smalllinenumber">[line 212]</span>
 </div>
 <br />
 
@@ -471,7 +471,7 @@ $key&nbsp;
 <div class="oddrow">
 
 <div class="method-header">
-	<span class="method-title">index</span>&nbsp;&nbsp;<span class="smalllinenumber">[line 42]</span>
+	<span class="method-title">index</span>&nbsp;&nbsp;<span class="smalllinenumber">[line 43]</span>
 </div>
 <br />
 
@@ -504,7 +504,7 @@ $key&nbsp;
 <div class="evenrow">
 
 <div class="method-header">
-	<span class="method-title">keyPreDel</span>&nbsp;&nbsp;<span class="smalllinenumber">[line 170]</span>
+	<span class="method-title">keyPreDel</span>&nbsp;&nbsp;<span class="smalllinenumber">[line 183]</span>
 </div>
 <br />
 
@@ -549,7 +549,7 @@ $key&nbsp;
 <div class="oddrow">
 
 <div class="method-header">
-	<span class="method-title">res</span>&nbsp;&nbsp;<span class="smalllinenumber">[line 28]</span>
+	<span class="method-title">res</span>&nbsp;&nbsp;<span class="smalllinenumber">[line 29]</span>
 </div>
 <br />
 
@@ -580,7 +580,7 @@ $key&nbsp;
 <div class="evenrow">
 
 <div class="method-header">
-	<span class="method-title">sea</span>&nbsp;&nbsp;<span class="smalllinenumber">[line 249]</span>
+	<span class="method-title">sea</span>&nbsp;&nbsp;<span class="smalllinenumber">[line 262]</span>
 </div>
 <br />
 
@@ -634,7 +634,7 @@ $currentPage&nbsp;
 
         <div class="credit">
 		    <hr class="separator" />
-		    Documentation generated on Tue, 15 Oct 2013 13:33:13 +0800 by <a href="http://www.phpdoc.org">phpDocumentor 1.4.4</a>
+		    Documentation generated on Tue, 29 Oct 2013 10:02:50 +0800 by <a href="http://www.phpdoc.org">phpDocumentor 1.4.4</a>
 	      </div>
       </td></tr></table>
     </td>

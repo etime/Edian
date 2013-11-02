@@ -6,7 +6,8 @@ last_modefied:  2013/04/05 04:33:37 PM
 */
 
 var passRight,np = $("#np"),dir = $("#dir"),dirUl = $("#dirUl");
-var getData;
+var getData,chaPart;
+//getdata autoload的实例化的对象,chaPart changePart的实例对象
 function tse(){
     var val;//控制页面点击消失提示字的函数,移动到dir.js中
     $(".valTog").focus(function(){
@@ -29,7 +30,7 @@ function tse(){
     });
 }
 /**
- * autoload 对象,下面是公共属性,控制添加数据的入口
+ *  输入对应的关键字得到数据，控制添加数据的入口
  *
  * 添加数据，控制数据的
  *
@@ -38,7 +39,7 @@ function tse(){
  * @param string seaIngkey 正在搜索的关键字，如果和当前的字不同，就要废弃掉申请来的结果
  */
 function autoload() {
-    var doc = document,$this = this,reg = /^\d+$/,noScroll;
+    var doc = document,$this = this,reg = /^\d+$/,noScroll,cont = $("#cont");
     /**
      * 上面的是私有属性，doc是为了效率的增加，$this 是为了this的避免替换，noScroll ,避免在不该滚动添加的时候，触发
      * timer 两个效果，一个是onscroll节流，另一个是控制，避免在不该触动的时候触动//暂时废弃
@@ -48,6 +49,7 @@ function autoload() {
         $this.stp = 0;
         noScroll = 1;
         $this.seaFlag = 0;//开始的时候，允许进行搜索
+        cont.empty();//在开始申请数据之前，将之前的清空
         $this.append();//初始化之后，申请数据
     }
     $this.append = function autoAppend () {
@@ -64,8 +66,9 @@ function autoload() {
                 $this.seaFlag = 0;
             },
             success:function  (data,textStatus) {
-                if(textStatus == "success"){
-                    if(data["flag"]){
+                console.log(data);
+                if(textStatus == "success" && data){
+                    if("flag" in data){
                         //这里应该是很多的列,formnavpg构成dom页面和事件的添加
                         np.css("display","none")
                         formNavPg(data);// 构成dom页面
@@ -76,7 +79,6 @@ function autoload() {
                         if(doc.height <=$(window).height()&& ($this.stp<5)){
                             //如果页面高度没有屏幕高，再申请
                             autoAppend();
-                            console.log("appending again");
                         }
                         if (data.length == 0){
                             //在数据比较少的时候，下面关于np的处理还是比较合理的
@@ -86,6 +88,8 @@ function autoload() {
                         noScroll = 0;//允许scroll事件申请数据，在还有下一页的时候，
                         np.css("display","inline-block").text("下一页");
                     }
+                }else{
+                    np.css("display","inline-block").text("没有了");
                 }
             },
             error:function(event,XMLHttpRequest){
@@ -119,14 +123,19 @@ function autoload() {
         }
     });
 }
+/**
+ * 亮暗切换的函数，包括侧边栏的高光显示和二级菜单的显示隐藏
+ *
+ */
 function highlight() {
-    //侧边栏的高光
+    //切换的时候侧边栏的高光
     dirUl.delegate(".part","click",function(){
         dirUl.find(".liC").removeClass("liC");
         $(this).addClass("liC");
     })
     var parts = $(".part"),spg;
     var flag = 0;
+    //第一次的时候的亮暗控制
     for (var i = 0, l = parts.length; i < l; i ++) {
         spg = $(parts[i]).find(".spg");
         for (var j = 0, lj = spg.length; j < lj; j ++) {
@@ -138,6 +147,16 @@ function highlight() {
         }
         if(flag)break;
     }
+    var lastDiv = false;
+    //控制侧边栏的显隐，经过长时间的磨练，自己写这个越来越熟练了
+    dirUl.delegate("li","mouseenter",function(){
+        if(lastDiv)$(lastDiv).css("display","none");
+        lastDiv = $(this).find(".dp");
+        if(lastDiv.length > 0){
+            lastDiv = lastDiv[0];
+            $(lastDiv).css("display","block");
+        }else lastDiv = false;
+    })
 }
 /**
  * 修改内容的时候用,或者是刚刚进入页面的时候使用
@@ -157,9 +176,9 @@ function chaCon(name){
     }else {
         $("#flexslider").slideUp(800);
     }
-    $("#cont").empty();
-    $("#bottomDir ul li").detach();//hide的事件必须保留
-    getData.init(name);
+    //$("#cont").empty();
+    //$("#bottomDir ul li").detach();//hide的事件必须保留
+    getData.init(decodeURI(name));
 }
 /**
  * 处理修改板块时候发生的事情
@@ -168,10 +187,11 @@ function chaCon(name){
  * back的成立条件是首先会冒泡的之前的delegate 的dir上，然后才会到hashchange上
  */
 function changePart () {
-    var back = true ;
+    $this = this;
+    $this.back = true ;
     //back 后退，为了添加后退的功能而添加的标志变量
     dirUl.delegate(".spg","click",function(event){
-        back = false ;
+        $this.back = false ;
         //chrome中的结果是首先发生delegate，之后是hashchange
         //其实和点击一样，在后退的时候，也许要发生点击的事情，因此将后面的代码单独成立为函数，
         getData.seaFlag = 0;//后退的判断完毕之后，进行后退之前的处理，如颜色，url的更改
@@ -184,10 +204,11 @@ function changePart () {
     window.onhashchange =  function () {
     //如果是IE的话，就不管了，直接跳转吧，为了后退的功能不失效，算是优雅降级吧
     //history.length的方式不可靠，最长只有50，极限测试下，会挂的
-        if(back){
+        console.log("backing");
+        if($this.back){
             chaCon();
         }else{
-            back = true;//如果不是后退的话，将back置位，不然下次难以判定
+            $this.back = true;//如果不是后退的话，将back置位，不然下次难以判定
         }
     }
 }
@@ -196,14 +217,13 @@ $(document).ready(function(){
     passRight = 0;
     tse();//显隐控制
     init();//登陆的初始化
-    search();//搜索时候的函数
     /**************处理关于当前板块的东西************/
     chaCon();//刷新和开始的时候的加载也是chacon不是吗？
     highlight();
     /************当前板块的uri处理结束************/
-    changePart();//切换板块的时候的事件处理
-    /***********之前的dir，下面就是对第二级的菜单进行控制的函数***********/
+    chaPart = new changePart();//切换板块的时候的事件处理
     showInfo();
+    search();//搜索时候的函数
 });
 function checkUserName () {
     //通过ajax检验用户的名称，获得对应的密码
@@ -318,10 +338,10 @@ function getInfo (type,partId) {
             if(textStatus == "success"){
                 if (data.length == 0){
                     np.text("没有了..");
-                    seaFlag = 1;
+                    getData.seaFlag = 1;
                     return false;
                 }
-                seaFlag = 0;
+                getData.seaFlag = 0;
                 if(type != now_type)return false;
                 formPage(data,partId);//生成页面dom
             }
@@ -329,7 +349,7 @@ function getInfo (type,partId) {
         },
         error: function  (xml) {
             np.text("下一页");
-            seaFlag = 0;
+            getData.seaFlag = 0;
         }
     })
 }
@@ -402,42 +422,33 @@ function formNavPg(data) {
     //flag为0的状态为没有请求状态，为1时候表示有，或者是还没有超时，当超过一定时间之后，会允许重新请求，那之前就被覆盖。
     $("#cont").delegate(".navMre","click",function(event){
         var evtNode = this;
+        url = $(evtNode).attr("href");
+        var node = parfind(evtNode);
+        //既然url没有变，node也不会更改
         if(flag){
             return false;
         }
         flag = 1;
-        url = $(evtNode).attr("href");
-        //$(evtNode).attr("href").replace("/pg=(\d)/","$1"+1);
-        //var flag = 2;
-        console.log(url);
-        var node = parfind(evtNode);
-        //既然url没有变，node也不会更改
-        (function(dataUrl){
-            //通过闭包决定传入的参数
-            $.ajax({
-                url: dataUrl,
-                dataType: 'json',
-                complete: function (jqXHR, textStatus) {
-                    flag = 0;
-                    console.log("flag = 0");
-                },
-                success: function (data, textStatus, jqXHR) {
-                    if((dataUrl  === url) && textStatus == "success"){
-                        for (var value in data) {
-                            //其实标准的来说，只有一个吧
-                            appLine(data[value],node);
-                        }
-                        if(value)
-                            $(evtNode).attr("href",url.replace(/pg=(\d+)/g,regTest));
-                        else $.alet("浏览到最后了");
-                    }
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    console.log("错误");//要不要将错误传回，好进行检测判断,url和textstatus
+        $.ajax({
+            url: url,
+            dataType: 'json',
+            complete: function (jqXHR, textStatus) {
+                flag = 0;
+            },
+            success: function (data, textStatus, jqXHR) {
+                if( ($(evtNode).attr("href") == url ) && ( textStatus == "success")){
+                    $(evtNode).attr("href",url.replace(/pg=(\d+)/g,regTest));//将页码加一
+                    appLine(data,node);
+                    if(!data)
+                        $.alet("浏览到最后了");
                 }
-            })
-        })(url);
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log("错误");//要不要将错误传回，好进行检测判断,url和textstatus
+            }
+        })
         setTimeout(function(){
+            //3s之后重发
             flag = 0;
         },3000);
         return false;
@@ -548,6 +559,7 @@ function ulCreateLi(data) {
     return li;
 }
 function search () {
+    var last = null;
     $("#sea").focus(function  () {
         $("#seaatten").text("");
     }).blur(function  () {
@@ -555,16 +567,17 @@ function search () {
             $("#seaatten").html("搜索<span class = 'seatip'>请输入关键字</span>")
     })
     //所有关于search操作的入口函数
-    $("#seaform").submit(function  () {
+    $("#seaform").submit(function  (event) {
         var keyword = $.trim($("#sea").val());
-        if(keyword == last)return false;//担心用户的连击造成重复申请数据
+        if(keyword === last)return false;//担心用户的连击造成重复申请数据
+        last = keyword;
         if(keyword.length == 0){
             $.alet("请输入关键字");
             return false;
         }
-        back = false;
+        chaPart.back = false;//虽然在改变url，但是不是后退，禁止onhashchange
         var temp = window.location.href.split("#");
-        window.location.href = temp[0]+"#"+encodeURI(keyword);
+        window.location.href = temp[0]+"#" + keyword;
         getData.init(keyword);
         return false;
     })
@@ -587,9 +600,6 @@ function getSea (keyword,page) {
             getData.seaFlag = 1;
             np.text("加载中..");
         },
-        complete:function(){
-            np.text("下一页");
-        },
         success:function(data,textStatus){
             if(textStatus == "success"){
                 if((data.length == 0)|| (!data)){
@@ -597,12 +607,13 @@ function getSea (keyword,page) {
                     getData.seaFlag = 1;//没有了，就要停止
                 }else if(keyword == getData.seaIngkey){
                     getData.seaFlag = 0;
+                    np.text("下一页");
                     formPage(data,page);//将申请的数据直接用来添加，没有其他的功能
                 }
             }
         },
         error:function  () {
-            seaFlag = 0;
+            getData.seaFlag = 0;
             np.text("错误.");
         }
     });

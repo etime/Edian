@@ -70,9 +70,16 @@ class item extends MY_Controller
         $this->load->view("item",$data);
         $this->mitem->addvisitor($itemId);
     }
+    /**
+     * 对Attr进行解码和重组，
+     *
+     * 通过传入的attr字符串，构成html字符串，然后在页面展示
+     *
+     * @param string $attr attr等信息构成的字符串，需要解析
+     * @return string html标签构成的页面内容；
+     */
     private function formAttr($attr)
     {
-        //对Attr进行解码和重组，构成html字符串，然后在页面展示
         $reg = "/^\d+$/";
         $len = count($attr);
         $ans = "";

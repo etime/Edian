@@ -20,7 +20,7 @@ var user_id="<?php echo trim($this->session->userdata('user_id'))?>";
 <body>
     <div id = "header">
     </div>
-<form action=" <?php echo $siteUrl.'/order/setPrint' ?>" method="post" accept-charset="utf-8" >
+<form action=" <?php echo $siteUrl.'/order/set' ?>" method="post" accept-charset="utf-8" >
     <table border = "0">
         <tr>
                 <th class = "chose">选择</th>

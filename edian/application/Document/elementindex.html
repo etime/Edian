@@ -16,7 +16,7 @@
   <tr><td colspan="2" class="header-line"><img src="media/empty.png" width="1" height="1" border="0" alt=""  /></td></tr>
   <tr>
     <td colspan="2" class="header-menu">
-                                                    [ <a href="elementindex.html" class="menu">all elements</a> ]
+                                                                  [ <a href="elementindex.html" class="menu">all elements</a> ]
     </td>
   </tr>
   <tr><td colspan="2" class="header-line"><img src="media/empty.png" width="1" height="1" border="0" alt=""  /></td></tr>
@@ -30,6 +30,7 @@
   <div class="package">
               <a href="li_default.html">default</a><br />
               <a href="li_controller.html">controller</a><br />
+              <a href="li_model.html">model</a><br />
       	</div>
       <br />
                 </td>
@@ -42,6 +43,7 @@
 <ul>
 	<li><a href="elementindex_default.html">default</a></li>
 	<li><a href="elementindex_controller.html">controller</a></li>
+	<li><a href="elementindex_model.html">model</a></li>
 </ul>
 <br />
 	[ <a href="elementindex.html#a">a</a> ]
@@ -109,17 +111,17 @@
 							<dt><b>addComNum</b></dt>
 				<dd>in file art.php, method <a href="default/Art.html#methodaddComNum">Art::addComNum()</a></dd>
 							<dt><b>addComNum</b></dt>
-				<dd>in file mitem.php, method <a href="default/Mitem.html#methodaddComNum">Mitem::addComNum()</a></dd>
+				<dd>in file mitem.php, method <a href="model/Mitem.html#methodaddComNum">Mitem::addComNum()</a></dd>
 							<dt><b>addComNum</b></dt>
 				<dd>in file user.php, method <a href="default/User.html#methodaddComNum">User::addComNum()</a></dd>
 							<dt><b>addMailNum</b></dt>
 				<dd>in file user.php, method <a href="default/User.html#methodaddMailNum">User::addMailNum()</a></dd>
 							<dt><b>addValue</b></dt>
-				<dd>in file mitem.php, method <a href="default/Mitem.html#methodaddValue">Mitem::addValue()</a></dd>
+				<dd>in file mitem.php, method <a href="model/Mitem.html#methodaddValue">Mitem::addValue()</a></dd>
 							<dt><b>addvisitor</b></dt>
 				<dd>in file art.php, method <a href="default/Art.html#methodaddvisitor">Art::addvisitor()</a></dd>
 							<dt><b>addvisitor</b></dt>
-				<dd>in file mitem.php, method <a href="default/Mitem.html#methodaddvisitor">Mitem::addvisitor()</a></dd>
+				<dd>in file mitem.php, method <a href="model/Mitem.html#methodaddvisitor">Mitem::addvisitor()</a></dd>
 							<dt><b>allMyOrder</b></dt>
 				<dd>in file morder.php, method <a href="default/Morder.html#methodallMyOrder">Morder::allMyOrder()</a></dd>
 							<dt><b>allTotal</b></dt>
@@ -227,9 +229,9 @@
 							<dt><b>cadd</b></dt>
 				<dd>in file write.php, method <a href="default/Write.html#methodcadd">Write::cadd()</a></dd>
 							<dt><b>change</b></dt>
-				<dd>in file reg.php, method <a href="default/Reg.html#methodchange">Reg::change()</a></dd>
-							<dt><b>change</b></dt>
 				<dd>in file write.php, method <a href="default/Write.html#methodchange">Write::change()</a></dd>
+							<dt><b>change</b></dt>
+				<dd>in file reg.php, method <a href="default/Reg.html#methodchange">Reg::change()</a></dd>
 							<dt><b>change</b></dt>
 				<dd>in file info.php, method <a href="default/Info.html#methodchange">Info::change()</a></dd>
 							<dt><b>changeInfo</b></dt>
@@ -240,6 +242,8 @@
 				<dd>in file art.php, method <a href="default/Art.html#methodchangeNew">Art::changeNew()</a></dd>
 							<dt><b>changeRead</b></dt>
 				<dd>in file mess.php, method <a href="default/Mess.html#methodchangeRead">Mess::changeRead()</a></dd>
+							<dt><b>changeStore</b></dt>
+				<dd>in file mitem.php, method <a href="model/Mitem.html#methodchangeStore">Mitem::changeStore()</a><br>&nbsp;&nbsp;&nbsp;&nbsp;在下单之后，修改对应的库存</dd>
 							<dt><b>changeTime</b></dt>
 				<dd>in file monline_user.php, method <a href="default/Monline_user.html#methodchangeTime">Monline_user::changeTime()</a></dd>
 							<dt><b>changeurl</b></dt>
@@ -270,10 +274,10 @@
 				<dd>in file user.php, method <a href="default/User.html#methodcleMail">User::cleMail()</a></dd>
 							<dt><b>ComItem</b></dt>
 				<dd>in file comitem.php, class <a href="default/ComItem.html">ComItem</a><br>&nbsp;&nbsp;&nbsp;&nbsp;***********************************************************************</dd>
-							<dt><b>Comment</b></dt>
-				<dd>in file comment.php, class <a href="default/Comment.html">Comment</a></dd>
 							<dt><b>comment</b></dt>
 				<dd>in file home.php, method <a href="default/Home.html#methodcomment">Home::comment()</a></dd>
+							<dt><b>Comment</b></dt>
+				<dd>in file comment.php, class <a href="default/Comment.html">Comment</a></dd>
 							<dt><b>conForm</b></dt>
 				<dd>in file comitem.php, method <a href="default/ComItem.html#methodconForm">ComItem::conForm()</a></dd>
 							<dt><b>content</b></dt>
@@ -312,13 +316,15 @@
 							<dt><b>dsreceive.class.php</b></dt>
 				<dd>procedural page <a href="default/_controllers---dsreceive.class.php.html">dsreceive.class.php</a></dd>
 							<dt><b>dataFb</b></dt>
-				<dd>in file img.php, method <a href="default/Img.html#methoddataFb">Img::dataFb()</a></dd>
-							<dt><b>dataFb</b></dt>
 				<dd>in file comitem.php, method <a href="default/ComItem.html#methoddataFb">ComItem::dataFb()</a></dd>
+							<dt><b>dataFb</b></dt>
+				<dd>in file img.php, method <a href="default/Img.html#methoddataFb">Img::dataFb()</a></dd>
 							<dt><b>dc</b></dt>
 				<dd>in file reg.php, method <a href="default/Reg.html#methoddc">Reg::dc()</a></dd>
 							<dt><b>debug</b></dt>
 				<dd>in file HttpClient.class.php, method <a href="default/HttpClient.html#methoddebug">HttpClient::debug()</a></dd>
+							<dt><b>decodeAttr</b></dt>
+				<dd>in file mitem.php, method <a href="model/Mitem.html#methoddecodeAttr">Mitem::decodeAttr()</a><br>&nbsp;&nbsp;&nbsp;&nbsp;对attr进行解析</dd>
 							<dt><b>del</b></dt>
 				<dd>in file bgart.php, method <a href="default/Bgart.html#methoddel">Bgart::del()</a></dd>
 							<dt><b>delAllArt</b></dt>
@@ -415,7 +421,7 @@
 							<dt><b>getAll</b></dt>
 				<dd>in file mess.php, method <a href="default/Mess.html#methodgetAll">Mess::getAll()</a></dd>
 							<dt><b>getAllList</b></dt>
-				<dd>in file mitem.php, method <a href="default/Mitem.html#methodgetAllList">Mitem::getAllList()</a></dd>
+				<dd>in file mitem.php, method <a href="model/Mitem.html#methodgetAllList">Mitem::getAllList()</a></dd>
 							<dt><b>getAllOntime</b></dt>
 				<dd>in file morder.php, method <a href="default/Morder.html#methodgetAllOntime">Morder::getAllOntime()</a></dd>
 							<dt><b>getAllToday</b></dt>
@@ -429,7 +435,7 @@
 							<dt><b>getArtById</b></dt>
 				<dd>in file bghome.php, method <a href="default/Bghome.html#methodgetArtById">Bghome::getArtById()</a></dd>
 							<dt><b>getBgList</b></dt>
-				<dd>in file mitem.php, method <a href="default/Mitem.html#methodgetBgList">Mitem::getBgList()</a></dd>
+				<dd>in file mitem.php, method <a href="model/Mitem.html#methodgetBgList">Mitem::getBgList()</a></dd>
 							<dt><b>getById</b></dt>
 				<dd>in file art.php, method <a href="default/Art.html#methodgetById">Art::getById()</a></dd>
 							<dt><b>getById</b></dt>
@@ -441,7 +447,7 @@
 							<dt><b>getCart</b></dt>
 				<dd>in file morder.php, method <a href="default/Morder.html#methodgetCart">Morder::getCart()</a></dd>
 							<dt><b>getChange</b></dt>
-				<dd>in file morder.php, method <a href="default/Morder.html#methodgetChange">Morder::getChange()</a></dd>
+				<dd>in file morder.php, method <a href="default/Morder.html#methodgetChange">Morder::getChange()</a><br>&nbsp;&nbsp;&nbsp;&nbsp;修改下单之前得到要修改的信息</dd>
 							<dt><b>getCom</b></dt>
 				<dd>in file sec.php, method <a href="default/Sec.html#methodgetCom">Sec::getCom()</a></dd>
 							<dt><b>getCom</b></dt>
@@ -455,7 +461,7 @@
 							<dt><b>getCookies</b></dt>
 				<dd>in file HttpClient.class.php, method <a href="default/HttpClient.html#methodgetCookies">HttpClient::getCookies()</a></dd>
 							<dt><b>getDetail</b></dt>
-				<dd>in file mitem.php, method <a href="default/Mitem.html#methodgetDetail">Mitem::getDetail()</a></dd>
+				<dd>in file mitem.php, method <a href="model/Mitem.html#methodgetDetail">Mitem::getDetail()</a></dd>
 							<dt><b>getDetail</b></dt>
 				<dd>in file img.php, method <a href="default/Img.html#methodgetDetail">Img::getDetail()</a></dd>
 							<dt><b>getError</b></dt>
@@ -469,7 +475,7 @@
 							<dt><b>getHeaders</b></dt>
 				<dd>in file HttpClient.class.php, method <a href="default/HttpClient.html#methodgetHeaders">HttpClient::getHeaders()</a></dd>
 							<dt><b>getHot</b></dt>
-				<dd>in file mitem.php, method <a href="default/Mitem.html#methodgetHot">Mitem::getHot()</a><br>&nbsp;&nbsp;&nbsp;&nbsp;为热区的搜索提供数据</dd>
+				<dd>in file mitem.php, method <a href="model/Mitem.html#methodgetHot">Mitem::getHot()</a><br>&nbsp;&nbsp;&nbsp;&nbsp;为热区的搜索提供数据</dd>
 							<dt><b>getHot</b></dt>
 				<dd>in file art.php, method <a href="default/Art.html#methodgetHot">Art::getHot()</a></dd>
 							<dt><b>getHotRecet</b></dt>
@@ -477,7 +483,7 @@
 							<dt><b>getIdArr</b></dt>
 				<dd>in file sea.php, method <a href="controller/Sea.html#methodgetIdArr">Sea::getIdArr()</a><br>&nbsp;&nbsp;&nbsp;&nbsp;通过传入的key组成id，然后通过id获得应该有的字符串</dd>
 							<dt><b>getIdByKey</b></dt>
-				<dd>in file mitem.php, method <a href="default/Mitem.html#methodgetIdByKey">Mitem::getIdByKey()</a></dd>
+				<dd>in file mitem.php, method <a href="model/Mitem.html#methodgetIdByKey">Mitem::getIdByKey()</a></dd>
 							<dt><b>getIdByKey</b></dt>
 				<dd>in file art.php, method <a href="default/Art.html#methodgetIdByKey">Art::getIdByKey()</a></dd>
 							<dt><b>getIdMap</b></dt>
@@ -509,11 +515,11 @@
 							<dt><b>getMainImg</b></dt>
 				<dd>in file spacePhoto.php, method <a href="default/SpacePhoto.html#methodgetMainImg">SpacePhoto::getMainImg()</a></dd>
 							<dt><b>getMaster</b></dt>
-				<dd>in file mitem.php, method <a href="default/Mitem.html#methodgetMaster">Mitem::getMaster()</a></dd>
+				<dd>in file mitem.php, method <a href="model/Mitem.html#methodgetMaster">Mitem::getMaster()</a></dd>
 							<dt><b>getMaster</b></dt>
 				<dd>in file art.php, method <a href="default/Art.html#methodgetMaster">Art::getMaster()</a></dd>
 							<dt><b>getMin</b></dt>
-				<dd>in file mitem.php, method <a href="default/Mitem.html#methodgetMin">Mitem::getMin()</a></dd>
+				<dd>in file mitem.php, method <a href="model/Mitem.html#methodgetMin">Mitem::getMin()</a></dd>
 							<dt><b>getNameById</b></dt>
 				<dd>in file user.php, method <a href="default/User.html#methodgetNameById">User::getNameById()</a></dd>
 							<dt><b>getNess</b></dt>
@@ -525,7 +531,7 @@
 							<dt><b>getOntime</b></dt>
 				<dd>in file morder.php, method <a href="default/Morder.html#methodgetOntime">Morder::getOntime()</a></dd>
 							<dt><b>getOrder</b></dt>
-				<dd>in file mitem.php, method <a href="default/Mitem.html#methodgetOrder">Mitem::getOrder()</a></dd>
+				<dd>in file mitem.php, method <a href="model/Mitem.html#methodgetOrder">Mitem::getOrder()</a></dd>
 							<dt><b>getpart</b></dt>
 				<dd>in file mess.php, method <a href="default/Mess.html#methodgetpart">Mess::getpart()</a></dd>
 							<dt><b>getPass</b></dt>
@@ -561,7 +567,7 @@
 							<dt><b>getThumb</b></dt>
 				<dd>in file spacePhoto.php, method <a href="default/SpacePhoto.html#methodgetThumb">SpacePhoto::getThumb()</a></dd>
 							<dt><b>getTitle</b></dt>
-				<dd>in file mitem.php, method <a href="default/Mitem.html#methodgetTitle">Mitem::getTitle()</a></dd>
+				<dd>in file mitem.php, method <a href="model/Mitem.html#methodgetTitle">Mitem::getTitle()</a></dd>
 							<dt><b>getToday</b></dt>
 				<dd>in file morder.php, method <a href="default/Morder.html#methodgetToday">Morder::getToday()</a></dd>
 							<dt><b>getTop</b></dt>
@@ -587,7 +593,7 @@
 							<dt><b>getUserInsert</b></dt>
 				<dd>in file art.php, method <a href="default/Art.html#methodgetUserInsert">Art::getUserInsert()</a></dd>
 							<dt><b>getUserList</b></dt>
-				<dd>in file mitem.php, method <a href="default/Mitem.html#methodgetUserList">Mitem::getUserList()</a></dd>
+				<dd>in file mitem.php, method <a href="model/Mitem.html#methodgetUserList">Mitem::getUserList()</a></dd>
 							<dt><b>get_last_entry</b></dt>
 				<dd>in file blog.php, method <a href="default/Blog_model.html#methodget_last_entry">Blog_model::get_last_entry()</a></dd>
 							<dt><b>get_user_name</b></dt>
@@ -769,7 +775,7 @@
 							<dt><b>insert</b></dt>
 				<dd>in file comitem.php, method <a href="default/ComItem.html#methodinsert">ComItem::insert()</a></dd>
 							<dt><b>insert</b></dt>
-				<dd>in file mitem.php, method <a href="default/Mitem.html#methodinsert">Mitem::insert()</a></dd>
+				<dd>in file mitem.php, method <a href="model/Mitem.html#methodinsert">Mitem::insert()</a></dd>
 							<dt><b>insert</b></dt>
 				<dd>in file morder.php, method <a href="default/Morder.html#methodinsert">Morder::insert()</a></dd>
 							<dt><b>insertComment</b></dt>
@@ -917,7 +923,7 @@
 							<dt><b>Mhome</b></dt>
 				<dd>in file mhome.php, class <a href="default/Mhome.html">Mhome</a></dd>
 							<dt><b>Mitem</b></dt>
-				<dd>in file mitem.php, class <a href="default/Mitem.html">Mitem</a><br>&nbsp;&nbsp;&nbsp;&nbsp;这里的item对应了mysql的item表，集中了item的所有的操作</dd>
+				<dd>in file mitem.php, class <a href="model/Mitem.html">Mitem</a><br>&nbsp;&nbsp;&nbsp;&nbsp;这里的item对应了mysql的item表，集中了item的所有的操作</dd>
 							<dt><b>mar_list.php</b></dt>
 				<dd>procedural page <a href="default/_models---mar_list.php.html">mar_list.php</a></dd>
 							<dt><b>mbgblocklist.php</b></dt>
@@ -935,7 +941,7 @@
 							<dt><b>mhome.php</b></dt>
 				<dd>procedural page <a href="default/_models---mhome.php.html">mhome.php</a></dd>
 							<dt><b>mitem.php</b></dt>
-				<dd>procedural page <a href="default/_models---mitem.php.html">mitem.php</a></dd>
+				<dd>procedural page <a href="model/_models---mitem.php.html">mitem.php</a></dd>
 							<dt><b>monline_user.php</b></dt>
 				<dd>procedural page <a href="default/_models---monline_user.php.html">monline_user.php</a></dd>
 							<dt><b>morder.php</b></dt>
@@ -1032,7 +1038,7 @@
 							<dt><b>$pageNum</b></dt>
 				<dd>in file sea.php, variable <a href="controller/Sea.html#var$pageNum">Sea::$pageNum</a></dd>
 							<dt><b>$pageNum</b></dt>
-				<dd>in file mitem.php, variable <a href="default/Mitem.html#var$pageNum">Mitem::$pageNum</a></dd>
+				<dd>in file mitem.php, variable <a href="model/Mitem.html#var$pageNum">Mitem::$pageNum</a></dd>
 							<dt><b>$pageNum</b></dt>
 				<dd>in file search.php, variable <a href="default/Search.html#var$pageNum">Search::$pageNum</a></dd>
 							<dt><b>$pageNum</b></dt>
@@ -1161,7 +1167,7 @@
 							<dt><b>spacePhoto.php</b></dt>
 				<dd>procedural page <a href="default/_controllers---spacePhoto.php.html">spacePhoto.php</a></dd>
 							<dt><b>Sea</b></dt>
-				<dd>in file sea.php, class <a href="controller/Sea.html">Sea</a></dd>
+				<dd>in file sea.php, class <a href="controller/Sea.html">Sea</a><br>&nbsp;&nbsp;&nbsp;&nbsp;这里面继承了搜索的一切操作，因为没有对应的表，</dd>
 							<dt><b>sea</b></dt>
 				<dd>in file sea.php, method <a href="controller/Sea.html#methodsea">Sea::sea()</a><br>&nbsp;&nbsp;&nbsp;&nbsp;对$id，currentPage进行处理 得到具体的数据，返回的数据数组</dd>
 							<dt><b>Search</b></dt>
@@ -1201,7 +1207,7 @@
 							<dt><b>setMaxRedirects</b></dt>
 				<dd>in file HttpClient.class.php, method <a href="default/HttpClient.html#methodsetMaxRedirects">HttpClient::setMaxRedirects()</a></dd>
 							<dt><b>setOrder</b></dt>
-				<dd>in file morder.php, method <a href="default/Morder.html#methodsetOrder">Morder::setOrder()</a></dd>
+				<dd>in file morder.php, method <a href="default/Morder.html#methodsetOrder">Morder::setOrder()</a><br>&nbsp;&nbsp;&nbsp;&nbsp;修改订单的状态</dd>
 							<dt><b>setPersistCookies</b></dt>
 				<dd>in file HttpClient.class.php, method <a href="default/HttpClient.html#methodsetPersistCookies">HttpClient::setPersistCookies()</a></dd>
 							<dt><b>setPersistReferers</b></dt>
@@ -1209,7 +1215,7 @@
 							<dt><b>setState</b></dt>
 				<dd>in file morder.php, method <a href="default/Morder.html#methodsetState">Morder::setState()</a></dd>
 							<dt><b>setState</b></dt>
-				<dd>in file mitem.php, method <a href="default/Mitem.html#methodsetState">Mitem::setState()</a></dd>
+				<dd>in file mitem.php, method <a href="model/Mitem.html#methodsetState">Mitem::setState()</a></dd>
 							<dt><b>setUserAgent</b></dt>
 				<dd>in file HttpClient.class.php, method <a href="default/HttpClient.html#methodsetUserAgent">HttpClient::setUserAgent()</a></dd>
 							<dt><b>showArr</b></dt>
@@ -1522,7 +1528,7 @@
 							<dt><b>__construct</b></dt>
 				<dd>in file test.php, method <a href="default/Test.html#method__construct">Test::__construct()</a></dd>
 							<dt><b>__construct</b></dt>
-				<dd>in file mitem.php, method <a href="default/Mitem.html#method__construct">Mitem::__construct()</a></dd>
+				<dd>in file mitem.php, method <a href="model/Mitem.html#method__construct">Mitem::__construct()</a></dd>
 							<dt><b>__construct</b></dt>
 				<dd>in file mhome.php, method <a href="default/Mhome.html#method__construct">Mhome::__construct()</a></dd>
 							<dt><b>__construct</b></dt>
@@ -1583,7 +1589,7 @@
 	</div>
         <div class="credit">
 		    <hr class="separator" />
-		    Documentation generated on Tue, 15 Oct 2013 13:33:09 +0800 by <a href="http://www.phpdoc.org">phpDocumentor 1.4.4</a>
+		    Documentation generated on Tue, 29 Oct 2013 10:02:46 +0800 by <a href="http://www.phpdoc.org">phpDocumentor 1.4.4</a>
 	      </div>
       </td></tr></table>
     </td>

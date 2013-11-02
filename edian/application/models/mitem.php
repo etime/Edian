@@ -1,42 +1,41 @@
 <?php
-/*************************************************************************
-    > File Name :     ../models/item.php
-    > Author :        unasm
-    > Mail :          douunasm@gmail.com
-    > Last_Modified : 2013-07-23 07:34:43
- ************************************************************************/
+ /**
+   * 这里的item对应了mysql的item表，集中了item的所有的操作
 
- /*
-  * art_id表明这个行的唯一id
- title，商品信息的标题，也是搜索的主要依据
- content，主要介绍内容
- time，最后的发表时间或者是修改时间
- author_id 发表的人的id
-value 通过赞助，评论，浏览添加起来的价值，也是热度的另一称呼
-visitor_num 访问者的数目，将来收钱的依据，会增加少量的values
-price，商品的价格
-img，商品的图片:每件商品或许不止一个图片，所以做成列表的形式，将来通过正则截取,多个图片，会默认首先显示第一个
-keyword 关键字，保存格式为苹果;清苹果;分号隔开，关键字为分区的字和用户自己输入的关键字,搜索的时候通过like对比关键字
-attr 通过拼成的字符串,格式采用json的格式，表示上平的属性，颜色，分类的,商品编号也在这中间,方便商家查找商品;之所以是这样，是因为这些都是一些无关紧要的因素，不会有人关注这个，不会有人在这里搜索
-//promise 承诺，货到付款，七日退货，保证正品，急速发货，赠运费险,送货//目前还没有做，以后做吧
-storeNum 库存量，是attr中各个存货量的叠加,减去每个的库存实在是太纠结了，目前先不处理吧,只是减去总的库存
-judgescore float商品评分：没有必要每次都重新计算一遍吧,加起来，然后除以评论数据就是了
-attr的格式为color
-                2,2,"颜色","重量",红色:123.jpg,绿色:123.jpg,1kg,3kg|//第一个属性，第二个属性，颜色的个数，重量的个数,方便数据处理
-                    [红色,1kg]12,11;
-                    [红色,3kg]12,11;
-                    [绿色,1kg]12,11
-                    [绿色,3kg]12,11
-    绿色对应颜色的具体表示，1kg是重量的具体表示，12是存货量,11表示价格
-    state 商品状态 0 销售中，1 下架 2 预备中，3,删除过一段时间开始销售
-  */
-/**
- * 这里的item对应了mysql的item表，集中了item的所有的操作
- */
+   * art_id : 表明这个行的唯一id <br><br>
+   * title : 商品信息的标题，也是搜索的主要依据<br><br>
+   * content : 主要介绍内容          <br><br>
+   * time，最后的发表时间或者是修改时间<br><br>
+   * author_id 发表的人的id<br><br>
+   * value 通过赞助，评论，浏览添加起来的价值，也是热度的另一称呼<br><br>
+   * visitor_num 访问者的数目，将来收钱的依据，会增加少量的values<br><br>
+   * price，商品的价格<br><br>
+   * img，商品的图片:每件商品或许不止一个图片，所以做成列表的形式，将来通过正则截取,多个图片，会默认首先显示第一个<br><br>
+   * keyword 关键字，保存格式为苹果;清苹果;分号隔开，关键字为分区的字和用户自己输入的关键字,搜索的时候通过like对比关键字<br><br>
+   * //promise 承诺，货到付款，七日退货，保证正品，急速发货，赠运费险,送货//目前还没有做，以后做吧<br><br>
+   * storeNum 库存量，是attr中各个存货量的叠加,减去每个的库存实在是太纠结了，目前先不处理吧,只是减去总的库存<br><br>
+   * judgescore float商品评分：没有必要每次都重新计算一遍吧,加起来，然后除以评论数据就是了<br><br>
+   * state : 商品状态 0 销售中，1 下架 2 预备中，3,删除过一段时间开始销售<br><br>
+   * attr 通过拼成的字符串,表示商品的属性，颜色，分类的,方便商家查找商品
+   * attr的解析拼接地方在插入的地方setorderstate,解析在item的formAttr，那是为了显示attr信息，在model/mitem筹备一个model级别的解析，一个做成数组，另一个管理数组
+   * <pre>
+   *    attr的格式为
+   *    2,2,风味,时间,红烧: ,喷香: ,一个月的烤肉: ,两个月的烤肉: |1000,23;1000,23;1000,23;1000,23
+   *        //第一个属性，第二个属性，颜色的个数，重量的个数,方便数据处理
+   *        [红烧,一个月]1000,23(库存和价格)
+   *        [红烧,两个月]1000,23
+   *        [喷香,一个月]1000,23
+   *        [喷香,两个月]1000,23
+   *  </pre>
+   * @author:        unasm <1264310280@qq.com>
+   * @since:         2013-07-23 07:34:43
+   * @name:          ../models/item.php
+   * @package        model
+   */
 class Mitem extends Ci_Model
 {
 
-    var $pageNum;//每次前端申请的数据条数
+    static  $pageNum;//每次前端申请的数据条数
      function __construct()
     {
         parent::__construct();
@@ -248,6 +247,317 @@ class Mitem extends Ci_Model
     public function setState($state,$itemId)
     {
         $this->db->query("update item set state = $state where id = $itemId");
+    }
+    /**
+     * 在下单之后，修改对应的库存
+     *
+     * 通过传入的info信息，分解字符串,查找对应的库存信息，然后减去,重新拼接字符串
+     * 目前针对的情况为属性只有两个的情况,
+     * @param string $info 或许包含|,需要分割的字符串，是物品的可选属性
+     * @param int $buyNum 用户购买的数量
+     * @param int $itemId  需要修改的商品的id
+     */
+    public function changeStore($info,$buyNum,$itemId)
+    {
+        $infoToSet = $this->db->query("select attr from item where id = $itemId");
+        if($infoToSet->num_rows){
+            $infoToSet = $infoToSet->result_array();
+            $infoToSet = $infoToSet[0]["attr"];//attr为0的情况
+            if($infoToSet){
+                $attr = $this->decodeAttr($infoToSet,$itemId);
+                $idxNum = $this->getIdx($attr["idx"],$info);
+                $len = count($idxNum);
+                if($len == 1){
+                    $attr["storePrc"][$idxNum[0]]["store"] -= $buyNum;
+                }else{
+                    $attr["storePrc"][$idxNum[0]][$idxNum[1]] -= $buyNum;
+                }
+                $fAttr = $this->formAttr($attr);//最终形成的attr，貌似是正确的
+                return $this->db->query("update item set store_num = store_num - ".$buyNum.",attr = '$fAttr' where id = ".$itemId);
+            }else{
+                return $this->db->query("update item set store_num = store_num - ".$buyNum." where id = $itemId");
+                //有没有可能小于0 呢
+            }
+        }else{
+            $this->load->model("mwrong");
+            $temp["text"] = "mitem/changeStore/".__LINE__."行，在itemId = ".$itemId."的情况下没有搜索结果";
+            $this->mwrong->insert($temp);
+            return false;
+        }
+        //$this->db->query("update item set store_num where id = $itemId");
+    }
+    /**
+     * 通过传入的idx，构成拼接的字符串
+     * @param array $attr attr拆分之后的数组
+     * @return string 重新构成的字符串
+     *     * idx: array(2) {
+     *      ["风味"]=> array(2) {
+     *              [0]=> array(2) {
+     *                  ["font"]=> string(6) "红烧" ["img"]=> string(1) " "
+     *              }
+     *              [1]=> array(2) {
+     *                  ["font"]=> string(6) "喷香" ["img"]=> string(1) " "
+     *              }
+     *      }
+     *      ["时间"]=> array(2) {
+     *              [0]=> array(2) {
+     *                  ["font"]=> string(18) "一个月的烤肉" ["img"]=> string(1) " "
+     *              }
+     *              [1]=> array(2) {
+     *                  ["font"]=> string(18) "两个月的烤肉" ["img"]=> string(1) " "
+     *              }
+     *      }
+     *  }
+     */
+    protected function formAttr($attr)
+    {
+        $idx = $this->formIdx($attr["idx"]);
+        $store = $this->formStore($attr["storePrc"]);
+        return $idx."|".$store;
+    }
+    /**
+     * 构成attr 的前面的一部分 attr属性
+     * @param array $idx item/attr字段的构成前面一部分
+     * @example 2,2,风味,时间,红烧: ,喷香: ,一个月的烤肉: ,两个月的烤肉: |1000,23;1000,23;1000,23;1000,23
+     */
+    protected function formIdx($idx)
+    {
+        $re = "";//属性的内容
+        $idxVal = "";//属性的名字
+        $num = "";//这个是为了attr之前的数字
+        $cnt = 0;
+        foreach ($idx as $key => $val) {
+            $len = count($val);
+            $idxVal = ",".$key;
+            if($cnt == 0){
+                $num = $len;
+                $cnt = 1;
+            }else{
+                $num .= ",".$len;
+            }
+            for ($i = 0; $i < $len; $i++) {
+                $re .= ",".$val[$i]["font"].":".$val[$i]["img"];
+            }
+        }
+        return $num.$idxVal.$re;
+    }
+    /**
+     * 通过传入的idx数组，得到里面的下标
+     *
+     * @param array $idx 包含了各个属性的数组
+     * @param string $attr 被选中的属性
+     * @return array 下标，一个，或则是两个
+     */
+    protected function getIdx($idx,$attr)
+    {
+        $attr = explode("|",$attr);
+        $len = count($attr);
+        $cnt = 0;
+        $res = array();
+        foreach ($idx as $val) {
+            if($cnt < $len){
+                for ($i = 0,$len = count($val); $i < $len; $i++) {
+                    if($attr[$cnt] == $val[$i]["font"]){
+                        $res[$cnt] = $i;
+                        break;
+                    }
+                }
+            }else{
+                $this->load->model("mwrong");
+                $temp["text"] = "mitem/getIdx".__LINE__."行出现bug,cnt超过len,目前数据为idx = ".$idx." attr = ".$attr;
+                $this->mwrong->insert($temp);
+                return false;
+            }
+            $cnt++;
+        }
+        return $res;
+    }
+    /**
+     * 对attr进行解析
+     * 传入attr 字符串，传出数组，将attr中包含的内容全部解析出来，方便处理
+     * @param string $attr 拼接成为的字符串
+     * @param int $itemId 表示商品的主键id
+     * @return array
+     * 传入的字符串如下
+     *
+     * @example 2,2,风味,时间,红烧: ,喷香: ,一个月的烤肉: ,两个月的烤肉: |1000,23;1000,23;1000,23;1000,23
+     * <pre>
+     * storeprc: array(2) {
+     *      [0]=> array(2) {
+ *              [0]=> array(2) {
+*                      ["store"]=> string(4) "1000"
+*                      ["prc"]=> string(2) "23"
+ *              }
+ *              [1]=> array(2) {
+*                      ["store"]=> string(4) "1000"
+*                      ["prc"]=> string(2) "23"
+ *               }
+     *      }
+     *      [1]=> array(2) {
+     *          [0]=> array(2) {
+     *              ["store"]=> string(4) "1000"
+     *              ["prc"]=> string(2) "23"
+     *          }
+     *          [1]=> array(2) {
+     *              ["store"]=> string(4) "1000"
+     *              ["prc"]=> string(2) "23"
+     *          }
+     *      }
+     *  }
+     * idx: array(2) {
+     *      ["风味"]=> array(2) {
+     *              [0]=> array(2) {
+     *                  ["font"]=> string(6) "红烧" ["img"]=> string(1) " "
+     *              }
+     *              [1]=> array(2) {
+     *                  ["font"]=> string(6) "喷香" ["img"]=> string(1) " "
+     *              }
+     *      }
+     *      ["时间"]=> array(2) {
+     *              [0]=> array(2) {
+     *                  ["font"]=> string(18) "一个月的烤肉" ["img"]=> string(1) " "
+     *              }
+     *              [1]=> array(2) {
+     *                  ["font"]=> string(18) "两个月的烤肉" ["img"]=> string(1) " "
+     *              }
+     *      }
+     *  }
+     *  </pre>
+     */
+   public function decodeAttr($attr,$itemId)
+   {
+       if(!$attr)return false;
+       $temp = explode("|",$attr);
+       $attrIdx = explode(",",$temp[0]);//将索引关键值保存到attrIdx中
+       $num = explode(";",$temp[1]);
+       $flag1 = preg_match("/^\d+$/",$attrIdx[1]);
+       $flag0 = preg_match("/^\d+$/",$attrIdx[0]);
+       if($flag1 && $flag0){
+           //返回false的情况为长度编码和标准预订的不同
+            $res = $this->_twoAttr($attrIdx,$num);
+            //对两个的情况进行处理
+       }else if($flag0){
+            $res = $this->_oneAttr($attrIdx,$num);
+       }else{
+            //报错，出现了问题
+            $this->load->model("mwrong");
+            $wrong["text"] = "在mitem.php/decodeAttr/".__LINE__."行两个flag都是0，这种情况不应个出现的，请检查一下,itemId = ".$itemId;
+            $this->mwrong->insert($wrong);
+            return false;
+       }
+       if(!$res){
+            $this->load->model("mwrong");
+            $wrong["text"] = "在mitem.php/decodeAttr/".__LINE__."出现编码不对的情况检查一下,attr : ".$attr."，商品的id为 itemId = ".$itemId;
+            $this->mwrong->insert($wrong);
+       }else{
+           return $res;
+       }
+   }
+    /**
+     * 对一个attr属性的时候进行解码
+     * <code>2,2,风味,时间,红烧: ,喷香: ,一个月的烤肉: ,两个月的烤肉: |1000,23;1000,23;1000,23;1000,23"</code>
+     * <pre>
+     * 样例
+     *array(2) {
+     *  ["storePrc"]=> array(2) {
+     *      [0]=> array(1) {
+     *          [0]=> array(2) { ["store"]=> string(2) "12" ["prc"]=> string(2) "10" }
+     *      }
+     *      [1]=> array(1) {
+     *          [0]=> array(2) { ["store"]=> string(2) "12" ["prc"]=> string(2) "10" }
+     *      }
+     *  }
+     *  ["idx"]=> array(1) {
+     *      ["颜色"]=> array(2) {
+     *           [0]=> array(2) { ["font"]=> string(6) "佰色" ["img"]=> string(0) "" }
+     *           [1]=> array(2) { ["font"]=> string(6) "红色" ["img"]=> string(0) "" }
+     *      }
+     *  }
+     *}
+     *</pre>
+     */
+    private  function _oneAttr($attrIdx,$num)
+    {
+        $clen = count($attrIdx);
+        if($clen == $attrIdx[0]+2){
+            for ($i = 2,$len = $attrIdx[0] + 2; $i < $len; $i++) {
+                $tmp = explode(":",$attrIdx[$i]);
+                $tmpArr["font"] = $tmp[0];
+                $tmpArr["img"] = count($tmp)>1 ? $tmp[1]:"";
+                $idx[$attrIdx["1"]][] = $tmpArr;
+            }
+            for ($i = 0; $i < $attrIdx[0]; $i++) {
+                $tmp = explode(",",$num[$i]);
+                $tmpStore["store"] = $tmp[0];
+                $tmpStore["prc"] = count($tmp) > 1 ? $tmp[1] : "";
+                $storePrc[$i] = $tmpStore;
+            }
+            $res["storePrc"] = $storePrc;
+            $res["idx"] = $idx;
+            return $res;
+        }
+        return false;
+    }
+    /**
+     * 对两个的attr进行解码
+     */
+    private function _twoAttr($attrIdx,$num)
+    {
+        $clen = count($attrIdx);
+        if($clen == ($attrIdx["0"] + $attrIdx["1"]+4 )){
+            //检查与规则是不是相符合；
+            for ($i = 4,$len = $attrIdx[0] + 4; $i < $len; $i++) {
+                $tmp = explode(":",$attrIdx[$i]);
+                $tmpArr["font"] = $tmp[0];
+                $tmpArr["img"] = count($tmp) > 1 ? $tmp[1] : "";
+                $idx[$attrIdx["2"]][] = $tmpArr;
+            }
+            for ($i = 4+$attrIdx[0]; $i < $clen; $i++) {
+                $tmp = explode(":",$attrIdx[$i]);
+                $tmpArr["font"] = $tmp[0];
+                $tmpArr["img"] = count($tmp) > 1 ? $tmp[1]: "";
+                $idx[$attrIdx["3"]][] = $tmpArr;
+            }
+            $cnt = 0;
+            for ($i = 0; $i < $attrIdx[0]; $i++) {
+                for ($j = 0; $j < $attrIdx[1]; $j++) {
+                    $tmp = explode(",",$num[$cnt]);
+                    $storePrc[$i][$j]["store"] = $tmp[0];
+                    $storePrc[$i][$j]["prc"] = count($tmp) > 1 ? $tmp[1] : "";
+                }
+            }
+            $res["storePrc"] = $storePrc;
+            $res["idx"] = $idx;
+            return $res;
+        }
+        return false;
+    }
+    /**
+     * 对storeprc的编码
+     * <code>2,2,风味,时间,红烧: ,喷香: ,一个月的烤肉: ,两个月的烤肉: |1000,23;1000,23;1000,23;1000,23"</code>
+     */
+    protected function formStore($storePrc)
+    {
+        $re = "";
+        for ($i = 0,$leni = count($storePrc); $i < $leni; $i++) {
+            $istore = $storePrc[$i];
+            if(array_key_exists("store",$istore)){
+                if($i == 0){
+                    $re .= $istore["store"].",".$istore["prc"];
+                }else{
+                    $re .= ";".$istore["store"].",".$istore["prc"];
+                }
+            }else{
+                for ($j = 0,$lenj = count($istore); $j < $lenj; $j++) {
+                    if($re){
+                        $re  .= ";".$istore[$j]["store"].",".$istore[$j]["prc"];
+                    }else{
+                        $re  = $istore[$j]["store"].",".$istore[$j]["prc"];
+                    }
+                }
+            }
+        }
+        return $re;
     }
 }
 ?>

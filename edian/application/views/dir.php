@@ -11,6 +11,7 @@
 <head>
 <?php
     $siteUrl = site_url();
+    $baseUrl = base_url();
 ?>
     <meta http-equiv = "content-type" content = "text/html;charset = utf-8">
     <title>E点</title>
@@ -41,13 +42,29 @@
 <!---------header------------------------>
         <div id = "#allmap">
         </div>
-        <ul id = "dirUl" >
+        <ul id = "dirUl" class = "dirUl" >
     <!-- spg same page，表示不跳转的链接-->
-            <li class = "diri part"><a class = "spg" href = "<?php echo $siteUrl.('/home/index#0')?>" name = "0">热点</a></li>
-            <li class = "diri"><a href = "<?php echo $siteUrl.('/waimai/index/10')?>" target = "_blank">送货上门</a></li>
+            <li class = "diri part">
+                <img src = "<?php echo $baseUrl.('bgimage/icon0.png') ?>" >
+                <a class = "spg" href = "<?php echo $siteUrl.('/home/index#0')?>" name = "0">
+                    热点
+                </a>
+            </li>
+            <li class = "diri">
+                    <img src = "<?php echo $baseUrl.('bgimage/icon1.png') ?>">
+                    <a href = "<?php echo $siteUrl.('/waimai/index/10')?>" target = "_blank">
+                        送货上门
+                    </a>
+                </li>
+<?php
+    $icon = 2;
+?>
             <?php foreach ($dir as $i => $vi):?>
                 <li class = "diri part">
-                <a class = "spg" name = "<?php echo $i ?>" href = "<?php echo $siteUrl.'/home/index#'.urldecode($i)?>"><?php echo $i?></a>
+                    <img src = "<?php echo $baseUrl.('bgimage/icon'. ( $icon ++ ) . '.png') ?>">
+                <a class = "spg" name = "<?php echo $i ?>" href = "<?php echo $siteUrl.'/home/index#'.urldecode($i)?>">
+                        <?php echo $i?>
+                        </a>
                     <div class = "dp clearfix">
                     <?php foreach ($vi as $j => $vj):?>
                         <ul>
@@ -60,9 +77,17 @@
                     </div>
                 </li>
             <?php endforeach?>
-            <li class = "diri part"><a class = "spg" href = "<?php echo $siteUrl.('/home/index/1')?>" name = "1">二手市场</a></li>
+            <li class = "diri part">
+                    <img src = "<?php echo $baseUrl.('bgimage/icon6.png') ?>">
+                <a class = "spg" href = "<?php echo $siteUrl.('/home/index/1')?>" name = "1">
+                    二手市场
+                </a>
+                </li>
             <!--二手市场要根据之前的来修改-->
-            <li class = "diri"><a class = "info" href = "<?php echo $siteUrl.('/pubInf/index/')?>" target = "_blank">通知公告</a></li>
+            <li class = "diri">
+                <img src = "<?php echo $baseUrl.('bgimage/notif.png') ?>">
+                <a class = "info" href = "<?php echo $siteUrl.('/pubInf/index/')?>" target = "_blank">通知公告</a>
+            </li>
         </ul>
     </div>
 

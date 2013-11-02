@@ -4,7 +4,7 @@
  * email:			douunasm@gmail.com
  * Last_modified:	2013-06-20 00:16:16
  * 这个文件是为message服务的，集成了所有的message的操作,所谓的message，就是站内信的函数
- 
+
  * 尚未检查测试;
  *
  *
@@ -17,7 +17,7 @@
  **/
 class Mess extends Ci_Model
 {
-	var $showNum;//每次显示的信息数	
+	var $showNum;//每次显示的信息数
 	function __construct()
 	{
 		$this->showNum=15;
@@ -60,6 +60,11 @@ class Mess extends Ci_Model
 	public function getAll($userId)
 	{
 		$res = $this->db->query("select * from message where senderId = '$userId' && replyTo  = 0");
+        /*
+        for ($i = 0,$len = count($res); $i < $len; $i++) {
+            $res[$i]["content"] = json_decode($res[$i]["content"]);
+        }
+         */
 		return $this->dataFb($res->result_array());
 	}
 	public function getInMess($userId)

@@ -8,9 +8,12 @@ require 'dsprint.class.php';
     > Mail :          douunasm@gmail.com
     > Last_Modified : 2013-07-29 10:06:13
  ************************************************************************/
-/*
+/**
  * 关于下单，是这么处理的，因为打印机的滞后性和不确定性，现在决定在用户下单的同时，发起两个http请求
- * 一个负责向数据库添加数据，完成后修改为完成下单，之后setPrint 完成打印的功能，完成状态为订单打印完毕,发货中
+ * 一个是set
+ *  负责向数据库添加数据，完成后修改为完成下单，
+ *  另一个是setPrint
+ *   @todo 完成打印/通知的功能，完成状态为订单打印完毕,发货中
  *  @function myorder 我的订单，前端将来放到用户中心里面
     @function sended  将订单标记成为已经发货的状态，为后台的更新状态，貌似还是需要处理一下权限的问题
     @function index 一方面提供数据(ajax请求),另一方面返回页面，就是下单页面的信息
@@ -41,6 +44,13 @@ class Order extends My_Controller{
          */
         //最好放到配置文件里面,统一一点
     }
+    /**
+     * 为我的订单页面，提供数据
+     *
+     * 好像目前只是为页面提供数据
+     *
+     * @param int $ajax 为标志位，查看是为ajax提供数据还是页面提供数据
+     */
     public function myorder($ajax = 0)
     {
         if(!$this->user_id){
@@ -52,8 +62,7 @@ class Order extends My_Controller{
             return;
         }
         $data["cart"] = $this->morder->allMyOrder($this->user_id);
-        $this->showArr($data["cart"]);
-        die;
+        //$this->showArr($data["cart"]);
         if($data["cart"]){
             for ($i = 0,$len = count($data["cart"]); $i < $len; $i++) {
                 /**************分解info，得到其中的各种信息****************/
@@ -69,18 +78,17 @@ class Order extends My_Controller{
             }
         }
         $this->config->load("edian");
-        /*
-        $data["signed"] = $this->signed;
-        $data["printed"] = $this->printed;
-        $data["Ordered"] = $this->Ordered;
-        $data["sended"] = $this->sended;
-         */
         $data["signed"] = $this->config->item("signed");
         $data["printed"] = $this->config->item("printed");
         $data["Ordered"] = $this->config->item("Ordered");
         $data["sended"] = $this->config->item("sended");
         $this->load->view("myorder",$data);
     }
+    /**
+     * 将订单标记成为已经发货的状态
+     *
+     * 在后台使用的函数和功能，在商家发货之后，可以自行在后台进行标记
+     */
     public function sended()
     {
         //这里是将订单标记成为已经发货的状态
@@ -88,20 +96,24 @@ class Order extends My_Controller{
         if($str){
             $str = explode("|",$str);
             $len = count($str)-1;//最后一个是空不用理会
-            for($i = 0;$i< $len;$i++){
-                //其实这里最好做一个检测，是不是都是数字
+            for($i = 0;$i< $len;$i++){//其实这里最好做一个检测，是不是都是数字
                 $this->morder->setState($this->sended,$str[$i]);
             }
         }
         redirect(site_url("order/ontime"));
     }
+   /**
+    * 用户的下单页面，和购物车页面，提供数据使用
+    *
+    *  为0，代表为非ajax请求，为1代表ajax，为1以上的，代表这次只下这个单,不理会购物车的东西
+        同时对应ajax请求和页面请求两种，由ajax控制
+        这个，是浏览购物车的时候的列表页面，要和淘宝京东很像，但是不能点两次，一个页面，将价格，送货地址之类的全部搞定，不要设置推荐，
+        这个时候，就让用户安静的，无打扰的，迅速的下单，我们方便收钱
+        备注的信息，按照店家进行分组,每组一个
+        * @param bool $ajax 决定是为ajax提供数据，还是为页面提供数据
+    */
     public function index($ajax = 0)
     {
-        //为0，代表为非ajax请求，为1代表ajax，为1以上的，代表这次只下这个单,不理会购物车的东西
-        //同时对应ajax请求和页面请求两种，由ajax控制
-        //这个，是浏览购物车的时候的列表页面，要和淘宝京东很像，但是不能点两次，一个页面，将价格，送货地址之类的全部搞定，不要设置推荐，
-        //这个时候，就让用户安静的，无打扰的，迅速的下单，我们方便收钱
-        //备注的信息，按照店家进行分组,每组一个
         if(!$this->user_id){
             if($ajax){
                 echo json_encode(0);
@@ -119,7 +131,6 @@ class Order extends My_Controller{
                 $info["price"] = $this->input->post("price");
                 $id = $this->add($ajax,$info["info"],$info["orderNum"],$info["price"]);//ajax代表商品号码
                 $info["info"] = $this->spInf($info["info"]);
-                //$data[0]["price"] = $info["price"];
                 $data[0]["item_id"] = $ajax;
                 $data[0]["info"] = $info;
                 if($id){
@@ -136,19 +147,24 @@ class Order extends My_Controller{
         }else{
             $cart = $this->delCart($this->morder->getCart($this->user_id));//取得cart的信息
             $data["lsp"] = $this->getLsp($cart);
-            //$data["lsp"] = $lsp;
-            $data["cart"]  = $cart;
-            //这里，其实已经按照卖家进行了分组
+            $data["cart"]  = $cart;//这里，其实已经按照卖家进行了分组
         }
         $data["buyer"] = $this->addrDecode($this->user->ordaddr($this->user_id));
-        if($ajax == 1){
-            //等于1的时候是ajax申请数据
+        if($ajax == 1){//等于1的时候是ajax申请数据
             echo json_encode($data);
         }else{
             //0或者是大于1都应该输出data
             $this->load->view("order",$data);
         }
     }
+    /**
+     * 得到最低起送价，
+     *
+     * 提供一个数组,根据数组中的卖家信息，在数组中添加最低起送价的信息
+     *
+     * @param array $cart 数组，至少包含买家的id
+     * @return array 在原来的基础上，添加最低起送价
+     */
     protected function getLsp($cart)
     {
         //在这里得到index的lsp，返回数组
@@ -179,9 +195,15 @@ class Order extends My_Controller{
         }
         return $lsp;
     }
+    /**
+     * 将index中的cart信息处理
+     *
+     * 根据传入的id数组，处理cart中的信息，丰富并返回购物车的信息
+     * @param array $tcart 包含购物车id的数组
+     * @return array 返回包含所有购物车信息的函数
+     */
     private function delCart($tcart)
     {
-        //将index中的cart信息处理
         $seller = Array();
         if($tcart){
             for ($i = 0,$len = count($tcart); $i < $len; $i++) {
@@ -205,6 +227,9 @@ class Order extends My_Controller{
     {
         //就算是为买家准备的，早晚也需要另一个页面,历史订单
     }
+    /**
+     * 将地址信息进行解码
+     */
     private function addrDecode($buyer)
     {
         $res = Array();
@@ -230,13 +255,26 @@ class Order extends My_Controller{
         }
         return $res;
     }
+    /**
+     * 对没有登录的情况进行处理
+     * @param string/url $url 传入的url，希望跳转到的页面
+     */
     protected function nologin($url)
     {
         $data["url"] = $url;
         $this->load->view("login",$data);
     }
+    /**
+     * 向购物车里面添加商品
+     *
+         这里更多对应的应该是ajax请求，可以的话，设置成双重的,因为只有在具体页面或者是列表页才可以加入购物车，总之，不会在这个页面的index加入，不会通过具体页面加入
+         其实后面的参数，更多的是无用的，price是通过数据库查找的，所有的参数中，只有有info,itemid,buynum是有效的
+     * @param int       $itemId     商品的id
+     * @param string    $info       备注信息，用户希望添加的备注
+     * @param int       $buyNum     表示希望购买的商品数目
+     * @param float     $price      价格信息
+     */
     public function add($itemId = 0,$info = "",$buyNum = "",$price = ""){
-        //这里更多对应的应该是ajax请求，可以的话，设置成双重的,因为只有在具体页面或者是列表页才可以加入购物车，总之，不会在这个页面的index加入，不会通过具体页面加入
         //加入购物车
         $res["flag"] = 0;
         if(!$this->user_id){
@@ -319,6 +357,10 @@ class Order extends My_Controller{
             echo "<br>";
         }
     }
+    /**
+     * 这里应该是因为set/setprint的读取数据相同，所以都是从这个函数得到内容
+     * @return array $res 从input读取的内容
+     */
     private function getData()
     {
         //读取数据，返回信息
@@ -331,9 +373,13 @@ class Order extends My_Controller{
         $res["more"] = explode("&",$res["more"]);
         return $res;
     }
+    /**
+     * 对下单之后的数据处理
+     *
+         下单时候，并发处理，将修改状态,将数据库中的内容进行变更
+     */
     public function set()
     {
-        //下单时候，并发处理，将修改状态和打印，通知系统并行处理
         $data = $this->getData();//获取input的信息
         $res["flag"]  = 0;
         if(!$this->user_id){
@@ -345,13 +391,16 @@ class Order extends My_Controller{
         $res = $this->setOrderState($data,$this->config->item("Ordered"));//下订单后状态变为2
         echo json_encode($res);//目前就只准备ajax的版本吧
     }
-    public function setOrderState($data,$value)
+    /**
+     * setOrderState 将商品对应的状态进行修改
+     * @todo 数据的检验，安全的检验
+     */
+    protected function setOrderState($data,$value)
     {
         $failed = 1;
         $res  = Array();
         $morelen = count($data["more"]);
         for($i = 0,$len = count($data["orderId"]);$i < $len;$i++){
-            //$id = $orderId[$i];
             $id = $data["orderId"][$i];
             if($data["more"] && $len == $morelen)
                 $more = addslashes($data["more"][$i]);
@@ -360,13 +409,23 @@ class Order extends My_Controller{
             if($info){
                 //一般情况下都是有
                 $temp = explode("&",$info["info"]);
-                $info = $data["buyNum"][$i]."&".$temp[1]."&".$temp[2]."&".$more;
-                $flag = $this->morder->setOrder($data["addr"],$id,$info,$value);
+                $attrStr = $data["buyNum"][$i]."&".$temp[1]."&".$temp[2]."&".$more;
+                $flag = $this->morder->setOrder($data["addr"],$id,$attrStr,$value);
                 if(!$flag){
                     $failed = 0;
                     $res["atten"] = "有商品下单失败";
                     //这个情况必须进行了解,坚决报告管理员
+                }else{
+                    //修改对应库存
+                    if(!$this->mitem->changeStore($temp[1],$data["buyNum"][$i],$info["item_id"]) ){
+                        $temp["text"] = "在order/setOrderState的".__LINE__."行插入失败对应参数为temp[1] = ".$temp[1]."buynum是".$data["buyNum"][$i]."itemId = ".$info["item_id"];
+                        $this->mwrong->insert($temp);
+                        $failed = 0;
+                    }
                 }
+            }else{
+                $temp["text"] = "在order.php/setOrderState/".__LINE__."行见到有\$info没有值,\$id为 \$id = ".$id;
+                $this->mwrong->insert($temp);
             }
         }
         $res["flag"] = $failed;//全部成功的话，就是全部1，有一个失败的话，就是0
@@ -561,6 +620,12 @@ class Order extends My_Controller{
         }
         //echo $this->sendSms($url);
     }
+    /**
+     * 打印成功之后，修改对应的状态
+     * @param array $arr 包含了购买数，价格，等其他信息的函数
+     * @param int $state 修改完成之后，对应的状态，
+     * @param string $addr 对应的地址
+     */
     private function afPnt($arr,$addr,$state)
     {
         //这里就不做反馈了，一来复杂，而来因为这个反馈不是给用户看的，一般不会出问题，
@@ -571,9 +636,11 @@ class Order extends My_Controller{
         $info = $arr["buyNum"]."&".$arr["info"]."&".$arr["price"]."&".$arr["more"];
         $this->morder->setOrder($addr,$arr["ordId"],$info,$state);
     }
+    /**
+     * 通过用户的id取得用户下单地址的函数
+     */
     private function getUser($adIdx)
     {
-        //通过用户的id取得用户下单地址的函数
         $user = $this->user->ordaddr($this->user_id);
         $user = $this->addrDecode($user);
         return $user[$adIdx];
@@ -589,6 +656,11 @@ class Order extends My_Controller{
         }
         return $res;
     }
+    /**
+     * 显示当前正要处理的订单信息
+     *
+     * 为后台实时刷新的页面提供数据,显示正要处理的订单信息
+     */
     public function ontime()
     {
         //为买家量身定做的
@@ -609,6 +681,11 @@ class Order extends My_Controller{
             $data["order"] = $this->formData($data["order"]);
         $this->load->view("onTimeOrder",$data);
     }
+    /**
+     * 历史订单的显示
+     *
+     * 通过登录者的id进行在后台查找用户的历史订单信息
+     */
     public function hist()
     {
         if(!$this->user_id){
@@ -627,6 +704,11 @@ class Order extends My_Controller{
             $data["order"] = $this->histForm($data["order"]);
         $this->load->view("histOrder",$data);
     }
+    /**
+     * 历史订单的内容构成
+     * @param array $arr 对得到的id信息进行丰富，和添加
+     * @return array $arr 历史订单的结果
+     */
     private function histForm($arr)
     {
         //历史的操作和即时的操作不同，
@@ -674,10 +756,13 @@ class Order extends My_Controller{
         $client = new DsPrintSend('1e13cb1c5281c812','2050');
         echo $client->changeurl();
     }
+    /**
+     * 后台处理今日订单的，不止是今日的，包括之前没有处理的，包括下单状态为2，1，下单后出错和下单后没有发货了
+     * 24小时的如论什么状态都会在这里
+     */
     public function today()
     {
-        //后台处理今日订单的，不止是今日的，包括之前没有处理的，包括下单状态为2，1，下单后出错和下单后没有发货了
-        //24小时的如论什么状态都会在这里
+
         if(!$this->user_id){
             $this->nologin(site_url()."/order/today");
             return;

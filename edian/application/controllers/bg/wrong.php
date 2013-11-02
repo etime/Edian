@@ -1,12 +1,9 @@
 <?php
-/*************************************************************************
-    > File Name :     ../controllers/bg/wrong.php
-    > Author :        unasm
-    > Mail :          douunasm@gmail.com
-    > Last_Modified : 2013-08-18 10:02:56
- ************************************************************************/
 /**
  * 这里是处理错误情况的，将来这里会不断的丰富的，目前只是处理打印失败的，
+ *  @name :         ../controllers/bg/wrong.php
+ *  @Author :       unasm <1264310280@qq.com>
+ *  @since :        2013-08-18 10:02:56
  */
 class Wrong extends MY_Controller
 {
@@ -18,8 +15,11 @@ class Wrong extends MY_Controller
     {
         parent::__construct();
         $this->user_id = $this->user_id_get();
-        $this->load->model("mwrong");
+        $this->load->model("mwrong");//对wrong表操作集中的函数
     }
+    /**
+     * 错误处理的入口函数，其他的操作的中心
+     */
     public function index()
     {
         if(!$this->user_id){
@@ -33,27 +33,23 @@ class Wrong extends MY_Controller
             return;
         }
         $wrong = $this->mwrong->getAll();
-        if($wrong)$len = count($wrong);
-        else $len = 0;
         $data = Array();
         $this->load->model("user");
-        if($len){
-            $data["flag"] = 1;
-            //打印出错，是第一个错误
-            if(array_key_exists("pntState",$wrong[0]["content"])){
+        if($wrong && $wrong[0]["content"] &&array_key_exists("pntState",$wrong[0]["content"])){
+            //打印出错，是第一个错误,处理wrong不存在和content = null和pntstate不存在的情况
+                $len = count($wrong);
                 $data["flag"] = 1;
                 for($i = 0;$i < $len;$i++){
                     $temp = $wrong[$i]["content"];
-                    $info = $temp->info;
-                    $wrong[$i]["content"]->buyer = $this->user->getaddrCratById($temp->userId);
-                    $wrong[$i]["content"]->seller = $this->user->getaddrCratById($info[0]->seller);
+                    $info = $temp["info"];
+                    $wrong[$i]["content"]["buyer"] = $this->user->getaddrCratById($temp["userId"]);
+                    $wrong[$i]["content"]["seller"] = $this->user->getaddrCratById($info[0]["seller"]);
                 }
-            }
-        }
+        }else $data["flag"] = 0;
         $data["wrong"] = $wrong;
         $this->load->view("bgWrong",$data);
     }
-    public function showArr($arr)
+    private function showArr($arr)
     {
         echo "<br/>";
         foreach($arr as $idx => $val){
@@ -63,10 +59,33 @@ class Wrong extends MY_Controller
         }
         echo "<br/>";
     }
-    private function getTp($userId)
+    /**
+     * gettype的简称，得到用户的类型
+     *
+     * @param int $userId 用户的id
+     * @return int 用户的类别
+     */
+    protected function getTp($userId)
     {
         $this->load->model("user");
         return $this->user->getType($userId);
+    }
+    /**
+     * 删除错误的报告，之后跳转到index
+     * @param int $wrongId 错误的id
+     */
+    public function delete($wrongId)
+    {
+        $type = $this->getTp($this->user_id);
+        $this->load->config("edian");
+        if($type == $this->config->item("ADMIN")){
+            //验证权限
+            if($this->mwrong->del($wrongId) == true){
+                redirect(site_url("bg/wrong/index"));
+            }
+        }
+        echo $admin."<br/>";
+        echo $type."<br/>";
     }
 }
 ?>

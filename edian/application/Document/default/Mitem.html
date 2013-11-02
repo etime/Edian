@@ -184,9 +184,9 @@ Source Location: /models/mitem.php<br /><br />
 
         		<p align="center" class="short-description"><strong>这里的item对应了mysql的item表，集中了item的所有的操作
 </strong></p>
-
+<span class="description"><p>art_id表明这个行的唯一id  title，商品信息的标题，也是搜索的主要依据  content，主要介绍内容  time，最后的发表时间或者是修改时间  author_id 发表的人的id  value 通过赞助，评论，浏览添加起来的价值，也是热度的另一称呼  visitor_num 访问者的数目，将来收钱的依据，会增加少量的values  price，商品的价格  img，商品的图片:每件商品或许不止一个图片，所以做成列表的形式，将来通过正则截取,多个图片，会默认首先显示第一个  keyword 关键字，保存格式为苹果;清苹果;分号隔开，关键字为分区的字和用户自己输入的关键字,搜索的时候通过like对比关键字  //promise 承诺，货到付款，七日退货，保证正品，急速发货，赠运费险,送货//目前还没有做，以后做吧  storeNum 库存量，是attr中各个存货量的叠加,减去每个的库存实在是太纠结了，目前先不处理吧,只是减去总的库存  judgescore float商品评分：没有必要每次都重新计算一遍吧,加起来，然后除以评论数据就是了  attr 通过拼成的字符串,格式采用json的格式，表示上平的属性，颜色，分类的,商品编号也在这中间,方便商家查找商品;之所以是这样，是因为这些都是一些无关紧要的因素，不会有人关注这个，不会有人在这里搜索  attr的格式为color</p></span>
 		<p class="notes">
-			Located in <a class="field" href="_models---mitem.php.html">/models/mitem.php</a> [<span class="field">line 36</span>]
+			Located in <a class="field" href="_models---mitem.php.html">/models/mitem.php</a> [<span class="field">line 33</span>]
 		</p>
 
 		
@@ -213,6 +213,7 @@ Source Location: /models/mitem.php<br /><br />
 		  		  <li><a href="../default/Mitem.html#methodaddComNum">addComNum</a></li>
 		  		  <li><a href="../default/Mitem.html#methodaddValue">addValue</a></li>
 		  		  <li><a href="../default/Mitem.html#methodaddvisitor">addvisitor</a></li>
+		  		  <li><a href="../default/Mitem.html#methodchangeStore">changeStore</a></li>
 		  		  <li><a href="../default/Mitem.html#methodgetAllList">getAllList</a></li>
 		  		  <li><a href="../default/Mitem.html#methodgetBgList">getBgList</a></li>
 		  		  <li><a href="../default/Mitem.html#methodgetDetail">getDetail</a></li>
@@ -269,7 +270,7 @@ Source Location: /models/mitem.php<br /><br />
 		<div class="info-box-body">
 			<div class="method-summary">
 				<table border="0" cellspacing="0" cellpadding="0" class="method-summary">
-																																																																																																																																																<div class="method-definition">
+																																																																																																																																																								<div class="method-definition">
 											<tr><td class="method-definition"><span class="method-result">Mitem</span>&nbsp;&nbsp;</td>
 										<td class="method-definition"><a href="#__construct" title="details" class="method-name">__construct</a>()&nbsp;&nbsp;</td>
 					<td class="method-definition"></td></tr>
@@ -288,6 +289,11 @@ Source Location: /models/mitem.php<br /><br />
 											<tr><td class="method-definition"><span class="method-result">void</span>&nbsp;&nbsp;</td>
 										<td class="method-definition"><a href="#addvisitor" title="details" class="method-name">addvisitor</a>()&nbsp;&nbsp;</td>
 					<td class="method-definition"></td></tr>
+				</div>
+																<div class="method-definition">
+											<tr><td class="method-definition"><span class="method-result">void</span>&nbsp;&nbsp;</td>
+										<td class="method-definition"><a href="#changeStore" title="details" class="method-name">changeStore</a>()&nbsp;&nbsp;</td>
+					<td class="method-definition">在下单之后，修改对应的库存</td></tr>
 				</div>
 																<div class="method-definition">
 											<tr><td class="method-definition"><span class="method-result">void</span>&nbsp;&nbsp;</td>
@@ -371,7 +377,7 @@ Source Location: /models/mitem.php<br /><br />
 		<span class="var-title">
 			<span class="var-type">mixed</span>&nbsp;&nbsp;
 			<span class="var-name">$pageNum</span>
-						<span class="smalllinenumber">[line 39]</span>
+						<span class="smalllinenumber">[line 36]</span>
 		</span>
 	</div>
 
@@ -399,7 +405,7 @@ Source Location: /models/mitem.php<br /><br />
 <div class="oddrow">
 
 <div class="method-header">
-	<span class="method-title">Constructor __construct</span>&nbsp;&nbsp;<span class="smalllinenumber">[line 40]</span>
+	<span class="method-title">Constructor __construct</span>&nbsp;&nbsp;<span class="smalllinenumber">[line 37]</span>
 </div>
 <br />
 
@@ -423,7 +429,7 @@ Source Location: /models/mitem.php<br /><br />
 <div class="evenrow">
 
 <div class="method-header">
-	<span class="method-title">addComNum</span>&nbsp;&nbsp;<span class="smalllinenumber">[line 178]</span>
+	<span class="method-title">addComNum</span>&nbsp;&nbsp;<span class="smalllinenumber">[line 175]</span>
 </div>
 <br />
 
@@ -466,7 +472,7 @@ $artId&nbsp;
 <div class="oddrow">
 
 <div class="method-header">
-	<span class="method-title">addValue</span>&nbsp;&nbsp;<span class="smalllinenumber">[line 174]</span>
+	<span class="method-title">addValue</span>&nbsp;&nbsp;<span class="smalllinenumber">[line 171]</span>
 </div>
 <br />
 
@@ -509,7 +515,7 @@ $artId&nbsp;
 <div class="evenrow">
 
 <div class="method-header">
-	<span class="method-title">addvisitor</span>&nbsp;&nbsp;<span class="smalllinenumber">[line 224]</span>
+	<span class="method-title">addvisitor</span>&nbsp;&nbsp;<span class="smalllinenumber">[line 221]</span>
 </div>
 <br />
 
@@ -548,11 +554,70 @@ $itemId&nbsp;
 		<br />
 	<div class="top">[ <a href="#top">Top</a> ]</div>
 </div>
-<a name="methodgetAllList" id="getAllList"><!-- --></a>
+<a name="methodchangeStore" id="changeStore"><!-- --></a>
 <div class="oddrow">
 
 <div class="method-header">
-	<span class="method-title">getAllList</span>&nbsp;&nbsp;<span class="smalllinenumber">[line 238]</span>
+	<span class="method-title">changeStore</span>&nbsp;&nbsp;<span class="smalllinenumber">[line 258]</span>
+</div>
+<br />
+
+	<div class="function">
+    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code-border">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">&nbsp;
+		<code>void changeStore(
+string
+$info, int
+$buyNum, int
+$itemId&nbsp;
+)</code>
+    </td></tr></table>
+    </td></tr></table><br /></div>
+
+	<p align="center" class="short-description"><strong>在下单之后，修改对应的库存
+</strong></p>
+<span class="description"><p>通过传入的info信息，分解字符串,查找对应的库存信息，然后减去,重新拼接字符串</p></span>
+			<strong>Parameters:</strong><br />
+			<table border="0" cellspacing="0" cellpadding="0">
+					<tr><td class="indent">
+				<span class="var-type">string</span>&nbsp;&nbsp;</td>
+				<td>
+				<span class="var-name">$info:&nbsp;</span></td>
+				<td>
+				<span class="var-description"> 或许包含|,需要分割的字符串，是物品的可选属性</span>			</td></tr>
+					<tr><td class="indent">
+				<span class="var-type">int</span>&nbsp;&nbsp;</td>
+				<td>
+				<span class="var-name">$buyNum:&nbsp;</span></td>
+				<td>
+				<span class="var-description"> 用户购买的数量</span>			</td></tr>
+					<tr><td class="indent">
+				<span class="var-type">int</span>&nbsp;&nbsp;</td>
+				<td>
+				<span class="var-name">$itemId:&nbsp;</span></td>
+				<td>
+				<span class="var-description"> 需要修改的商品的id</span>			</td></tr>
+				</table>
+
+	<br />
+	<strong>API Tags:</strong><br />
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td class="indent"><strong>Access:</strong>&nbsp;&nbsp;</td><td>public</td>
+  </tr>
+</table>
+<br />
+
+
+		
+		<br />
+	<div class="top">[ <a href="#top">Top</a> ]</div>
+</div>
+<a name="methodgetAllList" id="getAllList"><!-- --></a>
+<div class="evenrow">
+
+<div class="method-header">
+	<span class="method-title">getAllList</span>&nbsp;&nbsp;<span class="smalllinenumber">[line 235]</span>
 </div>
 <br />
 
@@ -580,10 +645,10 @@ $itemId&nbsp;
 	<div class="top">[ <a href="#top">Top</a> ]</div>
 </div>
 <a name="methodgetBgList" id="getBgList"><!-- --></a>
-<div class="evenrow">
+<div class="oddrow">
 
 <div class="method-header">
-	<span class="method-title">getBgList</span>&nbsp;&nbsp;<span class="smalllinenumber">[line 229]</span>
+	<span class="method-title">getBgList</span>&nbsp;&nbsp;<span class="smalllinenumber">[line 226]</span>
 </div>
 <br />
 
@@ -623,10 +688,10 @@ $userId&nbsp;
 	<div class="top">[ <a href="#top">Top</a> ]</div>
 </div>
 <a name="methodgetDetail" id="getDetail"><!-- --></a>
-<div class="oddrow">
+<div class="evenrow">
 
 <div class="method-header">
-	<span class="method-title">getDetail</span>&nbsp;&nbsp;<span class="smalllinenumber">[line 156]</span>
+	<span class="method-title">getDetail</span>&nbsp;&nbsp;<span class="smalllinenumber">[line 153]</span>
 </div>
 <br />
 
@@ -666,10 +731,10 @@ $id&nbsp;
 	<div class="top">[ <a href="#top">Top</a> ]</div>
 </div>
 <a name="methodgetHot" id="getHot"><!-- --></a>
-<div class="evenrow">
+<div class="oddrow">
 
 <div class="method-header">
-	<span class="method-title">getHot</span>&nbsp;&nbsp;<span class="smalllinenumber">[line 88]</span>
+	<span class="method-title">getHot</span>&nbsp;&nbsp;<span class="smalllinenumber">[line 85]</span>
 </div>
 <br />
 
@@ -711,10 +776,10 @@ $startId&nbsp;
 	<div class="top">[ <a href="#top">Top</a> ]</div>
 </div>
 <a name="methodgetIdByKey" id="getIdByKey"><!-- --></a>
-<div class="oddrow">
+<div class="evenrow">
 
 <div class="method-header">
-	<span class="method-title">getIdByKey</span>&nbsp;&nbsp;<span class="smalllinenumber">[line 217]</span>
+	<span class="method-title">getIdByKey</span>&nbsp;&nbsp;<span class="smalllinenumber">[line 214]</span>
 </div>
 <br />
 
@@ -754,10 +819,10 @@ $key&nbsp;
 	<div class="top">[ <a href="#top">Top</a> ]</div>
 </div>
 <a name="methodgetMaster" id="getMaster"><!-- --></a>
-<div class="evenrow">
+<div class="oddrow">
 
 <div class="method-header">
-	<span class="method-title">getMaster</span>&nbsp;&nbsp;<span class="smalllinenumber">[line 194]</span>
+	<span class="method-title">getMaster</span>&nbsp;&nbsp;<span class="smalllinenumber">[line 191]</span>
 </div>
 <br />
 
@@ -797,10 +862,10 @@ $itemId&nbsp;
 	<div class="top">[ <a href="#top">Top</a> ]</div>
 </div>
 <a name="methodgetMin" id="getMin"><!-- --></a>
-<div class="oddrow">
+<div class="evenrow">
 
 <div class="method-header">
-	<span class="method-title">getMin</span>&nbsp;&nbsp;<span class="smalllinenumber">[line 110]</span>
+	<span class="method-title">getMin</span>&nbsp;&nbsp;<span class="smalllinenumber">[line 107]</span>
 </div>
 <br />
 
@@ -840,10 +905,10 @@ $id&nbsp;
 	<div class="top">[ <a href="#top">Top</a> ]</div>
 </div>
 <a name="methodgetOrder" id="getOrder"><!-- --></a>
-<div class="evenrow">
+<div class="oddrow">
 
 <div class="method-header">
-	<span class="method-title">getOrder</span>&nbsp;&nbsp;<span class="smalllinenumber">[line 183]</span>
+	<span class="method-title">getOrder</span>&nbsp;&nbsp;<span class="smalllinenumber">[line 180]</span>
 </div>
 <br />
 
@@ -883,10 +948,10 @@ $itemId&nbsp;
 	<div class="top">[ <a href="#top">Top</a> ]</div>
 </div>
 <a name="methodgetTitle" id="getTitle"><!-- --></a>
-<div class="oddrow">
+<div class="evenrow">
 
 <div class="method-header">
-	<span class="method-title">getTitle</span>&nbsp;&nbsp;<span class="smalllinenumber">[line 204]</span>
+	<span class="method-title">getTitle</span>&nbsp;&nbsp;<span class="smalllinenumber">[line 201]</span>
 </div>
 <br />
 
@@ -926,10 +991,10 @@ $itemId&nbsp;
 	<div class="top">[ <a href="#top">Top</a> ]</div>
 </div>
 <a name="methodgetUserList" id="getUserList"><!-- --></a>
-<div class="evenrow">
+<div class="oddrow">
 
 <div class="method-header">
-	<span class="method-title">getUserList</span>&nbsp;&nbsp;<span class="smalllinenumber">[line 131]</span>
+	<span class="method-title">getUserList</span>&nbsp;&nbsp;<span class="smalllinenumber">[line 128]</span>
 </div>
 <br />
 
@@ -969,10 +1034,10 @@ $userId&nbsp;
 	<div class="top">[ <a href="#top">Top</a> ]</div>
 </div>
 <a name="methodinsert" id="insert"><!-- --></a>
-<div class="oddrow">
+<div class="evenrow">
 
 <div class="method-header">
-	<span class="method-title">insert</span>&nbsp;&nbsp;<span class="smalllinenumber">[line 47]</span>
+	<span class="method-title">insert</span>&nbsp;&nbsp;<span class="smalllinenumber">[line 44]</span>
 </div>
 <br />
 
@@ -1012,10 +1077,10 @@ $data&nbsp;
 	<div class="top">[ <a href="#top">Top</a> ]</div>
 </div>
 <a name="methodsetState" id="setState"><!-- --></a>
-<div class="evenrow">
+<div class="oddrow">
 
 <div class="method-header">
-	<span class="method-title">setState</span>&nbsp;&nbsp;<span class="smalllinenumber">[line 248]</span>
+	<span class="method-title">setState</span>&nbsp;&nbsp;<span class="smalllinenumber">[line 245]</span>
 </div>
 <br />
 
@@ -1067,7 +1132,7 @@ $itemId&nbsp;
 
         <div class="credit">
 		    <hr class="separator" />
-		    Documentation generated on Tue, 15 Oct 2013 13:33:13 +0800 by <a href="http://www.phpdoc.org">phpDocumentor 1.4.4</a>
+		    Documentation generated on Mon, 28 Oct 2013 13:24:51 +0800 by <a href="http://www.phpdoc.org">phpDocumentor 1.4.4</a>
 	      </div>
       </td></tr></table>
     </td>

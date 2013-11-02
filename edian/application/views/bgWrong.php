@@ -20,27 +20,29 @@
                 <th>操作</th>
             </tr>
 <?php
-    if($wrong)$len = count($wrong);
-    else $len = 0;
+$baseUrl = base_url();
+$siteUrl = site_url();
 ?>
-            <?php for($i = 0;$i < $len;$i++): ?>
+            <?php for($i = 0,$len = count($wrong);$i < $len;$i++): ?>
             <tr>
 <?php
     $temp = $wrong[$i];
-    if($flag == 1){
+    if($flag === 1){
         $str = "打印出错：".$temp["content"]->pntState."<br/>";
-        $str .="商家:".$temp["content"]->seller["user_name"]." 联系方式".$temp["content"]->seller["contract1"]."<br/>";
-        $str .="买家:".$temp["content"]->buyer["user_name"]." 联系方式".$temp["content"]->buyer["contract1"];
+        $str .="商家:".$temp["content"]["seller"]["user_name"]." 联系方式".$temp["content"]->seller["contract1"]."<br/>";
+        $str .="买家:".$temp["content"]["buyer"]["user_name"]." 联系方式".$temp["content"]->buyer["contract1"];
         echo "<td>".$str."</td>";
-    }else echo "<td>其他原因</td>";
+    }else {
+        echo "<td>".$temp["content"]["text"]."</td>";
+    }
 ?>
                 <td>
 <?php
-    if($flag == 1){
+    if($flag === 1){
         echo "打印";
     }
 ?>
-                    删除
+                    <a href = "<?php echo $siteUrl."/bg/wrong/delete/".$temp["id"] ?>"><?php echo $temp["id"] ?>删除</a>
                 </td>
             </tr>
             <?php endfor ?>

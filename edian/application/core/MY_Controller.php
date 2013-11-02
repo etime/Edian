@@ -40,7 +40,7 @@ class MY_Controller extends  CI_Controller
                 "水果" => array("鲜果","干果"),
                 "包装食品" => array("火腿","泡面")
            ),
-            "饭店" => array(
+            "餐饮" => array(
                 "外卖" => array("盒饭","蛋炒饭"),
                 "饭店" => array("烧烤","火锅","炒菜","凉菜","特色","小吃")
             ),
