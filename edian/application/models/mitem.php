@@ -41,6 +41,7 @@ class Mitem extends Ci_Model
         parent::__construct();
         $this->pageNum = 30;
         $this->load->config("edian");
+        $this->load->model("mwrong");// mwrong就像一个检测机器，有可能出错的地方都需要load
         $this->pageNum = $this->config->item("pageNum");
     }
     public function insert($data)
@@ -269,12 +270,12 @@ class Mitem extends Ci_Model
                 $len = count($idxNum);
                 if($len == 1){
                     $attr["storePrc"][$idxNum[0]]["store"] -= $buyNum;
-                }else{
-                    var_dump($idxNum);
-                    echo "<br/>";
-                    echo $buyNum."<br/>";
-                    die;//这里出现错误，不支持orand type
+                }elseif($len == 2){
                     $attr["storePrc"][$idxNum[0]][$idxNum[1]] -= $buyNum;
+                }else{
+                    $temp["text"] = "在mitem/changeStore/".__LINE__."行出现不应该出现的错误，len = ".$len.
+                        "，这不应该出现,attr[idx] = ".$attr["idx"]."itemId = ".$itemId;
+                    $this->mwrong->insert($temp);
                 }
                 $fAttr = $this->formAttr($attr);//最终形成的attr，貌似是正确的
                 return $this->db->query("update item set store_num = store_num - ".$buyNum.",attr = '$fAttr' where id = ".$itemId);
@@ -283,7 +284,6 @@ class Mitem extends Ci_Model
                 //有没有可能小于0 呢
             }
         }else{
-            $this->load->model("mwrong");
             $temp["text"] = "mitem/changeStore/".__LINE__."行，在itemId = ".$itemId."的情况下没有搜索结果";
             $this->mwrong->insert($temp);
             return false;
@@ -347,10 +347,10 @@ class Mitem extends Ci_Model
     }
     /**
      * 通过传入的idx数组，得到里面的下标
-     *
+     * 在修改库存的时候使用，通过对应属性的查找得到对应属性的下标，方便修改库存
      * @param array $idx 包含了各个属性的数组
      * @param string $attr 被选中的属性
-     * @return array 下标，一个，或则是两个
+     * @return array $res下标，一个，或则是两个
      */
     protected function getIdx($idx,$attr)
     {
@@ -367,7 +367,6 @@ class Mitem extends Ci_Model
                     }
                 }
             }else{
-                $this->load->model("mwrong");
                 $temp["text"] = "mitem/getIdx".__LINE__."行出现bug,cnt超过len,目前数据为idx = ".$idx." attr = ".$attr;
                 $this->mwrong->insert($temp);
                 return false;
@@ -445,13 +444,11 @@ class Mitem extends Ci_Model
             $res = $this->_oneAttr($attrIdx,$num);
        }else{
             //报错，出现了问题
-            $this->load->model("mwrong");
             $wrong["text"] = "在mitem.php/decodeAttr/".__LINE__."行两个flag都是0，这种情况不应个出现的，请检查一下,itemId = ".$itemId;
             $this->mwrong->insert($wrong);
             return false;
        }
        if(!$res){
-            $this->load->model("mwrong");
             $wrong["text"] = "在mitem.php/decodeAttr/".__LINE__."出现编码不对的情况检查一下,attr : ".$attr."，商品的id为 itemId = ".$itemId;
             $this->mwrong->insert($wrong);
        }else{

@@ -366,29 +366,67 @@ class Order extends My_Controller{
         //读取数据，返回信息
         $res["addr"] = trim($this->input->post("addr"));
         $res["orderId"] = trim($this->input->post("orderId"));
+        // 和下面的buynum 一样都是 123&123 这种
+        if(!preg_match("/^\d+[&\d]*$/",$res["orderId"])){
+            $res["failed"] = "商品的订单号不对";
+            $temp["text"] = "在order/getData/".__LINE__."行orderId格式不符合要求,res[orderId] = ".
+                $res["orderId"]."，当前用户的id为".$this->user_id;
+            $this->mwrong->insert($temp);
+            return $res;
+        }
         $res["buyNum"] = trim($this->input->post("buyNums"));
+        if(!preg_match("/^\d+[&\d]*$/",$res["buyNum"])){
+            $res["failed"] = "商品的购买量不对";
+            $temp["text"] = "在order/getData/".__LINE__."行buyNums格式不符合要求,res[buyNum] = ".
+                $res["buyNum"]."，当前用户的id为".$this->user_id;
+            $this->mwrong->insert($temp);
+            return $res;
+        }
         $res["more"] = trim($this->input->post("more"));
+        /*
+         //$res["more"] = "jial速度发！。，？：；-";
+         // 禁止除了汉字，数字，英文标点符号之外的符号!。？：；，下面的花括号\x是各种中文标点
+        if(preg_match("/[^\x{4e00}-\x{9fa5}\x{ff01}\x{3002}\x{ff0c}\x{ff1f}\x{ff1a}\x{ff1b}0-9a-zA-Z.?!,:;-&]+/u",$res["more"])){
+            $res["failed"] = "在备注中请不要输入特殊字符";
+            $temp["text"] = "在order/getData/".__LINE__."行出现不允许的特殊字符:".
+                $res["more"].";请检查，当前用户为user_id = ".$this->user_id;
+            $this->mwrong->insert($temp);
+            return $res;
+        }
+         */
+        //|{}` & '" = <>=;:  *空格都是不允许输入的
+        if(preg_match("/[\s\\\"\\\'\\\\{}*;|=><]/" ,$res["more"])){
+            $res["failed"] = "在备注中请不要输入特殊字符";
+            $temp["text"] = "在order/getData/".__LINE__."行出现不允许的特殊字符:".
+            $res["more"].";请检查，当前用户为user_id = ".$this->user_id;
+            $this->mwrong->insert($temp);
+            return $res;
+        }
         $res["orderId"] = explode("&",$res["orderId"]);
         $res["buyNum"] = explode("&",$res["buyNum"]);
         $res["more"] = explode("&",$res["more"]);
         return $res;
     }
+
     /**
      * 对下单之后的数据处理
-     *
-         下单时候，并发处理，将修改状态,将数据库中的内容进行变更
+     *  下单时候，并发处理，将修改状态,将数据库中的内容进行变更
      */
     public function set()
     {
-        $data = $this->getData();//获取input的信息
         $res["flag"]  = 0;
         if(!$this->user_id){
             $res["atten"] = "没有登录";
             echo json_encode($res);
             return ;
         }
-        $this->load->config("edian");
-        $res = $this->setOrderState($data,$this->config->item("Ordered"));//下订单后状态变为2
+        $data = $this->getData();//获取input的信息
+        if(array_key_exists("failed",$data)){
+            $res["atten"] = $data["failed"];
+        }else{
+            $this->load->config("edian");
+            $res = $this->setOrderState($data,$this->config->item("Ordered"));//下订单后状态变为2
+        }
         echo json_encode($res);//目前就只准备ajax的版本吧
     }
     /**

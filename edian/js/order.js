@@ -50,10 +50,14 @@ $(document).ready(function(){
 })
 function forbid() {
     $("body").delegate("textarea","keypress",function(event){
-        //|{}` & '" = <>=;:  都是不允许输入的
+        event = event || window.event;
+        //|{}` & '" = <>=;:  *空格都是不允许输入的
         if(event.which == 96)return false;
+        if(event.which == 32)return false;//空格
+        if(event.which == 42)return false;//*
+        if(event.which == 92)return false;// 反斜线\
         if((event.which < 40)&&(event.which > 33))return false;
-        if(event.which < 63 && (event.which > 57))return false;
+        if(event.which < 63 && (event.which > 58))return false;
         if(event.which < 126 && event.which > 122)return false;
     })
 }

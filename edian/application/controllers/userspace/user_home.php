@@ -24,22 +24,5 @@ class User_home  extends Ci_Controller{
 		$this->load->view("homeUserspace",$data);
 		$this->load->view("common_foot");
 	}
-	/*
-	function user_id_get(){
-	* 这个函数目前因为tianyi认为很实用，所以已经移动到了 library中的id类中了,如果出现了什么问题，将注释去掉，然后去掉__construct中的library id，就可以了
-	 */
-	/********************************************************
-	 * 通过cookie和session的方式获得用户的id
-	 ********************************************************/
-	/*
-		if(isset($this->session->userdata['user_id'])){
-			return $this->session->userdata['user_id'];
-		}
-		else if(isset($_SESSION['user_id'])){
-			return $_SESSION['user_id'];
-		}
-		return false ;
-	}
-	 */
 }
-?>	
+?>

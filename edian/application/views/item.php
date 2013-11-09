@@ -107,7 +107,8 @@ var lsp = Array();
                 </p>
                 <p> <span class="item">承诺:</span> <?php echo $promise ?></p>
                 <?php
-                if($user_type == 1 && (strpos($work,"送货") !== FALSE))
+                //if($user_type == 1 && (strpos($work,"送货") !== FALSE))
+                //这里是为了增加数据，以后要去掉上面的注释
                     echo "<p><input type = 'submit' name = 'inst' class = 'bton ba' value = 'e点购买' /><input type = 'submit' name = 'cart' class = 'bton bcl' href = 'userId/itemId' value = '加入购物车'></p>";
                 ?>
             </form>

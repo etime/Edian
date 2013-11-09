@@ -241,8 +241,7 @@ class Write extends MY_Controller
         $keys = $this->getrepeat($keys,$key);
         $key  = trim($this->input->post("keyk"));//这些不进行检验是不安全的
         $keys = $this->getrepeat($keys,$key);
-        $data["keys"] = $this->formate($keys);
-        //以上是对关键字的处理
+        $data["keys"] = $this->formate($keys);//以上是对关键字的处理
         return $data;
     }
     /**
