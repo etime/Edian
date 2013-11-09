@@ -270,6 +270,10 @@ class Mitem extends Ci_Model
                 if($len == 1){
                     $attr["storePrc"][$idxNum[0]]["store"] -= $buyNum;
                 }else{
+                    var_dump($idxNum);
+                    echo "<br/>";
+                    echo $buyNum."<br/>";
+                    die;//这里出现错误，不支持orand type
                     $attr["storePrc"][$idxNum[0]][$idxNum[1]] -= $buyNum;
                 }
                 $fAttr = $this->formAttr($attr);//最终形成的attr，貌似是正确的
@@ -293,7 +297,7 @@ class Mitem extends Ci_Model
      *     * idx: array(2) {
      *      ["风味"]=> array(2) {
      *              [0]=> array(2) {
-     *                  ["font"]=> string(6) "红烧" ["img"]=> string(1) " "
+     *                  ["font"]=> string(6) "红烧" ["img"]=> string(1) " ";
      *              }
      *              [1]=> array(2) {
      *                  ["font"]=> string(6) "喷香" ["img"]=> string(1) " "
