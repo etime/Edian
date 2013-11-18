@@ -107,6 +107,7 @@ class Sea extends MY_Controller
 
         echo json_encode($ans);
     }
+
     /**
      * 通过key数组得到数据
      *

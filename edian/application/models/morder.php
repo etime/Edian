@@ -72,6 +72,7 @@ class Morder extends Ci_Model
      */
     private function formInfo($data)
     {
+        if($data["info"] == "false" || (!$data["info"]))$data["info"] = "";
         $data["info"] = $data["orderNum"]."&".$data["info"]."&".$data["price"]."&";
         return $data;
     }

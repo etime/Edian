@@ -201,16 +201,19 @@ class Mitem extends Ci_Model
         }
         return false;
     }
+    /**
+     * 获取商品的title
+     * @param int $itemId 商品序列的id
+     * @return array/false $res 要不是false，要不是string
+     */
     public function getTitle($itemId)
     {
+        $itemId = (int)$itemId;
+        if(!$itemId)return false;
         $res = $this->db->query("select title from item where id = $itemId");
-        //如果搜一个没有id的主键id，结果会是什么,$res还会是true吗？
-        if($res){
+        if($res->num_rows){
             $res = $res->result_array();
-            //返回false的话，应该是已经下架之类的
-            if(count($res))
-                return $res[0];//id是主键，有的话，结果必然只有一个
-            return false;
+            return $res[0];//id是主键，有的话，结果必然只有一个
         }
         return false;
     }
@@ -249,6 +252,23 @@ class Mitem extends Ci_Model
     {
         $this->db->query("update item set state = $state where id = $itemId");
     }
+
+    /**
+     * 通过id获得对应的价格
+     * 对目前对应函数仅仅是order/setorderstate
+     * @param int $itemId 获得价格
+     */
+    public function getPrice($itemId)
+    {
+        $itemId = (int)$itemId;
+        if(!$itemId)return false;
+        $res = $this->db->query("select price from item where id = $itemId");
+        if($res->num_rows){
+            $res = $res->result_array();
+            return $res[0]["price"];
+        }
+        return false;
+    }
     /**
      * 在下单之后，修改对应的库存
      *
@@ -257,12 +277,18 @@ class Mitem extends Ci_Model
      * @param string $info 或许包含|,需要分割的字符串，是物品的可选属性
      * @param int $buyNum 用户购买的数量
      * @param int $itemId  需要修改的商品的id
+     * @todo 现在添加了无限商品的功能，将来添加每段时间多少最多销量的功能
      */
     public function changeStore($info,$buyNum,$itemId)
     {
-        $infoToSet = $this->db->query("select attr from item where id = $itemId");
+        $infoToSet = $this->db->query("select attr,store_num from item where id = $itemId");
         if($infoToSet->num_rows){
             $infoToSet = $infoToSet->result_array();
+            $this->load->config("edian");
+            if($this->config->item("maxStoreNum") == $infoToSet[0]["store_num"]){
+                //无限库存，不在减去，同时子类也不再减去,不再更新修改
+                return true;
+            }
             $infoToSet = $infoToSet[0]["attr"];//attr为0的情况
             if($infoToSet){
                 $attr = $this->decodeAttr($infoToSet,$itemId);

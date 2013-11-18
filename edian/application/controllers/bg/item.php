@@ -23,6 +23,7 @@ class item extends MY_Controller
         $this->ADMIN = 3;
         $this->type = $this->user->getType($this->user_id);
     }
+
     public function mange()
     {
         if(!$this->user_id){

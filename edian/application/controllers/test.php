@@ -31,8 +31,15 @@ class Test extends MY_Controller{
         @fputs($filenum,"123123\n");
         fclose($filenum);
     }
+    protected function  value(&$tt)
+    {
+        $tt = "aaaa";
+    }
     function index(){
-        $this->load->view("test");
+        require("sea.php");
+        $sea = new Sea();
+        $sea->test();
+        echo "testing";
     }
     function sms(){
         header("Cache-control:no-cache");

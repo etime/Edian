@@ -14,7 +14,9 @@ require 'dsprint.class.php';
  *  @todo 完成打印/通知的功能，完成状态为订单打印完毕,发货中
  */
 class Order extends My_Controller{
-    /** 登录者的id */
+    /**
+     * 登录者的id
+     */
     protected $user_id;
     function __construct(){
         parent::__construct();
@@ -347,7 +349,7 @@ class Order extends My_Controller{
         $res["orderId"] = trim($this->input->post("orderId"));
         // 和下面的buynum 一样都是 123&123 这种
         if(!preg_match("/^\d+[&\d]*$/",$res["orderId"])){
-            $res["failed"] = "订单号不正确";
+            $res["failed"] = "商品的订单号不对";
             $temp["text"] = "在order/getData/".__LINE__."行orderId格式不符合要求,res[orderId] = ".
                 $res["orderId"]."，当前用户的id为".$this->user_id;
             $this->mwrong->insert($temp);
@@ -410,44 +412,29 @@ class Order extends My_Controller{
 
     /**
      * setOrderState 将商品对应的状态进行修改
-     *    价格是大问题，当初的价格是不是已经修改，现在的库存是不是还有，
-     * 暂时不修改，默认没有变，将来添加
      * @todo 数据的检验，安全的检验
-     * @todo 现在的价钱是之前加入购物车时候，存入数据库的,要预防价钱变动的情况
      */
     protected function setOrderState($data)
     {
         $failed = 1;
         $res  = Array();
         $this->load->config("edian");
-        $orderedState = $this->config->item("Ordered");             //下单之后的订单状态
+        $orderedState = $this->config->item("Ordered");
         $morelen = count($data["more"]);
         if(count($data["more"]) != $len){
             $temp["text"] = "在order/setOrderState/".__LINE__
                 ."中发现len和moreLen长度不同，造成这个的原因，或许是遭到注入，或者是代码漏洞，请检验,data";
-            $this->mwrong->insert($temp);
         }
         for($i = 0,$len = count($data["orderId"]);$i < $len;$i++){
             $id = $data["orderId"][$i];
-            if($data["more"][$i])
+            if($data["more"] && $len == $morelen)
                 $more = addslashes($data["more"][$i]);
             else $more = "";//有时候，因为more没有输入，所以会造成bug，避免这个问题
-            $change = $this->morder->getChange($id);
-            if($change){
-                if($change["info"] && ($change["info"] != "false")) {
-                    $temp = explode("&",$change["info"]);
-                    if(!$temp[2] || ($temp[2] == "false"))//防止之前有false输入
-                        $temp[2] = "";
-                }else {
-                    $text["text"] = "order/setOrderState/".__LINE__."行出现info = ".$change["info"]."的情况，不应该出现，请检查,orderId = ".$id;
-                    $this->mwrong->insert($text);
-                    $temp[1] = $this->mitem->getPrice($change["id"]);
-                    $temp[2] = "";
-                }
-                //这个时候不能选择从后台读取，因为有些的价格是属性对应的价格，在暂时不考虑攻击的情况下，相信之前的数据
-                $info = $data["buyNum"][$i]."&".$temp[1]."&".$temp[2]."&".$more;
-                //补充还能修改的购买量
-                $flag = $this->morder->setOrder($data["addr"],$id,$info,$orderedState);
+            $info = $this->morder->getChange($id);
+            if($info){
+                $temp = explode("&",$info["info"]);
+                $attrStr = $data["buyNum"][$i]."&".$temp[1]."&".$temp[2]."&".$more;
+                $flag = $this->morder->setOrder($data["addr"],$id,$attrStr,$orderedState);
                 if(!$flag){
                     $failed = 0;
                     $res["atten"] = "有商品下单失败";
@@ -483,13 +470,19 @@ class Order extends My_Controller{
             $id = $orderId[$i];//将所有的进行打印
             $ordInfo[$cnt]= $this->morder->getChange($id);
             if($ordInfo[$cnt]){
+                echo $ordInfo[$cnt]["info"]."<br/>";
                 $temp = explode("&",$ordInfo[$cnt]["info"]);
+                var_dump($temp);
+                echo "<br/>";
+                echo "<br/>";
                 $seller[$cnt] = $ordInfo[$cnt]["seller"];
                 //这个顺序要进行测试
                 $ordInfo[$cnt]["buyNum"] = $buyNums[$i];
                 $ordInfo[$cnt]["more"]   = $more[$i];
                 $ordInfo[$cnt]["price"]  = $temp[2];
                 $ordInfo[$cnt]["info"]   = $temp[1];
+                var_dump($temp[1]);
+                echo "<br/>";
                 $ordInfo[$cnt]["ordId"]  = $id;
                 $cnt++;
             }else{
@@ -514,8 +507,14 @@ class Order extends My_Controller{
     {
         $title = $this->mitem->getTitle($temp["item_id"]);
         if($title){
-            //当info存在并且不是字符串false的时候，分割，否则返回空
-            $inf = ($temp["info"] && $temp["info"] != "false") ? $this->spInf($temp["info"]):"";
+            echo strlen($temp["info"]);
+            if($temp["info"])echo "yes";
+            else echo "no";
+            echo"<br/>";
+            //$inf = $this->spInf($temp["info"]);
+            $inf = $temp["info"]?$this->spInf($temp["info"]):"";
+            var_dump($inf);
+            die;
             $list  .= $title["title"].$inf." ".$temp["buyNum"]." x ".$temp["price"]."\n";
             $cntAl += $temp["buyNum"]*$temp["price"];
             //more是不一定存在的
@@ -535,35 +534,27 @@ class Order extends My_Controller{
      *  提交订单之后，修改状态和打印同步进行,（为了效率和不等待），一种一面是者set ，另一面是setPrint
      *  setPrint 首先进行打印，不行或者没有打印机的话，就短信，失败之后就宣布通知失败，
      * 下单的时候，格式控制，只发送一次就好，不然的会重复下单，也会多打印的
-     *
-     * @todo 过一段时间，加上在线验证吧,就是当用户在线的时候，就不发送，用户不在线的时候，就发送短信，
      */
     public function setPrint()
     {
         $res["flag"]  = 0;
+        //$choseState = $this->input->post("buyNum");
         if(!$this->user_id){
             $res["atten"] = "没有登录";
             echo json_encode($res);
             return false;
         }
         $data = $this->getData();
-        if(array_key_exists("failed" , $data)){
-            //如果输入数据出错的时候
-            echo "请返回<br/>";
-            echo $data["failed"];
-            return false;
-        }
         //保存打印者,下单的人信息
-        $ordInfo = $this->getOrderInfo( $data["orderId"] ,$data["buyNum"] ,$data["more"]);
+        $ordInfo = $this->getOrderInfo($data["orderId"],$data["buyNum"],$data["more"]);
         $quoto = "e点工作室竭诚为您服务";//口号
-        $time  = date("Y-m-d H:i:s");
-        $user  = $this->getUser($data["addr"]);//取得用户的信息，$user中有名字，地址和联系方式，
-        $this->load->config("edian");                    //根据对应状态修改对应的商品的状态
+        $time = date("Y-m-d H:i:s");
+        $user = $this->getUser($data["addr"]);//取得用户的信息，$user中有名字，地址和联系方式，
         $idlist = Array();//保存打印处理商品的菜单id
         for($i = 0 ,$cnt = count($ordInfo) ;$i < $cnt;){
             $nowSeller = $ordInfo[$i]["seller"];
-            $list   = "";
-            $cntAl  = 0;//将要打印的清单和总和
+            $list = "";
+            $cntAl = 0;//将要打印的清单和总和
             $cntPnt = 0;//将要打印的item_id array长度，为了在打印成功之后，进行处理
             while(($i < $cnt) && ($ordInfo[$i]["seller"] == $nowSeller)){
                 $this->getPrintReady($ordInfo[$i], $list ,$cntAl);
@@ -573,37 +564,35 @@ class Order extends My_Controller{
             //需要打印的代码
             $text = "\n顾客: ".$user["name"]."\n".
                     "手机号: ".$user["phone"]."\n".
-                    "地址: "  .$user["addr"]."\n".
-                    "店家: "  .$sellerName["user_name"]."\n".
-                    "清单:\n" .$list.
+                    "地址: ".$user["addr"]."\n".
+                    "店家: ".$sellerName["user_name"]."\n".
+                    "清单:\n".$list.
                     "合计: \t￥\x1B\x21\x08".$cntAl."\x1B\x21\x00(元)\n".
                     "下单时间: ".$time."\n".
                     "\t".$quoto."\n\n\n\n";
-            $sellerInfo = $this->user->informInfo($nowSeller);
-            $flag = $this->printInform($text , $sellerInfo["extro"]["dtuId"] , $sellerInfo["extro"]["dtuNum"]);  //这里首先进行打印，之后尝试短信
-            if($flag == "pr"){                        //打印成功
+            echo $text."<br/>";
+            die;
+            $flag = $this->printInform($text ,$temp["seller"]);//这里首先进行打印，之后尝试短信
+            $this->load->config("edian");
+            //根据对应状态修改对应的商品的状态
+            if($flag == "sms"){
+                //成功发送短信
+                $smsed = $this->config->item("smsed");
+                for($k = 0;$k < $cntPnt ;$k ++){
+                    $this->afPnt($ordInfo[$idlist[$k]] ,$data["addr"],$smsed);
+                }
+            }else if($flag == "pr"){
+                //打印成功
                 $printed = $this->config->item("printed");
                 for($k = 0;$k < $cntPnt ;$k ++){
-                    $this->morder->setState($idlist[$k],$printed);
+                    $this->afPnt($ordInfo[$idlist[$k]] ,$data["addr"],$printed);
                 }
-                continue;
-            }
-            if(array_key_exists("smsOrd" , $sellerInfo)){
-                //订购了这个短信服务的人才可以接收短信，
-                //之后添加一个在线即时聊天的功能，或许也可以截流一部分短信
-                $flag = $this->smsInform($text,$sellerInfo["contract1"]);
-                if($flag == "sms"){                              //成功发送短信
-                    $smsed = $this->config->item("smsed");
-                    for($k = 0;$k < $cntPnt ;$k ++){
-                        $this->morder->setState($idlist[$k],$smsed);
-                    }
+            }else{
+                //其他的通知方式都失败
+                $failed = $this->config->item("infoFaild");
+                for($k = 0 ;$k < $cntPnt ;$k ++){
+                    $this->afPnt($ordInfo[$idlist[$k]] ,$data["addr"],$failed);
                 }
-                continue;
-            }
-            //其他的通知方式都失败
-            $failed = $this->config->item("infoFaild");
-            for($k = 0 ;$k < $cntPnt ;$k ++){
-                $this->morder->setState($idlist[$k],$failed);
             }
         }
     }
@@ -615,12 +604,14 @@ class Order extends My_Controller{
      * @$selId int 卖家的id，通过id通知用户
      * @$return bool 打印/传递成功或者没有
      */
-    public function printInform($text , $dtuId , $dtuNum)
+    public function printInform($text,$selId)
     {
         //通知系统，通过打印，短信，和数据库进行多重保证通知
-        if($dtuId && $dtuNum){
-            $client = new DsPrintSend('1e13cb1c5281c812' , $dtuId );//密码和编号,或许这些东西也需要保存到后台，在必要的时候调用
-            $flag = $client->printtxt($dtuNum ,$text ,120 ,"\x1B\x76");//dtu编号，内容，重新发送打印的时间间隔，和查询代码，检查是否有纸
+        $selInfo = $this->user->informInfo($selId);
+        $this->showArr($selInfo);
+        if($selInfo && array_key_exists("dtuName" ,$selInfo)){
+            $client = new DsPrintSend('1e13cb1c5281c812' ,$selInfo["dtuId"]);//密码和编号,或许这些东西也需要保存到后台，在必要的时候调用
+            $flag = $client->printtxt($selInfo["dtuNum"] ,$text ,120 ,"\x1B\x76");//dtu编号，内容，重新发送打印的时间间隔，和查询代码，检查是否有纸
             if($flag == "00"){
                 return "pr";//返回pr代表打印成功
             }else{
@@ -629,20 +620,42 @@ class Order extends My_Controller{
                 $temp["pntState"] = $flag;//如果打印失败，pntstate 是判断错误类型为打印失败的重要依据
                 //其他为失败,失败则不处理，将检测到的信息和错误码发给管理员？
                 //将将ordInfo保存起来，省得再次读取，将它们写道到一个新的表中，交给管理员处理
+                /*
+                 * 感觉没有必要重新组织结构，可以直接将$text 保存起来，接着只是打印就好
+                for ($j = 0; $j < $cntPnt; $j++) {
+                    $tempInfo["info"][$j] = $ordInfo[$idlist[$j]];
+                }
+                $tempInfo["addr"] = $data["addr"];
+                $tempInfo["userId"] = $this->user_id;//下单人的id
+                $tempInfo["pntState"] = $flag;
+                //2013-09-22 20:27:14  ,unasm
+                 */
                 $this->mwrong->insert($temp);//打印失败，要通知给管理员
+                if($selInfo["smsOrd"]){
+                    //订购了这个短信服务的人才可以接收短信，
+                    //过一段时间，加上在线验证吧,就是当用户在线的时候，就不发送，用户不在线的时候，就发送短信，
+                    //之后添加一个在线即时聊天的功能，或许也可以截流一部分短信
+                    return $this->smsInform($text,$selInfo["contract1"]);
+                }
                 return false;
             }
+        }else if($selInfo && $selInfo["smsOrd"]){
+            //小心selinfo为0的情况
+            return $this->smsInform($text,$selInfo["contract1"]);
+            //来到这里，代表没有打印机,接着尝试短信
         }
-        return false;
     }
     /**
-     *  通过短信进行通知。
+     * 打印失败之后，通过短信进行通知。
      *
-     * 通过短信发送的信息，向对应的电话号码进行通知
-     * @param string $text      需要打印和通知的订单内容
-     * @param int    $selId     卖家的id
-     * @return  boolean         有没有打印成功
+     * 通过短信发送订单的信息，向卖家进行通知
+     * @$text string 需要打印和通知的订单内容
+     * @$selId int 卖家的id
+     * @return true/false 有没有打印成功
+     * @author:  unasm
+     * @time:    2013-09-22 19:59:55
      */
+    //public function smsInform($text,$selId)
     public function smsInform($text,$phone)
     {
         $this->load->library("sms");
@@ -652,26 +665,34 @@ class Order extends My_Controller{
             $temp["text"] = "controller/order.php/".__LINE__."行发现错误，手机号码不符合要求";
             //$this->load->model("mwrong");
             $this->mwrong->insert($temp);
+            return false;
         }elseif($flag == 1){
             //1,代表发送了合格
             return "sms";//返回sms代表发送短信成功
         }else{
             //其他的为奇葩的情况，向管理员报错,因为不重复发送，所以就算了
             $temp["text"] = "controller/order.php/".__LINE__."行发现错误，短信发送返回码为".$flag;
+            //$this->load->model("mwrong");
             $this->mwrong->insert($temp);
         }
-        return false;
+        //echo $this->sendSms($url);
     }
     /**
-     *    打印成功之后，修改对应的状态,已经被废弃
-     * 传入对应的 id，修改成为对应的状态
+     *    打印成功之后，修改对应的状态
+     * 传入对应的参数和变量，交给afpnt处理之后的状态
      * 这里就不做反馈了，一来复杂，而来因为这个反馈不是给用户看的，一般不会出问题，
-     * @param int $ordId 购物车的商品id
+     * @param array $arr 包含了购买数，价格，等其他信息的函数
      * @param int $state 修改完成之后，对应的状态，
+     * @param string $addr 对应的地址
      */
-    private function afPnt($ordId,$state)
+    private function afPnt($arr,$addr,$state)
     {
-        $this->morder->setState($addr,$arr["ordId"],$info,$state);
+        //为什么不是直接修改一个状态就够了呢？,以为但是
+        /*
+            seller,item_id,ordId,info,price,more,buyNum;
+         */
+        $info = $arr["buyNum"]."&".$arr["info"]."&".$arr["price"]."&".$arr["more"];
+        $this->morder->setOrder($addr,$arr["ordId"],$info,$state);
     }
     /**
      * 通过用户的id取得用户下单地址的函数
@@ -683,12 +704,9 @@ class Order extends My_Controller{
         return $user[$adIdx];
         //获取用户的地址，名字和联系方式的函数
     }
-    /**
-     * 这个函数是将info的具体解析出来
-     * 供打印使用的，目前的格式为inf|inf 的格式，返回(inf)(inf)的格式
-     */
     private function spInf($info)
     {
+        //这个函数是将info的具体解析出来，然后供打印使用的，目前的格式为inf|inf 的格式
         $res = "";
         $info = explode("|",$info);
         for($i = 0,$len = count($info);$i < $len; $i++){
@@ -700,10 +718,10 @@ class Order extends My_Controller{
      * 显示当前正要处理的订单信息
      *
      * 为后台实时刷新的页面提供数据,显示正要处理的订单信息
-     * 为买家量身定做的
      */
     public function ontime()
     {
+        //为买家量身定做的
         if(!$this->user_id){
             $this->nologin(site_url()."/order/ontime");
             return;
@@ -767,13 +785,10 @@ class Order extends My_Controller{
         }
         return $arr;
     }
-    /**
-     * 将info 格式化，组成数组，返回，
-     * @param array $arr 数组,包含了对应的info 元素
-     */
-    protected function formData($arr)
+    private function formData($arr)
     {
         $ordor = Array();
+        //将info 格式化，组成数组，返回，
         for($i = 0,$len = count($arr);$i < $len ;$i++){
             $temp = $arr[$i];
             $now = $this->mitem->getTitle($temp["item_id"]);
@@ -793,10 +808,7 @@ class Order extends My_Controller{
         $temp = $this->addrDecode($inf);//用户保存的地址id中记录的就是addrdecode 生成的地址列表中的下标号码
         return $temp[0];
     }
-    /**
-     * 别人提供的函数
-     */
-    private function change(){
+    function change(){
         require_once 'dsprint.class.php';
         require_once $_SERVER["DOCUMENT_ROOT"].'/dsconfig.class.php';
         $client = new DsPrintSend('1e13cb1c5281c812','2050');
