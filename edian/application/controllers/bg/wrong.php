@@ -16,11 +16,12 @@ class Wrong extends MY_Controller
         parent::__construct();
         $this->user_id = $this->user_id_get();
         $this->load->model("mwrong");//对wrong表操作集中的函数
+        $this->load->library('pagesplit');
     }
     /**
      * 错误处理的入口函数，其他的操作的中心
      */
-    public function index()
+    public function index($pageId = 1, $pageSize = 20)
     {
         if(!$this->user_id){
             //检查是否登录
@@ -47,6 +48,12 @@ class Wrong extends MY_Controller
                 }
         }else $data["flag"] = 0;
         $data["wrong"] = $wrong;
+        if ($data['wrong']) {
+        	$temp = $this->pagesplit->split($data['wrong'], $pageId, $pageSize);
+        	$data['wrong'] = $temp['newData'];
+        	$data['pageAmount'] = $temp['pageAmount'];
+        	$data['pageId'] = $pageId;
+        }
         $this->load->view("bgWrong",$data);
     }
     private function showArr($arr)

@@ -4,4 +4,5 @@ edian/upload/
 upload
 tags
 *.html
+.buildpath
 #忽略Document 和upload整个文件夹

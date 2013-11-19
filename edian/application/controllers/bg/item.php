@@ -20,11 +20,12 @@ class item extends MY_Controller
         $this->load->model("mitem");
         $this->user_id = $this->user_id_get();
         $this->load->model("user");
+        $this->load->library('pagesplit');
         $this->ADMIN = 3;
         $this->type = $this->user->getType($this->user_id);
     }
 
-    public function mange()
+    public function mange($pageId = 1, $pageSize = 2)
     {
         if(!$this->user_id){
             $this->noLogin(site_url("bg/item/mange"));
@@ -37,6 +38,12 @@ class item extends MY_Controller
             $data["item"] = $this->mitem->getBgList($this->user_id);
         }
         //$this->showArr($data);
+        if ($data['item']) {
+        	$temp = $this->pagesplit->split($data['item'], $pageId, $pageSize);
+        	$data['item'] = $temp['newData'];
+        	$data['pageAmount'] = $temp['pageAmount'];
+        	$data['pageId'] = $pageId;
+        }
         $this->load->view("bgItemMan",$data);
     }
     public function set($state = -1,$itemId = -1)
@@ -63,7 +70,7 @@ class item extends MY_Controller
         if(($this->type == $this->ADMIN) || ($this->user_id == $master["author_id"]))return true;
         return false;
     }
-    public function itemCom()
+    public function itemCom($pageId = 1, $pageSize = 2)
     {
         //管理员看到一天内所有的评论，其他人看到3天内所有的评论
         if(!$this->user_id){
@@ -79,10 +86,19 @@ class item extends MY_Controller
         }else{
             $com = $this->comitem->getUserDate($this->user_id,100);
         }
-        if($com)$len = count($com);
+        
+        //分页
+        if ($com) {
+        	$temp = $this->pagesplit->split($com, $pageId, $pageSize);
+        	$com = $temp['newData'];
+        	$data['pageAmount'] = $temp['pageAmount'];
+        	$data['pageId'] = $pageId;
+        }
+        
+        if($com) $len = count($com);
         else $len = 0;
         for ($i = 0; $i < $len; $i++) {
-            $temp  = $this->mitem->getTitle($com[$i]["item_id"]);
+            $temp = $this->mitem->getTitle($com[$i]["item_id"]);
             $com[$i]["title"] = $temp["title"];
         }
         $data["com"] = $com;

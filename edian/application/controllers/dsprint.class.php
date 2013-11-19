@@ -1,7 +1,7 @@
 <?php
 
 //引用库
-require_once $_SERVER["DOCUMENT_ROOT"].'/dsconfig.class.php';
+require_once $_SERVER["DOCUMENT_ROOT"].'/Edian/edian/application/controllers/dsconfig.class.php';
 //require_once 'dsconfig.class.php';
 require_once 'HttpClient.class.php';
 /*

@@ -19,6 +19,7 @@ class Bgart extends MY_Controller
         parent::__construct();
         $this->user_id = $this->user_id_get();
         $this->load->model("user");
+        $this->load->library('pagesplit');
         $this->type = $this->user->getType($this->user_id);
         if($this->type != 3){
             //非管理员不得进入
@@ -30,6 +31,12 @@ class Bgart extends MY_Controller
     public function index()
     {
         $data["art"] = $this->art->getHotRecet();
+        if ($data['art']) {
+        	$temp = $this->pagesplit->split($data['art'], $pageId, $pageSize);
+        	$data['art'] = $temp['newData'];
+        	$data['pageAmount'] = $temp['pageAmount'];
+        	$data['pageId'] = $pageId;
+        }
         $this->load->view("bgart",$data);
     }
     public function del($artId)

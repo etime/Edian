@@ -22,6 +22,7 @@ class Order extends My_Controller{
         $this->load->model("mitem");
         $this->load->model("user");
         $this->load->model("mwrong");//其实都是不太可能出现错误的地方
+        $this->load->library('pagesplit');
         $this->user_id = $this->user_id_get();
     }
 
@@ -702,7 +703,7 @@ class Order extends My_Controller{
      * 为后台实时刷新的页面提供数据,显示正要处理的订单信息
      * 为买家量身定做的
      */
-    public function ontime()
+    public function ontime($pageId = 1, $pageSize = 2)
     {
         if(!$this->user_id){
             $this->nologin(site_url()."/order/ontime");
@@ -717,6 +718,12 @@ class Order extends My_Controller{
             $data["order"] = $this->morder->getOntime($this->user_id);
         }
         //$this->showArr($data["order"]);
+        if ($data['order']) {
+        	$temp = $this->pagesplit->split($data['order'], $pageId, $pageSize);
+        	$data['order'] = $temp['newData'];
+        	$data['pageAmount'] = $temp['pageAmount'];
+        	$data['pageId'] = $pageId;
+        }
         if($data["order"])
             $data["order"] = $this->formData($data["order"]);
         $this->load->view("onTimeOrder",$data);
@@ -726,7 +733,7 @@ class Order extends My_Controller{
      *
      * 通过登录者的id进行在后台查找用户的历史订单信息
      */
-    public function hist()
+    public function hist($pageId = 1, $pageSize = 2)
     {
         if(!$this->user_id){
             $this->nologin(site_url()."/order/ontime");
@@ -739,6 +746,12 @@ class Order extends My_Controller{
             $data["order"] = $this->morder->histAll();
         }else{
             $data["order"] = $this->morder->hist($this->user_id);
+        }
+        if ($data['order']) {
+        	$temp = $this->pagesplit->split($data['order'], $pageId, $pageSize);
+        	$data['order'] = $temp['newData'];
+        	$data['pageAmount'] = $temp['pageAmount'];
+        	$data['pageId'] = $pageId;
         }
         if($data["order"])
             $data["order"] = $this->histForm($data["order"]);
@@ -806,7 +819,7 @@ class Order extends My_Controller{
      * 后台处理今日订单的，不止是今日的，包括之前没有处理的，包括下单状态为2，1，下单后出错和下单后没有发货了
      * 24小时的如论什么状态都会在这里
      */
-    public function today()
+    public function today($pageId = 1, $pageSize = 2)
     {
 
         if(!$this->user_id){
@@ -828,6 +841,12 @@ class Order extends My_Controller{
             $ans[$i]["user_name"] = $temp["user_name"];
         }
         $data["today"] = $ans;
+        if ($data['today']) {
+        	$temp = $this->pagesplit->split($data['today'], $pageId, $pageSize);
+        	$data['today'] = $temp['newData'];
+        	$data['pageAmount'] = $temp['pageAmount'];
+        	$data['pageId'] = $pageId;
+        }
         $this->load->view("ordtoday",$data);
     }
 }
