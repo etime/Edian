@@ -1,45 +1,42 @@
 <?php
-/*************************************************************************
- * 这里记录的是订单的数目，保存了订单的信息
-    > File Name :     models/order.php
-    > Author :        unasm
-    > Mail :          douunasm@gmail.com
-    > Last_Modified : 2013-07-17 12:47:45
- ************************************************************************/
-/*
+/**
+ * 这里集中了所有的order/订单的操作，并且order这个表，只对应这个class,或者这个class的继承的操作
  * 始终无法打印图片，所以最好添加图片的同时添加文字备注,后台还需要优化
  * table name ord
- * //之所以取这个名字，是因为order没有办法使用，然后测试的时候，就用了这个名字，不小心成功了，就懒得换了
+ * 之所以取这个名字，是因为order没有办法使用，然后测试的时候，就用了这个名字，不小心成功了，就懒得换了
  * id 订单的号码
  * addr 送(收)货地址，优先选择用户的地址，但是可以修改,然后把新的地址，放到用户地址中合并，订单的单次地址就只保存id，地址的id
  * addr的下标为controllers/order/addrdecode函数生成数组的的下标
- info    通过一定的格式保存起来的商品的价格，id，和百字以内的备注，由特殊的分割符号进行分割,属性的挑选,图片,价格,记录各种交易信息的，各种不重要（检索），但是有比较关心的
- info 的格式为
+ * info    通过一定的格式保存起来的商品的价格，id，和百字以内的备注，由特殊的分割符号进行分割,属性的挑选,图片,价格,记录各种交易信息的，各种不重要（检索），但是有比较关心的
+ * info 的格式为
+ * <pre>
     @example final
         orderNum & info & price & more
         info 为选购的属性，more 是说明和备注
     @example
         1&喷香|一个月的烤肉&23&
- 不对，保留价格毫无意义，因为要按照最新的价格进行购买，不过，也算作为一种对比了吧，提示,不做修改了吧
- 各大选则之间用;内部则使用|划分,最后的info 是用户添加的备注
-//seller 卖家的id，这个是为了方便检索,不然通过item_id,然后找到卖家的话，太慢
- item_id 购买的商品货号
- 关于退货中，几个商品中，接受几个商品的状态，退几个商品，之后在处理
- time 下订单的时间
- state 状态：0，尚在购物车中，下看后尚未处理
- 1,下单完成
- 2,打印完订单，开始准备发货
- 3,已经发货
- 4 已经签收
- 下单前删除(暂时不真正删除，算是作为数据研究吧)5
- 下单后删除,要不要真正删除7
- 退货6,
- 付款方式：(目前必然是货到付款，之后就再说吧,这个，目前没有为它设置字段，放到info中去吧
- ordor 下订单的人
- 所谓的购物车，就是order中state为0的东西
- */
-/**
- * 这里集中了所有的order的操作，并且order这个表，只对应这个class的操作
+    </pre>
+ * 不对，保留价格毫无意义，因为要按照最新的价格进行购买，不过，也算作为一种对比了吧，提示,不做修改了吧
+ * 各大选则之间用;内部则使用|划分,最后的info 是用户添加的备注
+ * //seller 卖家的id，这个是为了方便检索,不然通过item_id,然后找到卖家的话，太慢
+ * item_id 购买的商品货号
+ * 关于退货中，几个商品中，接受几个商品的状态，退几个商品，之后在处理
+ * time 下订单的时间
+ * state 状态：0，尚在购物车中，下看后尚未处理
+ *              1,下单完成
+ *              2,打印完订单，开始准备发货
+ *              3,已经发货
+ *              4 已经签收
+ *              5:下单前删除(暂时不真正删除，算是作为数据研究吧)
+ *              6:退货
+ *              7:下单后删除,要不要真正删除
+ * 付款方式：(目前必然是货到付款，之后就再说吧,这个，目前没有为它设置字段，放到info中去吧
+ * ordor 下订单的人
+ * 所谓的购物车，就是order中state为0的东西
+ *  @name       models/order.php
+ *  @Author     unasm<1264310280@qq.com>
+ *  @since      2013-07-17 12:47:45
+ *  @package    model
  */
 class Morder extends Ci_Model
 {
@@ -66,34 +63,52 @@ class Morder extends Ci_Model
         }
         return false;
     }
+    /**
+     * 拼接info字段信息，插入数据库
+     * more是后来单独处理的，真正下单的时候添加的内容
+     * @param array $data 需要装入info的数组
+     * @return array $data 修改原来的info信息更新之后得到的数组
+     * <code>final     orderNum & info & price & more</code>
+     */
     private function formInfo($data)
     {
-         //    final     orderNum & info & price & more
-        //more是后来单独处理的，真正下单的时候添加的内容
+        if($data["info"] == "false" || (!$data["info"]))$data["info"] = "";
         $data["info"] = $data["orderNum"]."&".$data["info"]."&".$data["price"]."&";
         return $data;
     }
+    /**
+     * 取得所有的cart中的商品
+     * state为0的商品为购物车的商品
+     * @param int $userId 用户的id
+     * @return array/flase 返回数组或者是false
+     */
     public function getCart($userId){
-        //取得所有的cart中的商品
+        $userId = (int)$userId;
+        if(!$userId)return false;
         $res = $this->db->query("select id,info,item_id,seller from ord where ordor = $userId && state = 0");
-        if($res){
+        if($res->num_rows){
             $res = $res->result_array();
             $len = count($res);
             if($len){
                 for($i = 0;$i < $len; $i++){
-                    $res[$i]["info"] = $this->deInfo($res[$i]["info"]);
+                    $res[$i]["info"] = $this->deInfo($res[$i]["info"]);//对info进行解码
                 }
                 return $res;
             }
-            return false;
         }
         return false;
     }
+    /*
+     * 取得所有的cart中的商品
+     * 没有被删除的,1-3之间的,这个和设定有上面order中状态的设定有关系
+     * @param int $userId 登录者的id
+     */
     public function allMyOrder($userId){
-        //取得所有的cart中的商品
+        $userId = (int)$userId;
+        if(!$userId)return false;
         $res = $this->db->query("select id,info,state,item_id,seller,time from ord where ordor = $userId && state > 0 && state < 4");
         // 1-4对应不同的状态
-        if($res){
+        if($res->num_rows){
             $res = $res->result_array();
             $len = count($res);
             if($len){
@@ -105,22 +120,40 @@ class Morder extends Ci_Model
         }
         return false;
     }
+    /*
+     * 用户删除自己的订单
+     * 删除只能由用户自己,管理员有管理员的方法
+     * @param int $ordor 下单的人自己的id
+     */
     public function delete($ordor)
     {
-        //删除只能由用户自己，管理员有管理员的方法
-        return $this->db->query("delete from ord where order = $order");
+        $ordor = (int)$ordor;
+        if(!$ordor)return false;
+        return $this->db->query("delete from ord where order = $ordor");
     }
+    /**
+     * 为了更好的人性化一点，就设置成7吧,目前应该只是为order/del服务吧
+     */
     public function setFive($id,$userId,$state)
     {
-        //为了更好的人性化一点，就设置成7吧,目前应该只是为order/del服务吧
+        $userId = (int)$userId;
+        if(!$userId)return false;
+        $id = (int)$id;
+        if(!$id)return false;
         return $this->db->query("update ord set state = $state where id = $id && ordor = $userId");
     }
+    /**
+     *  decode info 对info进行解码
+     *  @param string $str info在数据库保存时候的string
+     *  @return array $res
+     */
     private function deInfo($str)
     {
         $temp = explode("&",$str);
         $res["orderNum"] = $temp[0];
         $res["more"] =  $temp[3];
         $res["price"] = $temp[2];
+        //对从数据库中取得到数据抱着相信的态度
         $res["info"] = "";
         if($temp[1]){
             $temp = explode("|",$temp[1]);
@@ -135,46 +168,71 @@ class Morder extends Ci_Model
     /**
      * 修改订单的状态
      *  这里的info是之前就处理好的,而且，必须之前处理好
-        之所以加入state，我想避免bug，购物的状态是不可以逆转的，
-        @param int $addr 地址的下标
-        @param int $id  ord 的主键
-        @param string $info 将info拼接之后的产物
-        @param int $state 将ord想要标记的状态
+     *   之所以加入state，我想避免bug，购物的状态是不可以逆转的，
+     *   @param int $addr 地址的下标
+     *   @param int $id  ord 的主键
+     *   @param string $info 将info拼接之后的产物
+     *   @param int $state 将ord想要标记的状态
+     *   <code>
+        Error Number: 1064
+
+        You have an error in your SQL syntax; check the manua = that corresponds to your MySQL server version for the right syntax to use near '' at line 1
+
+        select info,seller,item_id from ord where id =
+
+        Filename: /var/www/html/edian/edian/models/morder.php
+
+       Line Number: 167
+       </code>
      *
      */
     public function setOrder($addr,$id,$info,$state)
     {
-
+        $id = (int)$id;
+        if(!$id)return false;
         $sql = "update ord set  state = $state,info = '$info',addr = '$addr' where id = $id && state < ".$state;
         return $this->db->query($sql);
     }
+
+    /**
+     * 将指定的订单设置成为指定的状态
+     * 发生的变化为不可逆变化,state只能增大不能减小
+     * @param int $state 指定的状态
+     * @param int $id 指定订单的id
+     */
     public function setState($state,$id)
     {
-        //将指定的订单设置成为指定的状态,发生的变化为不可逆变化,state只能增大不能减小
+        $id = (int)$id;
+        if(!$id)return false;
         return $this->db->query("update ord set state = $state where id = $id && state < ".$state);
     }
     /**
      * 修改下单之前得到要修改的信息
-        查找下单时候，要修改的内容,目前仅为order set 效力
-        功能增加，添加卖家，商品id，
-        并不是用来输出，所以不需要解码
-        @param int $id 订单ord 的主键id
-        @param array $res 因为主键代表唯一，返回包含info，seller,item_id信息的数组
+     *   查找下单时候，要修改的内容,目前仅为order set 效力
+     *  功能增加，添加卖家，商品id，
+     *  并不是用来输出，所以不需要解码
+     *  @param int $id 订单ord 的主键id
+     *  @param array $res 因为主键代表唯一，返回包含info，seller,item_id信息的数组
      */
     public function getChange($id)
     {
-
-        $res = $this->db->query("select info,seller,item_id from ord where id = $id");
-//        $res = $this->db->query("select info,seller,item_id from ord where id = $id && state = 0");
-        $res = $res->result_array();
-        if(count($res)){
-            //$temp["info"] = $this->deInfo($res[0]["info"]);
+        $idInt = (int)$id;
+        if($idInt == 0)return false;
+        $res = $this->db->query("select info,seller,item_id from ord where id = $idInt");
+        if($res->num_rows){
+            $res = $res->result_array();
             return $res[0];
         }
         return false;
     }
+    /**
+     * 需要即时处理的订单,状态为未打印和未发货
+     * 搜索店家刚刚得到的下单
+     * @param int $userId 商家的id
+     */
     public function getOntime($userId){
-        //需要即时处理的订单,状态为未打印和未发货
+        $userId = (int)$userId;
+        if(!$userId)return false;
        $res = $this->db->query("select id,addr,info,item_id,time,ordor,state from ord where ( state = 1 or state = 2 ) && seller = $userId");
         if($res){
             $res = $res->result_array();
@@ -206,6 +264,8 @@ class Morder extends Ci_Model
     }
     public function hist($userId)
     {
+        $userId = (int)$userId;
+        if(!$userId)return false;
         //历史上所有的订单，暂时不分页
         $res = $this->db->query("select id,addr,info,item_id,time,ordor,state from ord where  seller = $userId && state > 0");
         if($res){
@@ -237,6 +297,8 @@ class Morder extends Ci_Model
     }
     public function getToday($userId)
     {
+        $userId = (int)$userId;
+        if(!$userId)return false;
         $res = $this->db->query("select time,item_id,state,ordor,info from ord where seller = $userId and  unix_timestamp(time) > unix_timestamp(now()) - 86400 or state = $this->printed or state = $this->Ordered");
         if($res){
             //return $res->result_array();

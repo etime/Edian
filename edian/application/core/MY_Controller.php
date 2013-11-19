@@ -99,18 +99,17 @@ class MY_Controller extends  CI_Controller
     {
         //检查用户是否登陆，没有登陆返回0，登陆了返回1,暂时不完成，以后完成
     }
+
+    /**
+     * 或许可以选择保存在数据库，但是总要有一个唯一的标示，我想或许是session_id吧
+     */
     public function user_id_get()
     {
-        //或许可以选择保存在数据库，但是总要有一个唯一的标示，我想或许是session_id吧
-        $user_id = false;
         if($this->session->userdata("user_id")!=""){
-            $user_id = $this->session->userdata("user_id");
-            $intUser = intval($user_id);
-            if(is_numeric($user_id)&&($intUser == $user_id)){
-                return $user_id;
-            }
+            //这样可以确保返回整数,或者是0，或者是false
+            return (int)$this->session->userdata("user_id");
         }
-        return $user_id;
+        return false;
     }
     public  function fb_unique($array2D)
     {//将二维的数组转变成为一维数组,方便unique

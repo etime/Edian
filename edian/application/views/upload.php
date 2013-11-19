@@ -12,7 +12,14 @@
 </head>
 <body>
     <form method = 'post' action = "<?php echo site_url('chome/uploadDel')?>" enctype='multipart/form-data'>
-        <input type = 'file' id = 'file' name = 'userfile' value = '选择图片' size = "11"/>
+        <input type = 'file' id = 'file' name = 'userfile' value = '选择图片' size = "11"/> <br />
+
+				<label for="classfication">类别:</label> <br />
+        <input type = 'text' id = 'classfication' name = 'classfication'/> <br />
+
+				<label for="key_word">关键字:</label> <br />
+        <input type = 'text' id = 'key' name = 'key_word'/> <br />
+
         <input type = 'submit' name = 'sub' value = '上传'/>
 <!--
         <span id = 'showsize'>ESC键取消上传页面</span>

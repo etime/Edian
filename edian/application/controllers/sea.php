@@ -12,7 +12,6 @@
  * @since           2013-06-11 10:39:28
  * @name            sea.php
  * @package         controller
-
  **/
 class Sea extends MY_Controller
 {
@@ -107,6 +106,7 @@ class Sea extends MY_Controller
 
         echo json_encode($ans);
     }
+
     /**
      * 通过key数组得到数据
      *

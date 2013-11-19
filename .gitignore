@@ -1,5 +1,6 @@
 Document/
 !Document/*.txt
 edian/upload/
+tags
 *.html
 #忽略Document 和upload整个文件夹

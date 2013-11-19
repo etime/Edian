@@ -48,12 +48,19 @@ $(document).ready(function(){
     forbid();
     calAll();
 })
+/**
+ * 禁止在备注中输入的字符
+ * 希望因为使用了jquery不用在判断event的兼容性问题，event.which 在ie下也没有问题
+ */
 function forbid() {
     $("body").delegate("textarea","keypress",function(event){
-        //|{}` & '" = <>=;:  都是不允许输入的
+        //|{}` & '" = <>=;:  *空格都是不允许输入的
         if(event.which == 96)return false;
+        if(event.which == 32)return false;//空格
+        if(event.which == 42)return false;//*
+        if(event.which == 92)return false;// 反斜线\
         if((event.which < 40)&&(event.which > 33))return false;
-        if(event.which < 63 && (event.which > 57))return false;
+        if(event.which < 63 && (event.which > 58))return false;
         if(event.which < 126 && event.which > 122)return false;
     })
 }
@@ -192,7 +199,7 @@ function parFind(node) {
 }
 function sub(){
     //下单的函数
-    $("#sub").click(function(event){
+    $("form").submit(function(event){
         var chose = $("input[name = 'chose']"),tr,temp,buyNum,choseId,more;
         for (var i = 0, l = chose.length; i < l; i ++) {
             //下单之前，对数据的处理，拼接

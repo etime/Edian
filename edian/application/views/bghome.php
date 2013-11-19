@@ -43,15 +43,15 @@ if($type == $ADMIN){
         <!--商品管理其实分两个部分，一个是用户自己看的，一个是网站工作人员看的-->
         <a href = "<?php  echo $siteUrl.('/bg/item/itemCom')?>" target="content"><li>商品评论</li></a>
         <!-- 评论分为店家看的和管理员可以修改的部分-->
-        <a href = "<?php  echo $siteUrl.('/bg/home/itemadd')?>" target="content"><li>添加商品</li></a>
-        <a href="<?php echo $siteUrl.'/bg/home/set' ?>" target="content"><li>商城信息管理</li></a>
+        <a href = "<?php  echo $siteUrl.('/bg/home/item')?>" target="content"><li>添加商品</li></a>
+        <a href = "<?php echo $siteUrl.'/bg/home/set' ?>" target="content"><li>商城信息管理</li></a>
         <!--个人信息，直接将之前的那个页面拿过来,这里和dit打印机绑定-->
     </ul>
 <!--这里是art的结束------>
 <!--这里是img的开始------>
     <ul id = "img" class = "img">
-        <a href="<?php echo site_url('bg/imglist/index')?>" target="content"><li>图片管理</li></a>
-        <a href="<?php echo site_url('chome/upload')?>" target="content"><li>上传图片</li></a>
+        <a href = "<?php echo site_url('bg/home/imglist')?>" target="content"><li>图片管理</li></a>
+        <a href = "<?php echo site_url('chome/upload')?>" target="content"><li>上传图片</li></a>
     </ul>
     <!--这里是user的开始------>
     <ul id = "sec" class = "sec">

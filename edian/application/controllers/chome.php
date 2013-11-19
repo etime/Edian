@@ -14,14 +14,18 @@ class Chome extends MY_Controller{
         $this->load->model('mhome');
         $this->load->model("img");
     }
+
     function index(){
         $data['title'] = $this->mhome->home_title();
         $this->load->view('home',$data);
     }
+
     public function uploadDel()
     {
         $user_id = $this->user_id_get();
         $re = $this->ans_upload();
+				$re['classfication'] = $this->input->post('classfication');
+				$re['key_word'] = $this->input->post('key_word');
         $data["uri"] = site_url("chome/upload");
         $data["uriName"] = "上传图片";//不管胜利或者失败，家总是要回去的
         if($re["flag"]){
@@ -30,7 +34,7 @@ class Chome extends MY_Controller{
             $data["time"] = 5;
             $this->load->view("jump",$data);
         }else{
-            $res=$this->img->mupload($re['file_name'],$re["upload_name"],$user_id);
+            $res=$this->img->mupload($re['file_name'], $re["upload_name"], $re['classfication'], $re['key_word'], $user_id);
             $data["atten"]= "上传成功";
             $data["title"] = "上传成功";
             $data["time"] = 3;
