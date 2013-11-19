@@ -12,7 +12,6 @@
  * @since           2013-06-11 10:39:28
  * @name            sea.php
  * @package         controller
-
  **/
 class Sea extends MY_Controller
 {

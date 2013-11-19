@@ -21,7 +21,7 @@ function tse(){
     $("#showsub").click(function  (event) {
         checkUserName();
         ent.animate({
-            opaacity:'toggle',
+            opacity:'toggle',
             height:'toggle'
         },400);
         tip.text("显示登陆");

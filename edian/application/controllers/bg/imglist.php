@@ -1,42 +1,43 @@
 <?php
-//class Imglist extends Chome{
+/**
+ *  这里对应后台的入口函数
+ *  这里是后台管理显示的入口，很多具体class的入口都在这里
+ * @author          unasm<1264310280@qq.com>
+ * @since           2013-06-11 10:39:28
+ * @name            sea.php
+ * @package         bg_controller
+ */
 class Imglist extends MY_Controller{
+    /** img大图片的保存路径 */
     var $imgUrl = "/var/www/html/edian/edian/upload/";
+    /** 缩略图的保存路径 */
     var $thumbImg = "/var/www/html/edian/edian/thumb/";
     var $user_id,$ADMIN;
     function __construct()              {
         parent::__construct();
         $this->user_id = $this->user_id_get();
         $this->load->model("img");
-        $this->ADMIN = 3;
         $this->load->model("user");
         $this->type = $this->user->getType($this->user_id);
-        /*
-                $this->load->library('image_lib');
-         */
     }
-    function  index(){
-        //显示一个用户所有的图片
-        if(!$this->user_id){
-            echo "请登录";
-            return;
-        }
-        //要不要添加浏览全部图片的设定呢？
-        $data['imgall']=$this->img->userImgAll($this->user_id);
-        /*
-         * 这里暂时设定显示所有的图片，将来如果用户增多的话，就设置成为根据用户id显示图片
-         */
-        $this->load->view("m-bg-imglist",$data);
-    }
+    /**
+     * 当初设计的时候，是为了浏览大图片而准备的
+     * @param string $imgname  硬盘上面的图片名字
+     */
     function oneimg($imgname){
         $data['imgname']=$imgname;
         $this->load->view("m-bg-showimg",$data);
     }
-    function imgdel($imgId  = "",$img_name = ""){
-        /*
-         *这里/var/www/ci/upload真是太原始,将来要通过全局变量的形式,改成例如baseurl的形式
-         */
-        if($imgId && $img_name && ( $this->type == $this->ADMIN)){
+    /**
+     *  删除具体的图片,抹除它的存在
+     *  @param int      $imgId img      保存时候的id,为了从数据库删除
+     *  @param string   $img_name img   保存得硬盘上面的名字,为了从硬盘上删除
+     *  @todo 这里/var/www/ci/upload真是太原始,将来要通过全局变量的形式,比如通过DOCUMENT__ROOT的形式
+     */
+    public function imgdel($imgId  = "",$img_name = ""){
+
+        $this->load->config("edian");
+        if($imgId && $img_name && ( $this->type == $this->config->item("ADMIN"))){
             if($this->img->imgdel($imgId)){
                 //      $res=unlink(base_url("upload")."/".$img_name);
                 unlink($this->imgUrl.$img_name);
@@ -53,10 +54,12 @@ class Imglist extends MY_Controller{
         $data['content']=$content;
         $this->load->view("m-selfjump",$data);
     }
-    function user_photo(){
-        /*
-         * 目前作为一个模块，将来嵌套进入网站的模块
-         */
+    /*
+     *  应该已经被废弃了
+     *  上传图片的检测函数
+     */
+    private function user_photo(){
+
         if($this->input->post("sub")){
             $config['max_size']='2000000';
             $config['max_width']='1024';
@@ -88,8 +91,11 @@ class Imglist extends MY_Controller{
         }
         $this->load->view("vupload.php",$data);
     }
+    /**
+     * 生成缩小图的函数
+     * 应该已经被废弃了
+     */
     public function thumb_add($path){
-        //生成缩小图的函数
         $config['image_library']='gd2';
         $config['source_image']=$path;
         $config['create_thumb']=true;

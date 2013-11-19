@@ -2,6 +2,16 @@
 /**
  *  这里对应后台的入口函数
  *  这里是后台管理显示的入口，很多具体class的入口都在这里
+ *  其他入口不再这里的有
+ *  <pre>
+ *      order/ontime  待处理订单
+ *      order/Today   今日订单
+ *      order/hist    历史订单
+ *      item/mange    商品的管理
+ *      item/itemCom  item_Comment 商品评论的显示
+ *      chome/upload 上传图片的函数，其他的目前渐渐被遗弃了
+ *  </pre>
+ *  对于管理员登录来说，显示的东西稍微有些不同，添加了四项
  * @author          unasm<1264310280@qq.com>
  * @since           2013-06-11 10:39:28
  * @name            sea.php
@@ -15,7 +25,9 @@ class Home extends MY_Controller{
         $this->load->model("user");
         $this->user_id = $this->user_id_get();
     }
-    //这里显示的应该是第三版本的后台的页面,通过div布局和iframe的页面
+    /**
+     * 后台的入口view函数
+     */
     function  index(){
         if(!$this->user_id){
             $this->noLogin();
@@ -67,6 +79,20 @@ class Home extends MY_Controller{
         $this->load->model("img");
         $data["img"] = $this->img->getImgName($this->user_id);
         $this->load->view("mBgItemAdd",$data);
+    }
+    /**
+     * 显示一个商家所有的图片
+     * @todo 添加分类和搜索
+     */
+    public function  imglist(){
+        if(!$this->user_id){
+            echo "请登录";
+            return;
+        }
+        $this->load->model("img");
+        //要不要添加浏览全部图片的设定呢？
+        $data['imgall']=$this->img->userImgAll($this->user_id);
+        $this->load->view("m-bg-imglist",$data);
     }
 }
 ?>

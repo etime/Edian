@@ -1,8 +1,8 @@
 /*************************************************************************
-    > File Name :  ../js/cart.js
-    > Author  :      unasm
-    > Mail :         douunasm@gmail.com
-    > Last_Modified: 2013-09-18 20:53:02
+  > File Name :  ../js/cart.js
+  > Author  :      unasm
+  > Mail :         douunasm@gmail.com
+  > Last_Modified: 2013-09-18 20:53:02
  ************************************************************************/
 var totalPrc = 0;
 function alogin(){
