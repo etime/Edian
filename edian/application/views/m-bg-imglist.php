@@ -46,6 +46,12 @@
     </head>
         <!--  S - body -->
     <body>
+
+    <form method = 'post' action = "<?php echo site_url('bg/imglist/search')?>" >
+        <input type = 'text' id = 'search_keyword' name = 'search_keyword'/> <br />
+        <input type = 'submit' name = 'search' value = 'Search'/>
+    </form>
+
         <table cellspacing="0" class="mail-box">
             <tr>
                 <th class="img_name">图片名称</th>

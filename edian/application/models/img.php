@@ -32,10 +32,10 @@ class Img extends Ci_Model
         }
         return $array;
     }
-    function mupload($name,$upload_name,$id){
+    function mupload($name,$upload_name, $classfication, $key_word, $id){
         //向数据库中添加上传的图片的信息
         $upload_name = addslashes($upload_name);
-        $res = $this->db->query("insert into img(user_id,img_name,upload_name,upload_time) values('$id','$name','$upload_name',now())");
+        $res = $this->db->query("insert into img(user_id, img_name, upload_name, classfication, key_word, upload_time) values('$id', '$name', '$upload_name', '$classfication', '$key_word', now())");
         return $res;
         //return $res->result();
         //如果使用$res->result的话,会报错,说没办法转为string,而直接return $res答案是正确的
@@ -101,6 +101,21 @@ class Img extends Ci_Model
         if(count($res))return $res[0]["img_name"];
         return false;
     }
+
+		/*
+		 *get_search函数完成图片搜索功能，返回与关键字相关的图片数组
+		 */
+		function get_search()
+		{
+			$match = $this->input->post('search_keyword');
+
+			$this->db->like('classfication',$match);
+			$this->db->or_like('key_word',$match);
+
+			$query = $this->db->get('img');
+			return $query->result();
+		}
+
     private function getArray($arr)
     {
         if(count($arr)){

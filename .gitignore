@@ -1,7 +1,6 @@
 Document/
 !Document/*.txt
 edian/upload/
-upload
 tags
 *.html
 .buildpath
