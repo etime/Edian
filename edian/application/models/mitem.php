@@ -378,6 +378,7 @@ class Mitem extends Ci_Model
      * @param string $attr 拼接成为的字符串
      * @param int $itemId 表示商品的主键id
      * @return array
+     * @todo 将下面的oneAttr和twoAttr进行具体类型的判断
      * 传入的字符串如下
      *
      * @example 2,2,风味,时间,红烧: ,喷香: ,一个月的烤肉: ,两个月的烤肉: |1000,23;1000,23;1000,23;1000,23

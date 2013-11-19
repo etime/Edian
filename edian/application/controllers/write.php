@@ -1,13 +1,30 @@
 <?php
 /**
- *这个文件是用来发表文章的，之前的测试版本已经在test有过了，现在需要添加js和css，大概不需要太多的css吧js也不需要太多吧
- author:            unasm
- email:         douunasm@gmail.com
- last_modefied: 2013/03/28 12:31:53 AM
- **/
+ *      这个文件是用来发表文章的，
+ *  处理各种文章信息，作为发布文章和数据，上传到网站后台，包括二手和商城
+ * 需要检验后台上传数据的时候，强制前端所有信息重新检验,数据必须合格
+ *
+ * @author      unasm<1264310280@qq.com>
+ * @since       2013/03/28 12:31:53 AM
+ * @package     controller
+ */
 class Write extends MY_Controller
 {
-    var $userId,$defaultImg;//defaultImg 是在用户没有提交图片的情况下的默认图片
+
+    /**
+     * 用户的id，登录者的id
+     * 每个controller都有会，记录登录者的id，方便处理,提供数据
+     * @var int
+     */
+    var $userId;
+    /**
+     * 默认的头像图片
+     * 当初没有想到，其实$defaultImg 使用常量就最好了,或者是没有，在浏览查找的时候，修改成为默认图片，方便管理
+     * @var string $defaultImg 是在用户没有提交图片的情况下的默认图片
+     * @todo 废弃掉这个
+     */
+    var $defaultImg;
+
     function __construct()
     {
         parent::__construct();
@@ -16,9 +33,14 @@ class Write extends MY_Controller
         $this->defaultImg = "real.png";
         $this->userId = $this->user_id_get();
         $this->load->model("art");
+        $this->load->model("mwrong");
+        $this->load->model("mitem");//调出model
     }
+    /**
+     * 目前暂时废弃，write和对应的js，view和后台都不改变，将来需要可以随时添加，只是对应的表已经变了
+     */
     public function index2()
-    {//目前暂时废弃，write和对应的js，view和后台都不改变，将来需要可以随时添加，只是对应的表已经变了
+    {
         $data["title"] = "发表新帖";
         if(!$this->userId){
             $atten["uri"] = site_url("mainpage/index");
@@ -31,8 +53,13 @@ class Write extends MY_Controller
         }
         $this->load->view("write",$data);
     }
+
+    /**
+     * 商家添加新品的函数
+     * view 中cwrite c代表商业，就是商家的添加，也是默认的添加，有分区，价格的东西，对应的是目前的表
+     */
     public function index()
-    {//view 中cwrite c代表商业，就是商家的添加，也是默认的添加，有分区，价格的东西，对应的是目前的表
+    {
         $data["title"] = "新品上架";
         if($this->noLogin())return;
         $data["dir"] = $this->part;
@@ -40,8 +67,15 @@ class Write extends MY_Controller
         $data["userType"] = $this->user->getType($this->userId);
         $this->load->view("Cwrite",$data);
     }
+
+    /**
+     * 重新编辑修改的页面
+     * 对帖子进行修改重新编辑的函数，除了id，value之外，什么都修改吧
+     * 这里是显示view
+     * @param int $artId 目标文档的id
+     */
     public function change($artId)
-    {//对帖子进行修改重新编辑的函数，除了id，value之外，什么都修改吧
+    {
         if($this->noLogin())return;
         $data = $this->art->getUserInsert($artId);
         $data["keyword"] = preg_split("/;/",$data["keyword"]);
@@ -61,8 +95,12 @@ class Write extends MY_Controller
         //var_dump($data);
         $this->load->view("wChange",$data);
     }
+    /**
+     * 修改帖子的时候
+     * 应该是和上面的change差不多，都是修改商品的，这里是提交之后，后台逻辑处理
+     */
     public function reAdd($artId)
-    {//修改帖子的时候
+    {
         if($this->noLogin())return;
         $info = $this->art->getImgId($artId);//取得author_id 和img 的信息,
         if($info == false)show_404();
@@ -93,8 +131,12 @@ class Write extends MY_Controller
             $this->load->view("jump",$atten);
         }
     }
+    /**
+     * 处理没有登录的情况
+     * 所有的view的登陆判断页面
+     */
     protected function noLogin()
-    {//所有的view的登陆判断页面
+    {
         if(!$this->userId){
             $atten["uri"] = site_url("mainpage/index");
             $atten["uriName"] = "登陆";//如果将来有时间，专门做一个登陆的页面把
@@ -105,8 +147,13 @@ class Write extends MY_Controller
         }
         return false;
     }
+
+    /**
+     * 为下面的cadd提供抱错的函数
+     * @param string $error 错误的原因
+     */
     private function addError($error)
-    {//为下面的cadd提供抱错的函数
+    {
         $atten["uri"] = site_url("write/index");
         $atten["uriName"] = "新品发表页";//如果将来有时间，专门做一个登陆的页面把
         $atten["title"] = "图片出错了";
@@ -114,58 +161,97 @@ class Write extends MY_Controller
         $atten["time"] = 5;
         $this->load->view("jump",$atten);
     }
+
+    /**
+     * 为下面的cadd提供抱错的函数
+     *
+     *  向用户显示错误信息，同时想wrong检测报错
+     * @param string $error 错误的原因
+     */
     private function bgError($error)
-    {//为下面的cadd提供抱错的函数
+    {
         $atten["uri"] = site_url("bg/home/itemadd");
         $atten["uriName"] = "新品发布";//如果将来有时间，专门做一个登陆的页面把
         $atten["title"] = "出错了";
         $atten["atten"] = $error;
         $atten["time"] = 50;
         $this->load->view("jump",$atten);
+        $temp["text"] = $error.";目前所在的代码在".__LINE__."行，对应的用户为userId = ".$this->userId;
+        $this->mwrong->insert($temp);
     }
+    /**
+     * 对后台上传数据时候的数据检查
+     * 对本函数内的上传数据检验
+     * @param array 包含了各种post输入信息的array；
+     * @todo 库存应该分为1:一定量库存，2：无限库存，3：一定时间内最大量库存,目前实现前两种，第三种以后说
+     */
     private function insert()
     {
-        //对后台上传数据时候的数据检查
         $data["title"] = trim($this->input->post("title"));
-        if(strlen($data["title"])==0){
+        if(strlen($data["title"]) == 0){
             $this->bgError("没有添加标题");
             return false;
         }
         $data["content"] = $this->input->post("cont");
-        if(strlen(trim($data["content"]))==0){
-            $this->bgError("忘记添加内容");
-            return false;
-        }
-        //$data["part"] = trim($this->input->post("part"));
+        //只能是整数或者是两位小数,12或则是12.12,最大交易额不应该超过10万
         $data["price"] = trim($this->input->post("price"));
-        $data["img"] = trim($this->input->post("Img"));
-        $data["promise"] = trim($this->input->post("promise"));
-        if(strlen($data["img"]) == 0){
-            $this->bgError("忘记添加图片");
-        }
-        $data["attr"] = trim($this->input->post("attr"));
-        $data["store_num"] = trim($this->input->post("storeNum"));
-        if(!preg_match("/^\d+.?\d*$/",$data["price"])){
-            //其实这样还是有bug的，比如12.的情况，只是mysql好像可以自己转化这类型的为数字，比如这种情况就自动转化为12了
+        if(!preg_match("/^\d+(.\d)?\d$/",$data["price"])){
             $this->bgError("请输入标准数字");
             return false;
         }
-        //这里需要添加监视，就是用户到底输入的符合不符合规范
+        // 必须是"12_1212.PNG|123_123.gif"的格式，userId_uploadTime.(gif|png|jpg)
+        // 第二个preg_match是为了兼容之前的格式，正式上线的时候去掉
+        $data["img"] = trim($this->input->post("Img"));
+        if( ! (preg_match("/^\d+_\d+[\d_|.pngjif]*\.(png|jpg|gif)$/i",$data["img"]) || preg_match("/^\d+[\d|.jpg]*\.jpg$/",$data["img"]) ) ) {
+            $this->bgError("忘记添加图片");
+            return false;
+        }
+        $data["attr"] = trim($this->input->post("attr"));
+        //如果包含下面的字符的话，则视为注入,这样的话，应该能防住很多的攻击了吧
+        if(preg_match("/[\[\]\\\"\/?@=#&<>%$\{\}\\\~`^*]/",$data["attr"])){
+            $this->bgError("请不要在商品属性中添加中英文之外的字符");
+            return false;
+        }
+        // 在存储之前解码，判断格式的正确,如果可以正确的解码，表示没有问题，
+        // 如果返回的是false，表示不可以，不符合规则
+        if($data["attr"] && ( !$this->mitem->decodeAttr($data["attr"],0))){
+            $this->bgError("请完整输入库存和对应的价格");
+            return false;
+        }
+        //库存目前分为两种，一个是无限的，一个是定量的,无限的量为65535
+        $data["store_num"] = trim($this->input->post("storeNum"));
+        //1到5位数字，没有什么库存可以超过6万个，除非本来就是无限的，
+        //不检验超过65535，可以在后台管理员定期检查这个,不涉及安全
+        //其实可以通过int强制转码实现的，但是那样没有办法发现恶意提交，也没有办法对应用书的无意错误输入
+        if(!preg_match("/^\d{1,5}$/" ,$data["store_num"])){
+            $this->bgError("请在库存中输入数字");
+            return false;
+        }
+        $data["promise"]   = trim($this->input->post("promise"));
+        //只能包含中文英文数字|，不能包含空格，特殊字符
+        if(preg_match("/[^\x{4e00}-\x{9fa5}a-z\d|]+/iu" ,$data["promise"])){
+            $this->bgError("承诺中有不允许的特殊符号");
+            return false;
+        }
         $keys = trim($this->input->post("key"));
         $keys = preg_split("/[^\x{4e00}-\x{9fa5}0-9a-zA-Z]+/u",$keys);//以非汉字，数字，字母为分界点开始分割;
-        $key = trim($this->input->post("part"));
+        $key  = trim($this->input->post("part"));
         $keys = $this->getrepeat($keys,$key);
-        $key = trim($this->input->post("keyj"));
+        $key  = trim($this->input->post("keyj"));
         $keys = $this->getrepeat($keys,$key);
-        $key = trim($this->input->post("keyk"));
+        $key  = trim($this->input->post("keyk"));//这些不进行检验是不安全的
         $keys = $this->getrepeat($keys,$key);
         $data["keys"] = $this->formate($keys);
         //以上是对关键字的处理
         return $data;
     }
+    /**
+     * 返回标题，价格，内容，分区
+     * 在这里读取数据，检验数据，对输入信息判断的函数，因此两次添加修改的判断一样，合并
+     */
     private function insertJudge()
-    {//返回标题，价格，内容，分区
-        //对输入信息判断的函数，因此两次添加修改的判断一样，合并
+    {
+
         $data["tit"] = trim($this->input->post("title"));
         if(strlen($data["tit"])==0){
             $this->addError("没有添加标题");
@@ -193,9 +279,14 @@ class Write extends MY_Controller
         $data["keys"] = $this->formate($keys);
         return $data;
     }
+
+    /**
+     * 整理数组，将数组变成A;B;的形似存储
+     * @param array 想要转化成为字符串的数组
+     * @return string
+     */
     private  function formate($arr)
     {
-        //整理数组，将数组变成A;B;的形似存储
         $temp = ";";
         for($i = 0,$len = count($arr); $i < $len;$i++){
             if($arr[$i]!="")
@@ -203,8 +294,13 @@ class Write extends MY_Controller
         }
         return $temp;
     }
+    /**
+     * 检查数组中有木有重复的，有就不添加，没有，就直接添加了。
+     * @param array $arr 想要检验的数组
+     * @param string $value 查找的值
+     */
     private function getrepeat($arr,$value)
-    {//检查数组中有木有重复的，有就不添加，没有，就直接添加了。
+    {
         if(strlen($value)== 0)return $arr;
         $len = count($arr);
         for($i = 0; $i < $len;$i++){
@@ -213,6 +309,10 @@ class Write extends MY_Controller
         $arr[$len] = $value;
         return $arr;
     }
+    /**
+     * 商家添加数据使用那个，
+     * 应该已经被废弃了
+     */
     public function cadd()
     {
         if(!$this->userId){
@@ -253,6 +353,9 @@ class Write extends MY_Controller
             }
         }
     }
+    /**
+     * 后台添加数据后的处理函数
+     */
     public function bgAdd()
     {
         if(!$this->userId){
@@ -260,12 +363,11 @@ class Write extends MY_Controller
         }
         if($_POST["sub"]){
             $re = null;
-            //$data = $this->ans_upload(300,150);//成功的时候返回两个名字，一个是本来上传的时候的名字，一个是数字组成的名字，采用数字的名字，保持兼容性
             $data = $this->insert();
-            $data["value"] = time();//value ，标示一个帖子含金量的函数,初始的值为当时的事件辍
+            if($data === false) return;
+            $data["value"] = time();
+            //value ，标示一个帖子含金量的函数,初始的值为当时的事件辍
             $data["author_id"] = $this->userId;
-            if($data === false)return;//返回false，代表出错，而且，已经进入了调转
-            $this->load->model("mitem");//调出model
             $re = $this->mitem->insert($data);
             if($re){
                 $data["time"] = 3;
@@ -285,8 +387,13 @@ class Write extends MY_Controller
             }
         }
     }
+    /**
+     * 编辑器自动上传图片的后台处理函数
+     * 目前对应的是xhe函数，编辑器上传图片的后台处理部分，将来需要将大图片压缩成为小图片,目前集中精力处理重要部分吧
+     * 应该是借鉴的别人的代码
+     */
     public function imgAns()
-    {//目前对应的是xhe函数，编辑器上传图片的后台处理部分，将来需要将大图片压缩成为小图片,目前集中精力处理重要部分吧
+    {
         header('Content-Type: text/html; charset=UTF-8');
         $inputName='filedata';//表单文件域name,form的name
         //$attachDir='upload';//上传文件保存路径，结尾不要带/
@@ -394,6 +501,10 @@ class Write extends MY_Controller
     {
         return preg_replace("/([\\\\\/'])/",'\\\$1',$str);
     }
+    /**
+     * 计算文件大小的函数
+     * @param int  $bytes 文件的大小比特
+     */
     function formatBytes($bytes) {
         if($bytes >= 1073741824) {
             $bytes = round($bytes / 1073741824 * 100) / 100 . 'GB';

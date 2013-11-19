@@ -207,7 +207,7 @@ class Reg extends MY_Controller{
             $this->user->changeLoginTime($userId["user_id"]);//修改登陆时间，还未检查
             $atten["title"] = "恭喜您，注册成功";
             $atten["atten"] = "恭喜，欢迎来到Edian<br/>".$re;
-            $atten["uri"] = site_url("mainpage");
+            $atten["uri"] = site_url("home/index");
             $atten["uriName"] = "主页";
             $this->load->view("jump2",$atten);
             return;
@@ -224,7 +224,7 @@ class Reg extends MY_Controller{
     public function index()
     {
         //$data["dir"] = $this->partMap;
-        $this->load->view("reg");
+        $this->load->view("reg/userReg.php");
     }
     /*
     private  function _lSet($userId,$name)
