@@ -102,11 +102,16 @@ class Img extends Ci_Model
         return false;
     }
 
+		/*
+		 *get_search函数完成图片搜索功能，返回与关键字相关的图片数组
+		 */
 		function get_search()
 		{
 			$match = $this->input->post('search_keyword');
+
 			$this->db->like('classfication',$match);
 			$this->db->or_like('key_word',$match);
+
 			$query = $this->db->get('img');
 			return $query->result();
 		}
