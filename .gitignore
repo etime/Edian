@@ -1,4 +1,5 @@
-Document
-upload
+Document/
+!Document/*.txt
+edian/upload/
 *.html
-#忽略整个文件夹
+#忽略Document 和upload整个文件夹
