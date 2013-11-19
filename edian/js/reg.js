@@ -1,4 +1,3 @@
-<<<<<<< Updated upstream
 var funpasswd,funname,imgCheck,phone,sms,file;
 //funpasswd 是检验密码的对象，name是namecheck对象的实例,imgcheck是图片验证码的检验，sms是短信验证码,file上传图片检验和操作,phone 是手机号码检验
 function fpasswd(){
@@ -59,32 +58,6 @@ function fpasswd(){
                     });
                 }else report("请输入用户名","#name","red");
             })
-=======
-$(document).ready(function(){
-    var reg,name = false,pass = false,photo = false,phone = false,imgCheck = false;
-    //phone 对手机号码格式的检验，imgcheck,对图片验证码的检验，pass密码的检验，photo，有没有头像
-    var userName = $("#content input[name = 'userName']");
-    $("#check").click(function  () {
-        $.get(site_url+"/checkcode/index",function  (data,status) {
-            document.getElementById("check").src = site_url+"/checkcode/index/"+(new Date()).getTime();
-        });
-    })
-    /********对输入的用户名检查*************/
-     function namecheck(node){
-        name = $.trim($(node).val());
-        reg = /[\[\];\"\/?:@=#*&<>%{}\\|~`^]/;
-        var temp = reg.exec(name);
-        if(temp){
-            report("抱歉,符号"+temp[0]+"不可以用","#name","red");
-            name = false;
-            return false;
-        }
-        reg = /^1[\d]{10}$/;//如果名字类似与手机号码，就无法将
-        if(reg.exec(name)){
-            report("请不要使用类似于手机号码的名字","#name","red");
-            name = false;
-            return false;
->>>>>>> Stashed changes
         }
         return new temp();
     }else return funname;
