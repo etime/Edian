@@ -73,7 +73,7 @@ class Home extends MY_Controller{
             $this->noLogin();
             return;
         }
-        $data['title']="添加文章";
+        $data['title']="添加商品";
         $data["dir"] = $this->part;
         $data["userType"] = $this->user->getType($this->user_id);
         $this->load->model("img");
