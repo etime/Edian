@@ -721,11 +721,12 @@ class Order extends My_Controller{
         if ($data['order']) {
         	$temp = $this->pagesplit->split($data['order'], $pageId, $pageSize);
         	$data['order'] = $temp['newData'];
-        	$data['pageAmount'] = $temp['pageAmount'];
-        	$data['pageId'] = $pageId;
+        	$commonUrl = site_url() . '/order/ontime';
+        	$data['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount']);
         }
         if($data["order"])
             $data["order"] = $this->formData($data["order"]);
+        echo $data['pageNumFooter'] . '<br>';
         $this->load->view("onTimeOrder",$data);
     }
     /**
@@ -733,7 +734,7 @@ class Order extends My_Controller{
      *
      * 通过登录者的id进行在后台查找用户的历史订单信息
      */
-    public function hist($pageId = 1, $pageSize = 2)
+    public function hist($pageId = 1, $pageSize = 10)
     {
         if(!$this->user_id){
             $this->nologin(site_url()."/order/ontime");
@@ -747,12 +748,13 @@ class Order extends My_Controller{
         }else{
             $data["order"] = $this->morder->hist($this->user_id);
         }
-        if ($data['order']) {
+    	if ($data['order']) {
         	$temp = $this->pagesplit->split($data['order'], $pageId, $pageSize);
         	$data['order'] = $temp['newData'];
-        	$data['pageAmount'] = $temp['pageAmount'];
-        	$data['pageId'] = $pageId;
+        	$commonUrl = site_url() . '/order/hist';
+        	$data['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount']);
         }
+        echo $data['pageNumFooter'];
         if($data["order"])
             $data["order"] = $this->histForm($data["order"]);
         $this->load->view("histOrder",$data);
@@ -841,12 +843,13 @@ class Order extends My_Controller{
             $ans[$i]["user_name"] = $temp["user_name"];
         }
         $data["today"] = $ans;
-        if ($data['today']) {
+    	if ($data['today']) {
         	$temp = $this->pagesplit->split($data['today'], $pageId, $pageSize);
         	$data['today'] = $temp['newData'];
-        	$data['pageAmount'] = $temp['pageAmount'];
-        	$data['pageId'] = $pageId;
+        	$commonUrl = site_url() . '/order/Today';
+        	$data['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount']);
         }
+        echo $data['pageNumFooter'];
         $this->load->view("ordtoday",$data);
     }
 }

@@ -41,9 +41,10 @@ class item extends MY_Controller
         if ($data['item']) {
         	$temp = $this->pagesplit->split($data['item'], $pageId, $pageSize);
         	$data['item'] = $temp['newData'];
-        	$data['pageAmount'] = $temp['pageAmount'];
-        	$data['pageId'] = $pageId;
+        	$commonUrl = site_url() . '/bg/item/mange';
+        	$data['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount']);
         }
+        echo $data['pageNumFooter'];
         $this->load->view("bgItemMan",$data);
     }
     public function set($state = -1,$itemId = -1)
@@ -91,8 +92,8 @@ class item extends MY_Controller
         if ($com) {
         	$temp = $this->pagesplit->split($com, $pageId, $pageSize);
         	$com = $temp['newData'];
-        	$data['pageAmount'] = $temp['pageAmount'];
-        	$data['pageId'] = $pageId;
+        	$commonUrl = site_url() . '/bg/item/itemCom';
+        	$data['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount']);
         }
         
         if($com) $len = count($com);
