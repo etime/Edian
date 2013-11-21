@@ -19,7 +19,6 @@ class Chome extends MY_Controller{
         $data['title'] = $this->mhome->home_title();
         $this->load->view('home',$data);
     }
-
     public function uploadDel()
     {
         $user_id = $this->user_id_get();

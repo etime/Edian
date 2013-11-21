@@ -7,6 +7,10 @@
  * upload_name 上传时候的名字
  * upload_time 上传时间
  * intro 关于图片的一些介绍，随便说说
+ *  @name       models/order.php
+ *  @Author     unasm<1264310280@qq.com>
+ *  @since      2013-07-17 12:47:45
+ *  @package    model
  **/
 class Img extends Ci_Model
 {
