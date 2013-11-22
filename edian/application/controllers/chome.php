@@ -101,11 +101,13 @@ class Chome extends MY_Controller{
         echo $this->pagination->create_links();
         $this->load->view("artlist");
     }
+    /**
+     * 上传图片的view显示函数
+     */
     public function upload()
     {
         $this->load->view("upload");
     }
-
     //下面该函数的作用是显示图片在m-showimg上面
     function showimg($id){
         //  $this->load->model("mhome") ;
