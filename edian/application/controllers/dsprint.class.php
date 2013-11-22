@@ -1,8 +1,11 @@
 <?php
 
 //引用库
-require_once $_SERVER["DOCUMENT_ROOT"].'/Edian/edian/application/controllers/dsconfig.class.php';
-//require_once 'dsconfig.class.php';
+/**
+ * 至张建，不是谁的那里都会有Edian这个文件夹的,
+ */
+//require_once $_SERVER["DOCUMENT_ROOT"].'/Edian/edian/application/controllers/dsconfig.class.php';
+require_once 'dsconfig.class.php';
 require_once 'HttpClient.class.php';
 /*
 require_once $_SERVER["DOCUMENT_ROOT"].'application/controller/dsconfig.class.php';

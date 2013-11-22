@@ -113,6 +113,9 @@ class Art extends Ci_Model
         $res=$this->db->query($sql);
         return $this->titleFb($res->result_array());
     }
+    /**
+     * @todo 使用memcache优化分页
+     */
     public function getHotRecet()
     {
         //取得全部的hot内容

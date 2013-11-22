@@ -19,8 +19,34 @@ class Chome extends MY_Controller{
         $data['title'] = $this->mhome->home_title();
         $this->load->view('home',$data);
     }
+<<<<<<< HEAD
 
    function bubble(){
+=======
+    public function uploadDel()
+    {
+        $user_id = $this->user_id_get();
+        $re = $this->ans_upload();
+				$re['classfication'] = $this->input->post('classfication');
+				$re['key_word'] = $this->input->post('key_word');
+        $data["uri"] = site_url("chome/upload");
+        $data["uriName"] = "上传图片";//不管胜利或者失败，家总是要回去的
+        if($re["flag"]){
+            $data["atten"] = $re["atten"];
+            $data["title"] = "上传失败";
+            $data["time"] = 5;
+            $this->load->view("jump",$data);
+        }else{
+            $res=$this->img->mupload($re['file_name'], $re["upload_name"], $re['classfication'], $re['key_word'], $user_id);
+            $data["atten"]= "上传成功";
+            $data["title"] = "上传成功";
+            $data["time"] = 3;
+            $data["value"] = $this->imgPath."/".$re["file_name"];
+            $this->load->view("jump2",$data);
+        }
+    }
+    function bubble(){
+>>>>>>> 811d6f4677330418ef2e33ff6695e3fd91e3be19
         $this->load->view("bubble")             ;
     }
 
@@ -81,7 +107,17 @@ class Chome extends MY_Controller{
         echo $this->pagination->create_links();
         $this->load->view("artlist");
     }
+<<<<<<< HEAD
 
+=======
+    /**
+     * 上传图片的view显示函数
+     */
+    public function upload()
+    {
+        $this->load->view("upload");
+    }
+>>>>>>> 811d6f4677330418ef2e33ff6695e3fd91e3be19
     //下面该函数的作用是显示图片在m-showimg上面
     function showimg($id){
         //  $this->load->model("mhome") ;
