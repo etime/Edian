@@ -32,10 +32,11 @@ class Img extends Ci_Model
         }
         return $array;
     }
-    function mupload($name,$upload_name, $classfication, $key_word, $id){
+
+    function upload_insert($name,$upload_name, $category, $key_word, $id){
         //向数据库中添加上传的图片的信息
         $upload_name = addslashes($upload_name);
-        $res = $this->db->query("insert into img(user_id, img_name, upload_name, classfication, key_word, upload_time) values('$id', '$name', '$upload_name', '$classfication', '$key_word', now())");
+        $res = $this->db->query("insert into img(user_id, img_name, upload_name, category, key_word, upload_time) values('$id', '$name', '$upload_name', '$category', '$key_word', now())");
         return $res;
         //return $res->result();
         //如果使用$res->result的话,会报错,说没办法转为string,而直接return $res答案是正确的
@@ -65,17 +66,27 @@ class Img extends Ci_Model
         $res=$this->db->query($sql);
         return $res->result_array();
     }
+
     public function userImgAll($userId){
         //从mbgimglist 中转移过来的,查找用户所有的图片
         $sql="select img_id,upload_name,upload_time,img_name from img where user_id = $userId";
         $res=$this->db->query($sql);
         return $res->result();
     }
+
+		public function select_show_picture($userId)
+		{
+			$sql = "SELECT * FROM img WHERE user_id = $userId ORDER BY 'img_id' DESC LIMIT 1";
+			$res =$this->db->query($sql);
+			return $res->result();
+		}
+
     function imgdel($name){
-        $sql="delete  from img where img_name  = '$name'"               ;
+        $sql="delete from img where img_name = '$name'";
         $res=$this->db->query($sql);
         return $res;
     }
+
     function getimg_id($user_id){
         /*
          * 通过用户的id，得到该用户所有的图片的id的函数
@@ -102,18 +113,16 @@ class Img extends Ci_Model
         return false;
     }
 
-		/*
+		/**
 		 *get_search函数完成图片搜索功能，返回与关键字相关的图片数组
 		 */
-		function get_search()
+		function get_search($match)
 		{
-			$match = $this->input->post('search_keyword');
-
-			$this->db->like('classfication',$match);
+			$this->db->like('category',$match);
 			$this->db->or_like('key_word',$match);
 
 			$query = $this->db->get('img');
-			return $query->result();
+			return $query->result_array();
 		}
 
     private function getArray($arr)

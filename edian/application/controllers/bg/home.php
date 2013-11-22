@@ -54,15 +54,16 @@ class Home extends MY_Controller{
      * 营业时间，dtu，起送价，店家公告等
      * 具体的操作处理在set 这个php里面
      */
-    public function set()
-    {
-        if(!$this->user_id){
-            $this->noLogin();
-            return ;
-        }
-        $data = $this->user->getExtro($this->user_id);//获取之前的类型
-        $data["type"] = $this->user->getType($this->user_id);//获取用户的类型，方便差异化处理
-        $this->load->view("bgHomeSet",$data);
+    public function set() {
+			if(!$this->user_id){
+					$this->noLogin();
+					return ;
+			}
+			$data = $this->user->getExtro($this->user_id);//获取之前的类型
+			$data["type"] = $this->user->getType($this->user_id);//获取用户的类型，方便差异化处理
+			$this->load->model("img");
+			$data["show_picture"] = $this->img->select_show_picture($this->user_id);
+			$this->load->view("bgHomeSet",$data);
     }
     /**
      * 添加商品的入口函数

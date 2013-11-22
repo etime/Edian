@@ -18,7 +18,7 @@
 ?>
 </head>
 <body>
-    <form action="<?php echo $siteUrl.'/bg/home/setAct' ?>" method="post" accept-charset="utf-8" enctype = "multipart/form-data">
+    <form action="<?php echo $siteUrl.'/bg/home/set' ?>" method="post" accept-charset="utf-8" enctype = "multipart/form-data">
 <?php
     if(!isset($dtuNum))$dtuNum = "";
     if(!isset($dtuId))$dtuId = "";
@@ -47,28 +47,24 @@
             }
             ?>
         </p>
+
         <p>
             最低起送价:(外卖商家请输入最低起送价,没有则视为0)
             <input type="text" name="lestPrc" value = "<?php echo $lestPrc ?>"/>
         </p>
-        <p>
-             本店介绍(输入链接):
-            <input type="text" name="intro"  value = "<?php echo $intro ?>" />
-        </p>
-        <p title = "在用户下单的时候，订购短信的卖家可以在没有其他的通知方式的时候，收到短信通知,每条短信5毛">
-            是否订购"下单短信通"服务
-    <?php
-        if(isset($smsOrd) && ($smsOrd))
-            echo "<input type = 'checkbox' name = 'smsOrd' checked = 'checked'>";
-        else{
-            echo "<input type='checkbox' name='smsOrd'/>";
-        }
-    ?>
-        </p>
-<!--
-        <textarea name="procast"></textarea>
--->
+
+				<p>
+					展示图片：
+					<a href="<?php echo base_url('upload/'.$show_picture[0]->img_name)?>">
+						<img src="<?php echo base_url('thumb/'.$show_picture[0]->img_name)?>"/>
+					</a>
+
+					<input type = 'file' id = 'upload_show_picture' name = 'upload_show_picture' value = '上传图片' size = "11"/> <br />
+
+				</p>
+
         <input type="submit" name="sub"  value="提交" />
     </form>
+
 </body>
 </html>

@@ -52,27 +52,27 @@
         <input type = 'submit' name = 'search' value = 'Search'/>
     </form>
 
-        <table cellspacing="0" class="mail-box">
-            <tr>
-                <th class="img_name">图片名称</th>
-                <th class="time">上传时间</th>
-                <th class="action">操作</th>
-            </tr>
-        <?php foreach($imgall as $temp):?>
-            <tr>
-                <td class="img_name">
-                    <a href="<?php echo base_url('upload/'.$temp->img_name)?>">
-                        <img src="<?php echo base_url('thumb/'.$temp->img_name)?>"/>
-                    </a>
-                </td>
-                <td class="time"><?php echo $temp->upload_time ?></td>
-                <td><a href = "<?php echo $siteUrl.('/bg/imglist/imgdel/').$temp->img_id."/".$temp->img_name ?>">删除</a></td>
-<!--
-                <td class="time"><a href="<?php echo site_url('bg/imglist/imgdel/'.$temp->img_name)?>">删除</a></td>
--->
-            </tr>
-        <?php endforeach?>
-        </table>
-    </body>
-        <!--  E - body -->
+		<?php if(isset($failed)) { echo $failed; } ?>
+
+		<table cellspacing="0" class="mail-box">
+			<tr>
+					<th class="img_name">图片名称</th>
+					<th class="time">上传时间</th>
+					<th class="action">操作</th>
+			</tr>
+			<?php if(isset($imgall)) { ?>
+				<?php foreach($imgall as $temp):?>
+					<tr>
+						<td class="img_name">
+							<a href="<?php echo base_url('upload/'.$temp->img_name)?>">
+								<img src="<?php echo base_url('thumb/'.$temp->img_name)?>"/>
+							</a>
+						</td>
+						<td class="time"><?php echo $temp->upload_time ?></td>
+						<td><a href = "<?php echo $siteUrl.('/bg/imglist/imgdel/').$temp->img_id."/".$temp->img_name ?>">删除</a></td>
+					</tr>
+				<?php endforeach?>
+			<?php } ?>
+    </table>
+  </body>
 </html>

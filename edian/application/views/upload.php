@@ -11,11 +11,11 @@
 </script>
 </head>
 <body>
-    <form method = 'post' action = "<?php echo site_url('chome/uploadDel')?>" enctype='multipart/form-data'>
-        <input type = 'file' id = 'file' name = 'userfile' value = '选择图片' size = "11"/> <br />
+    <form method = 'post' action = "<?php echo site_url('upload/upload_picture')?>" enctype='multipart/form-data'>
+        <input type = 'file' id = 'file' name = 'userfile' value = '上传图片' size = "11"/> <br />
 
-				<label for="classfication">类别:</label> <br />
-        <input type = 'text' id = 'classfication' name = 'classfication'/> <br />
+				<label for="category">类别:</label> <br />
+        <input type = 'text' id = 'category' name = 'category'/> <br />
 
 				<label for="key_word">关键字:</label> <br />
         <input type = 'text' id = 'key' name = 'key_word'/> <br />
@@ -27,5 +27,10 @@
         <p id = 'spanintro'>简要介绍下图片吧</p>
 -->
     </form>
+
+<div id="upload">
+
+</div>
+
 </body>
 </html>

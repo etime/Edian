@@ -55,16 +55,26 @@ class Imglist extends MY_Controller{
         $this->load->view("m-selfjump",$data);
     }
 
-		/*
+		/**
 		 * search函数完成图片搜索功能，返回图片数据信息到view
 		 */
 		function search()
 		{
-			  $this->load->model("img");
+			$this->load->model("img");
 
-        $data['imgall']= $this->img->get_search();
-        $this->load->view("m-bg-imglist",$data);
+			$match = $this->input->post('search_keyword');
+
+			if (!preg_match('[#|%|@]', $match)) 
+			{  
+				$data['imgall']= $this->img->get_search($match);
+			}
+			else
+			{
+				$data['failed'] = "搜索关键字不合法！";
+			}
+			$this->load->view("m-bg-imglist",$data);
 		}
+
     /*
      *  应该已经被废弃了
      *  上传图片的检测函数

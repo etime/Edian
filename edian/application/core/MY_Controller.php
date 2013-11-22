@@ -158,65 +158,67 @@ class MY_Controller extends  CI_Controller
         }
         return $res;
     }
-    function ans_upload($height = -1,$width = -1){
-        //对上传进行处理的函数，去掉了jump的部分，使它更富有扩展性
-        //返回数据格式为数组，flag,0,标示没有错误,1,没有登陆，2，图片重复,3,没有上传，4，其他原因
-        $re["flag"] = 1;
-        $user_id=$this->user_id_get();
-        if($user_id == false){
-            $re["atten"] = "请首先登陆";
-            return $re;
-        }
-        $config['max_size']='5000000';
-        $config['max_width']='4500';
-        $config['max_height']='4000';//here need to be changed someday
-        $config['allowed_types']='gif|jpg|png|jpeg';//即使在添加PNG JEEG之类的也是没有意义的，这个应该是通过php判断的，而不是后缀名
-        $config['max_filename'] = 100;
-        $config['upload_path']= $this->img_save_path;
-        $config['file_name']=$user_id.time().".jpg"; //这里将来修改成前面是用户的id，这样，就永远都不会重复了
-        $this->load->library('upload',$config);
-        $this->load->model("img");//图片验重复使用
-        if($this->input->post("sub")){
-            $upload_name=$_FILES['userfile']['name'];        // 当图片名称超过100的长度的时候，就会出现问题，为了系统的安全，所以需要在客户端进行判断
-            if(strlen(trim($upload_name)) == 0){
-                $re["flag"] = 3;
-                $re["atten"] = "没有上传图片";
-                return $re;
-            }
-            if($this->img->judgesame($upload_name)){
-                $re["atten"] = "图片重复，您已经提交过同名图片";
-                return $re;
-            }
-            else {
-                if(!$this->upload->do_upload()){
-                    $error = $this->upload->display_errors();//这里的英文将来要汉化
-                    $re["atten"] = $error;
-                    return $re;
-                }
-                else {
-                    $temp=$this->upload->data();
-                    $this->load->library("image_lib");
-                    if($width == -1){//如果没有给出指定宽度，就按照默认的，否则按照指定的
-                        if(($temp['image_width']> $this->max_img_width )||($temp['image_height']> $this->max_img_height)){
-                            $this->thumb_add($temp['full_path'],$temp['file_name'],$this->img_save_path,$this->max_img_width,$this->max_img_height);
-                        }
-                    }else {
-                        if(($temp['image_width']> $width )||($temp['image_height']> $height)){
-                            $this->thumb_add($temp['full_path'],$temp['file_name'],$this->img_save_path,$width,$height);
-                        }
-                    }
-                    $this->thumb_add($temp['full_path'],$temp['file_name'],$this->thumb_path,$this->img_thumb_width,$this->img_thumb_height);//生成缩略图
-                    $intro = $this->input->post("intro");//上传就是上传，数据的处理就交给其他的吧
-                    $re["flag"] = 0;
-                    $re["file_name"] = $temp['file_name'] ;
-                    $re["upload_name"] = $upload_name;
-                    return $re;
-                }
-            }
-        }
-        $re["atten"] = "没有submit";
-        return $re;
-    }
+
+	function ans_upload($height = -1,$width = -1){
+		//对上传进行处理的函数，去掉了jump的部分，使它更富有扩展性
+		//返回数据格式为数组，flag,0,标示没有错误,1,没有登陆，2，图片重复,3,没有上传，4，其他原因
+		$re["flag"] = 1;
+		$user_id=$this->user_id_get();
+		if($user_id == false){
+			$re["atten"] = "请首先登陆";
+			return $re;
+		}
+		$config['max_size']='5000000';
+		$config['max_width']='4500';
+		$config['max_height']='4000';//here need to be changed someday
+		$config['allowed_types']='gif|jpg|png|jpeg';//即使在添加PNG JEEG之类的也是没有意义的，这个应该是通过php判断的，而不是后缀名
+		$config['max_filename'] = 100;
+		$config['upload_path']= $this->img_save_path;
+		$config['file_name']=$user_id.time().".jpg"; //这里将来修改成前面是用户的id，这样，就永远都不会重复了
+		$this->load->library('upload',$config);
+		$this->load->model("img");//图片验重复使用
+		if($this->input->post("sub")){
+			$upload_name=$_FILES['userfile']['name'];        // 当图片名称超过100的长度的时候，就会出现问题，为了系统的安全，所以需要在客户端进行判断
+			if(strlen(trim($upload_name)) == 0){
+				$re["flag"] = 3;
+				$re["atten"] = "没有上传图片";
+				return $re;
+			}
+			if($this->img->judgesame($upload_name)){
+				$re["atten"] = "图片重复，您已经提交过同名图片";
+				return $re;
+			}
+			else {
+				if(!$this->upload->do_upload()){
+					$error = $this->upload->display_errors();//这里的英文将来要汉化
+					$re["atten"] = $error;
+					return $re;
+				}
+				else {
+					$temp=$this->upload->data();
+					$this->load->library("image_lib");
+					if($width == -1){//如果没有给出指定宽度，就按照默认的，否则按照指定的
+						if(($temp['image_width']> $this->max_img_width )||($temp['image_height']> $this->max_img_height)){
+							$this->thumb_add($temp['full_path'],$temp['file_name'],$this->img_save_path,$this->max_img_width,$this->max_img_height);
+						}
+					}else {
+						if(($temp['image_width']> $width )||($temp['image_height']> $height)){
+							$this->thumb_add($temp['full_path'],$temp['file_name'],$this->img_save_path,$width,$height);
+						}
+					}
+					$this->thumb_add($temp['full_path'],$temp['file_name'],$this->thumb_path,$this->img_thumb_width,$this->img_thumb_height);//生成缩略图
+					$intro = $this->input->post("intro");//上传就是上传，数据的处理就交给其他的吧
+					$re["flag"] = 0;
+					$re["file_name"] = $temp['file_name'] ;
+					$re["upload_name"] = $upload_name;
+					return $re;
+				}
+			}
+		}
+		$re["atten"] = "没有submit";
+		return $re;
+	}
+
     protected function thumb_add($path,$name,$newPath,$width,$height){
         //生成缩小图的函数,函数的属性不可以随便修改呢，下层必须和上层相同才可以
         $this->load->library("upload");

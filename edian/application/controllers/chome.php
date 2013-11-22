@@ -20,31 +20,10 @@ class Chome extends MY_Controller{
         $this->load->view('home',$data);
     }
 
-    public function uploadDel()
-    {
-        $user_id = $this->user_id_get();
-        $re = $this->ans_upload();
-				$re['classfication'] = $this->input->post('classfication');
-				$re['key_word'] = $this->input->post('key_word');
-        $data["uri"] = site_url("chome/upload");
-        $data["uriName"] = "上传图片";//不管胜利或者失败，家总是要回去的
-        if($re["flag"]){
-            $data["atten"] = $re["atten"];
-            $data["title"] = "上传失败";
-            $data["time"] = 5;
-            $this->load->view("jump",$data);
-        }else{
-            $res=$this->img->mupload($re['file_name'], $re["upload_name"], $re['classfication'], $re['key_word'], $user_id);
-            $data["atten"]= "上传成功";
-            $data["title"] = "上传成功";
-            $data["time"] = 3;
-            $data["value"] = $this->imgPath."/".$re["file_name"];
-            $this->load->view("jump2",$data);
-        }
-    }
-    function bubble(){
+   function bubble(){
         $this->load->view("bubble")             ;
     }
+
     function editor(){
         //这个函数是和edian数据库项符合的
         $this->load->library("ckeditor");
@@ -101,10 +80,6 @@ class Chome extends MY_Controller{
         $this->pagination->initialize($config);
         echo $this->pagination->create_links();
         $this->load->view("artlist");
-    }
-    public function upload()
-    {
-        $this->load->view("upload");
     }
 
     //下面该函数的作用是显示图片在m-showimg上面
