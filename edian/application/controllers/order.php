@@ -705,6 +705,9 @@ class Order extends My_Controller{
      */
     public function ontime($pageId = 1, $pageSize = 2)
     {
+    	if (isset($_GET['pageId'])) {
+    		$pageId = $_GET['pageId'];
+    	}
         if(!$this->user_id){
             $this->nologin(site_url()."/order/ontime");
             return;
@@ -739,6 +742,9 @@ class Order extends My_Controller{
         if(!$this->user_id){
             $this->nologin(site_url()."/order/ontime");
             return;
+        }
+        if (isset($_GET['pageId'])) {
+        	$pageId = $_GET['pageId'];
         }
         $type = $this->user->getType($this->user_id);
         $data = Array();
@@ -823,10 +829,12 @@ class Order extends My_Controller{
      */
     public function today($pageId = 1, $pageSize = 2)
     {
-
         if(!$this->user_id){
             $this->nologin(site_url()."/order/today");
             return;
+        }
+        if (isset($_GET['pageId'])) {
+        	$pageId = $_GET['pageId'];
         }
         $type = $this->user->getType($this->user_id);
         $ans = Array();

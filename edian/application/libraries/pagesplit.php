@@ -1,11 +1,10 @@
 <?php
 /**
- * 用于分页，对提供进来的数据进行划分
+ * 用于处理分页相关的操作，包括：对提供进来的数据进行划分，提供页号的 html 代码
  *
  * @author 	farmerjian
  * @package library
  * @since 	2013-11-19 15:43:51
- * @todo 新建一个函数，用于划分数据
  *
  */
 class PageSplit {
@@ -36,16 +35,25 @@ class PageSplit {
 		return $ans;
 	}
     /**
+     * 显示页面按钮，包括跳转页面功能的实现，其主要 html 代码如下：
+     * 
      * <code>
-     * <ul class = "pagesplit">
-     *  <li><a href = "">1</a></li>
-     *  <li><a href = "">2</a></li>
-     *  <form action="" method="get" accept-charset="utf-8">
-     *  <input type="text" name="pageId" id="pageId"  />
-     *   </form>
+     * <ul class = "pagesplit" id = pagesplit>
+     *     <li><a href = "">1</a></li>
+     *     <li><a href = "">2</a></li>
+     *     <span class="toalPage">共有 x 页</span>
+     *     <form action="" method="get" accept-charset="utf-8">
+     *         跳到<input type="text" name="pageId" id="pageId"/>页
+     *         <input type="submit" value="确定"/>
+     *     </form>
      * </ul>
      * </code>
-     * @todo 按照这个规则，返回一个字符串
+     * 
+     * @author farmerjian
+     * @param string $commonUrl  所有调用 controller 的公共接口
+     * @param int $pageId  当前的页号
+     * @param int $pageAmount  总共的页数
+     * @return string
      */
 	public function setPageUrl($commonUrl, $pageId, $pageAmount) {
 		if ($pageId > $pageAmount) $pageId = $pageAmount;
@@ -60,7 +68,11 @@ class PageSplit {
 			$curPageUrl = $commonUrl . '/' . $i;
 			$ans .= "<li><a href=\"" . $curPageUrl . "\">" . $i . '</a></li>';
 		}
-		$ans .= '</ul>';
+		$ans .= "<span class=\"toalPage\">共有 $pageAmount 页</span>";
+		$ans .= "<form action=\"$commonUrl\" method=\"get\" accept-charset=\"utf-8\">";
+		$ans .= "跳到<input type=\"text\" name=\"pageId\" id=\"pageId\"/>页";
+		$ans .= "<input type=\"submit\" value=\"确定\"/>";
+		$ans .= '</form></ul>';
 		return $ans;
 	}
 }

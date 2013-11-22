@@ -31,6 +31,9 @@ class item extends MY_Controller
             $this->noLogin(site_url("bg/item/mange"));
             return;
         }
+        if (isset($_GET['pageId'])) {
+        	$pageId = $_GET['pageId'];
+        }
         $data = Array();
         if($this->type == $this->ADMIN){
             $data["item"] = $this->mitem->getAllList();
@@ -77,6 +80,9 @@ class item extends MY_Controller
         if(!$this->user_id){
             $this->noLogin(site_url("bg/item/itemCom"));
             return;
+        }
+        if (isset($_GET['pageId'])) {
+        	$pageId = $_GET['pageId'];
         }
         $type = $this->user->getType($this->user_id);
         $this->load->model("comitem");
