@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- 主机: localhost
--- 生成日期: 2013 年 11 月 23 日 11:12
+-- 生成日期: 2013 年 11 月 23 日 22:13
 -- 服务器版本: 5.5.34-0ubuntu0.13.04.1
 -- PHP 版本: 5.4.9-4ubuntu2.3
 
@@ -212,12 +212,12 @@ INSERT INTO `art` (`art_id`, `title`, `content`, `part_id`, `time`, `author_id`,
 --
 
 CREATE TABLE IF NOT EXISTS `boss` (
-  `name` tinytext NOT NULL,
+  `name` varchar(10) NOT NULL,
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `phone` int(15) NOT NULL,
-  `password` tinytext NOT NULL,
+  `phone` char(13) NOT NULL,
+  `password` varchar(20) NOT NULL,
   `registerTime` time NOT NULL,
-  `email` tinytext NOT NULL,
+  `email` varchar(100) NOT NULL,
   `storeId` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
@@ -243,7 +243,7 @@ CREATE TABLE IF NOT EXISTS `ci_sessions` (
 --
 
 INSERT INTO `ci_sessions` (`session_id`, `ip_address`, `user_agent`, `last_activity`, `user_data`) VALUES
-('9d7d98ceda1fc66516a75bafc6dd7149', '127.0.0.1', 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.57 Safari/537.36', 1385173769, 'a:3:{s:9:"user_data";s:0:"";s:7:"user_id";s:2:"19";s:9:"user_name";s:6:"tianyi";}');
+('8bada82ee7b5cdc4c402659b08f9eb69', '127.0.0.1', 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.57 Safari/537.36', 1385182782, 'a:3:{s:9:"user_data";s:0:"";s:7:"user_id";s:2:"19";s:9:"user_name";s:6:"tianyi";}');
 
 -- --------------------------------------------------------
 
@@ -681,20 +681,26 @@ INSERT INTO `ord` (`id`, `addr`, `info`, `seller`, `item_id`, `time`, `state`, `
 --
 
 CREATE TABLE IF NOT EXISTS `store` (
-  `name` tinytext CHARACTER SET gb2312 NOT NULL,
+  `name` varchar(20) NOT NULL,
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `photo` tinytext CHARACTER SET gb2312 NOT NULL,
-  `phone` int(15) NOT NULL,
-  `address` tinytext CHARACTER SET gb2312 NOT NULL,
+  `photo` tinytext,
+  `phone` varchar(13) NOT NULL,
+  `address` tinytext,
   `longitude` float NOT NULL,
   `latitude` float NOT NULL,
-  `category` mediumtext CHARACTER SET gb2312 NOT NULL,
-  `briefInfo` text CHARACTER SET gb2312 NOT NULL,
-  `ownerName` tinytext CHARACTER SET gb2312 NOT NULL,
+  `category` mediumtext,
+  `briefInfo` tinytext,
   `ownerId` int(11) NOT NULL,
-  `deliveryTime` text CHARACTER SET gb2312 NOT NULL,
+  `deliveryTime` tinytext,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='用于存储商店相关信息' AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='用于存储商店相关信息' AUTO_INCREMENT=5 ;
+
+--
+-- 转存表中的数据 `store`
+--
+
+INSERT INTO `store` (`name`, `id`, `photo`, `phone`, `address`, `longitude`, `latitude`, `category`, `briefInfo`, `ownerId`, `deliveryTime`) VALUES
+('二笔火锅清水河分店', 4, NULL, '13598762349', '四川省成都市高新西区顺江小区2004号', 103.9, 30.75, '烧烤;火锅;鸳鸯锅;红锅;清锅;自助火锅;打折;', '提供各种风格的火锅，酒水免费，值得信赖', 1, '12:00-13:00;17:00-20:00;');
 
 -- --------------------------------------------------------
 
