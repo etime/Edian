@@ -15,7 +15,7 @@
 </head>
 <body>
     <table id="content"  class = "clearfix">
-        <form action="<?php echo site_url("reg/regSub")?>" method="post" enctype = "multipart/form-data" accept-charset="utf-8">
+        <form action="<?php echo site_url("register/bossRegisterCheck")?>" method="post" enctype = "multipart/form-data" accept-charset="utf-8">
             <tr>
                 <td>
                     姓名<span class = "xx">*</span>：
