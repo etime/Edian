@@ -102,13 +102,12 @@ class MY_Controller extends  CI_Controller {
     /**
      * 或许可以选择保存在数据库，但是总要有一个唯一的标示，我想或许是session_id吧
      */
-    public function user_id_get()
-    {
-        if($this->session->userdata("user_id")!=""){
-            //这样可以确保返回整数,或者是0，或者是false
-            return (int)$this->session->userdata("user_id");
-        }
-        return false;
+    public function user_id_get() {
+//         if ($this->session->userdata("id")!="") {
+//             //这样可以确保返回整数,或者是0，或者是false
+//             return (int)$this->session->userdata("id");
+//         }
+//         return false;
     }
     public  function fb_unique($array2D)
     {//将二维的数组转变成为一维数组,方便unique

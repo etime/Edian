@@ -23,12 +23,12 @@ class Home extends MY_Controller{
         parent::__construct();
         $this->load->model("bghome");
         $this->load->model("user");
-        $this->user_id = $this->user_id_get();
+//         $this->user_id = $this->user_id_get();
     }
     /**
      * 后台的入口view函数
      */
-    function  index(){
+    function index(){
         if(!$this->user_id){
             $this->noLogin();
             return;

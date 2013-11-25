@@ -47,7 +47,7 @@ class Img extends Ci_Model
     }
     function getImgName($user_id){
         //获得该用户所有上传的图片的服务器名称
-        $res = $this->db->query("select img_name from img where user_id  = $user_id");
+        $res = $this->db->query("select imgName from img where uploadStore = '$user_id'");
         return $res->result_array();
     }
 

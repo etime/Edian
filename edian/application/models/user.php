@@ -179,15 +179,29 @@ class User extends CI_Model {
         $res=$this->db->query("insert into user(user_name,user_passwd,reg_time,user_photo,email,addr,intro,contract1,contract2,user_type,lng,lat,operst,opered,work) VALUES('$data[name]','$data[passwd]','$day','$data[photo]','$data[email]','$data[addr]','$data[intro]','$data[contract1]','$data[contract2]','$data[type]','".$data["pos"][0]."','".$data["pos"][1]."','".$data["st"]."','".$data["ed"]."','".$data["work"]."')");
         return $res;
     }
-    public function getType($userId)
-    {
-        $res = $this->db->query("select user_type from user where user_id = '$userId'");
-        $res = $res->result_array();
-        if(count($res)== 1){
-            return $res[0]["user_type"];
-        }
-        return false;
-    }
+    
+    /**
+     * 获取用户的权限
+     * 
+     * 通过查询用户的 credit 的值来获取用户的权限，其中，credit 在[0, 100]为普通用户，为 255 的为老板，为 250 的为超级管理员
+     * 
+     * @author farmerjian <chengfeng1992@hotmail.com>
+     * @param int $userId
+     * @return boolean | int
+     */
+	public function getType($userId) {
+		$res = $this->db->query("select credit from user where id = '$userId'");
+		$res = $res->result_array();
+		if (count($res) == 0) return false;
+		echo $res[0]["credit"] . '<br>';
+        
+		if ($res[0]["credit"] == 250) return 3;
+		if ($res[0]["credit"] == 255) return 2;
+		return 1;
+	}
+    
+    
+    
     public function getPubToAll($userId)
     {//获取那些所有可以被普通的用户浏览的信息，
         $res = $this->db->query("select user_name,reg_time,user_photo,last_login_time,email,addr,intro,contract1,contract2,user_type,lng,lat from user where user_id = '$userId'");
