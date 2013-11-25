@@ -5,8 +5,7 @@
  * email:           douunasm@gmail.com
  * Last_modified:   2013-06-11 10:39:28
  **/
-class MY_Controller extends  CI_Controller
-{
+class MY_Controller extends  CI_Controller {
     public $part;//表示首页的菜单目录的关系
     public $adminMail;
     protected $priAdd;//当运费不足的情况下,添加的运费

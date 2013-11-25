@@ -66,14 +66,28 @@ class Home extends MY_Controller{
 			$this->load->view("bgHomeSet",$data);
     }
     /**
-     * 添加商品的入口函数
-     * 显示view,添加商品的view函数，对应的后台处理在item这个class里面，这里只是入口
+     * 传递给 view 的数据包括：
+     *     全局分类列表
+     *     本店的分类列表
+     *     本店上传过的用于描述商品详细信息的图片
+     * 
+     * 由 view 传递回来的信息:
+     *     商品名字：title
+     *     商品主缩略图：mainThumbnail
+     *     商品的附图片：thumbnail
+     *     库存：storeNum
+     *     属性：attr
+     *     价格：price
+     *     索引分类：gKey1,gKey2,gKey3,category
+     *     详情编辑：detail
+     *     上架时间：putawayTime
+     *     简要描述：briefInfo
      */
-    public function item(){
-        if(!$this->user_id){
-            $this->noLogin();
-            return;
-        }
+    public function item() {
+//         if(!$this->user_id) {
+//             $this->noLogin();
+//             return;
+//         }
         $data['title']="添加商品";
         $data["dir"] = $this->part;
         $data["userType"] = $this->user->getType($this->user_id);

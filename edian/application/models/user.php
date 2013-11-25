@@ -1,52 +1,51 @@
 <?php
-/**asdfasdf
- * 表的解释
- * user_id 用户的id，也是主键
- * user_name 用户的名称,用户名，添加了unique索引
- * user_passwd 没有加密的用户密码
- * user_type 3 是管理员 1 是卖家，2是买家，顾客
- * reg_time 用户注册时间
- * user_photo 用户的头像
- * block目前还没有使用，就是封杀用户，block 阻塞,0 为正常，1为冻结，2 为没有短信验证的用户,3就是暂时设定成为删除吧
- * 没有经过短信验证的客户不能进行发帖，进入后台，不能下单
- * last_login_time 最后一次登陆时间
- * email ，联系方式的一种，邮箱
- * addr，地址，因为是以地址为中心的嘛, addr&user_name|phoneNum|addr
- * 第一个是用户的个人地址，这个可能没有，有的话，也是只有地址，第二个由用户名，手机号码，地址构成，构成第二第三地址,在订单中保存的是这个的编号，0代表作者自己的，
- * intro，用户的自我简介,公告,店家的临时通知
- * contract1，我想是电话，或手机号码
- * contract2 QQ号码
- * mailNum，这段期间祖受到的站内信数目;
- * comNum 这段时间的品论数目，但是想废弃掉了，因为通过select 查询得到的更加确切,用户 如果已经浏览过了，但是状态还是没有清空，就出现问题了,算了，还是启用吧，这么定义，comNum为0的时候，不显示，com为1的时候，给出select new的数目
- * lny 经度，总长10位，小数最长7位，再精确已经没有意义了，1秒大概是30米，首先定位本身的不确切，再说精确到0.1m，现实中已经够用了
- * lat 维度,设计同lny
-   operTime:是营业时间，前者务必小于后者8:00-12；00的格式
- * operst 营业开始的时间，从小时精确到s，如果以后有时间的话，就修改成精确到分钟吧
- * opered 营业时间的结束
- * impress 印象，游客或者是别人对店家的评价，感觉
- * work 经营范围，
- * extro 这个是额外的信息，保存的是一些商店没有的，但是另一些商店有的，保存的是数组哦
-     * {
-     *     lestPrc:最低起送价，不一定所有的商店都有最低起送价
-     *     dtuName:给dtu取的名字，在索引和打印的时候，不重要，
-     *     intro:本店介绍链接，功能具体怎么用，将来再说吧
-     *     dtuNum:dtu编号，应该是十几位的那个，
-             //或许还需要密码吧
-     * }
- * 这个文件是作为user这个表的操作类来使用的，所有关于user的函数，都在这里使用
- * 目前还是需要删除用户的选项，就到以后吧
- * 在获得更新数目的时候，调用了art中的数据;
- * author:          unasm
- * email:           douunasm@gmail.com
- * Last_modified:   2013-06-20 21:10:58
- **/
-class User extends Ci_Model
-{
-//对于select结果只有单独一条的情况下，要不返回false，要不给出结果
-    function __construct()
-    {
-        parent::__construct();
+/**
+ * 用于处理所有和 user 这个表有关的数据信息
+ * @author farmerjian
+ * @since 2013-11-24 23:29:38
+ *
+ */
+class User extends CI_Model {
+	/**
+	 * 构造函数
+	 * @author farmerjian <chengfeng1992@hotmail.com>
+	 */
+	function __construct() {
+		parent::__construct();
+	}
+
+	private function dataFb($array) {
+		if (count($array)) {
+			if (array_key_exists('passwd', $array["0"])) {
+				for ($i = 0, $len = count($array); $i < $len; $i ++) {
+    				$array[$i]["passwd"] = stripslashes($array[$i]["passwd"]);
+    			}
+    		}
+    		if(array_key_exists('user_name', $array["0"])) {
+    			for ($i = 0, $len = count($array); $i < $len; $i ++) {
+    				$array[$i]["user_name"] = stripslashes($array[$i]["user_name"]);
+    			}
+    		}
+    	}
+    	return $array;
     }
+    
+    /**
+     * 处理 mysql 查询的返回结果只有单独一条的情况
+     * 
+     * 因为mysql对于数据的处理是返回$array[0][content]的形式，但是对于很多单独数据的情况下不是这个样子的，只是有一条的情况，则处理为返回content
+     * 
+     * @param array $array
+     * @return array|boolean
+     */
+    private function getArray($array) {
+	    if(count($array) == 1) {
+	    	$array = $this->dataFb($array);
+	    	return $array[0];
+	    }
+	    return false;
+    }
+    
     private function author_check($permit_level)
     {//用户级别查询吗？
         //check the author of the user
@@ -55,22 +54,19 @@ class User extends Ci_Model
             return false;
         return true;
     }
-    public function getInfoById($id)
-    {
-        //这个函数是通过用户的id得到用户的信息的函数
-        $sql="select * from user where user_id = $id";
+    
+    /**
+     * 通过用户的 id 获取用户的相关信息
+     * 
+     * @param int $id
+     * @return Ambigous <boolean, array>
+     */
+    public function getInfoById($id) {
+        $sql="select * from user where id = $id";
         $res=$this->db->query($sql);
         return $this->getArray($res->result_array());
-    }
-    private function getArray($array)
-    {//因为mysql对于数据的处理是返回$array[0][content]的形式，但是对于很多单独数据的情况下不是这个样子的，只是有一条的情况，则处理为返回content
-        //处理只有单独一条的情况
-        if(count($array)==1){
-            $array = $this->dataFb($array);
-            return $array[0];
-        }
-        return false;
-    }
+    }    
+    
     public function getPubById($user_id)
     {
         //输出的都是显示的内容，不涉及用户的隐私，不知道这样会不会加快速度
@@ -236,22 +232,6 @@ class User extends Ci_Model
     public function changeLoginTime($userId)
     {//修改最后登陆时间
         $this->db->query("update user set last_login_time  = now() where user_id = '$userId'");
-    }
-    private function dataFb($array)
-    {
-        if(count($array)){
-            if(array_key_exists('passwd',$array["0"])){
-                for($i = 0; $i < count($array);$i++){
-                    $array[$i]["passwd"] = stripslashes($array[$i]["passwd"]);
-                }
-            }
-            if(array_key_exists('user_name',$array["0"])){
-                for($i = 0; $i < count($array);$i++){
-                    $array[$i]["user_name"] = stripslashes($array[$i]["user_name"]);
-                }
-            }
-        }
-        return $array;
     }
     public function cleCom($userId)
     {//每当用户的帖子（商品）增加评论的时候，用户进入列表页，清除评论数字
