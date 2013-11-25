@@ -13,7 +13,7 @@ class User extends CI_Model {
 	function __construct() {
 		parent::__construct();
 	}
-
+	
 	private function dataFb($array) {
 		if (count($array)) {
 			if (array_key_exists('passwd', $array["0"])) {
@@ -44,6 +44,27 @@ class User extends CI_Model {
 	    	return $array[0];
 	    }
 	    return false;
+    }
+    
+    /**
+     * 通过电话号码查询一个用户是否存在，如果存在的话，返回这个用户的所有信息，如果不在，返回 false
+     * 
+     * @param string $phone 待查询的电话号码
+     * @return array | boolean
+     */
+    public function getUserByPhone($phone) {
+    	$sql = "select * from user where phone = '$phone'";
+    	$res = $this->db->query($sql);
+    	return $this->getArray($res->result_array());
+    }
+    
+    /**
+     * 向 user 表中新增加一个用户
+     * @param array $data
+     */
+    public function addUser($data) {
+    	$sql = "INSERT INTO user(name, password, credit, registerTime, email, phone) VALUES('$data[name]', '$data[password]', '$data[credit]', now(), '$data[email]', '$data[phoneNum]')";
+    	$this->db->query($sql);
     }
     
     private function author_check($permit_level)
