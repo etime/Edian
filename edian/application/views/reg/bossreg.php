@@ -15,13 +15,13 @@
 </head>
 <body>
     <table id="content"  class = "clearfix">
-        <form action="<?php echo site_url("reg/regSub")?>" method="post" enctype = "multipart/form-data" accept-charset="utf-8">
+        <form action="<?php echo site_url("register/bossRegisterCheck")?>" method="post" enctype = "multipart/form-data" accept-charset="utf-8">
             <tr>
                 <td>
                     姓名<span class = "xx">*</span>：
                 </td>
                 <td>
-                    <input type="text" name="userName" />
+                    <input type="text" name="name" />
                 </td>
             </tr>
             <tr>
@@ -29,25 +29,22 @@
                     <span class = "xx">*</span>：
                 </td>
                 <td>
-                    <input type="password" name="passwd" />
+                    <input type="password" name="password" />
                     <span id = "pass"></span>
                 </td>
             </tr>
             <tr>
                 <td>确认密码<span class = "xx">*</span>：</td>
-                <td><input type="password" name="repasswd" /></td>
+                <td><input type="password" name="confirm" /></td>
             </tr>
             <tr>
                 <td>联系方式(手机)
                     <span class = "xx">*</span>：
                 </td>
                 <td>
-                    <input type="text" name="contra" /><span id = "contra"></span>
+                    <input type="text" name="phoneNum" /><span id = "contra"></span>
                 </td>
             </tr>
-            <!--
-                <p>头像(可选)：<input type="file" name="userfile" /><span id = "photo">小于5M的jpg,gif,png格式图片</span></p>
-            -->
             <tr>
                 <td>邮箱(可选)：</td>
                 <td><input type="text" name="email" /><span id = "email"></span></td>
@@ -58,7 +55,7 @@
                     <span class = "xx">*</span>：
                 </td>
                 <td>
-                    <input type = "text" name = "smschk"/>
+                    <input type = "text" name = "checkNum"/>
                     <button id = "smschk">点击发送验证码</button>
                 </td>
             </tr>
@@ -77,5 +74,7 @@
 -->
 </body>
 <script type="text/javascript" src = "<?php echo $baseUrl.('js/jquery.js')?>"> </script>
+<!--
 <script type="text/javascript" src = "<?php echo $baseUrl.('js/bossReg.js')?>"></script>
+-->
 </html>
