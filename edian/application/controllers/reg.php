@@ -224,7 +224,7 @@ class Reg extends MY_Controller{
     public function index()
     {
         //$data["dir"] = $this->partMap;
-        $this->load->view("reg/userReg.php");
+        $this->load->view("reg/bossreg.php");
     }
     /*
     private  function _lSet($userId,$name)
@@ -320,44 +320,12 @@ class Reg extends MY_Controller{
         $this->user->changeLoginTime($userId);
     }
     /**
-     * 已经遭到废弃的函数
+     * 这里对应的是前台的showart和art.js中的ajax申请
+     * 感觉这里需要进行判断呢，一旦用户name中有很奇葩的名字，会出问题的
+     * 应该已经废弃了
      */
-    public function denglu()
-    {
-        if($_POST['enter']){
-            $name = $this->input->post("userId");
-            $pass = $this->input->post("passwd");
-            $res = $this->user->checkname($name);
-            if($res == false){
-                exit("没有该用户，请退回重新输入");
-            }
-            else {
-                if($pass == $res["user_passwd"]){
-                    $this->session->set_userdata("user_id",$res["user_id"]);
-                    $this->session->set_userdata("user_name",$res["user_name"]);
-                    $this->session->set_userdata("passwd",$res["user_passwd"]);
-                    $this->user->changeLoginTime($res["user_id"]);
-                    $data["uri"]=site_url("mainpage?".$res["user_id"]);
-                    $data["uriName"]="主页";
-                    $data["time"]=3;
-                    $data["title"]="登陆成功";
-                    $data["atten"] = "恭喜您，登陆成功";
-                    $this->load->view("jump",$data);
-                }
-                else {
-                    exit("用户名不正确");
-                }
-            }
-        }
-    }
-        /**
-         * 这里对应的是前台的showart和art.js中的ajax申请
-         * 感觉这里需要进行判断呢，一旦用户name中有很奇葩的名字，会出问题的
-         * 应该已经废弃了
-         */
     public function artD($name,$passwd)
     {
-
         $name = urldecode($name);
         $passwd = urldecode($passwd);
         $res = $this->user->checkname($name);

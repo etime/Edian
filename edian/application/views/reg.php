@@ -70,13 +70,13 @@ var user_id="<?php echo $this->session->userdata('user_id')?>";
                     <select  name = "operedm">
                         <?php
                             for($i = 0;$i<60;$i++){
-                            if($i == 0){
-                                echo "<option value = ".$i." Selected = 'Selected'>".$i."</option>";
+                                if($i == 0){
+                                    echo "<option value = ".$i." Selected = 'Selected'>".$i."</option>";
+                                }
+                                else {
+                                    echo "<option value = ".$i.">".$i."</option>";
+                                }
                             }
-                            else {
-                                echo "<option value = ".$i.">".$i."</option>";
-                            }
-                        }
                         ?>
                     </select>
                 </p>
