@@ -2,32 +2,27 @@ var funpasswd,funname,imgCheck,phone,sms,file;
 //funpasswd 是检验密码的对象，name是namecheck对象的实例,imgcheck是图片验证码的检验，sms是短信验证码,file上传图片检验和操作,phone 是手机号码检验
 function fpasswd(){
     //单例模式实现密码检验
-    if(!funpasswd){
-        function temp() {
-            var $this = this;
-            console.log("ab");
-            $this.flag = 0;//当flag置位2的时候，是可以的时候
-            $("input[type = 'password']").change(function  () {
-                value = $.trim($(this).val());
-                console.log(value);
-                if(value.length<=5){
-                    report("太短,太简单的密码容易被破解哦","#pass","red");
-                    return false;
-                }else if($this.flag == 1){
-                    var passwd = $("input[type = 'password']");
-                    var pa1 = $(passwd[0]).val();
-                    var pa2 = $(passwd[1]).val();
-                    if(pa1 == pa2){
-                        $this.flag = 2;//为2的时候，代表检验完成
-                    }
-                }else{
-                    //无论之前是否为2,或者为0,现在都重新开始,刚刚输入一个的状态
-                    $this.flag = 1;
-                    //下一步，在这里输入对应的提示
-                }
-            });
-        return new temp();
-    }else return funpasswd;
+    var $this = this;
+    $this._flag = 0;//当flag置位2的时候，是可以的时候
+    $("input[type = 'password']").change(function  () {
+        value = $.trim($(this).val());
+        console.log(value);
+        if(value.length<=5){
+            report("太短,太简单的密码容易被破解哦","#pass","red");
+            return false;
+        }else if($this.flag == 1){
+            var passwd = $("input[type = 'password']");
+            var pa1 = $(passwd[0]).val();
+            var pa2 = $(passwd[1]).val();
+            if(pa1 == pa2){
+                $this._flag = 2;//为2的时候，代表检验完成
+            }
+        }else{
+            //无论之前是否为2,或者为0,现在都重新开始,刚刚输入一个的状态
+            $this._flag = 1;
+            //下一步，在这里输入对应的提示
+        }
+    });
 }
  function namecheck(){
     if(!funname){

@@ -17,11 +17,20 @@
     <table id="content"  class = "clearfix">
         <form action="<?php echo site_url("register/bossRegisterCheck")?>" method="post" enctype = "multipart/form-data" accept-charset="utf-8">
             <tr>
+                <td>用户名:</td>
                 <td>
-                    姓名<span class = "xx">*</span>：
+                    <input type="text" name="loginName" />
+                    <!--中英文字幕字符-->
+                    <span></span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    联系人姓名<span class = "xx">*</span>：
                 </td>
                 <td>
-                    <input type="text" name="name" />
+                    <input type="text" name="nickname" />
+                    <span id = "nameCheck"></span>
                 </td>
             </tr>
             <tr>
@@ -35,7 +44,10 @@
             </tr>
             <tr>
                 <td>确认密码<span class = "xx">*</span>：</td>
-                <td><input type="password" name="confirm" /></td>
+                <td>
+                    <input type="password" name="confirm" />
+                    <span></span>
+                </td>
             </tr>
             <tr>
                 <td>联系方式(手机)
@@ -70,11 +82,9 @@
         </form>
     </table>
 <!--
-<script type="text/javascript" src="http://api.map.baidu.com/api?v=1.5&ak=672fb383152ac1625e0b49690797918d"></script>
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=1.5&ak=672fb383152ac1625e0b49690797918d"></script>
 -->
 </body>
 <script type="text/javascript" src = "<?php echo $baseUrl.('js/jquery.js')?>"> </script>
-<!--
 <script type="text/javascript" src = "<?php echo $baseUrl.('js/bossReg.js')?>"></script>
--->
 </html>

@@ -25,8 +25,7 @@ body{
 	height:100%;
 	width:600px;
 	margin:0 auto;
-    _width:600px;
-    background:green;
+    background:#ECECEC;
 }
 #dir{
 	width:250px;
@@ -108,4 +107,8 @@ form .xx{
 }
 .dan{
 	color:red;
+}
+.success{
+    background:url("../bgimage/success.png") no-repeat;
+    padding:0 10px;
 }
