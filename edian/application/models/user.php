@@ -47,7 +47,7 @@ class User extends CI_Model {
     }
     
     /**
-     * 通过电话号码查询一个用户是否存在，如果存在的话，返回这个用户的所有信息，如果不在，返回 false
+     * 通过电话号码查询一个用户是否存在，如果存在，返回这个用户的所有信息，如果不在，返回 false
      * 
      * @param string $phone 待查询的电话号码
      * @return array | boolean
@@ -59,11 +59,22 @@ class User extends CI_Model {
     }
     
     /**
+     * 通过用户的登录名查询一个用户是否存在，如果存在，返回这个用户的所有信息，如果不再，返回 false
+     * @param string $loginName
+     * @return array | boolean
+     */
+    public function getUserByLoginName($loginName) {
+    	$sql = "select * from user where loginName = '$loginName'";
+    	$res = $this->db->query($sql);
+    	return $this->getArray($res->result_array());
+    }
+    
+    /**
      * 向 user 表中新增加一个用户
      * @param array $data
      */
     public function addUser($data) {
-    	$sql = "INSERT INTO user(name, password, credit, registerTime, email, phone) VALUES('$data[name]', '$data[password]', '$data[credit]', now(), '$data[email]', '$data[phoneNum]')";
+    	$sql = "INSERT INTO user(nickname, loginName, password, credit, registerTime, email, phone) VALUES('$data[nickname]', '$data[loginName]', '$data[password]', '$data[credit]', now(), '$data[email]', '$data[phoneNum]')";
     	$this->db->query($sql);
     }
     
