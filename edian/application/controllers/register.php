@@ -26,8 +26,6 @@ class Register extends CI_Controller {
 	 * @param string $urlName  出错时，跳转到的页面的 title
 	 */
 	public function errorJump($content, $url, $urlName) {
-		echo $content;
-
 		$data['atten'] = $content;
 		$data['uri'] = $url;
 		$data['uriName'] = $urlName;
@@ -42,9 +40,8 @@ class Register extends CI_Controller {
 	 * @param string $url      出错时，跳转到的页面的 url
 	 * @param string $urlName  出错时，跳转到的页面的 title
 	 * @return boolean         变量不为空，返回 false，否则返回 true
-	 * @todo 其实全部跳转的url地址，都是注册页面，不是吗？所以可以通过设置url的默认值的方式 ，比如现在，方便扩展和减少输入
 	 */
-	public function isInputNull($val, $content, $url = regUrl, $urlName = "注册页面") {
+	public function isInputNull($val, $content, $url, $urlName) {
 		if ($val != '') return false;
 		$this->errorJump($content, $url, $urlName);
 		return true;

@@ -1,7 +1,7 @@
 <?php
 /**
  * 用于处理所有和 user 这个表有关的数据信息
- * @author farmerjian
+ * @author farmerjian <chengfeng1992@hotmail.com>
  * @since 2013-11-24 23:29:38
  *
  */
@@ -59,12 +59,23 @@ class User extends CI_Model {
     }
     
     /**
-     * 通过用户的登录名查询一个用户是否存在，如果存在，返回这个用户的所有信息，如果不再，返回 false
+     * 通过用户的登录名查询一个用户是否存在，如果存在，返回这个用户的所有信息，如果不在，返回 false
      * @param string $loginName
      * @return array | boolean
      */
     public function getUserByLoginName($loginName) {
     	$sql = "select * from user where loginName = '$loginName'";
+    	$res = $this->db->query($sql);
+    	return $this->getArray($res->result_array());
+    }
+    
+    /**
+     * 通过用户的邮箱查询一个用户是否存在，如果存在，返回这个用户的所有信息，如果不在，返回 false
+     * @param string $email
+     * @return array | boolean;
+     */
+    public function getUserByEmail($email) {
+    	$sql = "select * from user where email = '$email'";
     	$res = $this->db->query($sql);
     	return $this->getArray($res->result_array());
     }
