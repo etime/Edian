@@ -7,14 +7,14 @@
  * 如果不是第一级菜单，就正常显示，和搜索和其他没有任何区别，
  * 但是这么处理，显然增大的工作量，几倍增大了搜索量，
  *
- * <code> <?php echo "hello,world!!" ?></code>
  * @author          unasm<1264310280@qq.com>
  * @since           2013-06-11 10:39:28
  * @name            sea.php
  * @package         controller
- **/
+ */
 class Sea extends MY_Controller
 {
+    /** 每页显示的数据条数 */
     var $pageNum;
     function __construct()
     {

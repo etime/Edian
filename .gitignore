@@ -7,4 +7,5 @@ tags
 *.html
 *.swp
 .buildpath
+*.orig
 #忽略Document 和upload整个文件夹
