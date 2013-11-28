@@ -17,7 +17,7 @@
     <table id="content"  class = "clearfix">
         <form action="<?php echo site_url("register/bossRegisterCheck")?>" method="post" enctype = "multipart/form-data" accept-charset="utf-8">
             <tr>
-                <td>用户名:</td>
+                <td>登录名:</td>
                 <td>
                     <input type="text" name="loginName" />
                     <!--中英文字幕字符-->
@@ -58,10 +58,6 @@
                 </td>
             </tr>
             <tr>
-                <td>邮箱(可选)：</td>
-                <td><input type="text" name="email" /><span id = "email"></span></td>
-            </tr>
-            <tr>
                 <td>
                     短信验证码
                     <span class = "xx">*</span>：
@@ -70,6 +66,10 @@
                     <input type = "text" name = "checkNum"/>
                     <button id = "smschk">点击发送验证码</button>
                 </td>
+            </tr>
+            <tr>
+                <td>邮箱(可选)：</td>
+                <td><input type="text" name="email" /><span id = "email"></span></td>
             </tr>
             <tr class = "tip">
                 <td>标有<span class = "xx">*</span>为必填内容，其他可选

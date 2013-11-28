@@ -109,6 +109,9 @@ form .xx{
 	color:red;
 }
 .success{
-    background:url("../bgimage/success.png") no-repeat;
+    background:#01B834 url("../bgimage/success.png") no-repeat;
     padding:0 10px;
+}
+.failed{
+    color:red;
 }
