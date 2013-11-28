@@ -17,7 +17,7 @@
     <table id="content"  class = "clearfix">
         <form action="<?php echo site_url("register/bossRegisterCheck")?>" method="post" enctype = "multipart/form-data" accept-charset="utf-8">
             <tr>
-                <td>用户名:</td>
+                <td>登录名:</td>
                 <td>
                     <input type="text" name="loginName" />
                     <!--中英文字幕字符-->
