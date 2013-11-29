@@ -66,7 +66,7 @@ class Register extends CI_Controller {
         if ($loginName == false) {
         	$loginName = @$_GET["loginName"];
         }
-        
+
         // 判断用户输入的登录名是否含有非法字符
         if (preg_match("/[~!@#$%^&*()_+`\\=\\|\\{\\}:\\\">\\?<\\[\\];',\/\\.\\-\\\\]/", $loginName)) {
             if (isset($_SERVER["HTTP_X_REQUESTED_WITH"]) && strtolower($_SERVER["HTTP_X_REQUESTED_WITH"]) == 'xmlhttprequest') {
@@ -76,7 +76,7 @@ class Register extends CI_Controller {
             }
             return false;
         }
-        
+
         // 判断用户的登录名是否已经存在
         $ans = $this->user->isUserExistByLoginName($loginName);
         if ($ans) {
@@ -95,7 +95,7 @@ class Register extends CI_Controller {
 
     /**
      * 检验手机号码的合法性和唯一性，供 ajax 和内部检查调用
-     * 
+     *
      * @param int $phoneNum 用户将要注册的手机号码
      * @return boolean 如果该手机号码合法且不存在，返回 true，否则返回 false
      */
@@ -112,7 +112,7 @@ class Register extends CI_Controller {
         	}
         	return false;
         }
-        
+
         // 判断用户输入的手机号码是否已经被注册
         $ans = $this->user->isUserExistByPhone($phoneNum);
         if ($ans) {
@@ -124,7 +124,8 @@ class Register extends CI_Controller {
         	return false;
         }
         if (isset($_SERVER["HTTP_X_REQUESTED_WITH"]) && strtolower($_SERVER["HTTP_X_REQUESTED_WITH"]) == 'xmlhttprequest') {
-        	echo "true";
+        	//echo "true";
+            echo "1234";
         }
         return true;
     }
@@ -196,7 +197,7 @@ class Register extends CI_Controller {
 
         // 检测客户端是否频繁注册
         if (! $this->_checkRegisterTimes($url, $urlName)) return;
-        
+
         $data['loginName']  = $this->input->post('loginName');
         $data['nickname']   = $this->input->post('nickname');
         $data['password']   = $this->input->post('password');
@@ -227,7 +228,7 @@ class Register extends CI_Controller {
             $this->_errorJump('请输入正确的邮箱格式', $url, $urlName);
             return;
         }
-        
+
         // 检测姓名输入是否合法
         if (strlen($data['nickname'] > 10)) {
             $this->errorJump('姓名不要超过 10 个字，如果实在太长，请用昵称取代', $url, $urlName);
@@ -237,9 +238,9 @@ class Register extends CI_Controller {
         $data['credit'] = $this->config->item("bossCredit");
         $this->user->addUser($data);
         $this->boss->addBoss($data);
-        
+
         $this->session->set_userdata('userId', $this->user->getUserIdByLoginName($data['loginName']));
-        
+
         // 跳转到商店设置的主页面
         $this->errorJump('恭喜！您已经成功注册！', site_url('bg/home'), '首页');
     }
@@ -247,14 +248,14 @@ class Register extends CI_Controller {
     public function bossRegister() {
         $this->load->view('reg/bossreg');
     }
-    
+
     public function userRegisterCheck() {
     	$url = site_url() . '/register/userRegister';
     	$urlName = '用户注册页面';
-    	
+
     	// 检测客户端是否频繁注册
     	if (! $this->_checkRegisterTimes($url, $urlName)) return;
-    	
+
     	$data['email'] = '';
     	$data['nickname'] = '';
     	$data['loginName']  = $this->input->post('loginName');
@@ -262,33 +263,33 @@ class Register extends CI_Controller {
     	$data['confirm']    = $this->input->post('confirm');
     	$data['phoneNum']   = $this->input->post('phoneNum');
     	$data['checkNum']   = $this->input->post('checkNum');
-    	
+
     	// 检测必选输入是否为空
     	if ($this->_isInputNull($data['loginName'], '请输入登录名', $url, $urlName)) return;
     	if ($this->_isInputNull($data['password'], '请输入密码', $url, $urlName)) return;
     	if ($this->_isInputNull($data['confirm'], '请确认您的密码', $url, $urlName)) return;
     	if ($this->_isInputNull($data['phoneNum'], '请输入手机号码', $url, $urlName)) return;
     	if ($this->_isInputNull($data['checkNum'], '请输入验证码', $url, $urlName)) return;
-    	
+
     	// 检测输入的短信验证码是否相符
     	if ($data["checkNum"] != $this->session->userdata("phoneCheck")) {
     		$this->_errorJump('请输入正确的短信验证码', $url, $urlName);
     	}
-    	
+
     	// 检测手机号码和登录名
     	if (!$this->checkLoginName($data['loginName'], $url, $urlName)) return;
     	if (!$this->checkPhoneNum($data['phoneNum'], $url, $urlName)) return;
-    	
+
     	$this->load->config("edian");
     	$data['credit'] = 0;
     	$this->user->addUser($data);
-    	
+
     	$this->session->set_userdata('userId', $this->user->getUserIdByLoginName($data['loginName']));
-    	
+
     	// 跳转到最后一次访问的页面
     	$this->errorJump('恭喜！您已经成功注册！', $originUrl, '回到刚才浏览的页面');
     }
-    
+
     public function userRegister() {
     	$this->load->view('reg/userreg');
     }

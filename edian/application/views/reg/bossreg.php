@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta http-equiv = "content-type" content = "text/html;charset = utf-8">
-    <title>注册</title>
+    <title>商家注册</title>
     <link rel="stylesheet" href="<?php echo base_url('css/reg.css')?>" type="text/css" charset="UTF-8">
 <?php
     $baseUrl = base_url();
@@ -65,6 +65,7 @@
                 <td>
                     <input type = "text" name = "checkNum"/>
                     <a id = "smschk" href = "javascript:javascript">发送验证码</a>
+                    <span></span>
                 </td>
             </tr>
             <tr>
