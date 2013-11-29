@@ -57,6 +57,34 @@ class Register extends CI_Controller {
     }
 
     /**
+     * 检测客户端是否频繁注册，默认 2 小时之内只能注册 5 次
+     * @return boolean
+     */
+    private function _checkRegisterTimes($url = '', $urlName = '') {
+    	$cnt = $this->session->userdata("cnt");
+    	if ($cnt == '') {
+    		$this->session->set_userdata("cnt", 4);
+    		return true;
+    	} else if ($cnt === 0) {
+    		$this->errorJump('您的注册次数太频繁，请稍候再试', $url, $urlName);
+    		$this->mwrong->insert("有人注册了五次，现在默认禁止再注册，其输入内容为loginName = ".$data["loginName"].",phoneNum = ".$data["phoneNum"]);
+    		return false;
+    	} else {
+    		$this->session->set_userdata("cnt", $cnt - 1);
+    		return true;
+    	}
+    	return false;
+    }
+
+    private function _checkPassword($password, $url, $urlName) {
+    	if (strlen($password) < 6 || $password > 20) {
+    		$this->_errorJump('您输入的密码长度不合法，请重新输入', $url, $urlName);
+    		return false;
+    	}
+    	return true;
+    }
+
+    /**
      * 检测 loginName 的合法性和唯一性，供 ajax 和内部检查调用
      *
      * @param $loginName 用户将要注册的用户名
@@ -72,9 +100,19 @@ class Register extends CI_Controller {
             if (isset($_SERVER["HTTP_X_REQUESTED_WITH"]) && strtolower($_SERVER["HTTP_X_REQUESTED_WITH"]) == 'xmlhttprequest') {
                 echo "false";
             } else {
-                $this->errorJump('您输入的用户名中含有非法字符，请重新输入', $url, $urlName);
+                $this->_errorJump('您输入的用户名中含有非法字符，请重新输入', $url, $urlName);
             }
             return false;
+        }
+
+        // 判断 loginName 是否为长度为 [1, 20] 的字符串
+        if (strlen($loginName) == 0 || strlen($loginName) > 20) {
+        	if (isset($_SERVER["HTTP_X_REQUESTED_WITH"]) && strtolower($_SERVER["HTTP_X_REQUESTED_WITH"]) == 'xmlhttprequest') {
+        		echo "false";
+        	} else {
+        		$this->errorJump('您输入的用户名长度不合法，请重新输入', $url, $urlName);
+        	}
+        	return false;
         }
 
         // 判断用户的登录名是否已经存在
@@ -124,8 +162,7 @@ class Register extends CI_Controller {
         	return false;
         }
         if (isset($_SERVER["HTTP_X_REQUESTED_WITH"]) && strtolower($_SERVER["HTTP_X_REQUESTED_WITH"]) == 'xmlhttprequest') {
-        	//echo "true";
-            echo "1234";
+        	echo "true";
         }
         return true;
     }
@@ -166,26 +203,6 @@ class Register extends CI_Controller {
             return;
         }
         echo $phoneCheck;
-    }
-
-    /**
-     * 检测客户端是否频繁注册，默认 2 小时之内只能注册 5 次
-     * @return boolean
-     */
-    private function _checkRegisterTimes($url = '', $urlName = '') {
-        $cnt = $this->session->userdata("cnt");
-        if ($cnt == '') {
-            $this->session->set_userdata("cnt", 4);
-            return true;
-        } else if ($cnt === 0) {
-            $this->errorJump('您的注册次数太频繁，请稍候再试', $url, $urlName);
-            $this->mwrong->insert("有人注册了五次，现在默认禁止再注册，其输入内容为loginName = ".$data["loginName"].",phoneNum = ".$data["phoneNum"]);
-            return false;
-        } else {
-            $this->session->set_userdata("cnt", $cnt - 1);
-            return true;
-        }
-        return false;
     }
 
     /**
@@ -236,6 +253,10 @@ class Register extends CI_Controller {
         }
         $this->load->config("edian");
         $data['credit'] = $this->config->item("bossCredit");
+
+        // 对密码进行转义，防止攻击
+        $data['password'] = mysql_real_escape_string($data['password']);
+
         $this->user->addUser($data);
         $this->boss->addBoss($data);
 
@@ -282,6 +303,10 @@ class Register extends CI_Controller {
 
     	$this->load->config("edian");
     	$data['credit'] = 0;
+
+    	// 对密码进行转义，防止攻击
+    	$data['password'] = mysql_real_escape_string($data['password']);
+
     	$this->user->addUser($data);
 
     	$this->session->set_userdata('userId', $this->user->getUserIdByLoginName($data['loginName']));
