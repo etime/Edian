@@ -80,24 +80,19 @@ function floginName() {
         $($this._bro).text("请输入10位以内中英文字符或数字").removeClass("success").removeClass("failed");
     }).change(function () {
         var val = $.trim($(this).val());
-        console.log(val);
-        var reg = /[~!`@#$%^&*()_+-={}|[]\;:'\"<>?,\/.]+/;
+        var reg = /[~!`@#$%^&*()_+-={}\\\|\[\]\;:'\"<>?,\/.]/;
         if(reg.exec(val)){
             $($this._bro).text("请只用中文英文数字").addClass("failed");
         }else {
             $($this._bro).addClass("success").text("");//或许这里的符号，可以成为等待符号
-            $.get(site_url + "/checkcode/sms/",function(data,textStatus){
+            $.get(site_url + "/register/checkLoginName?loginName=" + val,function(data,textStatus){
                 if(textStatus == "success"){
-                    //$.alet(data);
-                    $this._flag = 0;//有待检验
+                    $this._flag = data.indexOf("true") == -1 ? 1 : 0;
                 }
                 else{
-                    console.log("");
+                    console.log(textStatus);//这种情况改怎么处理呢，向后台报错？
                     //$.alet("发送失败");
                 }
-                setTimeout(function() {
-                    smsflag = false;//每隔一定时间，允许发送一次短信验证码
-                }, 20000)
             })
         }
     })
@@ -107,7 +102,7 @@ function floginName() {
  * 点击发送之后，发送按钮小时，使用倒计时取代
  * _flag为0 的情况下是手机号码正确和验证码
  * 1 为手机号正确，
- * 2 为都不正确
+ * 2 为都不正确,或则什么都没有做的状态
  */
 function funPhone(){
     var $this = this;
@@ -134,31 +129,62 @@ function funPhone(){
             }
         })
     })
-    var smsflag = false;
+    var smsCnt = 0,smsCode = false;
     $("#smschk").click(function(event){
-        if($this._flag){
-            var phNum = $.trim($("input[name = 'phoneNum']").val());
-            if(smsflag){
-                $.alet("请稍等半分钟");
-            } else {
-                smsflag = true;
-                $.get(site_url + "/checkcode/sms?phoneNum=" + phNum,function(data,textStatus){
-                    if(textStatus == "success"){
-                        $.alet(data);
+        if($this._flag != 1){
+            $("input[name = 'phoneNum']").focus();
+            //只有手机号码已经正确的情况下才可以进入这里
+            //$($this._bro).text("请首先输入手机号码").addClass("failed");
+            return false;
+        }
+        event.preventDefault();
+        var phNum = $.trim($("input[name = 'phoneNum']").val());
+        if(smsCnt === 0){
+            smsCode = false;  //每一次发送，都将smsCode清空
+            $.get(site_url + "/register/checkPhoneNum/" + phNum ,function(data,textStatus){
+                if(textStatus == "success"){
+                    $($this._bro).text("")
+                    if(data.indexOf("true") == -1){
+                        $this._flag = 1;
+                        $($this._bro).text("该怎么提示用户错误呢").removeClass("success").addClass("failed");
+                    }else{
                         $this._flag = 0;
+                        $($this._bro).text("提交成功").addClass("success").removeClass("failed");
+                        smsCode = data;
                     }
-                    else{
-                        $.alet("发送失败");
-                    }
-                    setTimeout(function() {
-                        smsflag = false;//每隔一定时间，允许发送一次短信验证码
-                    }, 20000)
-                })
+                }
+                else{
+                    console.log("发送失败");
+                }
+            })
+            smsCnt = 2;
+            var flag = setInterval(function () {
+                if(smsCnt=== 0){
+                    $($this._bro).text("");
+                    clearInterval(flag);
+                }else {
+                    smsCnt --;
+                    $($this._bro).text(smsCnt + "秒后可重新发送");
+                }
+            },1000)//2s之后，重新发送一次短信验证码
+        }
+    }).change(function () {
+        $this._bro = $(this.parentNode).find("span");
+        if(smsCode){
+            var phoneCode = $.trim($(this).val());
+            if(smsCode == phoneCode){
+                console.log("");
+                $($this._bro).text("").addClass("success").removeClass("failed");
             }
         }else{
-            $($this._bro).text("请首先输入手机号码").addClass("failed");
+            console.log("没有输如手机验证码");
         }
     })
+}
+/**
+ * 修改提示框的状态；
+ */
+function changeState() {
 }
 $(document).ready(function(){
     objName   = new  namecheck();

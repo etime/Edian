@@ -5,9 +5,14 @@
  * 1:虽然看起来public和protected没有什么区别，但是如果从用户的角度来说，是有的，
  * 每一个public都可以通过服务器链接找到，但是protected却不能通过访问读取到
  * 所以根据最小权限法则，如果不是和用户交互的接口的话，还是尽量使用protected
+ * 2:写一个登录的东西
+ * 3:注册完成之后，应该有一个对用户信息的初始化的
+ * 4:问题太多了,一点一点处理把
  *
- * @since 2013-11-25 22:43:21
- * @author farmerjian
+ * change:经所有的
+ * @since   2013-11-25 22:43:21
+ * @author  farmerjian
+ * @package controller
  *
  */
 class Register extends CI_Controller {
@@ -19,7 +24,7 @@ class Register extends CI_Controller {
         $this->load->library('sms');
         $this->load->model('user');
         $this->load->model('boss');
-        $this->load->model("wrong");
+        $this->load->model("mwrong");
     }
 
     /**
@@ -57,45 +62,80 @@ class Register extends CI_Controller {
      * @param $loginName 用户将要注册的用户名
      * @return boolean 如果用户名合法且不存在，返回 true，否则返回 false
      */
-    public function checkLoginName($loginName) {
-        echo $loginName;
-        if (preg_match("/[~!@#$%^&*()_+`-={}:\">?<\[\];',./|\\]/", $loginName)) {
-            $this->errorJump('您的用户名中含有非法字符，请重新输入', $url, $urlName);
-            echo 'false';
-            return false;
+    public function checkLoginName() {
+        $loginName = @$_GET["loginName"];//@是错误抑制符号
+        if( !$loginName){
+            echo "这里应该加一个默认值，方便处理";
         }
-        $ans = $this->user->getUserByLoginName($data['loginName']);
+        echo $loginName;
+        if (preg_match("/[~!@#$%^&*()_+`\\=\\|\\{\\}:\\\">\\?<\\[\\];',\/\\.\\-\\\\]/", $loginName)) {
+            if(isset($_SERVER["HTTP_X_REQUESTED_WITH"]) && strtolower($_SERVER["HTTP_X_REQUESTED_WITH"]) == 'xmlhttprequest'){
+                echo "false";
+                //处理ajax请求，
+            }else{
+                $this->errorJump('您的用户名中含有非法字符，请重新输入', $url, $urlName);
+                return false;
+                //处理非ajax请求
+            }
+        }
+        /*
+        $ans = $this->user->getUserByLoginName($loginName);
         if ($ans != false) {
             $this->errorJump('该用户已经存在', $url, $urlName);
             echo 'false';
-            return false;
+            return ;
         }
-        echo 'true';
-        return true;
+         */
+        echo "true";
+        //echo 'true';
     }
-
+    /**
+     * 输入各种数据测试checkLoginName
+     */
+    public function test($data = "~!@#$%^&*()_+`-={}:\">?<\[\];',./|>adfasd")
+    {
+        $len = strlen($data);
+        echo $data."<br/>";
+        for ($i = 0; $i < $len; $i++) {
+            $this->checkLoginName($data[$i]);
+        }
+    }
     /**
      * 检验手机号码的合法性和唯一性，供 ajax 调用
-     *
+     * 其实不一定是手机号码调用,我为你添加了一个flag变量，方便对返回值的处理
      * @param int $phoneNum 用户将要注册的手机号码
      * @return boolean 如果该手机号码合法且不存在，返回 true，否则返回 false
      */
     public function checkPhoneNum($phoneNum) {
-        if (!preg_match("/^1[\d]{10}$/", $phoneNum)) {
+        $flag = true;
+        if (! preg_match("/^1[\d]{10,10}$/" , $phoneNum)) {
+            $flag = false;
+            /*
             echo 'false';
             return false;
+             */
+        }else{
+            /*
+            $ans = $this->user->getUserByPhone($data['phoneNum']);
+            if ($ans != false) {
+                echo 'false';
+                return false;
+            }
+             */
+            //$flag = $this->user->getUserByPhone($phoneNum);
+            $flag = ( rand(1,100)%2 ) ? true : false;
         }
-        $ans = $this->user->getUserByPhone($data['phoneNum']);
-        if ($ans != false) {
-            echo 'false';
-            return false;
-        }
-        echo 'true';
-        return true;
+        if(isset($_SERVER["HTTP_X_REQUESTED_WITH"]) && strtolower($_SERVER["HTTP_X_REQUESTED_WITH"]) == 'xmlhttprequest'){
+            echo $flag ? "true" : "false";
+        }else return $flag;
+        //return true;
     }
 
     /**
      * 发送短信验证码，供 ajax 调用
+     *  unasm :下面的too often
+     *  和error之类的让我怎么处理嘛，既不能直接呈现给用户，也不能判别，
+     *  要不给我完成的话，要不给我错误的编号，
      */
     function smsSend() {
         $curTime = time();
@@ -140,7 +180,7 @@ class Register extends CI_Controller {
             return true;
         } else if ($cnt === 0) {
             $this->errorJump('您的注册次数太频繁，请稍候再试', $url, $urlName);
-            $this->wrong->inset("有人注册了五次，现在默认禁止再注册，其输入内容为loginName = ".$data["loginName"].",phoneNum = ".$data["phoneNum"]);
+            $this->mwrong->insert("有人注册了五次，现在默认禁止再注册，其输入内容为loginName = ".$data["loginName"].",phoneNum = ".$data["phoneNum"]);
             return false;
         } else {
             $this->session->set_userdata("cnt", $cnt - 1);

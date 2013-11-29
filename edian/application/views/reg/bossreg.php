@@ -64,7 +64,7 @@
                 </td>
                 <td>
                     <input type = "text" name = "checkNum"/>
-                    <button id = "smschk">点击发送验证码</button>
+                    <a id = "smschk" href = "javascript:javascript">发送验证码</a>
                 </td>
             </tr>
             <tr>

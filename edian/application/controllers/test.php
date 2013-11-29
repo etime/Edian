@@ -33,13 +33,18 @@ class Test extends MY_Controller{
     }
     protected function  value(&$tt)
     {
-        $tt = "aaaa";
+        echo "testing";
     }
     function index(){
+        /*
         require("sea.php");
         $sea = new Sea();
         $sea->test();
-        echo "testing";
+         */
+        $str = "select * from";
+        echo $str."<br/>";
+        $str = mysql_real_escape_string($str);
+        echo $str;
     }
     function sms(){
         header("Cache-control:no-cache");

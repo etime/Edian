@@ -1,94 +1,100 @@
 <?php
 /**
  * 用于处理所有和 user 这个表有关的数据信息
- * @author farmerjian <chengfeng1992@hotmail.com>
- * @since 2013-11-24 23:29:38
+ * @author  farmerjian <chengfeng1992@hotmail.com>
+ * @since   2013-11-24 23:29:38
+ * @todo    对所有的插入和进行转义,使用mysql_real_escape_string,单独列出成为一个函数
+ * @todo    http://wudi.in/archives/127.html  看下这个。。
  *
  */
 class User extends CI_Model {
-	/**
-	 * 构造函数
-	 * @author farmerjian <chengfeng1992@hotmail.com>
-	 */
-	function __construct() {
-		parent::__construct();
-	}
-	
-	private function dataFb($array) {
-		if (count($array)) {
-			if (array_key_exists('passwd', $array["0"])) {
-				for ($i = 0, $len = count($array); $i < $len; $i ++) {
-    				$array[$i]["passwd"] = stripslashes($array[$i]["passwd"]);
-    			}
-    		}
-    		if(array_key_exists('user_name', $array["0"])) {
-    			for ($i = 0, $len = count($array); $i < $len; $i ++) {
-    				$array[$i]["user_name"] = stripslashes($array[$i]["user_name"]);
-    			}
-    		}
-    	}
-    	return $array;
+    /**
+     * 构造函数
+     * @author farmerjian <chengfeng1992@hotmail.com>
+     * 这个author貌似没有存在的必要
+     */
+    function __construct() {
+        parent::__construct();
     }
-    
+    /**
+     * 这个函数在我之前的实现里面，是为了去除转义的字符而用的
+     */
+    private function dataFb($array) {
+        if (count($array)) {
+            if (array_key_exists('passwd', $array["0"])) {
+                for ($i = 0, $len = count($array); $i < $len; $i ++) {
+                    $array[$i]["passwd"] = stripslashes($array[$i]["passwd"]);
+                }
+            }
+            if(array_key_exists('user_name', $array["0"])) {
+                for ($i = 0, $len = count($array); $i < $len; $i ++) {
+                    $array[$i]["user_name"] = stripslashes($array[$i]["user_name"]);
+                }
+            }
+        }
+        return $array;
+    }
+
     /**
      * 处理 mysql 查询的返回结果只有单独一条的情况
-     * 
+     *
      * 因为mysql对于数据的处理是返回$array[0][content]的形式，但是对于很多单独数据的情况下不是这个样子的，只是有一条的情况，则处理为返回content
-     * 
+     *
      * @param array $array
      * @return array|boolean
      */
     private function getArray($array) {
-	    if(count($array) == 1) {
-	    	$array = $this->dataFb($array);
-	    	return $array[0];
-	    }
-	    return false;
+        if(count($array) == 1) {
+            $array = $this->dataFb($array);
+            return $array[0];
+        }
+        return false;
     }
-    
+
     /**
      * 通过电话号码查询一个用户是否存在，如果存在，返回这个用户的所有信息，如果不在，返回 false
-     * 
+     *
      * @param string $phone 待查询的电话号码
      * @return array | boolean
      */
     public function getUserByPhone($phone) {
-    	$sql = "select * from user where phone = '$phone'";
-    	$res = $this->db->query($sql);
-    	return $this->getArray($res->result_array());
+        $sql = "select * from user where phone = '$phone'";
+        $res = $this->db->query($sql);
+        return $this->getArray($res->result_array());
     }
-    
+
     /**
      * 通过用户的登录名查询一个用户是否存在，如果存在，返回这个用户的所有信息，如果不在，返回 false
      * @param string $loginName
      * @return array | boolean
+     * @todo 不要使用select * 的方式，你想要什么数据，select 什么便是了，比如这次，如果你想要id,name select id,name 便是了，直接*会增加数据库io读写，减慢速度
      */
     public function getUserByLoginName($loginName) {
-    	$sql = "select * from user where loginName = '$loginName'";
-    	$res = $this->db->query($sql);
-    	return $this->getArray($res->result_array());
+        $sql = "select * from user where loginName = '$loginName'";
+        $res = $this->db->query($sql);
+        return $this->getArray($res->result_array());//感觉这个也是毫无道理，
     }
-    
+
     /**
      * 通过用户的邮箱查询一个用户是否存在，如果存在，返回这个用户的所有信息，如果不在，返回 false
      * @param string $email
      * @return array | boolean;
      */
     public function getUserByEmail($email) {
-    	$sql = "select * from user where email = '$email'";
-    	$res = $this->db->query($sql);
-    	return $this->getArray($res->result_array());
+        $sql = "select * from user where email = '$email'";
+        $res = $this->db->query($sql);
+        return $this->getArray($res->result_array());
     }
-    
+
     /**
      * 向 user 表中新增加一个用户
      * @param array $data
      */
     public function addUser($data) {
-    	$sql = "INSERT INTO user(nickname, loginName, password, credit, registerTime, email, phone) VALUES('$data[nickname]', '$data[loginName]', '$data[password]', '$data[credit]', now(), '$data[email]', '$data[phoneNum]')";
-    	$this->db->query($sql);
+        $sql = "INSERT INTO user(nickname, loginName, password, credit, registerTime, email, phone) VALUES('$data[nickname]', '$data[loginName]', '$data[password]', '$data[credit]', now(), '$data[email]', '$data[phoneNum]')";
+        $this->db->query($sql);
     }
-    
+
     private function author_check($permit_level)
     {//用户级别查询吗？
         //check the author of the user
@@ -97,10 +103,10 @@ class User extends CI_Model {
             return false;
         return true;
     }
-    
+
     /**
      * 通过用户的 id 获取用户的相关信息
-     * 
+     *
      * @param int $id
      * @return Ambigous <boolean, array>
      */
@@ -108,8 +114,8 @@ class User extends CI_Model {
         $sql="select * from user where id = $id";
         $res=$this->db->query($sql);
         return $this->getArray($res->result_array());
-    }    
-    
+    }
+
     public function getPubById($user_id)
     {
         //输出的都是显示的内容，不涉及用户的隐私，不知道这样会不会加快速度
@@ -222,29 +228,29 @@ class User extends CI_Model {
         $res=$this->db->query("insert into user(user_name,user_passwd,reg_time,user_photo,email,addr,intro,contract1,contract2,user_type,lng,lat,operst,opered,work) VALUES('$data[name]','$data[passwd]','$day','$data[photo]','$data[email]','$data[addr]','$data[intro]','$data[contract1]','$data[contract2]','$data[type]','".$data["pos"][0]."','".$data["pos"][1]."','".$data["st"]."','".$data["ed"]."','".$data["work"]."')");
         return $res;
     }
-    
+
     /**
      * 获取用户的权限
-     * 
+     *
      * 通过查询用户的 credit 的值来获取用户的权限，其中，credit 在[0, 100]为普通用户，为 255 的为老板，为 250 的为超级管理员
-     * 
+     *
      * @author farmerjian <chengfeng1992@hotmail.com>
      * @param int $userId
      * @return boolean | int
      */
-	public function getType($userId) {
-		$res = $this->db->query("select credit from user where id = '$userId'");
-		$res = $res->result_array();
-		if (count($res) == 0) return false;
-		echo $res[0]["credit"] . '<br>';
-        
-		if ($res[0]["credit"] == 250) return 3;
-		if ($res[0]["credit"] == 255) return 2;
-		return 1;
-	}
-    
-    
-    
+    public function getType($userId) {
+        $res = $this->db->query("select credit from user where id = '$userId'");
+        $res = $res->result_array();
+        if (count($res) == 0) return false;
+        echo $res[0]["credit"] . '<br>';
+
+        if ($res[0]["credit"] == 250) return 3;
+        if ($res[0]["credit"] == 255) return 2;
+        return 1;
+    }
+
+
+
     public function getPubToAll($userId)
     {//获取那些所有可以被普通的用户浏览的信息，
         $res = $this->db->query("select user_name,reg_time,user_photo,last_login_time,email,addr,intro,contract1,contract2,user_type,lng,lat from user where user_id = '$userId'");
