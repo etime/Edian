@@ -42,7 +42,9 @@ $config["maxStoreNum"] = 65535; //最大的库存量，这个数字视为诬陷�
 /**
 确定用户的权限
  */
+$config['userCreditMin'] = 0;
 $config['userCreditMax'] = 100;
 $config['bossCredit'] = 110;
 $config['adminCredit'] = 120;
+
 ?>

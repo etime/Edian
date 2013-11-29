@@ -62,17 +62,43 @@ class User extends CI_Model {
         $res = $this->db->query($sql);
         return $this->getArray($res->result_array());
     }
-
+    
     /**
-     * 通过用户的登录名查询一个用户是否存在，如果存在，返回这个用户的所有信息，如果不在，返回 false
-     * @param string $loginName
-     * @return array | boolean
-     * @todo 不要使用select * 的方式，你想要什么数据，select 什么便是了，比如这次，如果你想要id,name select id,name 便是了，直接*会增加数据库io读写，减慢速度
+     * 通过用户的 loginName 判断一个用户是否存在
+     * 
+     * @param string $loginName 用户的登录名
+     * @return boolean 如果用户存在，返回 true，否则返回 false
      */
-    public function getUserByLoginName($loginName) {
-        $sql = "select * from user where loginName = '$loginName'";
+    public function isUserExistByLoginName($loginName) {
+    	$sql = "select count(*) from user where loginName = '$loginName'";
+    	$res = $this->db->query($sql);
+    	$res = $res->result_array();
+    	return $res[0]['count(*)'] == 1 ? true : false;
+    }
+    
+    /**
+     * 通过用户的 phoneNum 判断一个用户是否存在
+     *
+     * @param string $phoneNum 用户的登录名
+     * @return boolean 如果用户存在，返回 true，否则返回 false
+     */
+    public function isUserExistByPhone($phoneNum) {
+    	$sql = "select count(*) from user where phone = '$phoneNum'";
+    	$res = $this->db->query($sql);
+    	$res = $res->result_array();
+    	return $res[0]['count(*)'] == 1 ? true : false;
+    }
+    
+    /**
+     * 通过用户的登录名查询一个用户的 id 号
+     * @param string $loginName 用户的登录名（已经确认了登录名字存在）
+     * @return int
+     */
+    public function getUserIdByLoginName($loginName) {
+        $sql = "select id from user where loginName = '$loginName'";
         $res = $this->db->query($sql);
-        return $this->getArray($res->result_array());//感觉这个也是毫无道理，
+        $res = $res->result_array();
+        return $res[0]['id'];
     }
 
     /**
