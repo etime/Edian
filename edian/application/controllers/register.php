@@ -76,14 +76,6 @@ class Register extends CI_Controller {
     	return false;
     }
 
-    private function _checkPassword($password, $url, $urlName) {
-    	if (strlen($password) < 6 || $password > 20) {
-    		$this->_errorJump('您输入的密码长度不合法，请重新输入', $url, $urlName);
-    		return false;
-    	}
-    	return true;
-    }
-
     /**
      * 检测 loginName 的合法性和唯一性，供 ajax 和内部检查调用
      *
@@ -171,22 +163,26 @@ class Register extends CI_Controller {
      * 发送短信验证码，供 ajax 调用
      * 我的错，做出如下约定：
      * 错误代码：
-     * -1 : 两次短信发送的时间间隔小于 30 秒
-     *  0 : 短信发送
+     * -1               : 两次调用短信发送函数的时间间隔小于 30 秒
+     * -2               : 手机号码格式不正确
+     *  0               : 手机验证码发送出现意外情况，记录在 wrong 信息中
+     *  长度为 4 的数字串  : 短信发送成功，这个数字串是发送的短信验证码
+     *  上面的约定可以讨论，这只是一个临时版本
      */
-    function smsSend() {
+    public function smsSend() {
         $curTime = time();
         $lstTime = $this->session->userdata("lstTime");
         if ($lstTime != '' || $curTime - $lstTime < 30) {
+        	$this->session->set_userdata('lstTime', $curTime);
             echo '-1';
-            return false;
+            return;
         }
         $this->session->set_userdata('lstTime', $curTime);
         $phoneNum = $_GET['phoneNum'];
         // 检查手机号码格式是否正确
         if (!preg_match("/^1[\d]{10}$/", $phoneNum)) {
-            echo 'error';
-            return false;
+            echo '-2';
+            return;
         }
         // 生成四位短信验证码
         $phoneCheck = '';
@@ -203,18 +199,18 @@ class Register extends CI_Controller {
             echo 0;
             return;
         }
-        echo $phoneCheck;
     }
 
     /**
-     * 注册页面的后台处理函数
+     * 商家注册页面的后台处理函数
+     * 包括各种检测，基本的顺序是对照着注册表，一个一个检测，先判断必备信息是否填写，再从上往下的判断每个信息的合法性和唯一信息的唯一性
      */
     public function bossRegisterCheck() {
         $url = site_url('register/bossRegister');
         $urlName = '商家注册';
 
         // 检测客户端是否频繁注册
-        //if (! $this->_checkRegisterTimes($url, $urlName)) return;
+        if (! $this->_checkRegisterTimes($url, $urlName)) return;
 
         $data['loginName']  = $this->input->post('loginName');
         $data['nickname']   = $this->input->post('nickname');
@@ -230,7 +226,8 @@ class Register extends CI_Controller {
         if ($this->_isInputNull($data['password'], '请输入密码', $url, $urlName)) return;
         if ($this->_isInputNull($data['confirm'], '请确认您的密码', $url, $urlName)) return;
         if ($this->_isInputNull($data['phoneNum'], '请输入手机号码', $url, $urlName)) return;
-        if ($this->_isInputNull($data['checkNum'], '请输入验证码', $url, $urlName)) return;
+        // 暂时关闭短信验证码的功能
+        //if ($this->_isInputNull($data['checkNum'], '请输入验证码', $url, $urlName)) return;
         
         // 检测登录名的合法性和唯一性
         if (! $this->checkLoginName($data['loginName'], $url, $urlName)) return;
@@ -257,29 +254,34 @@ class Register extends CI_Controller {
         // 检测手机的合法性和唯一性
         if (! $this->checkPhoneNum($data['phoneNum'], $url, $urlName)) return;
         
+        /* 暂时关闭短信验证功能
+
         // 检测输入的短信验证码是否相符
 		if ($data["checkNum"] != $this->session->userdata("phoneCheck")) {
 			$this->_errorJump('请输入正确的短信验证码', $url, $urlName);
+			return;
 		}
+		
+		*/
         
-        // 检测输入的邮箱格式是否合法
-        if ($data['email'] != '' && preg_match("/^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(\.[a-zA-Z0-9_-])+$/", $data['email'])) {
+        // 检测输入的邮箱格式是否合法 "/^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(\.[a-zA-Z0-9_-])+$/"
+        if ($data['email'] != '' && ! preg_match("/^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+.([a-zA-Z0-9_-])+$/", $data['email'])) {
             $this->_errorJump('请输入正确的邮箱格式', $url, $urlName);
             return;
         }
-		
+        
         // 通过了以上的检验，用户的输入已经合法能够注册了，先设置用户的权限
         $this->load->config("edian");
         $data['credit'] = $this->config->item("bossCredit");
-
+        
         // 对密码进行转义，防止攻击
         $data['password'] = mysql_real_escape_string($data['password']);
-
+        
         $this->user->addUser($data);
         $this->boss->addBoss($data);
-//         $this->session->set_userdata('userId', $this->user->getUserIdByLoginName($data['loginName']));
-
-        // 跳转到商店设置的主页面
+        $this->session->set_userdata('userId', $this->user->getUserIdByLoginName($data['loginName']));
+        
+        // 跳转到商店设置的主页面，目前为止，商店后台管理的首页还存在问题
         $this->errorJump('恭喜！您已经成功注册！', site_url('bg/home'), '首页');
     }
 
