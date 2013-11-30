@@ -52,7 +52,7 @@ class Register extends CI_Controller {
      */
     private function _isInputNull($val, $content, $url, $urlName) {
         if ($val != '') return false;
-        $this->errorJump($content, $url, $urlName);
+        $this->_errorJump($content, $url, $urlName);
         return true;
     }
 
@@ -61,12 +61,12 @@ class Register extends CI_Controller {
      * @return boolean
      */
     private function _checkRegisterTimes($url = '', $urlName = '') {
-    	$cnt = $this->session->userdata("cnt");
-    	if ($cnt == '') {
+    	$cnt = $this->session->userdata('cnt');
+    	if ($cnt == false) {
     		$this->session->set_userdata("cnt", 4);
     		return true;
     	} else if ($cnt === 0) {
-    		$this->errorJump('您的注册次数太频繁，请稍候再试', $url, $urlName);
+    		$this->_errorJump('您的注册次数太频繁，请稍候再试', $url, $urlName);
     		$this->mwrong->insert("有人注册了五次，现在默认禁止再注册，其输入内容为loginName = ".$data["loginName"].",phoneNum = ".$data["phoneNum"]);
     		return false;
     	} else {
@@ -94,7 +94,7 @@ class Register extends CI_Controller {
         if ($loginName == false) {
         	$loginName = @$_GET["loginName"];
         }
-
+        
         // 判断用户输入的登录名是否含有非法字符
         if (preg_match("/[~!@#$%^&*()_+`\\=\\|\\{\\}:\\\">\\?<\\[\\];',\/\\.\\-\\\\]/", $loginName)) {
             if (isset($_SERVER["HTTP_X_REQUESTED_WITH"]) && strtolower($_SERVER["HTTP_X_REQUESTED_WITH"]) == 'xmlhttprequest') {
@@ -104,24 +104,24 @@ class Register extends CI_Controller {
             }
             return false;
         }
-
+        
         // 判断 loginName 是否为长度为 [1, 20] 的字符串
         if (strlen($loginName) == 0 || strlen($loginName) > 20) {
         	if (isset($_SERVER["HTTP_X_REQUESTED_WITH"]) && strtolower($_SERVER["HTTP_X_REQUESTED_WITH"]) == 'xmlhttprequest') {
         		echo "false";
         	} else {
-        		$this->errorJump('您输入的用户名长度不合法，请重新输入', $url, $urlName);
+        		$this->_errorJump('您输入的用户名长度不合法，请重新输入', $url, $urlName);
         	}
         	return false;
         }
-
+        
         // 判断用户的登录名是否已经存在
         $ans = $this->user->isUserExistByLoginName($loginName);
         if ($ans) {
         	if (isset($_SERVER["HTTP_X_REQUESTED_WITH"]) && strtolower($_SERVER["HTTP_X_REQUESTED_WITH"]) == 'xmlhttprequest') {
         		echo "false";
         	} else {
-        		$this->errorJump('您输入的用户名已经存在，请重新输入', $url, $urlName);
+        		$this->_errorJump('您输入的用户名已经存在，请重新输入', $url, $urlName);
         	}
         	return false;
         }
@@ -146,7 +146,7 @@ class Register extends CI_Controller {
         	if (isset($_SERVER["HTTP_X_REQUESTED_WITH"]) && strtolower($_SERVER["HTTP_X_REQUESTED_WITH"]) == 'xmlhttprequest') {
         		echo "false";
         	} else {
-        		$this->errorJump('您输入的手机号码格式非法，请重新输入', $url, $urlName);
+        		$this->_errorJump('您输入的手机号码格式非法，请重新输入', $url, $urlName);
         	}
         	return false;
         }
@@ -157,7 +157,7 @@ class Register extends CI_Controller {
         	if (isset($_SERVER["HTTP_X_REQUESTED_WITH"]) && strtolower($_SERVER["HTTP_X_REQUESTED_WITH"]) == 'xmlhttprequest') {
         		echo "false";
         	} else {
-        		$this->errorJump('您输入的手机号码已被注册，请重新输入', $url, $urlName);
+        		$this->_errorJump('您输入的手机号码已被注册，请重新输入', $url, $urlName);
         	}
         	return false;
         }
@@ -169,15 +169,16 @@ class Register extends CI_Controller {
 
     /**
      * 发送短信验证码，供 ajax 调用
-     *  unasm :下面的too often
-     *  和error之类的让我怎么处理嘛，既不能直接呈现给用户，也不能判别，
-     *  要不给我完成的话，要不给我错误的编号，
+     * 我的错，做出如下约定：
+     * 错误代码：
+     * -1 : 两次短信发送的时间间隔小于 30 秒
+     *  0 : 短信发送
      */
     function smsSend() {
         $curTime = time();
         $lstTime = $this->session->userdata("lstTime");
         if ($lstTime != '' || $curTime - $lstTime < 30) {
-            echo 'too often';
+            echo '-1';
             return false;
         }
         $this->session->set_userdata('lstTime', $curTime);
@@ -209,19 +210,19 @@ class Register extends CI_Controller {
      * 注册页面的后台处理函数
      */
     public function bossRegisterCheck() {
-        $url = site_url() . '/register/bossRegister';
-        $urlName = '老板注册页面';
+        $url = site_url('register/bossRegister');
+        $urlName = '商家注册';
 
         // 检测客户端是否频繁注册
-        if (! $this->_checkRegisterTimes($url, $urlName)) return;
+        //if (! $this->_checkRegisterTimes($url, $urlName)) return;
 
         $data['loginName']  = $this->input->post('loginName');
         $data['nickname']   = $this->input->post('nickname');
         $data['password']   = $this->input->post('password');
-        $data['confirm']    = $this->input->post('confirm');
-        $data['email']      = $this->input->post('email');
+        $data['confirm']    = $this->input->post('confirm');        
         $data['phoneNum']   = $this->input->post('phoneNum');
         $data['checkNum']   = $this->input->post('checkNum');
+        $data['email']      = $this->input->post('email');
 
         // 检测必选输入是否为空
         if ($this->_isInputNull($data['loginName'], '请输入登录名', $url, $urlName)) return;
@@ -230,27 +231,44 @@ class Register extends CI_Controller {
         if ($this->_isInputNull($data['confirm'], '请确认您的密码', $url, $urlName)) return;
         if ($this->_isInputNull($data['phoneNum'], '请输入手机号码', $url, $urlName)) return;
         if ($this->_isInputNull($data['checkNum'], '请输入验证码', $url, $urlName)) return;
-
-        // 检测输入的短信验证码是否相符
-        if ($data["checkNum"] != $this->session->userdata("phoneCheck")) {
-            $this->_errorJump('请输入正确的短信验证码', $url, $urlName);
+        
+        // 检测登录名的合法性和唯一性
+        if (! $this->checkLoginName($data['loginName'], $url, $urlName)) return;
+        
+        // 检测姓名输入是否合法
+        if (strlen($data['nickname'] > 10)) {
+        	$this->_errorJump('姓名不要超过 10 个字，如果实在太长，请用昵称取代', $url, $urlName);
+        	return;
         }
-
-        // 检测手机号码和登录名
-        if (!$this->checkLoginName($data['loginName'], $url, $urlName)) return;
-        if (!$this->checkPhoneNum($data['phoneNum'], $url, $urlName)) return;
-
+        
+        $len = strlen($data['password']);
+        // 检测密码的合法性
+        if ($len < 6 || $len > 20) {
+        	$this->_errorJump('请输入正确长度的密码', $url, $urlName);
+        	return;
+        }
+        
+        // 检测密码和确认密码是否一致
+        if ($data['password'] != $data['confirm']) {
+        	$this->_errorJump('您两次输入的密码不一致', $url, $urlName);
+        	return;
+        }
+        
+        // 检测手机的合法性和唯一性
+        if (! $this->checkPhoneNum($data['phoneNum'], $url, $urlName)) return;
+        
+        // 检测输入的短信验证码是否相符
+		if ($data["checkNum"] != $this->session->userdata("phoneCheck")) {
+			$this->_errorJump('请输入正确的短信验证码', $url, $urlName);
+		}
+        
         // 检测输入的邮箱格式是否合法
         if ($data['email'] != '' && preg_match("/^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(\.[a-zA-Z0-9_-])+$/", $data['email'])) {
             $this->_errorJump('请输入正确的邮箱格式', $url, $urlName);
             return;
         }
-
-        // 检测姓名输入是否合法
-        if (strlen($data['nickname'] > 10)) {
-            $this->errorJump('姓名不要超过 10 个字，如果实在太长，请用昵称取代', $url, $urlName);
-            return;
-        }
+		
+        // 通过了以上的检验，用户的输入已经合法能够注册了，先设置用户的权限
         $this->load->config("edian");
         $data['credit'] = $this->config->item("bossCredit");
 
@@ -259,8 +277,7 @@ class Register extends CI_Controller {
 
         $this->user->addUser($data);
         $this->boss->addBoss($data);
-
-        $this->session->set_userdata('userId', $this->user->getUserIdByLoginName($data['loginName']));
+//         $this->session->set_userdata('userId', $this->user->getUserIdByLoginName($data['loginName']));
 
         // 跳转到商店设置的主页面
         $this->errorJump('恭喜！您已经成功注册！', site_url('bg/home'), '首页');
