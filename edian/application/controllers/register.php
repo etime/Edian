@@ -1,19 +1,9 @@
 <?php
 /**
  * 处理所有注册有关的操作
- * unasm 2013-11-28 18:57:03
- * 1:虽然看起来public和protected没有什么区别，但是如果从用户的角度来说，是有的，
- * 每一个public都可以通过服务器链接找到，但是protected却不能通过访问读取到
- * 所以根据最小权限法则，如果不是和用户交互的接口的话，还是尽量使用protected
- * 2:写一个登录的东西
- * 3:注册完成之后，应该有一个对用户信息的初始化的
- * 4:问题太多了,一点一点处理把
- *
- * change:经所有的
  * @since   2013-11-25 22:43:21
  * @author  farmerjian
  * @package controller
- *
  */
 class Register extends CI_Controller {
     /**
@@ -277,8 +267,14 @@ class Register extends CI_Controller {
         // 对密码进行转义，防止攻击
         $data['password'] = mysql_real_escape_string($data['password']);
         
+        // 删除 session 中的 lstTime 信息，减小 session 的开销
+        $this->session->unset_userdata('lstTime');
+        
+        // 向数据表中添加相应的信息
         $this->user->addUser($data);
         $this->boss->addBoss($data);
+        
+        // 存储用户的 usrId，便于检验用户是否登录及一系列和登录用户有关的信息
         $this->session->set_userdata('userId', $this->user->getUserIdByLoginName($data['loginName']));
         
         // 跳转到商店设置的主页面，目前为止，商店后台管理的首页还存在问题
