@@ -86,8 +86,6 @@
     <script type="text/javascript" src="http://api.map.baidu.com/api?v=1.5&ak=672fb383152ac1625e0b49690797918d"></script>
 -->
 </body>
-<!--
 <script type="text/javascript" src = "<?php echo $baseUrl.('js/jquery.js')?>"> </script>
 <script type="text/javascript" src = "<?php echo $baseUrl.('js/bossReg.js')?>"></script>
- -->
 </html>

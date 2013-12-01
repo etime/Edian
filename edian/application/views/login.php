@@ -35,7 +35,7 @@
 </head>
 <body>
 	<h1>E点，悠闲生活</h1>
-	<form id = "ent" action="<?php echo $siteUrl.('/login/checkLogin')?>" method="post" accept-charset="utf-8" >
+	<form id = "ent" action="<?php echo $siteUrl.('/login/loginCheck')?>" method="post" accept-charset="utf-8" >
 		<p>用户名:<input type="text"  class = "valTog" name="userName" id = "userName"></p>
 		<p>密码:<input type="password" class = "valTog"  name="password" id = "passwd"></p>
 		<input  class = "butCol  et" type="submit" name="enter" value="登录"/>

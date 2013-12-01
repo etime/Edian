@@ -17,8 +17,12 @@ class Login extends CI_Controller {
 	 * @return boolean
 	 */
 	private function _isLoginName($userName) {
-		if (preg_match("/[~!@#$%^&*()_+`\\=\\|\\{\\}:\\\">\\?<\\[\\];',\/\\.\\-\\\\]/", $userName)) return true;
-		else return false;
+		if (preg_match("/[~!@#$%^&*()_+`\\=\\|\\{\\}:\\\">\\?<\\[\\];',\/\\.\\-\\\\]/", $userName)) {
+			return false;
+		}
+		else {
+			return true;
+		}
 	}
 	
 	/**
@@ -27,8 +31,11 @@ class Login extends CI_Controller {
 	 * @return boolean
 	 */
 	private function _isPhoneNum($userName) {
-		if (preg_match("/^1[\d]{10}$/", $userName)) return true;
-		else return false;
+		if (preg_match("/^1[\d]{10,10}$/", $userName)) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 	/**
@@ -49,7 +56,8 @@ class Login extends CI_Controller {
 			$ans = false;
 		}
 		
-		if ($this->_isPhoneNum($userName)) {
+		// 对用户的 userName 进行分类讨论
+		if ($this->_isPhoneNum($userName) == true) {
 			if (! $this->user->isUserExistByPhone($userName)) {
 				// 用户不存在
 				$ans = false;
@@ -60,7 +68,7 @@ class Login extends CI_Controller {
 					$ans = false;
 				}
 			}
-		} else if ($this->_isLoginName($userName)) {
+		} else if ($this->_isLoginName($userName) == true) {
 			if (! $this->user->isUserExistByLoginName($userName)) {
 				// 用户不存在
 				$ans = false;
@@ -107,9 +115,11 @@ class Login extends CI_Controller {
 			else if ($this->_isPhoneNum($userName)) {
 				$this->sesion->set_userdata('userId', $this->user->getuserIdByPhone($userName));
 			}
+			echo 'You are now login !' . '<br>';
 			$this->load->view("'$url'");
 		} else {
 			// 用户登录失败
+			echo 'Login failed !' . '<br>';
 			$this->load->view("'$url'");
 		}
 	}

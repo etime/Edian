@@ -95,7 +95,7 @@ class User extends CI_Model {
      * @return int
      */
     public function getuserIdByPhone($phoneNum) {
-    	$sql = "select id from user where phoneNum = '$phoneNum'";
+    	$sql = "select id from user where phone = '$phoneNum'";
     	$res = $this->db->query($sql);
     	$res = $res->result_array();
     	return $res[0]['id'];
@@ -119,7 +119,7 @@ class User extends CI_Model {
 	 * @return string  用户手机号码对应的密码
 	 */
 	public function getUserPasswordByPhone($phoneNum) {
-		$sql = "select password from user where phoneNum = '$phoneNum'";
+		$sql = "select password from user where phone = '$phoneNum'";
 		$res = $this->db->query($sql);
 		$res = $res->result_array();
 		return $res[0]['password'];
