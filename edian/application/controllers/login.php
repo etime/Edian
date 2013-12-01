@@ -8,44 +8,119 @@ class Login extends CI_Controller {
 	function __construct() {
 		parent::__construct();
 		$this->load->model('user');
-		$this->load->model('boss');
 		$this->load->model('mwrong');
 	}
 	
 	/**
-	 * 用户登录的管理窗口，验证是否一致，供外界调用的接口
-	 * @todo 用户登录名与密码匹配的时候，完成登录后跳转到哪个页面，在函数的最后 $this->load-view('') 中添加
+	 * 检测用户的登录名是否是 loginName
+	 * @param string $userName
+	 * @return boolean
 	 */
-	public function checkLogin() {
-		$val = $this->input->post('val');
-		$password = $this->input->post('password');
-		// 输入不能为空
-		if ($val == '' || $password == '') {
-			echo 'false';
-			return;
+	private function _isLoginName($userName) {
+		if (preg_match("/[~!@#$%^&*()_+`\\=\\|\\{\\}:\\\">\\?<\\[\\];',\/\\.\\-\\\\]/", $userName)) {
+			return false;
 		}
-		// 当用户的输入是 phoneNum 时
-		if (preg_match("/^1[\d]{10}$/", $val)) {
-			$ans = $this->user->getUserByEmail($val);
-		}
-		// 当用户的是如是 loginName 时
-		else if (preg_match("/[~!@#$%^&*()_+`-={}:\">?<\[\];',./|\\]/", $val)) {
-			$ans = $this->user->getUserByLoginName($val);
-		}
-		// 其他情况
 		else {
-			echo 'false';
-			return;
+			return true;
+		}
+	}
+	
+	/**
+	 * 检测用户的登录名是否是 phoneNum
+	 * @param string $userName
+	 * @return boolean
+	 */
+	private function _isPhoneNum($userName) {
+		if (preg_match("/^1[\d]{10,10}$/", $userName)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	/**
+	 * 用于用户登录的各种检测，供 ajax 和内部调用
+	 * 我是这样想的，不管用户登录出现什么样的错误，只返回一个错误信息：您的登录名和密码不匹配
+	 */
+	public function checkMatch($userName = false, $password = '') {
+		if ($userName == false) {
+			$userName = $this->input->post('userName');
+			$password = $this->input->post('password');
 		}
 		
-		if (count($ans) == 0 || $ans['password'] != $password) {
-			echo 'false';
-			return;
+		// 先假定用户的登录情况合法
+		$ans = true;
+		
+		// 输入不能为空
+		if ($userName == '' || $password == '') {
+			$ans = false;
 		}
-		else {
-			echo 'true';
-			$this->load->view('');
-			return;
+		
+		// 对用户的 userName 进行分类讨论
+		if ($this->_isPhoneNum($userName) == true) {
+			if (! $this->user->isUserExistByPhone($userName)) {
+				// 用户不存在
+				$ans = false;
+			} else {
+				$expectPassword = $this->user->getUserPasswordByPhone($userName);
+				// 用户输入密码与其登陆密码不符
+				if ($password != $expectPassword) {
+					$ans = false;
+				}
+			}
+		} else if ($this->_isLoginName($userName) == true) {
+			if (! $this->user->isUserExistByLoginName($userName)) {
+				// 用户不存在
+				$ans = false;
+			} else {
+				$expectPassword = $this->user->getUserPasswordByLoginName($userName);
+				// 用户输入密码与其登陆密码不符
+				if ($password != $expectPassword) {
+					$ans = false;
+				}
+			}
+		} else {
+			// $loginName 是其他情况
+			$ans = false;
+		}
+		
+		if (! $ans) {
+			if (isset($_SERVER["HTTP_X_REQUESTED_WITH"]) && strtolower($_SERVER["HTTP_X_REQUESTED_WITH"]) == 'xmlhttprequest') {
+				echo "false";
+			} else {
+				return false;
+			}
+		} else {
+			if (isset($_SERVER["HTTP_X_REQUESTED_WITH"]) && strtolower($_SERVER["HTTP_X_REQUESTED_WITH"]) == 'xmlhttprequest') {
+				echo "true";
+			} else {
+				return true;
+			}
+		}
+	}
+	
+	/**
+	 * 处理用户登录的情况，是 view 中 action 的接口
+	 * 如果用户登录成功，记录其 userId 到 session 中并返回最近浏览页面，否则直接返回最近浏览页面
+	 */
+	public function loginCheck() { 
+		$userName = $this->input->post('userName');
+		$password = $this->input->post('password');
+		$url = $this->input->post('url');
+		if ($this->checkMatch($userName, $password)) {
+			// 用户登录成功，只可能是两种情况：loginName 登录和 phoneNum 登录
+			if ($this->_isLoginName($userName)) {
+				$this->session->set_userdata('userId', $this->user->getUserIdByLoginName($userName));
+			}
+			else if ($this->_isPhoneNum($userName)) {
+				$this->sesion->set_userdata('userId', $this->user->getuserIdByPhone($userName));
+			}
+			echo 'You are now login !' . '<br>';
+			$this->load->view("'$url'");
+		} else {
+			// 用户登录失败
+			echo 'Login failed !' . '<br>';
+			$this->load->view("'$url'");
 		}
 	}
 	
@@ -53,7 +128,7 @@ class Login extends CI_Controller {
 	 * 用于向外界提供访问的登录页面
 	 */
 	public function userlogin() {
-		$this->load->view('');
+		$this->load->view('login');
 	}
 }
 ?>

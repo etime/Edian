@@ -50,18 +50,6 @@ class User extends CI_Model {
         }
         return false;
     }
-
-    /**
-     * 通过电话号码查询一个用户是否存在，如果存在，返回这个用户的所有信息，如果不在，返回 false
-     *
-     * @param string $phone 待查询的电话号码
-     * @return array | boolean
-     */
-    public function getUserByPhone($phone) {
-        $sql = "select * from user where phone = '$phone'";
-        $res = $this->db->query($sql);
-        return $this->getArray($res->result_array());
-    }
     
     /**
      * 通过用户的 loginName 判断一个用户是否存在
@@ -100,18 +88,43 @@ class User extends CI_Model {
         $res = $res->result_array();
         return $res[0]['id'];
     }
-
+    
     /**
-     * 通过用户的邮箱查询一个用户是否存在，如果存在，返回这个用户的所有信息，如果不在，返回 false
-     * @param string $email
-     * @return array | boolean;
+     * 通过用户的电话号码查询其 id
+     * @param string $phoneNum
+     * @return int
      */
-    public function getUserByEmail($email) {
-        $sql = "select * from user where email = '$email'";
-        $res = $this->db->query($sql);
-        return $this->getArray($res->result_array());
+    public function getuserIdByPhone($phoneNum) {
+    	$sql = "select id from user where phone = '$phoneNum'";
+    	$res = $this->db->query($sql);
+    	$res = $res->result_array();
+    	return $res[0]['id'];
     }
-
+    
+    /**
+     * 通过用户的登录名查询该用户的 password
+     * @param string $loginName 用户的登录名
+     * @return string 用户登录名对应的密码
+     */
+	public function getUserPasswordByLoginName($loginName) {
+		$sql = "select password from user where loginName = '$loginName'";
+		$res = $this->db->query($sql);
+		$res = $res->result_array();
+		return $res[0]['password'];
+	}
+	
+	/**
+	 * 通过用户的手机号码查询该用户的 password
+	 * @param string $phoneNum  用户的手机号码
+	 * @return string  用户手机号码对应的密码
+	 */
+	public function getUserPasswordByPhone($phoneNum) {
+		$sql = "select password from user where phone = '$phoneNum'";
+		$res = $this->db->query($sql);
+		$res = $res->result_array();
+		return $res[0]['password'];
+	}
+	
     /**
      * 向 user 表中新增加一个用户
      * @param array $data
