@@ -19,63 +19,73 @@
 <body class = "clearfix">
     <div id="content" class="contSpace">
         <form action="<?php echo $siteUrl.('/write/bgAdd')?>" method="post" enctype = "multipart/form-data" accept-charset = "utf-8">
-            <p class = "col part" id = "part">
-                    <span class = "item">类别<span class = "X">*</span>:</span>
-<?php
-    $count = 1;
-?>
-<!--js控制选择-->
-            <?php foreach ($dir as $key => $value):?>
-                <input type="radio" name="part" value="<?php echo $key ?>" <?php if($userType == 2){ if($key == "二手交易") echo "checked='ehecked'"; else echo "disabled";}else if($key == "食品") echo "checked='checked'"?>/><span><?php echo $key?></span>
-            <?php endforeach?>
-                <input type="radio" name="part" value="其他" <?php if($userType == 2) echo "disabled"?>/><span>其他</span>
+            <div class = "part">
+                <p class = "col" id = "part">
+                        <span class = "item">全站类别<span class = "X">*</span>:</span>
+                    <?php
+                        $count = 1;
+                        $category = array(
+                            "苹果","香蕉","梨子"
+                        )
+                    ?>
+                    <!--js控制选择-->
+                    <?php foreach ($dir as $key => $value):?>
+                        <input type="radio" name="part" value="<?php echo $key ?>" <?php if($userType == 2){ if($key == "二手交易") echo "checked='ehecked'"; else echo "disabled";}else if($key == "食品") echo "checked='checked'"?>/><span><?php echo $key?></span>
+                    <?php endforeach?>
+                        <input type="radio" name="part" value="其他" <?php if($userType == 2) echo "disabled"?>/><span>其他</span>
+                </p>
+            </div>
+            <p class = "col">
+                <span class = "item">本店分类<span class = "X">*</span>:</span>
+                <?php foreach ($category as $value):?>
+                    <input type = "radio" name = "category" value = "<?php echo $value?>" >
+                    <span>
+                        <?php echo $value;?>
+                    </span>
+                <?php endforeach?>
             </p>
             <p class = "col">
-                <span class = "item">商品价格<span>*</span>:(元)</span><input type="text" name="price" class = "price" id = "price" /><span id = "patten"></span>
+                <span class = "item">商品价格
+                    <span>*</span>:
+                </span>
+                <input type="text" name="price" class = "price" id = "price" />
+                <span>(元)</span>
                 <span class = "item" style = "display:none">促销价格:(元)</span><input type="hidden" name="sale" id = "sale"  class = "price"/><span id = "patten"></span>
             </p>
-<!--
             <p  class = "col">
                 <span class = "item">商品主图<span>*</span>:</span><input type="file" name="userfile" size = "14"/>
                 <span id = "imgAtten">请用800*800以下图片,超过标准会压缩</span>
             </p>
--->
             <p class = "col">
-                <span class = "item">服务承诺</span>
-                <input type="text" name="promise" id = "promise" class = "title" value = "送货"/>
-            </p>
-            <p class = "label col">
-                <span class = "item">关键词<span>*</span></span>
-                <input type="text" class = "title" name="key" id = "key" value="明天 美好，世界"/>
-                <label for="key">查找更准确,请空格断开如:水果 苹果 青苹果 送货</span></label>
-            </p>
-            <p class = "col"><span class = "item">商品属性:</span><span>可以在下面灰色框添加至多两组属性,如颜色,重量,规格,口味等，右边添加黄色,绿色,或者是选用图片 </span></p>
-            <table  id = "pro" class = "pro" border = "1">
-                <tr  class="proBl clearfix">
-                    <td class = "proK">
-                        <input type = "text" name = "proKey" placeholder = "颜色尺寸等属性名称" >
-                    </td>
-                    <td class = "proVal">
-                        <table >
-                        <!--将来添加js禁止标点哦-->
-                            <tr>
-                                <td>
-                                    <input type = "text" name = "proVal" class = "liVal" placeholder = "红色XL等属性值">
-                                </td>
-                                <td>
-                                    <a class = "choseImg" href = "javascript:javascript">选择图片</a>
-                                </td>
-                                <td>
-                                    <a class = "uploadImg" href = "javascript:javascript">上传图片</a>
-                                </td>
-                                <td>
-                                    <img class = "chosedImg" src = ""/>
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
-                </tr>
-            </table>
+                <span class = "item">商品属性:</span>
+                <span>可以在下面灰色框添加至多两组属性,如颜色,重量,规格,口味等，右边添加黄色,绿色,或者是选用图片 </span>
+                </p>
+                <table  id = "pro" class = "pro" border = "1">
+                    <tr  class="proBl clearfix">
+                        <td class = "proK">
+                            <input type = "text" name = "proKey" placeholder = "颜色尺寸等属性名称" >
+                        </td>
+                        <td class = "proVal">
+                            <table >
+                            <!--将来添加js禁止标点哦-->
+                                <tr>
+                                    <td>
+                                        <input type = "text" name = "proVal" class = "liVal" placeholder = "红色XL等属性值">
+                                    </td>
+                                    <td>
+                                        <a class = "choseImg" href = "javascript:javascript">选择图片</a>
+                                    </td>
+                                    <td>
+                                        <a class = "uploadImg" href = "javascript:javascript">上传图片</a>
+                                    </td>
+                                    <td>
+                                        <img class = "chosedImg" src = ""/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
             <!--下面两个div  是为了上传图片准备的，一个是选择，一个是上传-->
             <div id = "ifc" class = "ifc" style = "display:none">
                 <div >

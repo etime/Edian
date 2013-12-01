@@ -67,10 +67,10 @@ class Home extends MY_Controller{
     }
     /**
      * 传递给 view 的数据包括：
-     *     全局分类列表
-     *     本店的分类列表
-     *     本店上传过的用于描述商品详细信息的图片
-     * 
+     *     全局分类列表:dir
+     *     本店的分类列表:category
+     *     本店上传过的用于描述商品详细信息的图片:img
+     *
      * 由 view 传递回来的信息:
      *     商品名字：title
      *     商品主缩略图：mainThumbnail

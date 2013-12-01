@@ -191,3 +191,9 @@ input[type = "text"]{
 .attrB{
     width:130px;
 }
+.part{
+    border-bottom:1px solid #cfcfcf;
+}
+.part .col{
+    border-bottom:none;
+}

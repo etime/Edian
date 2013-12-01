@@ -55,8 +55,8 @@ function namecheck(){
     $this._bro = null;
     $("input[name = 'nickname']").change(function () {
         var name = $.trim($(this).val());
-        if(name.length > 10){
-            $($this._bro).text("请保持文字在10字以内").addClass("failed").removeClass("success");
+        if(name.length > 20){
+            $($this._bro).text("请保持文字在20字以内").addClass("failed").removeClass("success");
             $this._flag = 1;
         }else  if(name){
             $this._flag = 0;
@@ -64,7 +64,7 @@ function namecheck(){
         }
     }).focus(function () {
         $this._bro = $(this.parentNode).find("span");
-        $($this._bro).text("请输入1-10位中英文字符").removeClass("success").removeClass("failed");
+        $($this._bro).text("请输入1-20位中英文字符").removeClass("success").removeClass("failed");
     });
 }
 /**
@@ -117,7 +117,7 @@ function funPhone(){
         $(this).unbind("keypress");//删除press事件，防止意外
         $this._bro = $(this.parentNode).find("span");
         value = $.trim($(this).val());
-        reg = /^1[\d]{10}$/;
+        var reg = /^1[\d]{10}$/;
         if(reg.exec(value)){
             $this._flag = 1;
             $($this._bro).text("").addClass("success");
@@ -129,7 +129,8 @@ function funPhone(){
         $this._bro = $(this.parentNode).find("span");
         $($this._bro).text("请输入11位手机号码").removeClass("success").removeClass("failed");
         $(this).keypress(function  (event) {
-            if(((event.which<48)||(event.which>57))&&(event.which != 45)){
+            console.log(event.which);
+            if( (event.which<48) || (event.which>57) ){
                 return false;
             }
         })
