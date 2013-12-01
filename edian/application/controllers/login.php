@@ -102,6 +102,7 @@ class Login extends CI_Controller {
     /**
      * 处理用户登录的情况，是 view 中 action 的接口
      * 如果用户登录成功，记录其 userId 到 session 中并返回最近浏览页面，否则直接返回最近浏览页面
+     * @todo 用户登陆失败的返回信息的 style 修饰
      */
     public function loginCheck() {
         $userName = $this->input->post('userName');
@@ -115,10 +116,12 @@ class Login extends CI_Controller {
             else if ($this->_isPhoneNum($userName)) {
                 $this->sesion->set_userdata('userId', $this->user->getuserIdByPhone($userName));
             }
-            //跳转到用户登录之前访问的页面
+            // 跳转到用户登录之前访问的页面
 			header("Location: $url");
         } else {
-            // 用户登录失败
+            // 用户登录失败，返回用户登陆失败的信息，怎么调整这个信息的显示方式，我使用了 span，具体到时候设计稿出来了再修改
+            $message = "<span>用户名或密码错误！</span>";
+            echo $message;
             $this->load->view('login');
         }
     }
