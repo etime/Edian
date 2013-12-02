@@ -150,7 +150,7 @@ class Register extends CI_Controller {
         $data = array();
 
         // 两次发送短信验证码的时间间隔不得小于 30 秒
-        if ($lstTime != '' || $curTime - $lstTime < 30) {
+        if ($lstTime != '' && $curTime - $lstTime < 30) {
             $data['failed'] = '两次短信发送的时间间隔不得小于 30 秒';
             echo(json_encode($data));
             return;
