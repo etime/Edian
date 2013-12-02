@@ -17,37 +17,46 @@
  * @name            sea.php
  * @package         bg_controller
  */
-class Home extends MY_Controller{
-    var $user_id;
-    function __construct(){
+class Home extends MY_Controller {
+    var $userId;
+
+    /**
+     * 构造函数，需要使用的 model 文件有：bghome, user
+     */
+    function __construct() {
         parent::__construct();
         $this->load->model("bghome");
         $this->load->model("user");
-//         $this->user_id = $this->user_id_get();
+        $this->userId = $this->getUserId();
     }
+
     /**
-     * 后台的入口view函数
-     */
-    function index(){
-        if(!$this->user_id){
-            $this->noLogin();
-            return;
-        }
-        $data["type"] = $this->user->getType($this->user_id);
-        $this->load->config("edian");//读取admin和seller对应的配置
-        $data["ADMIN"] = $this->config->item("ADMIN");
-        $data["SELLER"] = $this->config->item("SELLER");
-        $this->load->view("bghome",$data);
-    }
-    /**
-     * 处理没有登录的情况
+     * 如果没有登录，调出登录窗口
      */
     public function noLogin()
     {
         $data["url"] = site_url("bg/home");
-        //redirect(site_url("reg/login/"));
-        $this->load->view("login",$data);
+        $this->load->view("login", $data);
     }
+
+    /**
+     * 后台的入口view函数
+     */
+    function index() {
+        // 如果用户未登录
+        if ($this->userId == -1) {
+            $this->noLogin();
+            return;
+        }
+        $data["type"] = $this->user->getType($this->userId);
+
+        //读取admin和seller对应的配置
+        $this->load->config("edian");
+        $data["ADMIN"] = $this->config->item("ADMIN");
+        $data["SELLER"] = $this->config->item("SELLER");
+        //$this->load->view("bghome",$data);
+    }
+
     /**
      * 商城设置的入口函数
      * 这里是添加商城设置的地方，就是需要，但是又不必在注册时候的信息,
@@ -55,16 +64,16 @@ class Home extends MY_Controller{
      * 具体的操作处理在set 这个php里面
      */
     public function set() {
-			if(!$this->user_id){
-					$this->noLogin();
-					return ;
-			}
-			$data = $this->user->getExtro($this->user_id);//获取之前的类型
-			$data["type"] = $this->user->getType($this->user_id);//获取用户的类型，方便差异化处理
-			$this->load->model("img");
-			$data["show_picture"] = $this->img->select_show_picture($this->user_id);
-			$this->load->view("bgHomeSet",$data);
-    }
+        if($this->userId == -1) {
+            $this->noLogin();
+            return;
+        }
+        $data = $this->user->getExtro($this->userId);//获取之前的类型
+        $data["type"] = $this->user->getType($this->userId);//获取用户的类型，方便差异化处理
+        $this->load->model("img");
+        $data["show_picture"] = $this->img->select_show_picture($this->userId);
+        $this->load->view("bgHomeSet",$data);
+}
     /**
      * 传递给 view 的数据包括：
      *     全局分类列表:dir
@@ -84,15 +93,15 @@ class Home extends MY_Controller{
      *     简要描述：briefInfo
      */
     public function item() {
-//         if(!$this->user_id) {
-//             $this->noLogin();
-//             return;
-//         }
+         if ($this->userId == -1) {
+             $this->noLogin();
+             return;
+         }
         $data['title']="添加商品";
         $data["dir"] = $this->part;
-        $data["userType"] = $this->user->getType($this->user_id);
+        $data["userType"] = $this->user->getType($this->userId);
         $this->load->model("img");
-        $data["img"] = $this->img->getImgName($this->user_id);
+        $data["img"] = $this->img->getImgName($this->userId);
         $this->load->view("mBgItemAdd",$data);
     }
     /**
@@ -100,13 +109,13 @@ class Home extends MY_Controller{
      * @todo 添加分类和搜索
      */
     public function  imglist(){
-        if(!$this->user_id){
+        if(!$this->userId){
             echo "请登录";
             return;
         }
         $this->load->model("img");
         //要不要添加浏览全部图片的设定呢？
-        $data['imgall']=$this->img->userImgAll($this->user_id);
+        $data['imgall']=$this->img->userImgAll($this->userId);
         $this->load->view("m-bg-imglist",$data);
     }
 }

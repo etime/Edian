@@ -1,3 +1,4 @@
+
 <?php
 /**
  * 处理所有注册有关的操作
@@ -114,81 +115,81 @@ class Register extends CI_Controller {
     }
 
     /**
-     * 检验手机号码的合法性和唯一性，供 ajax 和内部检查调用
+     * 检验手机号码的合法性和唯一性
      *
      * @param int $phoneNum 用户将要注册的手机号码
-     * @return boolean 如果该手机号码合法且不存在，返回 true，否则返回 false
+     * @return array 如果该手机号码合法且不存在，返回一个空的数组，否则返回 $ans['failed']
      */
-    public function checkPhoneNum($phoneNum = false, $url = '', $urlName = '') {
-        if ($phoneNum == false) {
-            $phoneNum = @$_GET['phoneNum'];
-        }
+    private function _checkPhoneNum($phoneNum) {
         // 判断用户输入的手机号码是否合法
+        $data = array();
         if (! preg_match("/^1[\d]{10,10}$/", $phoneNum)) {
-            if (isset($_SERVER["HTTP_X_REQUESTED_WITH"]) && strtolower($_SERVER["HTTP_X_REQUESTED_WITH"]) == 'xmlhttprequest') {
-                echo "false";
-            } else {
-                $this->_errorJump('您输入的手机号码格式非法，请重新输入', $url, $urlName);
-            }
-            return false;
+            $data['failed'] = '您输入的手机号码格式非法';
+            return $data;
         }
 
         // 判断用户输入的手机号码是否已经被注册
         $ans = $this->user->isUserExistByPhone($phoneNum);
         if ($ans) {
-            if (isset($_SERVER["HTTP_X_REQUESTED_WITH"]) && strtolower($_SERVER["HTTP_X_REQUESTED_WITH"]) == 'xmlhttprequest') {
-                echo "false";
-            } else {
-                $this->_errorJump('您输入的手机号码已被注册，请重新输入', $url, $urlName);
-            }
-            return false;
+            $data['failed'] = '您输入的手机号码已经被注册';
+            return $data;
         }
-        if (isset($_SERVER["HTTP_X_REQUESTED_WITH"]) && strtolower($_SERVER["HTTP_X_REQUESTED_WITH"]) == 'xmlhttprequest') {
-            echo "true";
-        }
-        return true;
+
+        // 该手机号码合法且未被注册
+        return $data;
     }
 
     /**
      * 发送短信验证码，供 ajax 调用
-     * 我的错，做出如下约定：
-     * 错误代码：
-     * -1               : 两次调用短信发送函数的时间间隔小于 30 秒
-     * -2               : 手机号码格式不正确
-     *  0               : 手机验证码发送出现意外情况，记录在 wrong 信息中
-     *  长度为 4 的数字串  : 短信发送成功，这个数字串是发送的短信验证码
-     *  上面的约定可以讨论，这只是一个临时版本
+     * 如果发送失败，返回一个数组，其中 'failed' 键值对应的信息为发送失败的错误报告，否则，直接返回发送的手机验证码
+     * @todo 开启手机验证码的发送功能
      */
     public function smsSend() {
         $curTime = time();
         $lstTime = $this->session->userdata("lstTime");
+        $data = array();
+
+        // 两次发送短信验证码的时间间隔不得小于 30 秒
         if ($lstTime != '' || $curTime - $lstTime < 30) {
             $this->session->set_userdata('lstTime', $curTime);
-            echo '-1';
+            $data['failed'] = '两次短信发送的时间间隔不得小于 30 秒';
+            echo(json_encode($data));
             return;
         }
         $this->session->set_userdata('lstTime', $curTime);
         $phoneNum = $_GET['phoneNum'];
-        // 检查手机号码格式是否正确
-        if (!preg_match("/^1[\d]{10}$/", $phoneNum)) {
-            echo '-2';
+
+        // 检查手机号码的合法性和唯一性
+        $data = $this->_checkPhoneNum($phoneNum);
+        if (array_key_exists('failed', $data)) {
+            echo(json_encode($data));
             return;
         }
+
         // 生成四位短信验证码
         $phoneCheck = '';
         for ($i = 0; $i < 4; $i ++) {
-            $phoneCheck .= rand(0, 10);
+            //$phoneCheck .= rand(0, 10);
+            $phoneCheck .= 1;
         }
-        $flag = $this->sms->send($phoneCheck, $data['phoneNum']);
-        if ($flag == 1) {
-            $this->session->set_userdata("phoneCheck", $phoneCheck);
-            echo $phoneCheck;
-            return;
-        } else if ($flag == 0) {
-            $this->mwrong->insert("手机号码为" . $phoneNum . "发送出现意外，返回值为:" . $flag);
-            echo 0;
-            return;
-        }
+
+        // 发送伪手机验证码，以后会取消掉的
+        echo($phoneCheck);
+        $this->session->set_userdata("phoneCheck", $phoneCheck);
+        return;
+//        目前先暂时关闭手机验证码发送功能，默认验证码为 1111，以后如果要开启的话，直接将下面的代码去掉注释
+        // 发送短信验证码
+//        $flag = $this->sms->send($phoneCheck, $data['phoneNum']);
+//        if ($flag == 1) {
+//            $this->session->set_userdata("phoneCheck", $phoneCheck);
+//            echo $phoneCheck;
+//            return;
+//        } else if ($flag == 0) {
+//            $this->mwrong->insert("手机号码为" . $phoneNum . "发送出现意外，返回值为:" . $flag);
+//            $data['failed'] = '手机验证码发送遇到意外情况';
+//            echo(json_encode($data));
+//            return;
+//        }
     }
 
     /**
@@ -216,8 +217,7 @@ class Register extends CI_Controller {
         if ($this->_isInputNull($data['password'], '请输入密码', $url, $urlName)) return;
         if ($this->_isInputNull($data['confirm'], '请确认您的密码', $url, $urlName)) return;
         if ($this->_isInputNull($data['phoneNum'], '请输入手机号码', $url, $urlName)) return;
-        // 暂时关闭短信验证码的功能
-        //if ($this->_isInputNull($data['checkNum'], '请输入验证码', $url, $urlName)) return;
+        if ($this->_isInputNull($data['checkNum'], '请输入手机验证码', $url, $urlName)) return;
 
         // 检测登录名的合法性和唯一性
         if (! $this->checkLoginName($data['loginName'], $url, $urlName)) return;
@@ -242,17 +242,17 @@ class Register extends CI_Controller {
         }
 
         // 检测手机的合法性和唯一性
-        if (! $this->checkPhoneNum($data['phoneNum'], $url, $urlName)) return;
-
-        /* 暂时关闭短信验证功能
+        $tmp = $this->_checkPhoneNum($data['phoneNum']);
+        if (array_key_exists('failed', $tmp)) {
+            $this->_errorJump($tmp['failed'], $url, $urlName);
+            return;
+        }
 
         // 检测输入的短信验证码是否相符
         if ($data["checkNum"] != $this->session->userdata("phoneCheck")) {
             $this->_errorJump('请输入正确的短信验证码', $url, $urlName);
             return;
         }
-
-        */
 
         // 检测输入的邮箱格式是否合法 "/^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(\.[a-zA-Z0-9_-])+$/"
         if ($data['email'] != '' && ! preg_match("/^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+.([a-zA-Z0-9_-])+$/", $data['email'])) {
@@ -314,7 +314,7 @@ class Register extends CI_Controller {
 
         // 检测手机号码和登录名
         if (!$this->checkLoginName($data['loginName'], $url, $urlName)) return;
-        if (!$this->checkPhoneNum($data['phoneNum'], $url, $urlName)) return;
+        if (!$this->_checkPhoneNum($data['phoneNum'], $url, $urlName)) return;
 
         $this->load->config("edian");
         $data['credit'] = 0;
