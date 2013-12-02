@@ -151,7 +151,6 @@ class Register extends CI_Controller {
 
         // 两次发送短信验证码的时间间隔不得小于 30 秒
         if ($lstTime != '' || $curTime - $lstTime < 30) {
-            $this->session->set_userdata('lstTime', $curTime);
             $data['failed'] = '两次短信发送的时间间隔不得小于 30 秒';
             echo(json_encode($data));
             return;
@@ -278,7 +277,7 @@ class Register extends CI_Controller {
         $this->session->set_userdata('userId', $this->user->getUserIdByLoginName($data['loginName']));
 
         // 跳转到商店设置的主页面，目前为止，商店后台管理的首页还存在问题
-        $this->errorJump('恭喜！您已经成功注册！', site_url('bg/home'), '首页');
+        $this->_errorJump('恭喜！您已经成功注册！', site_url('bg/home'), '首页');
     }
 
     public function bossRegister() {
@@ -286,48 +285,75 @@ class Register extends CI_Controller {
     }
 
     public function userRegisterCheck() {
-        $url = site_url() . '/register/userRegister';
-        $urlName = '用户注册页面';
+        $url = site_url('register/userRegister');
+        $urlName = '用户注册';
 
         // 检测客户端是否频繁注册
         if (! $this->_checkRegisterTimes($url, $urlName)) return;
 
-        $data['email'] = '';
-        $data['nickname'] = '';
         $data['loginName']  = $this->input->post('loginName');
+        $data['nickname']   = $this->input->post('nickname');
         $data['password']   = $this->input->post('password');
         $data['confirm']    = $this->input->post('confirm');
         $data['phoneNum']   = $this->input->post('phoneNum');
         $data['checkNum']   = $this->input->post('checkNum');
+        $data['email']      = $this->input->post('email');
 
         // 检测必选输入是否为空
         if ($this->_isInputNull($data['loginName'], '请输入登录名', $url, $urlName)) return;
         if ($this->_isInputNull($data['password'], '请输入密码', $url, $urlName)) return;
         if ($this->_isInputNull($data['confirm'], '请确认您的密码', $url, $urlName)) return;
         if ($this->_isInputNull($data['phoneNum'], '请输入手机号码', $url, $urlName)) return;
-        if ($this->_isInputNull($data['checkNum'], '请输入验证码', $url, $urlName)) return;
+        if ($this->_isInputNull($data['checkNum'], '请输入手机验证码', $url, $urlName)) return;
+
+        // 检测登录名的合法性和唯一性
+        if (! $this->checkLoginName($data['loginName'], $url, $urlName)) return;
+
+        $len = strlen($data['password']);
+        // 检测密码的合法性
+        if ($len < 6 || $len > 20) {
+            $this->_errorJump('请输入正确长度的密码', $url, $urlName);
+            return;
+        }
+
+        // 检测密码和确认密码是否一致
+        if ($data['password'] != $data['confirm']) {
+            $this->_errorJump('您两次输入的密码不一致', $url, $urlName);
+            return;
+        }
+
+        // 检测手机的合法性和唯一性
+        $tmp = $this->_checkPhoneNum($data['phoneNum']);
+        if (array_key_exists('failed', $tmp)) {
+            $this->_errorJump($tmp['failed'], $url, $urlName);
+            return;
+        }
 
         // 检测输入的短信验证码是否相符
         if ($data["checkNum"] != $this->session->userdata("phoneCheck")) {
             $this->_errorJump('请输入正确的短信验证码', $url, $urlName);
+            return;
         }
 
-        // 检测手机号码和登录名
-        if (!$this->checkLoginName($data['loginName'], $url, $urlName)) return;
-        if (!$this->_checkPhoneNum($data['phoneNum'], $url, $urlName)) return;
-
+        // 通过了以上的检验，用户的输入已经合法能够注册了，先设置用户的权限
         $this->load->config("edian");
-        $data['credit'] = 0;
+        $data['credit'] = $this->config->item("userCreditMin");
 
         // 对密码进行转义，防止攻击
         $data['password'] = mysql_real_escape_string($data['password']);
 
-        $this->user->addUser($data);
+        // 删除 session 中的 lstTime 信息，减小 session 的开销
+        $this->session->unset_userdata('lstTime');
 
+        // 向数据表中添加相应的信息
+        $this->user->addUser($data);
+        $this->boss->addBoss($data);
+
+        // 存储用户的 usrId，便于检验用户是否登录及一系列和登录用户有关的信息
         $this->session->set_userdata('userId', $this->user->getUserIdByLoginName($data['loginName']));
 
-        // 跳转到最后一次访问的页面
-        $this->errorJump('恭喜！您已经成功注册！', $originUrl, '回到刚才浏览的页面');
+        // 跳转到网站首页
+        $this->_errorJump('恭喜！您已经成功注册！', site_url(), '首页');
     }
 
     public function userRegister() {
