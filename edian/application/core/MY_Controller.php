@@ -14,7 +14,7 @@ class MY_Controller extends  CI_Controller {
         parent::__construct();
         session_start();
         date_default_timezone_set("Asia/Chongqing");
-        $this->load->library("session");
+        //$this->load->library("session");
         $this->adminMail = "1264310280@qq.com";
         //将来这里的先后顺序，就根据商品的多少和点击的多少来决定吧,目前暂定顺序如下,而且，觉得有必要给出二级连接呢,只是商品比较少的时候，就算了吧
         //$this->partMap = array(

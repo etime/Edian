@@ -19,13 +19,11 @@ class Chome extends MY_Controller{
         $data['title'] = $this->mhome->home_title();
         $this->load->view('home',$data);
     }
-<<<<<<< HEAD
-
-   function bubble(){
-=======
-    public function uploadDel()
+   function
+    uploadDel()
     {
-        $user_id = $this->user_id_get();
+        $user_id =
+
         $re = $this->ans_upload();
 				$re['classfication'] = $this->input->post('classfication');
 				$re['key_word'] = $this->input->post('key_word');

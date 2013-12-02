@@ -1,6 +1,6 @@
 var prokey = new  Array(),proans =  new Array();
+//处理禁止输入字符的问题
 function forbid() {
-    //处理禁止输入字符的问题
     $("#pro").delegate("input","keypress",function(event){
         //|{}` & '" = <>=;:  都是不允许输入的
         if(event.which == 96)return false;
@@ -188,26 +188,38 @@ $(document).ready(function  () {
     store();
     funoimgUp();
 })
+/**
+ * 这里是控制分区，全站类别的显示
+ * @param {arr} list 是全站的数组传递 进来的变量
+ */
 function part (list) {
     var part = $("#part"),temp,tempk = null,flag = 0;
+    /**
+     * 当用户点击的时候，根据动作，添加对应的信息
+     */
     part.delegate("input","click",function () {
         var texts = $(this.nextSibling).text();
         getSon(texts);
     })
+    /**
+     * 在刚开始的时候，检验那些已经被选择了
+     */
     $("#part input").each(function  () {
         if(this.checked){
             getSon($(this.nextSibling).text());
         }
     })
+    /**
+     * 得到list数组中当前节点的子元素get son ,添加到dom中
+     */
     function getSon (text) {
+        //清空之前添加的，防止错误
         if(tempk)$("#kk").detach();
-        if (temp)$("#kj").detach();//清空之前添加的，防止错误
+        if (temp)$("#kj").detach();
         $.each(list,function  (key,value) {
             if(key == text){
                 flag = 1;
-                if (temp) {
-                    $("#kj").detach();
-                }
+                if (temp)  $("#kj").detach();
                 temp = "<p id = 'kj'><span class = 'item'>"+text+"</span>";
                 for(var keyj in value){
                     temp+="<input type = 'radio' name = 'keyj' value = "+keyj+"><span>"+keyj+"</span>";
@@ -237,8 +249,8 @@ function part (list) {
         })
     }
 }
-function proAdd () {
     //要禁止输入标点符号
+function proAdd () {
     var pro = $("#pro"),ichose = $("#ichose"),vpar;
     //vpar 目前是指proVal的下一级别table
     var proBl = $(".proBl").clone();
@@ -279,8 +291,11 @@ function proAdd () {
             }
         }
     });
+    /**
+     * 选择图片，choose img
+     * vpar li 就是img和span共同的父亲
+     */
     ichose.delegate("img","click",function(event){
-        //vpar li 就是img和span共同的父亲
         //src = event.srcElement;
         src = $(this).attr("src");
         console.log(src);
@@ -288,26 +303,16 @@ function proAdd () {
         $(vpar).find(".chosedImg").attr("src",src);
         ichose.fadeOut();
     });
-    /*
-     * 好像是没有什么用处
-    $("#storeNum").focus(function(){
-        var val = $(this).val();
-        console.log(val);
-    })
-    */
     $(".close").click(function(){
         //考虑到弹出窗口的结构特点，祖父是弹出的跟节点
         var node = this.parentNode.parentNode;
         $(node).fadeOut();
     })
 }
-function getBroByClass  (node,cla) {
-    //取得兄弟节点,修改同一组的img src
-    var bro = node.nextSibling;
-    console.log(bro);
-}
+/**
+ * 取得iframe中的节点的元素
+ */
 function getElementByIdInFrame(objFrame,idInFrame) {
-    //获得iframe中的元素
     var obj;
     if(objFrame.contentDocument)obj = objFrame.contentDocument.getElementById(idInFrame);
     else if(objFrame.contentWindow) obj = objFrame.contentDocument.getElementById(idInFrame);
@@ -393,6 +398,9 @@ function store() {
         return res;
     }
 }
+/**
+ * 商品的1-6个缩略图
+ */
 function funoimgUp () {
     var reg = /^http\:\/\//;//如果是url的形式，则是图片，否则是文字
     var six = 6,ochose = $("#ochose"),oimg = $("#oimg"),oimgUp = $("#oimgUp");//这些算是个优化了，不用第二次进行dom检索

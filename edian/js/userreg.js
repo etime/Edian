@@ -1,4 +1,4 @@
-var objName,objPasswd,objPhone,objemail,objLoginName ;
+var objPasswd,objPhone,objLoginName ;
 //funpasswd 是检验密码的对象，name是namecheck对象的实例,imgcheck是图片验证码的检验，sms是短信验证码,file上传图片检验和操作,phone 是手机号码检验
 /**
  * login zhj5adf
@@ -46,27 +46,7 @@ function fpasswd(){
         $($this._bro).text("请输入6-20位中英文字符").removeClass("success").removeClass("failed");//.removeClass("success failed");
     });
 }
-/**
- * 真实姓名不能超过一定长度
- */
-function namecheck(){
-    var $this = this;
-    $this._flag = 1;
-    $this._bro = null;
-    $("input[name = 'nickname']").change(function () {
-        var name = $.trim($(this).val());
-        if(name.length > 20){
-            $($this._bro).text("请保持文字在20字以内").addClass("failed").removeClass("success");
-            $this._flag = 1;
-        }else  if(name){
-            $this._flag = 0;
-            $($this._bro).addClass("success").text("");
-        }
-    }).focus(function () {
-        $this._bro = $(this.parentNode).find("span");
-        $($this._bro).text("请输入1-20位中英文字符").removeClass("success").removeClass("failed");
-    });
-}
+
 /**
  * 检测登录名的唯一性和合法性
  * @todo 有待检验get唯一性
@@ -96,6 +76,7 @@ function floginName() {
                 }
                 else{
                     console.log(textStatus);//这种情况改怎么处理呢，向后台报错？
+                    //$.alet("发送失败");
                 }
             })
         }
@@ -111,21 +92,22 @@ function floginName() {
 function funPhone(){
     var $this = this;
     $this._flag = 2;
+    $this._bro = null;
     $("input[name = 'phoneNum']").change(function  () {
         $(this).unbind("keypress");//删除press事件，防止意外
-        //$this._broPhone = $(this.parentNode).find("span");
+        $this._bro = $(this.parentNode).find("span");
         value = $.trim($(this).val());
         var reg = /^1[\d]{10}$/;
         if(reg.exec(value)){
             $this._flag = 1;
-            $($this._broPhone).text("").addClass("success");
+            $($this._bro).text("").addClass("success");
         }else {
             $this._flag = 2;
-            $($this._broPhone).text("请输入正确手机号").addClass("failed");
+            $($this._bro).text("请输入正确手机号").addClass("failed");
         }
     }).focus(function  (event){
-        $this._broPhone = $(this.parentNode).find("span");
-        $($this._broPhone).text("请输入11位手机号码").removeClass("success").removeClass("failed");
+        $this._bro = $(this.parentNode).find("span");
+        $($this._bro).text("请输入11位手机号码").removeClass("success").removeClass("failed");
         $(this).keypress(function  (event) {
             console.log(event.which);
             if( (event.which<48) || (event.which>57) ){
@@ -142,34 +124,30 @@ function funPhone(){
         event.preventDefault();
         var phNum = $.trim($("input[name = 'phoneNum']").val());
         if(smsCnt === 0){
-            $this._broCode = $(this.parentNode).find("span");
-            $($this._broPhone).removeClass("failed").addClass("success");//防止用户change之后，点击phone
-            smsCode = false;
-            smsCnt = 20;
+            $this._bro = $(this.parentNode).find("span");
+            smsCode = false;  //每一次发送，都将smsCode清空
             //应该将检验手机号码的和合格性和验证码放一起，这样如果合适的话，就发送短信，不合适的话，就放弃
-            $.get(site_url + "/register/smssend/" + phNum ,function(data,textStatus){
-                console.log(data);
+            $.get(site_url + "/register/checkPhoneNum/" + phNum ,function(data,textStatus){
                 if(textStatus == "success"){
-                    $($this._broCode).text("")
-                    if("failed" in data){
-                        $($this._broCode).text(data["failed"]).removeClass("success").addClass("failed");
-                    }else{
-                        smsCode = data;
-                    }
+                    $($this._bro).text("")
+                    var tmpCode = parseInt(data);
+                    tmpCode ?( smsCode = tmpCode ): ($($this._bro).text("手机号码错误或您已经注册").removeClass("success").addClass("failed") );
                 }
                 else{
-                    console.log("发送失败");//向后台报告这种错误的情况吧
+                    console.log("发送失败");
+                    //向后台报告这种错误的情况吧
                 }
             })
-            $($this._broCode).removeClass("success").removeClass("failed");
+            smsCnt = 20;
+            $($this._bro).removeClass("success").removeClass("failed");
             interval = setInterval(function () {
                 if(smsCnt=== 0){
-                    $($this._broCode).text("");
+                    $($this._bro).text("");
                     clearInterval(interval);
                     interval = false;
                 }else {
                     smsCnt --;
-                    $($this._broCode).text(smsCnt + "秒后可重新发送");
+                    $($this._bro).text(smsCnt + "秒后可重新发送");
                 }
             },1000)//2s之后，重新发送一次短信验证码
         }
@@ -178,25 +156,22 @@ function funPhone(){
         if(smsCode){
             var phoneCode = $.trim($(this).val());
             if(smsCode == phoneCode){
-                $($this._broCode).text("").addClass("success").removeClass("failed");
+                $($this._bro).text("").addClass("success").removeClass("failed");
                 if(interval) clearInterval( interval );
             }
         }
     })
 }
 /**
- * 修改提示框的状态；
+ * 修改提示框的状态，根据检验结果，确定是不是让提交修改
  */
 $(document).ready(function(){
-    objName   = new  namecheck();
     objPasswd = new fpasswd();
     objPhone  = new funPhone();
     objLoginName = new floginName();
     $("form").submit(function () {
         //在登录之前检验需要输入的东西
-        if(objName._flag != 0){
-            $(objName._bro).text("请输入正确的用户名").addClass("failed").removeClass("success");
-        }else if( objPasswd._flag != 0){
+        if( objPasswd._flag != 0){
             $(objPasswd._bro).text("请检查密码").addClass("failed").removeClass("success");
         }else if( objPhone._flag != 0){
             $(objPhone._bro).text("请输入手机号码").addClass("failed").removeClass("success");

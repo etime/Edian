@@ -87,12 +87,7 @@
                     </tr>
                 </table>
             <!--下面两个div  是为了上传图片准备的，一个是选择，一个是上传-->
-            <div id = "ifc" class = "ifc" style = "display:none">
-                <div >
-                    <a class = "close" href = "javascript:javascript">关闭</a>
-                    <iframe border = "none" id = "uploadImg"  name = "img" src = " <?php echo site_url('chome/upload') ?>"></iframe>
-                </div>
-            </div>
+
             <div id="ichose"  class = "ichose" style = "display:none">
                 <div>
                     <a class = "close" id = "iclose" href = "javascript:javascript">关闭</a>
@@ -122,14 +117,7 @@
             <input type="hidden" name="Img" id="Img" />
             <!--通过js 修改value 所有图片的集合-->
             <input type="hidden" name="attr" id="attr" />
-            <!---->
-           <div id = "oimgUp" style = "display:none" class = "ifc">
-            <!--oimg upload 上传更多的图片使用的-->
-                <div >
-                    <a class = "close" href = "javascript:javascript">关闭</a>
-                    <iframe border = "none" id = "ouploadImg"  name = "img" src = " <?php echo site_url('chome/upload') ?>"></iframe>
-                </div>
-            </div>
+
             <div id="ochose" class = "ichose" style = "display:none">
                 <div>
                     <a class = "close" id = "iclose" href = "javascript:javascript">关闭</a>
@@ -144,7 +132,7 @@
                 <span class = "item">标题<span>*</span></span>
                 <input type="text" name="title" id = "title" class = "title"  value = "物美价廉"/>
                 <label for = "title">请用简短的描述商品,尽量包含名称和特点，尽量50字以内哦</label>
-<!----------------title太差劲了。,学习以下taobao了-------->
+                <!----------------title太差劲了。,学习以下taobao了-------->
             </p>
             <p class = "col"><span class = "item">商品描述<span>*</span>:</span></p>
             <tr id = "tcont">
@@ -153,9 +141,21 @@
          <input type="submit" name = "sub" class = "button" value="发表" />
         </form>
     </div>
+    <div id = "ifc" class = "ifc" style = "display:none">
+        <div >
+            <a class = "close" href = "javascript:javascript">关闭</a>
+            <iframe border = "none" id = "uploadImg"  name = "img" src = " <?php echo site_url('chome/upload') ?>"></iframe>
+        </div>
+    </div>
+   <div id = "oimgUp" style = "display:none" class = "ifc">
+    <!--oimg upload 上传更多的图片使用的-->
+        <div >
+            <a class = "close" href = "javascript:javascript">关闭</a>
+            <iframe border = "none" id = "ouploadImg"  name = "img" src = " <?php echo site_url('chome/upload') ?>"></iframe>
+        </div>
+    </div>
 <script type="text/javascript" src = "<?php echo base_url('js/xheditor.min.js')?>"></script>
 <script type="text/javascript" src = "<?php echo base_url('js/zh-cn.js')?>"></script>
-
 <script type="text/javascript" >
 var site_url = "<?php echo site_url()?>";
 var user_name="<?php echo $this->session->userdata('user_name')?>";

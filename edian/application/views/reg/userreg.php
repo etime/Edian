@@ -72,5 +72,5 @@
 -->
 </body>
 <script type="text/javascript" src = "<?php echo $baseUrl.('js/jquery.js')?>"> </script>
-<script type="text/javascript" src = "<?php echo $baseUrl.('js/bossReg.js')?>"></script>
+<script type="text/javascript" src = "<?php echo $baseUrl.('js/userreg.js')?>"></script>
 </html>
