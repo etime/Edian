@@ -18,12 +18,15 @@ class Mwrong extends Ci_Model
     }
      public function insert($text)
      {
-        $text["text"] .= ", 现在时间是".date("m-d h:i:s");//添加上时间，更好辨别,分析
-        $text["text"] = addslashes($text["text"]);
         $wrong  = "";
-        //对数组进行编码
-        foreach($text as $key => $value){
-            $wrong .= $key."&[".$value."&]";//通过转义的分号，应该是没有重复的可能性吧
+        if(is_array($text)){
+            $text["text"] .= ", 现在时间是".date("m-d h:i:s");//添加上时间，更好辨别,分析
+            //对数组进行编码
+            foreach($text as $key => $value){
+                $wrong .= $key."&[".$value."&]";//通过转义的分号，应该是没有重复的可能性吧
+            }
+        }else {
+            $wrong = $text;
         }
         $this->db->query("insert into wrong(content) values('$wrong')");
      }

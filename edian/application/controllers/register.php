@@ -144,7 +144,7 @@ class Register extends CI_Controller {
      * 如果发送失败，返回一个数组，其中 'failed' 键值对应的信息为发送失败的错误报告，否则，直接返回发送的手机验证码
      * @todo 开启手机验证码的发送功能
      */
-    public function smsSend() {
+    public function smsSend($phoneNum = false) {
         $curTime = time();
         $lstTime = $this->session->userdata("lstTime");
         $data = array();
@@ -156,7 +156,6 @@ class Register extends CI_Controller {
             return;
         }
         $this->session->set_userdata('lstTime', $curTime);
-        $phoneNum = $_GET['phoneNum'];
 
         // 检查手机号码的合法性和唯一性
         $data = $this->_checkPhoneNum($phoneNum);
