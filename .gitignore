@@ -3,6 +3,7 @@ Document/
 *.jpg
 *.png
 *.gif
+.idea
 tags
 *.html
 *.swp
