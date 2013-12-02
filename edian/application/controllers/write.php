@@ -36,23 +36,41 @@ class Write extends MY_Controller
         $this->load->model("mwrong");
         $this->load->model("mitem");//调出model
     }
+
     /**
-     * 目前暂时废弃，write和对应的js，view和后台都不改变，将来需要可以随时添加，只是对应的表已经变了
+     * 判断用户是否登录，如果没有登录，跳转到登录页面并返回 true，否则返回 false
+     * @return boolean
      */
-    public function index2()
+    protected function isNoLogin()
     {
-        $data["title"] = "发表新帖";
-        if(!$this->userId){
+        if($this->userId == -1) {
             $atten["uri"] = site_url("mainpage/index");
-            $atten["uriName"] = "登陆页面";//如果将来有时间，专门做一个登陆的页面把
-            $atten["time"] = 5;
+            $atten["uriName"] = "登陆";
             $atten["title"] = "请首先登陆";
-            $atten["atten"] = "请登陆后发表新帖";
-            $this->load->view("jump",$atten);
-            return;
+            $atten["atten"] = "请登陆后继续";
+            $this->load->view("jump", $atten);
+            return true;
         }
-        $this->load->view("write",$data);
+        return false;
     }
+
+//    /**
+//     * 目前暂时废弃，write和对应的js，view和后台都不改变，将来需要可以随时添加，只是对应的表已经变了
+//     */
+//    public function index2()
+//    {
+//        $data["title"] = "发表新帖";
+//        if($this->userId == -1){
+//            $atten["uri"] = site_url("mainpage/index");
+//            $atten["uriName"] = "登陆页面";//如果将来有时间，专门做一个登陆的页面把
+//            $atten["time"] = 5;
+//            $atten["title"] = "请首先登陆";
+//            $atten["atten"] = "请登陆后发表新帖";
+//            $this->load->view("jump",$atten);
+//            return;
+//        }
+//        $this->load->view("write", $data);
+//    }
 
     /**
      * 商家添加新品的函数
@@ -61,7 +79,7 @@ class Write extends MY_Controller
     public function index()
     {
         $data["title"] = "新品上架";
-        if($this->noLogin())return;
+        if($this->isNoLogin()) return;
         $data["dir"] = $this->part;
         $this->load->model("user");
         $data["userType"] = $this->user->getType($this->userId);
@@ -76,7 +94,7 @@ class Write extends MY_Controller
      */
     public function change($artId)
     {
-        if($this->noLogin())return;
+        if($this->isNoLogin())return;
         $data = $this->art->getUserInsert($artId);
         $data["keyword"] = preg_split("/;/",$data["keyword"]);
         $temp = "";
@@ -101,7 +119,7 @@ class Write extends MY_Controller
      */
     public function reAdd($artId)
     {
-        if($this->noLogin())return;
+        if($this->isNoLogin())return;
         $info = $this->art->getImgId($artId);//取得author_id 和img 的信息,
         if($info == false)show_404();
         if($info["author_id"] != $this->userId){
@@ -130,22 +148,6 @@ class Write extends MY_Controller
             $atten["atten"] = "修改失败，请联系管理员解决".$this->adminMail;
             $this->load->view("jump",$atten);
         }
-    }
-    /**
-     * 处理没有登录的情况
-     * 所有的view的登陆判断页面
-     */
-    protected function noLogin()
-    {
-        if(!$this->userId){
-            $atten["uri"] = site_url("mainpage/index");
-            $atten["uriName"] = "登陆";//如果将来有时间，专门做一个登陆的页面把
-            $atten["title"] = "请首先登陆";
-            $atten["atten"] = "请登陆后继续";
-            $this->load->view("jump",$atten);
-            return true;
-        }
-        return false;
     }
 
     /**
@@ -179,6 +181,7 @@ class Write extends MY_Controller
         $temp["text"] = $error.";目前所在的代码在".__LINE__."行，对应的用户为userId = ".$this->userId;
         $this->mwrong->insert($temp);
     }
+
     /**
      * 对后台上传数据时候的数据检查
      * 对本函数内的上传数据检验
@@ -244,6 +247,7 @@ class Write extends MY_Controller
         $data["keys"] = $this->formate($keys);//以上是对关键字的处理
         return $data;
     }
+
     /**
      * 返回标题，价格，内容，分区
      * 在这里读取数据，检验数据，对输入信息判断的函数，因此两次添加修改的判断一样，合并
@@ -293,6 +297,7 @@ class Write extends MY_Controller
         }
         return $temp;
     }
+
     /**
      * 检查数组中有木有重复的，有就不添加，没有，就直接添加了。
      * @param array $arr 想要检验的数组
@@ -308,6 +313,7 @@ class Write extends MY_Controller
         $arr[$len] = $value;
         return $arr;
     }
+
     /**
      * 商家添加数据使用那个，
      * 应该已经被废弃了
@@ -352,12 +358,13 @@ class Write extends MY_Controller
             }
         }
     }
+
     /**
      * 后台添加数据后的处理函数
      */
     public function bgAdd()
     {
-        if(!$this->userId){
+        if($this->userId == -1) {
             exit("请登陆后继续");//这里修改成主页调转
         }
         if($_POST["sub"]){
@@ -386,6 +393,7 @@ class Write extends MY_Controller
             }
         }
     }
+
     /**
      * 编辑器自动上传图片的后台处理函数
      * 目前对应的是xhe函数，编辑器上传图片的后台处理部分，将来需要将大图片压缩成为小图片,目前集中精力处理重要部分吧
