@@ -11,8 +11,9 @@ function fpasswd(){
     $this._bro = null;
     $this._flag = 2;//当flag置位2的时候，是可以的时候
     var passwd = $("input[type = 'password']");
-    $("input[type = 'password']").change(function  () {
-        value = $.trim($(this).val());
+    $("input[type = 'password']").blur(function  () {
+        var value = $(this).val();
+        if(!value)return false;
         if(value.length<6){
             $($this._bro).text("密码太短，不安全哦").addClass("failed").removeClass("success");
             return false;
@@ -53,7 +54,7 @@ function namecheck(){
     var $this = this;
     $this._flag = 1;
     $this._bro = null;
-    $("input[name = 'nickname']").change(function () {
+    $("input[name = 'nickname']").blur(function () {
         var name = $.trim($(this).val());
         if(name.length > 20){
             $($this._bro).text("请保持文字在20字以内").addClass("failed").removeClass("success");
@@ -79,10 +80,9 @@ function floginName() {
     $("input[name = 'loginName']").focus(function () {
         $this._bro = $(this.parentNode).find("span");
         $($this._bro).text("请输入20位以内中英文字符或数字").removeClass("success").removeClass("failed");
-    }).change(function () {
+    }).blur(function () {
         var val = $.trim($(this).val());
         var reg = /[~!`@#$%^&*()_\+\-\={}\\\|\[\]\;:'\"<>?,\/.]/;
-        console.log(reg.exec(val));
         if(reg.exec(val)){
             $this._flag = 1;
             $($this._bro).text("请用中文英文数字").addClass("failed");
@@ -111,7 +111,7 @@ function floginName() {
 function funPhone(){
     var $this = this;
     $this._flag = 2;
-    $("input[name = 'phoneNum']").change(function  () {
+    $("input[name = 'phoneNum']").blur(function  () {
         $(this).unbind("keypress");//删除press事件，防止意外
         //$this._broPhone = $(this.parentNode).find("span");
         value = $.trim($(this).val());
@@ -147,8 +147,7 @@ function funPhone(){
             smsCode = false;
             smsCnt = 20;
             //应该将检验手机号码的和合格性和验证码放一起，这样如果合适的话，就发送短信，不合适的话，就放弃
-            $.get(site_url + "/register/smssend/" + phNum ,function(data,textStatus){
-                console.log(data);
+            $.getJSON(site_url + "/register/smssend/" + phNum ,function(data,textStatus){
                 if(textStatus == "success"){
                     $($this._broCode).text("")
                     if("failed" in data){
@@ -174,7 +173,7 @@ function funPhone(){
             },1000)//2s之后，重新发送一次短信验证码
         }
     })
-    $("input[name = 'checkNum']").change(function () {
+    $("input[name = 'checkNum']").blur(function () {
         if(smsCode){
             var phoneCode = $.trim($(this).val());
             if(smsCode == phoneCode){
@@ -198,8 +197,10 @@ $(document).ready(function(){
             $(objName._bro).text("请输入正确的用户名").addClass("failed").removeClass("success");
         }else if( objPasswd._flag != 0){
             $(objPasswd._bro).text("请检查密码").addClass("failed").removeClass("success");
-        }else if( objPhone._flag != 0){
-            $(objPhone._bro).text("请输入手机号码").addClass("failed").removeClass("success");
+        }else if( objPhone._flag == 2){
+            $(objPhone._broPhone).text("请输入您的手机号码").addClass("failed").removeClass("success");
+        }else if( objPhone._flag == 1){
+            $(objPhone._broCode).text("请输入发送到你手机的验证码").addClass("failed").removeClass("success");
         }else if(objLoginName != 0){
             $(objPhone._bro).text("请正确输入登录名").addClass("failed").removeClass("success");
         }else return true;
