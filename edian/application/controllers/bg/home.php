@@ -91,16 +91,18 @@ class Home extends MY_Controller {
      *     详情编辑：detail
      *     上架时间：putawayTime
      *     简要描述：briefInfo
+     *  @todo 对图片的使用，需要再次商量
      */
     public function item() {
-         if ($this->userId == -1) {
+        if ($this->userId == -1) {
              $this->noLogin();
              return;
-         }
+        }
         $data['title']="添加商品";
         $data["dir"] = $this->part;
         $data["userType"] = $this->user->getType($this->userId);
         $this->load->model("img");
+        //得到属于该用户的图片，方便二次添加,另议
         $data["img"] = $this->img->getImgName($this->userId);
         $this->load->view("mBgItemAdd",$data);
     }

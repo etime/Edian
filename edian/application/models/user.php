@@ -50,10 +50,10 @@ class User extends CI_Model {
         }
         return false;
     }
-    
+
     /**
      * 通过用户的 loginName 判断一个用户是否存在
-     * 
+     *
      * @param string $loginName 用户的登录名
      * @return boolean 如果用户存在，返回 true，否则返回 false
      */
@@ -63,7 +63,7 @@ class User extends CI_Model {
     	$res = $res->result_array();
     	return $res[0]['count(*)'] == 1 ? true : false;
     }
-    
+
     /**
      * 通过用户的 phoneNum 判断一个用户是否存在
      *
@@ -76,7 +76,7 @@ class User extends CI_Model {
     	$res = $res->result_array();
     	return $res[0]['count(*)'] == 1 ? true : false;
     }
-    
+
     /**
      * 通过用户的登录名查询一个用户的 id 号
      * @param string $loginName 用户的登录名（已经确认了登录名字存在）
@@ -88,7 +88,7 @@ class User extends CI_Model {
         $res = $res->result_array();
         return $res[0]['id'];
     }
-    
+
     /**
      * 通过用户的电话号码查询其 id
      * @param string $phoneNum
@@ -100,7 +100,7 @@ class User extends CI_Model {
     	$res = $res->result_array();
     	return $res[0]['id'];
     }
-    
+
     /**
      * 通过用户的登录名查询该用户的 password
      * @param string $loginName 用户的登录名
@@ -112,7 +112,7 @@ class User extends CI_Model {
 		$res = $res->result_array();
 		return $res[0]['password'];
 	}
-	
+
 	/**
 	 * 通过用户的手机号码查询该用户的 password
 	 * @param string $phoneNum  用户的手机号码
@@ -124,7 +124,7 @@ class User extends CI_Model {
 		$res = $res->result_array();
 		return $res[0]['password'];
 	}
-	
+
     /**
      * 向 user 表中新增加一个用户
      * @param array $data
@@ -281,7 +281,6 @@ class User extends CI_Model {
         $res = $this->db->query("select credit from user where id = '$userId'");
         $res = $res->result_array();
         if (count($res) == 0) return false;
-        echo $res[0]["credit"] . '<br>';
 
         if ($res[0]["credit"] == 250) return 3;
         if ($res[0]["credit"] == 255) return 2;

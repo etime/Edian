@@ -1,5 +1,7 @@
 var prokey = new  Array(),proans =  new Array();
-//处理禁止输入字符的问题
+/**
+ * 处理禁止输入字符的问题
+ */
 function forbid() {
     $("#pro").delegate("input","keypress",function(event){
         //|{}` & '" = <>=;:  都是不允许输入的
@@ -249,7 +251,9 @@ function part (list) {
         })
     }
 }
-    //要禁止输入标点符号
+/*
+ *添加对应的属性
+ */
 function proAdd () {
     var pro = $("#pro"),ichose = $("#ichose"),vpar;
     //vpar 目前是指proVal的下一级别table
@@ -263,18 +267,28 @@ function proAdd () {
         $(this).unbind("change");
     });
     var reg = /^http\:\/\//,flag = 0;//如果是url的形式，则是图片，否则是文字
+    /**
+     * 在input text focus的时候，添加input text
+     * 只有在当前节点是最后一个的时候，空白节点只有一个的时候，添加
+     */
     pro.delegate(".liVal","focus",function(event){
-        //在input text focus的时候，添加input text
-        vpar = this.parentNode.parentNode;
-        $(vpar).after(tr);
+        vpar = this.parentNode.parentNode.parentNode;//vpar 是tr节点
+        var sonli = $(vpar).find(".liVal");
+        var cnt = 0;
+        for (var i = 0, l = sonli.length; i < l; i ++) {
+            if( ! $.trim( $(sonli[i]).val() ) ){
+                cnt++;
+            }
+        }
+        if(cnt < 2)  $(vpar).append(tr);
     }).delegate("a","click",function(event){
         //添加图片
-        //var ele = event.srcElement;//被点击的元素
         var src = $(this).attr("class");
         vpar = this.parentNode.parentNode;
         if(src === "choseImg"){
             ichose.fadeIn();
         }else if(src == "uploadImg"){
+                //通过临时上传的方式上传上传商品
             $("#ifc").fadeIn();
             if(flag == 0){
                 flag = 1;
@@ -303,7 +317,30 @@ function proAdd () {
         $(vpar).find(".chosedImg").attr("src",src);
         ichose.fadeOut();
     });
-    $(".close").click(function(){
+
+}
+/**
+ * 处理上传1：1的主图的商品
+ */
+function mainThum() {
+    $("#mainInput").click(function () {
+        $("#mainImg").load(function (event) {
+            //这里需要读取上传完毕之后的值,通过iframe加载完毕之后，
+            //读取路径,怎么判断，明天上网搜
+            var ans =  getElementByIdInFrame(document.getElementById("uploadImg"),"value");
+            ans = $.trim($(ans).val());
+            if(ans){
+                $(vpar).find(".chosedImg").attr("src",ans);
+                $("#mainImg").fadeOut();
+            }
+        })
+    })
+}
+/**
+ * 对上传东西,选择图片，等需要全屏的操作关闭的控制
+ */
+function displayHandle() {
+    $("body").delegate(".close","click",function () {
         //考虑到弹出窗口的结构特点，祖父是弹出的跟节点
         var node = this.parentNode.parentNode;
         $(node).fadeOut();
@@ -319,6 +356,9 @@ function getElementByIdInFrame(objFrame,idInFrame) {
     else obj = objFrame.document.getElementById(idInFrame);
     return obj;
 }
+/**
+ * 添加商品对应的库存和价格
+ */
 function store() {
     var reg = /^http\:\/\//;//如果是url的形式，则是图片，否则是文字
     $("#storeNum").focus(function(){
