@@ -13,7 +13,9 @@
 <body>
     <form method = 'post' action = "<?php echo $url?>" enctype='multipart/form-data'>
         <input type = 'file' id = 'file' name = 'userfile' value = '上传图片' size = "11"/>
+        <br/>
         <input type = 'submit' name = 'sub' value = '上传'/>
+        <p id = "showsize"></p>
     </form>
 </body>
 </html>

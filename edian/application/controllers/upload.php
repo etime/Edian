@@ -26,12 +26,16 @@ class Upload extends MY_Controller {
     }
     /**
      *  对mainThumbnail上传，1:1的图片
+     *  将图片的链接返回
      */
     public function imgMain()
     {
+        //echo "http://www.edian.cn/upload/month_1306/201306281243524066.JPG";
+        echo "<input type = 'hidden' id = 'value' value = 'http://www.edian.cn/upload/month_1306/201306281243524066.JPG' />";
     }
     /**
      *  对不分比例的图片进行上传
+     *  将图片的链接返回
      */
     public function imgpicture()
     {
