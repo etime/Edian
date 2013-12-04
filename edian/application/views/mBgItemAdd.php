@@ -94,11 +94,10 @@
             <div id = "store"  >
             </div>
             <div id = "thumbnail" class = "col">
-                <p><span class = "item">商品图片<span>*</span></span><span class = "atten">请不要超过6张图片,第一张很重要,超过800*800会自动压缩</span></p>
-                <div class = "moreImg">
-                     <a class = "choseImg" href = "#">选择图片</a>
-                     <a class = "uploadImg" href = "#">上传图片</a>
-                </div>
+                <p>
+                    <span class = "item">商品图片<span>*</span></span>
+                    <input type = "button" name = "thumbButton" id = "thumbButton" value = "上传图片" />
+                </p>
             </div>
             <input type="hidden" name="Img" id="Img" />
             <!--通过js 修改value 所有图片的集合-->
@@ -127,7 +126,7 @@
          <input type="submit" name = "sub" class = "button" value="发表" />
         </form>
     </div>
-    <!--对属性描述的图片的上传-->
+    <!--对属性描述和thumb的两处图片的上传-->
     <div id = "ifc" class = "popf" style = "display:none">
         <div >
             <a class = "close" href = "#">关闭</a>
@@ -141,14 +140,8 @@
             <iframe border = "none" id = "mainImg"  name = "img" src = " <?php echo site_url('upload/index/1') ?>"></iframe>
         </div>
     </div>
-    <!-- thumb 上传更多的图片使用的-->
-    <div id = "oimgUp" style = "display:none" class = "popf">
-        <div >
-            <a class = "close" href = "#">关闭</a>
-            <iframe border = "none" id = "ouploadImg"  name = "img" src = " <?php echo site_url('chome/upload') ?>"></iframe>
-        </div>
-    </div>
     <!-- 选择图片，添加到对应的地方-->
+<!--
     <div id="ichose"  class = "ichose" style = "display:none">
         <div>
             <a class = "close" id = "iclose" href = "#">关闭</a>
@@ -159,6 +152,7 @@
                 </div>
         </div>
     </div>
+-->
 <script type="text/javascript" src = "<?php echo base_url('js/xheditor.min.js')?>"></script>
 <script type="text/javascript" src = "<?php echo base_url('js/zh-cn.js')?>"></script>
 <script type="text/javascript" >

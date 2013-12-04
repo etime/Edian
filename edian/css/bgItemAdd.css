@@ -98,9 +98,6 @@ input[type = "text"]{
 .label{
     position:relative;
 }
-.moreImg{
-    text-align:center;
-}
 .popf{
     /*
      *  pop full screen
