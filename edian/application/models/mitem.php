@@ -36,7 +36,7 @@ class Mitem extends Ci_Model
 {
 
     static  $pageNum;//每次前端申请的数据条数
-     function __construct()
+    function __construct()
     {
         parent::__construct();
         $this->pageNum = 30;
@@ -44,6 +44,29 @@ class Mitem extends Ci_Model
         $this->load->model("mwrong");// mwrong就像一个检测机器，有可能出错的地方都需要load
         $this->pageNum = $this->config->item("pageNum");
     }
+
+    /**
+     * $data 数组必须包含以下东西： keyi, keyj, keyk, category，将他们用 "keyi;keyj;keyk;category|" 的格式进行编码，然后返回
+     * @prama array $data
+     * @return string
+     */
+    public function encodeCategory($data) {
+        $ans = '';
+        $ans .= $data['keyi'] . ';';
+        $ans .= $data['keyj'] . ';';
+        $ans .= $data['keyk'] . ';';
+        $ans .= $data['category'] . '|';
+        return $ans;
+    }
+
+
+/**********************************************************************************************************************/
+/**********************************************************************************************************************/
+/**********************************************************************************************************************/
+/**********************************************************************************************************************/
+/**********************************************************************************************************************/
+
+
     public function insert($data)
     {
         $data["title"] = addslashes($data["title"]);

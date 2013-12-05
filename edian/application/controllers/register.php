@@ -263,9 +263,6 @@ class Register extends CI_Controller {
         $this->load->config("edian");
         $data['credit'] = $this->config->item("bossCredit");
 
-        // 对密码进行转义，防止攻击
-        $data['password'] = mysql_real_escape_string($data['password']);
-
         // 删除 session 中的 lstTime 信息，减小 session 的开销
         $this->session->unset_userdata('lstTime');
 
@@ -338,9 +335,6 @@ class Register extends CI_Controller {
         // 通过了以上的检验，用户的输入已经合法能够注册了，先设置用户的权限
         $this->load->config("edian");
         $data['credit'] = $this->config->item("userCreditMin");
-
-        // 对密码进行转义，防止攻击
-        $data['password'] = mysql_real_escape_string($data['password']);
 
         // 删除 session 中的 lstTime 信息，减小 session 的开销
         $this->session->unset_userdata('lstTime');

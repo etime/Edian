@@ -35,7 +35,7 @@ class Home extends MY_Controller
             }
              */
         /**********************/
-        $user_id = $this->user_id_get();
+        $user_id = $this->getUserId();
         $data = null;
         if($user_id){
             $data = $this->user->getNess($user_id);
@@ -52,7 +52,7 @@ class Home extends MY_Controller
     public function test($id = 0)
     {
         //只是为添加新的特性而测试的函数
-        $user_id = $this->user_id_get();
+        $user_id = $this->getUserId();
         $this->load->model("user");
         $data = null;
         if($user_id){
