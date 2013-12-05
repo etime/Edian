@@ -8,41 +8,185 @@
  */
 
 class Upload extends MY_Controller {
-    function __construct()
-    {
+    function __construct() {
         parent::__construct();
         $this->load->model('img');
     }
+
     /**
-     * 显示具体的页面，view
-     * @param int $flag 当flag为1的时候，页面对应的action为上传1：1主图，其他的情况，上传不比例
+     * 通过对文件类型的检查，判断上传的文件是否是图片
+     * @param string $type 上传文件的类型，通过 $_FILES 获取
+     * @return bool 如果是图片，返回 true，否则返回 false
      */
-    function index($flag = 0)
-    {
-        if($flag){
+    private function _isImg($type) {
+        if ($type == 'image/gif') return true;
+        if ($type == 'image/jpeg') return true;
+        if ($type == 'image/pjpeg') return true;
+        if ($type == 'image/png') return true;
+        return false;
+    }
+
+    /**
+     * 显示上传商品图片的具体页面，传递给 view 处理上传的图片的处理函数
+     * @param int $flag $flag 为 1 表示上传的是 1:1 的 mainThumbnail，否则为其他情况
+     */
+    public function index($flag = 0) {
+        // 用户没有登录
+        $userId = $this->getUserId();
+        if ($userId == -1) {
+            $this->load->view('login');
+            return;
+        }
+
+        // 不同情况下选择不同的后台处理函数
+        if($flag) {
             $data["url"] = site_url("upload/imgMain");
-        }else $data["url"] = site_url("imgpicture");//不同情况下对应的后台处理url
-        $this->load->view('uploadImg',$data);
+        } else {
+            $data["url"] = site_url("imgpicture");
+        }
+        $this->load->view('uploadImg', $data);
     }
+
     /**
-     *  对mainThumbnail上传，1:1的图片
+     * 删除图片
+     * @param string $imageName 图片的名字
      */
-    public function imgMain()
-    {
+    public function imgDelete($imageName = false) {
+        // 用户没有登录
+        if ($this->getUserId() == -1) {
+            $this->load->view('login');
+            return;
+        }
+
+        // 如果是 ajax 调用，设置 imageName
+        if ($imageName == false) {
+            ;
+        }
+
+        // 删除图片
+        if (file_exists($imageName)) {
+            unlink($imageName);
+        }
     }
+
     /**
-     *  对不分比例的图片进行上传
+     * 对 mainThumbnail 上传，通过 post 方式提交回来的变量名为 userfile
+     * 对 mainThumbnail 的要求：
+     *     长宽比为 1:1
+     *     最少为 300*300 像素
+     *     文件不得大于 300kb
      */
-    public function imgpicture()
-    {
+    public function imgMain() {
+        // 用户没有登录
+        $userId = $this->getUserId();
+        if ($userId == -1) {
+            $this->load->view('login');
+            return;
+        }
+
+        // 获取文件的类型和大小
+        $type = $_FILES['userfile']['type'];
+        $size = $_FILES['userfile']['size'];
+
+        // 上传的文件格式非法
+        if (! $this->_isImg($type)) {
+            $this->index(1);
+            return;
+        }
+
+        // 上传的文件太大
+        if ($size > 300 * 1024) {
+            $this->index(1);
+            return;
+        }
+
+        // 对上传的文件进行重命名
+        $fileName = $userId . '_' . date('Y-m-d_H-i-s');
+        if ($type == 'image/gif') {
+            $fileName .= '.gif';
+        } else if ($type == 'image/png') {
+            $fileName .= '.png';
+        } else {
+            $fileName .= '.jpg';
+        }
+
+        // 创建用户文件夹
+        if (! is_dir('./image/' . $userId)) {
+            mkdir('./image/' . $userId);
+        }
+
+        // 定义用户上传的图片的存储地址和名字
+        $path = './image/' . $userId . '/' . $fileName;
+
+        // 上传图片
+        move_uploaded_file($_FILES['userfile']['tmp_name'], $path);
+
+        // 获得图片的 size
+        $imageSize = getimagesize($path);
+
+        // 上传的主图片必须满足长宽比为 1:1，且 长度不得小于 300 像素
+        if ($imageSize[0] != $imageSize[1] || $imageSize[0] < 300) {
+            $this->imgDelete($path);
+            $this->index(1);
+            return;
+        }
+
+        echo('your uploaded file has stroed !<br>');
     }
+
     /**
-     * 通过传入一个图片的的名字，删除这个图片
-     * 检查是否登录，删除使用unlink
+     * 对 thumbnail 上传，通过 post 方式提交回来的变量名为 userfile
+     * 对 thumbnail 的要求：
+     *     文件不得大于 300kb
      */
-    public function imgDelete($imgName  = false)
-    {
+    public function imgpicture() {
+        // 用户没有登录
+        $userId = $this->getUserId();
+        if ($userId == -1) {
+            $this->load->view('login');
+            return;
+        }
+
+        // 获取文件的类型和大小
+        $type = $_FILES['userfile']['type'];
+        $size = $_FILES['userfile']['size'];
+
+        // 上传的文件格式非法
+        if (! $this->_isImg($type)) {
+            $this->index(0);
+            return;
+        }
+
+        // 上传的文件太大
+        if ($size > 300 * 1024) {
+            $this->index(0);
+            return;
+        }
+
+        // 对上传的文件进行重命名
+        $fileName = $userId . '_' . date('Y-m-d_H-i-s');
+        if ($type == 'image/gif') {
+            $fileName .= '.gif';
+        } else if ($type == 'image/png') {
+            $fileName .= '.png';
+        } else {
+            $fileName .= '.jpg';
+        }
+
+        // 创建用户文件夹
+        if (! is_dir('./image/' . $userId)) {
+            mkdir('./image/' . $userId);
+        }
+
+        // 定义用户上传的图片的存储地址和名字
+        $path = './image/' . $userId . '/' . $fileName;
+
+        // 上传图片
+        move_uploaded_file($_FILES['userfile']['tmp_name'], $path);
+
+        echo('your uploaded file has stroed !<br>');
     }
+
     function upload_config($height = -1,$width = -1){
         //对上传进行处理的函数，去掉了jump的部分，使它更富有扩展性
         //返回数据格式为数组，flag,0,标示没有错误,1,没有登陆，2，图片重复,3,没有上传，4，其他原因
@@ -102,7 +246,7 @@ class Upload extends MY_Controller {
         $re["atten"] = "没有submit";
         return $re;
     }
-   /**
+    /**
     * 这里上传的是之前的有关键字和索引的图片
     */
     function upload_picture()
