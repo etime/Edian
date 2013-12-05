@@ -1,15 +1,22 @@
-function test() {
-    this.key = 100;
-    this.value = function (){
-	    this.key = 0;
-        console.log("11");
-    }
-    this.show = function(){
-        console.log(this.key);
-    }
-}
 $(document).ready(function(){
-    var test1 = new test();
-    console.log(test1.show());
-    console.log(test1.value());
+    var options = {
+        target: "#toImg",
+        url:    siteUrl+"/test/abc",
+        iframe:true,
+        success:function (responseText) {
+            console.log(responseText);
+            $("#toImg").attr("src",responseText);
+        }
+    }
+    $("#myImg").ajaxForm(options);
+    $("#userfile").change(function(){
+        console.log("testing");
+        $("#myImg").ajaxSubmit();
+        return false;
+    })
+    $("#myImg").submit(function () {
+        console.log("ac");
+        $(this).ajaxSubmit();
+        return false;
+    })
 });

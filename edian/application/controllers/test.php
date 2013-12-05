@@ -1,13 +1,12 @@
 <?php
 //require_once 'print.php';
-require_once 'dsprint.class.php';
-require_once 'dsconfig.class.php';
+//require_once 'dsprint.class.php';
+//require_once 'dsconfig.class.php';
 class Test extends MY_Controller{
     var  $user_id="",$partmap;
     static $time;
     function __construct(){
         parent::__construct();
-        $this->user_id = $this->user_id_get();
     }
     public function mem()
     {
@@ -35,16 +34,12 @@ class Test extends MY_Controller{
     {
         echo "testing";
     }
+    public function abc()
+    {
+        echo "testing";
+    }
     function index(){
-        /*
-        require("sea.php");
-        $sea = new Sea();
-        $sea->test();
-         */
-        $str = "select * from";
-        echo $str."<br/>";
-        $str = mysql_real_escape_string($str);
-        echo $str;
+        $this->load->view("test");
     }
     function sms(){
         header("Cache-control:no-cache");

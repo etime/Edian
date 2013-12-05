@@ -19,8 +19,7 @@ class Chome extends MY_Controller{
         $data['title'] = $this->mhome->home_title();
         $this->load->view('home',$data);
     }
-   function
-    uploadDel()
+   function  uploadDel()
     {
         $user_id =
 
@@ -44,7 +43,6 @@ class Chome extends MY_Controller{
         }
     }
     function bubble(){
->>>>>>> 811d6f4677330418ef2e33ff6695e3fd91e3be19
         $this->load->view("bubble")             ;
     }
 
@@ -105,9 +103,6 @@ class Chome extends MY_Controller{
         echo $this->pagination->create_links();
         $this->load->view("artlist");
     }
-<<<<<<< HEAD
-
-=======
     /**
      * 上传图片的view显示函数
      */
@@ -115,7 +110,6 @@ class Chome extends MY_Controller{
     {
         $this->load->view("upload");
     }
->>>>>>> 811d6f4677330418ef2e33ff6695e3fd91e3be19
     //下面该函数的作用是显示图片在m-showimg上面
     function showimg($id){
         //  $this->load->model("mhome") ;
