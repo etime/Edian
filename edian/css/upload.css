@@ -23,11 +23,15 @@ tr{
     margin:3px 0;
 }
 form{
+    /*
     width:500px;
+    */
     border-radius:2px;
     margin:0 auto;
 }
 input[type = 'submit']{
+    /*
     margin-left:23%;
+    */
     margin-top:5px;
 }

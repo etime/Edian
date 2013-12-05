@@ -42,7 +42,7 @@ class Upload extends MY_Controller {
         if($flag) {
             $data["url"] = site_url("upload/imgMain");
         } else {
-            $data["url"] = site_url("imgpicture");
+            $data["url"] = site_url("upload/thumb");
         }
         $this->load->view('uploadImg', $data);
     }
@@ -139,7 +139,7 @@ class Upload extends MY_Controller {
      * 对 thumbnail 的要求：
      *     文件不得大于 300kb
      */
-    public function imgpicture() {
+    public function thumb() {
         // 用户没有登录
         $userId = $this->getUserId();
         if ($userId == -1) {
@@ -191,7 +191,7 @@ class Upload extends MY_Controller {
         //对上传进行处理的函数，去掉了jump的部分，使它更富有扩展性
         //返回数据格式为数组，flag,0,标示没有错误,1,没有登陆，2，图片重复,3,没有上传，4，其他原因
         $re["flag"] = 1;
-        $user_id=$this->user_id_get();
+        $user_id=$this->getUserId();
         if($user_id == false){
             $re["atten"] = "请首先登陆";
             return $re;
@@ -246,12 +246,13 @@ class Upload extends MY_Controller {
         $re["atten"] = "没有submit";
         return $re;
     }
+
     /**
     * 这里上传的是之前的有关键字和索引的图片
     */
     function upload_picture()
     {
-        $user_id = $this->user_id_get();
+        $user_id = $this->getUserId();
         $re = $this->upload_config();
         $re['category'] = $this->input->post('category');
         $re['key_word'] = $this->input->post('key_word');

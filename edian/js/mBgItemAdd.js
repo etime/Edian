@@ -1,4 +1,4 @@
-var prokey = new  Array(),proans =  new Array();
+var prokey = new  Array(),proans =  new Array(),objThumb, objImgSix , property;
 /**
  * 处理禁止输入字符的问题
  */
@@ -154,7 +154,7 @@ $(document).ready(function  () {
        }
        $("#attr").attr("value",attr);
        /*********下面是对图片的处理*********************/
-       var oimg = $("#oimg").find("img");
+       var oimg = $("#thumbnail").find("img");
        var img = "";
        for (var i = Math.min(oimg.length-1,5); i >= 0; i --) {
            temp = $(oimg[i]).attr("src");
@@ -186,9 +186,12 @@ $(document).ready(function  () {
         }
     });
     part(dir);
-    proAdd();
+    property = new proAdd();
     store();
-    funoimgUp();
+    objImgSix = new funoimgUp();
+    mainThum();
+    displayHandle();
+    objThumb = new thumbnailUpload();
 })
 /**
  * 这里是控制分区，全站类别的显示
@@ -252,21 +255,19 @@ function part (list) {
     }
 }
 /*
- *添加对应的属性
+ *添加对应的属性,对应的对象为property
  */
 function proAdd () {
     var pro = $("#pro"),ichose = $("#ichose"),vpar;
     //vpar 目前是指proVal的下一级别table
     var proBl = $(".proBl").clone();
-    var tr = "<tr ><td><input type = 'text' name = 'proVal' class = 'liVal' placeholder = '红色XL等属性值'></td><td><a class = 'choseImg' href = 'javascript:javascript'>选择图片</a></td><td><a class = 'uploadImg' href = 'javascript:javascript'>上传图片</a></td><td><img class = 'chosedImg' /></td></tr>"
+    var tr = "<tr ><td><input type = 'text' name = 'proVal' class = 'liVal' placeholder = '红色XL等属性值'></td><td><a class = 'choseImg' href = '#'>选择图片</a></td><td><a class = 'uploadImg' href = 'javascript:javascript'>上传图片</a></td><td><img class = 'chosedImg' /></td></tr>"
     $(".proK").change(function(){
         //复制第二个属性框
-        console.log("changeing");
-        //如果可以的话，这些after希望都通过clone的方法,这个将来直接加入到dom中算了,不用再
         $(".proBl").after(proBl);
+        proBl = null;
         $(this).unbind("change");
     });
-    var reg = /^http\:\/\//,flag = 0;//如果是url的形式，则是图片，否则是文字
     /**
      * 在input text focus的时候，添加input text
      * 只有在当前节点是最后一个的时候，空白节点只有一个的时候，添加
@@ -281,33 +282,24 @@ function proAdd () {
             }
         }
         if(cnt < 2)  $(vpar).append(tr);
-    }).delegate("a","click",function(event){
+    }).delegate(".uploadImg","click",function(event){
         //添加图片
         var src = $(this).attr("class");
         vpar = this.parentNode.parentNode;
-        if(src === "choseImg"){
-            ichose.fadeIn();
-        }else if(src == "uploadImg"){
-                //通过临时上传的方式上传上传商品
-            $("#ifc").fadeIn();
-            if(flag == 0){
-                flag = 1;
-                //flag好像定义了，但是没有使用
-                $("#uploadImg").load(function (event) {
-                    //            这里需要读取上传完毕之后的值,通过iframe加载完毕之后，读取路径,怎么判断，明天上网搜
-                    var ans =  getElementByIdInFrame(document.getElementById("uploadImg"),"value");
-                    ans = $.trim($(ans).val());
-                    if(reg.exec(ans)){
-                        $(vpar).find(".chosedImg").attr("src",ans);
-                        $("#ifc").fadeOut();
-                    }
-                })
-            }
-        }
+        vpar = $(vpar).find(".chosedImg");
+        destoryImg( $(vpar).attr("src") );      //如果之前上传图片的话，销毁
+        objThumb.self.fadeIn();                 //传入框显示
+        objThumb.set( property.afterLoad );     //设置回调函数
+        event.preventDefault();
     });
+    this.afterLoad = function (ans) {
+        $(vpar).attr("src",ans);
+        objThumb.self.fadeOut();
+    }
     /**
      * 选择图片，choose img
      * vpar li 就是img和span共同的父亲
+     * @todo 是否允许选择图片，另说
      */
     ichose.delegate("img","click",function(event){
         //src = event.srcElement;
@@ -323,27 +315,44 @@ function proAdd () {
  * 处理上传1：1的主图的商品
  */
 function mainThum() {
+    var main = $("#main");
     $("#mainInput").click(function () {
+        main.fadeIn();
         $("#mainImg").load(function (event) {
             //这里需要读取上传完毕之后的值,通过iframe加载完毕之后，
-            //读取路径,怎么判断，明天上网搜
-            var ans =  getElementByIdInFrame(document.getElementById("uploadImg"),"value");
+            var ans =  getElementByIdInFrame(document.getElementById("mainImg"),"value");
             ans = $.trim($(ans).val());
             if(ans){
-                $(vpar).find(".chosedImg").attr("src",ans);
-                $("#mainImg").fadeOut();
+                var toImg = $("#toImgMain");
+                destoryImg( toImg.attr("src") );        //如果之前有图片的话，发送请求删除，;
+                toImg.attr("src" , ans);            //添加新的图片
+                main.fadeOut();
             }
         })
-    })
+    }) }
+/**
+ * 对用户输入的图片然后又决定抛弃的图片，进行删除
+ * 无论是否成功，都不再报错返回
+ */
+function destoryImg(name) {
+    if(name ){
+        //将名字发送过去
+        var url = site_url + "/upload/imgDelete/" + name.substr(name.lastIndexOf("/") + 1);
+        $.get(url,function (data,textStatus) {
+            console.log(data);
+            console.log("yes");
+        })
+    }
 }
 /**
  * 对上传东西,选择图片，等需要全屏的操作关闭的控制
  */
 function displayHandle() {
-    $("body").delegate(".close","click",function () {
+    $("body").delegate(".close","click",function (event) {
         //考虑到弹出窗口的结构特点，祖父是弹出的跟节点
         var node = this.parentNode.parentNode;
         $(node).fadeOut();
+        event.preventDefault();
     })
 }
 /**
@@ -439,41 +448,50 @@ function store() {
     }
 }
 /**
- * 商品的1-6个缩略图
+ * 用来上传选择商品的1-6个缩略图
  */
 function funoimgUp () {
-    var reg = /^http\:\/\//;//如果是url的形式，则是图片，否则是文字
-    var six = 6,ochose = $("#ochose"),oimg = $("#oimg"),oimgUp = $("#oimgUp");//这些算是个优化了，不用第二次进行dom检索
-    //这个是用来上传多余的6张图片的
-    oimg.delegate("a","click",function(){
-        var dir = $(this).attr("class");
-        if(six<=0)return false;
-        if(dir == "choseImg"){
-            ochose.fadeIn();//ochose会在其他的地方更多的使用
-        }else{
-            oimgUp.fadeIn();
-        }
-        if(six == 6){
-            //只有在最初的一次添加监听load事件
-            ouploadImg.load(function(){
-                var ans =  getElementByIdInFrame(document.getElementById("ouploadImg"),"value");
-                ans= $.trim($(ans).val());
-                if(reg.exec(ans)){
-                    oimg.append("<img src = '"+ans+"' />");
-                    six--;
-                    if(six == 0){
-                        oimgUp.fadeOut();
-                    }
-                }
-            })
-        }
-    });
-    var ouploadImg = $("#ouploadImg");
+    var six = 6,ochose = $("#ochose"),oimg = $("#thumbnail");//这些算是个优化了，不用第二次进行dom检索
+    $("#thumbButton").click(function () {
+        console.log("abc");
+        objThumb.self.fadeIn();
+        objThumb.set( objImgSix.count );//这里要不要使用子函数呢？
+    })
+    //尚未检测
+    this.count = function (imgUrl) {
+        oimg.append("<img src = '"+imgUrl+"' />");
+        ( six > 1 ) ? (six -- ) : ochose.fadeOut() ;
+    }
+    /* 下面的函数应该是要被抛弃了 */
     ochose.delegate("img","click",function(){
         var src = $(this).attr("src");
         oimg.append("<img src = '"+src+"' />");
-        six--;
-        if(six == 0)
-            ochose.fadeOut();
+        six >= 1 ? ochose.fadeOut() : ( six-- );
+        //if(six == 0) ochose.fadeOut();
+    })
+}
+/**
+ * 控制缩略图的上传
+ * 供属性和缩略图两个地方调用
+ */
+function thumbnailUpload() {
+    var $this = this;
+    $this.self = $("#oimgUp");//上传的显示区域,方便在外部控制
+    $this.callback = null;
+    $this.set = function (callfunc) {
+        //修改对应的回调函数
+        $this.callback = callfunc;
+    }
+    var reg = /^http\:\/\//;//传回的值，必须是图片才可以
+    $("#uploadImg").load(function(){
+        var ans =  getElementByIdInFrame(document.getElementById("uploadImg"),"value");
+        ans= $.trim($(ans).val());
+        if(reg.exec(ans)){
+            $this.callback(ans);
+            /*
+            oimg.append("<img src = '"+ans+"' />");
+            six >= 1 ? ochose.fadeOut() : ( six-- );
+            */
+        }
     })
 }

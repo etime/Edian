@@ -57,6 +57,7 @@
                 <!-- <input type="file" name="userfile" size = "14"/> -->
                 <input type = "button" name = "mainInput" value = "上传图片"  id = "mainInput"/>
                 <span id = "imgAtten">请用800*800以下图片,超过标准会压缩</span>
+                <img src = "" id = "toImgMain"/>
             </p>
             <p class = "col">
                 <span class = "item">商品属性:</span>
@@ -71,18 +72,10 @@
                             <table >
                             <!--将来添加js禁止标点哦-->
                                 <tr>
-                                    <td>
-                                        <input type = "text" name = "proVal" class = "liVal" placeholder = "红色XL等属性值">
-                                    </td>
-                                    <td>
-                                        <a class = "choseImg" href = "javascript:javascript">选择图片</a>
-                                    </td>
-                                    <td>
-                                        <a class = "uploadImg" href = "javascript:javascript">上传图片</a>
-                                    </td>
-                                    <td>
-                                        <img class = "chosedImg" src = ""/>
-                                    </td>
+                                    <td><input type = "text" name = "proVal" class = "liVal" placeholder = "红色XL等属性值"></td>
+                                    <td><a class = "choseImg" href = "#">选择图片</a></td>
+                                    <td><a class = "uploadImg" href = "#">上传图片</a></td>
+                                    <td><img class = "chosedImg" src = ""/></td>
                                 </tr>
                             </table>
                         </td>
@@ -100,12 +93,11 @@
             <!--final ans 最终所有的答案都需要到这里查找-->
             <div id = "store"  >
             </div>
-            <div id = "oimg" class = "col">
-                <p><span class = "item">商品图片<span>*</span></span><span class = "atten">请不要超过6张图片,第一张很重要,超过800*800会自动压缩</span></p>
-                <div class = "moreImg">
-                     <a class = "choseImg" href = "javascript:javascript">选择图片</a>
-                     <a class = "uploadImg" href = "javascript:javascript">上传图片</a>
-                </div>
+            <div id = "thumbnail" class = "col">
+                <p>
+                    <span class = "item">商品图片<span>*</span></span>
+                    <input type = "button" name = "thumbButton" id = "thumbButton" value = "上传图片" />
+                </p>
             </div>
             <input type="hidden" name="Img" id="Img" />
             <!--通过js 修改value 所有图片的集合-->
@@ -134,31 +126,25 @@
          <input type="submit" name = "sub" class = "button" value="发表" />
         </form>
     </div>
-    <!--对属性描述的图片的上传-->
-    <div id = "ifc" class = "popf" style = "display:none">
+    <!--对属性描述和thumb的两处图片的上传-->
+    <div id = "oimgUp" class = "popf" style = "display:none">
         <div >
-            <a class = "close" href = "javascript:javascript">关闭</a>
-            <iframe border = "none" id = "uploadImg"  name = "img" src = " <?php echo site_url('upload/imgPicture') ?>"></iframe>
+            <a class = "close" href = "#">关闭</a>
+            <iframe border = "none" id = "uploadImg"  name = "img" src = " <?php echo site_url('upload/index') ?>"></iframe>
         </div>
     </div>
     <!-- 对商品主图片的上传-->
     <div id = "main" class = "popf" style = "display:none">
         <div >
-            <a class = "close" href = "javascript:javascript">关闭</a>
-            <iframe border = "none" id = "mainImg"  name = "img" src = " <?php echo site_url('upload/imgPicture') ?>"></iframe>
-        </div>
-    </div>
-    <!--oimg upload 上传更多的图片使用的-->
-    <div id = "oimgUp" style = "display:none" class = "popf">
-        <div >
-            <a class = "close" href = "javascript:javascript">关闭</a>
-            <iframe border = "none" id = "ouploadImg"  name = "img" src = " <?php echo site_url('chome/upload') ?>"></iframe>
+            <a class = "close" href = "#">关闭</a>
+            <iframe border = "none" id = "mainImg"  name = "img" src = " <?php echo site_url('upload/index/1') ?>"></iframe>
         </div>
     </div>
     <!-- 选择图片，添加到对应的地方-->
+<!--
     <div id="ichose"  class = "ichose" style = "display:none">
         <div>
-            <a class = "close" id = "iclose" href = "javascript:javascript">关闭</a>
+            <a class = "close" id = "iclose" href = "#">关闭</a>
                 <div>
                     <?php foreach ($img as $temp):?>
                     <img src = " <?php echo $baseUrl.'upload/'.$temp['img_name'] ?>">
@@ -166,6 +152,7 @@
                 </div>
         </div>
     </div>
+-->
 <script type="text/javascript" src = "<?php echo base_url('js/xheditor.min.js')?>"></script>
 <script type="text/javascript" src = "<?php echo base_url('js/zh-cn.js')?>"></script>
 <script type="text/javascript" >
