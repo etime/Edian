@@ -1,4 +1,4 @@
-var prokey = new  Array(),proans =  new Array(),objThumb;
+var prokey = new  Array(),proans =  new Array(),objThumb, objImgSix , property;
 /**
  * 处理禁止输入字符的问题
  */
@@ -186,9 +186,9 @@ $(document).ready(function  () {
         }
     });
     part(dir);
-    proAdd();
+    property = new proAdd();
     store();
-    funoimgUp();
+    objImgSix = new funoimgUp();
     mainThum();
     displayHandle();
     objThumb = new thumbnailUpload();
@@ -255,7 +255,7 @@ function part (list) {
     }
 }
 /*
- *添加对应的属性
+ *添加对应的属性,对应的对象为property
  */
 function proAdd () {
     var pro = $("#pro"),ichose = $("#ichose"),vpar;
@@ -264,12 +264,10 @@ function proAdd () {
     var tr = "<tr ><td><input type = 'text' name = 'proVal' class = 'liVal' placeholder = '红色XL等属性值'></td><td><a class = 'choseImg' href = '#'>选择图片</a></td><td><a class = 'uploadImg' href = 'javascript:javascript'>上传图片</a></td><td><img class = 'chosedImg' /></td></tr>"
     $(".proK").change(function(){
         //复制第二个属性框
-        console.log("changeing");
-        //如果可以的话，这些after希望都通过clone的方法,这个将来直接加入到dom中算了,不用再
         $(".proBl").after(proBl);
+        proBl = null;
         $(this).unbind("change");
     });
-    var reg = /^http\:\/\//,flag = 0;//如果是url的形式，则是图片，否则是文字
     /**
      * 在input text focus的时候，添加input text
      * 只有在当前节点是最后一个的时候，空白节点只有一个的时候，添加
@@ -284,33 +282,24 @@ function proAdd () {
             }
         }
         if(cnt < 2)  $(vpar).append(tr);
-    }).delegate("a","click",function(event){
+    }).delegate(".uploadImg","click",function(event){
         //添加图片
         var src = $(this).attr("class");
         vpar = this.parentNode.parentNode;
-        if(src === "choseImg"){
-            ichose.fadeIn();
-        }else if(src == "uploadImg"){
-                //通过临时上传的方式上传上传商品
-            $("#ifc").fadeIn();
-            if(flag == 0){
-                flag = 1;
-                //flag好像定义了，但是没有使用
-                $("#uploadImg").load(function (event) {
-                    //            这里需要读取上传完毕之后的值,通过iframe加载完毕之后，读取路径,怎么判断，明天上网搜
-                    var ans =  getElementByIdInFrame(document.getElementById("uploadImg"),"value");
-                    ans = $.trim($(ans).val());
-                    if(reg.exec(ans)){
-                        $(vpar).find(".chosedImg").attr("src",ans);
-                        $("#ifc").fadeOut();
-                    }
-                })
-            }
-        }
+        vpar = $(vpar).find(".chosedImg");
+        destoryImg( $(vpar).attr("src") );      //如果之前上传图片的话，销毁
+        objThumb.self.fadeIn();                 //传入框显示
+        objThumb.set( property.afterLoad );     //设置回调函数
+        event.preventDefault();
     });
+    this.afterLoad = function (ans) {
+        $(vpar).attr("src",ans);
+        objThumb.self.fadeOut();
+    }
     /**
      * 选择图片，choose img
      * vpar li 就是img和span共同的父亲
+     * @todo 是否允许选择图片，另说
      */
     ichose.delegate("img","click",function(event){
         //src = event.srcElement;
@@ -464,9 +453,16 @@ function store() {
 function funoimgUp () {
     var six = 6,ochose = $("#ochose"),oimg = $("#thumbnail");//这些算是个优化了，不用第二次进行dom检索
     $("#thumbButton").click(function () {
+        console.log("abc");
         objThumb.self.fadeIn();
-        objThumb.set("funimg");//这里要不要使用子函数呢？
+        objThumb.set( objImgSix.count );//这里要不要使用子函数呢？
     })
+    //尚未检测
+    this.count = function (imgUrl) {
+        oimg.append("<img src = '"+imgUrl+"' />");
+        ( six > 1 ) ? (six -- ) : ochose.fadeOut() ;
+    }
+    /* 下面的函数应该是要被抛弃了 */
     ochose.delegate("img","click",function(){
         var src = $(this).attr("src");
         oimg.append("<img src = '"+src+"' />");
@@ -488,7 +484,7 @@ function thumbnailUpload() {
     }
     var reg = /^http\:\/\//;//传回的值，必须是图片才可以
     $("#uploadImg").load(function(){
-        var ans =  getElementByIdInFrame(document.getElementById("ouploadImg"),"value");
+        var ans =  getElementByIdInFrame(document.getElementById("uploadImg"),"value");
         ans= $.trim($(ans).val());
         if(reg.exec(ans)){
             $this.callback(ans);

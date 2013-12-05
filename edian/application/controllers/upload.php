@@ -21,12 +21,12 @@ class Upload extends MY_Controller {
     {
         if($flag){
             $data["url"] = site_url("upload/imgMain");
-        }else $data["url"] = site_url("imgpicture");//不同情况下对应的后台处理url
+        }else $data["url"] = site_url("upload/thumb");//不同情况下对应的后台处理url
         $this->load->view('uploadImg',$data);
     }
     /**
      *  对mainThumbnail上传，1:1的图片
-     *  将图片的链接返回
+     *  @todo 将图片的链接返回,通过jump然后重新返回上传
      */
     public function imgMain()
     {
@@ -35,10 +35,11 @@ class Upload extends MY_Controller {
     }
     /**
      *  对不分比例的图片进行上传
-     *  将图片的链接返回
+     *  @todo 将图片的链接返回,通过jump然后重新返回上传
      */
-    public function imgpicture()
+    public function thumb()
     {
+        echo "<input type = 'hidden' id = 'value' value = 'http://www.edian.cn/upload/month_1306/201306281243524066.JPG' />";
     }
     /**
      * 通过传入一个图片的的名字，删除这个图片

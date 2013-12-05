@@ -127,7 +127,7 @@
         </form>
     </div>
     <!--对属性描述和thumb的两处图片的上传-->
-    <div id = "ifc" class = "popf" style = "display:none">
+    <div id = "oimgUp" class = "popf" style = "display:none">
         <div >
             <a class = "close" href = "#">关闭</a>
             <iframe border = "none" id = "uploadImg"  name = "img" src = " <?php echo site_url('upload/index') ?>"></iframe>
