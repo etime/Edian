@@ -83,7 +83,11 @@ function floginName() {
         var val = $.trim($(this).val());
         if(!val)return false;
         var reg = /[~!`@#$%^&*()_\+\-\={}\\\|\[\]\;:'\"<>?,\/.]/;
-        if(reg.exec(val)){
+        var regNum = /^[\d]+$/;
+        if(regNum.exec(val)){
+            $this._flag = 1;
+            $($this._bro).text("请不用使用纯数字").addClass("failed");
+        }else if(reg.exec(val)){
             $this._flag = 1;
             $($this._bro).text("请用中文英文数字").addClass("failed");
         }else if(val.length > 20){
@@ -92,10 +96,10 @@ function floginName() {
             $.get(site_url + "/register/checkLoginName?loginName=" + val,function(data,textStatus){
                 if(textStatus == "success"){
                     if(data.indexOf("false") == -1){
-                        $this._flag = 1;
+                        $this._flag = 0;
                         $($this._bro).addClass("success").text("");//或许这里的符号，可以成为等待符号
                     }else {
-                        $this._flag = 0;
+                         $this._flag = 1;
                          $($this._bro).addClass("failed").text("登录名重复");//或许这里的符号，可以成为等待符号
                     }
                 }
