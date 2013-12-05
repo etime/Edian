@@ -16,39 +16,16 @@ class User extends CI_Model {
     function __construct() {
         parent::__construct();
     }
-    /**
-     * 这个函数在我之前的实现里面，是为了去除转义的字符而用的
-     */
-    private function dataFb($array) {
-        if (count($array)) {
-            if (array_key_exists('passwd', $array["0"])) {
-                for ($i = 0, $len = count($array); $i < $len; $i ++) {
-                    $array[$i]["passwd"] = stripslashes($array[$i]["passwd"]);
-                }
-            }
-            if(array_key_exists('user_name', $array["0"])) {
-                for ($i = 0, $len = count($array); $i < $len; $i ++) {
-                    $array[$i]["user_name"] = stripslashes($array[$i]["user_name"]);
-                }
-            }
-        }
-        return $array;
-    }
 
     /**
-     * 处理 mysql 查询的返回结果只有单独一条的情况
+     * 将输入的字符串转义后返回
+     * 这样做的好处：经过转义的字符串，在一定程度上能够防止 sql 注入，对网站安全性的提高会有一点作用
      *
-     * 因为mysql对于数据的处理是返回$array[0][content]的形式，但是对于很多单独数据的情况下不是这个样子的，只是有一条的情况，则处理为返回content
-     *
-     * @param array $array
-     * @return array|boolean
+     * @param  string $val
+     * @return string
      */
-    private function getArray($array) {
-        if(count($array) == 1) {
-            $array = $this->dataFb($array);
-            return $array[0];
-        }
-        return false;
+    private function _escape($val) {
+        return mysql_real_escape_string($val);
     }
 
     /**
@@ -130,8 +107,58 @@ class User extends CI_Model {
      * @param array $data
      */
     public function addUser($data) {
+        foreach ($data as $key => $val) {
+            $data[$key] = $this->_escape($val);
+        }
         $sql = "INSERT INTO user(nickname, loginName, password, credit, registerTime, email, phone) VALUES('$data[nickname]', '$data[loginName]', '$data[password]', '$data[credit]', now(), '$data[email]', '$data[phoneNum]')";
         $this->db->query($sql);
+    }
+
+
+
+
+/**********************************************************************************************************************/
+/**********************************************************************************************************************/
+/**********************************************************************************************************************/
+/**********************************************************************************************************************/
+/**********************************************************************************************************************/
+
+
+
+
+    /**
+     * 这个函数在我之前的实现里面，是为了去除转义的字符而用的
+     */
+    private function dataFb($array) {
+        if (count($array)) {
+            if (array_key_exists('passwd', $array["0"])) {
+                for ($i = 0, $len = count($array); $i < $len; $i ++) {
+                    $array[$i]["passwd"] = stripslashes($array[$i]["passwd"]);
+                }
+            }
+            if(array_key_exists('user_name', $array["0"])) {
+                for ($i = 0, $len = count($array); $i < $len; $i ++) {
+                    $array[$i]["user_name"] = stripslashes($array[$i]["user_name"]);
+                }
+            }
+        }
+        return $array;
+    }
+
+    /**
+     * 处理 mysql 查询的返回结果只有单独一条的情况
+     *
+     * 因为mysql对于数据的处理是返回$array[0][content]的形式，但是对于很多单独数据的情况下不是这个样子的，只是有一条的情况，则处理为返回content
+     *
+     * @param array $array
+     * @return array|boolean
+     */
+    private function getArray($array) {
+        if(count($array) == 1) {
+            $array = $this->dataFb($array);
+            return $array[0];
+        }
+        return false;
     }
 
     private function author_check($permit_level)

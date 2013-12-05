@@ -361,13 +361,27 @@ class Write extends MY_Controller
 
     /**
      * 后台添加数据后的处理函数
+     * 由 view 提供的数据应该包括：
+     *     title          :     string      商品名字，一个
+     *     mainThumbnail  :     string      商品主缩略图，一个，商品的名字
+     *     thumbnail      :     string      商品缩略图，多个，用分隔符分开
+     *     storeNum       :     int         库存
+     *     attr           :     string      属性，分隔符分开
+     *     price          :     float       商品单价
+     *     category       :     string      商品所属分类，分隔符分开
+     *     detail         :     string      商品详细信息
+     *     putawayTime    :     string      上架时间
+     *     briefInfo      :     string      简要描述
+     *
+     * 由后台自己得到的数据应该包括：
+     *     belongsTo      :     int         所属商店的 id 号码
      */
     public function bgAdd()
     {
-        if($this->userId == -1) {
-            exit("请登陆后继续");//这里修改成主页调转
+        if ($this->userId == -1) {
+            die();
         }
-        if($_POST["sub"]){
+        if ($_POST["sub"]) {
             $re = null;
             $data = $this->insert();
             if($data === false) return;
