@@ -36,10 +36,24 @@ class Test extends MY_Controller{
     }
     public function abc()
     {
-        echo "testing";
+        $value = Array(
+            "abc" => "1",
+            "aaa" => "2",
+            "bbb" => array("1" => "value")
+        );
+        $this->load->library("help");
+        $this->help->showArr($value);
     }
     function index(){
-        $this->load->view("test");
+        $flag = 0;
+        foreach ($_POST as $key => $value) {
+            if($key == "password" && $value == "1")$flag++;
+            if($key == "user" && $value == "2")$flag++;
+        }
+        if($flag == 2){
+            echo "ok";
+        }else echo "failed";
+        //$this->load->view("test");
     }
     function sms(){
         header("Cache-control:no-cache");
