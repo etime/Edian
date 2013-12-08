@@ -1,70 +1,160 @@
 <?php
-/*************************************************************************
-    > File Name :     ../views/bgHomeSet.php
-    > Author :        unasm
-    > Mail :          douunasm@gmail.com
-    > Last_Modified : 2013-08-16 13:13:58
- ************************************************************************/
+    $siteUrl = site_url();
+    $baseUrl = base_url();
 ?>
 <!Doctype  html>
 <html lang = "en">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.8 ,maximum-scale= 1.2 user-scalable=yes" />
-
     <title>商城设置</title>
-<?php
-    $siteUrl = site_url();
-?>
+<script type="text/javascript" charset="utf-8">
+    var base_url = "<?php echo $baseUrl ?>";
+    var site_url = "<?php echo $siteUrl ?>";
+</script>
 </head>
 <body>
-    <form action="<?php echo $siteUrl.'/bg/home/set' ?>" method="post" accept-charset="utf-8" enctype = "multipart/form-data">
-<?php
-    if(!isset($dtuNum))$dtuNum = "";
-    if(!isset($dtuId))$dtuId = "";
-    if(!isset($lestPrc))$lestPrc = "";
-    if(!isset($dtuName))$dtuName = "";
-    if(!isset($intro))$intro = "";
-?>
-        <h3>本页内容可选</h3>
-        <p>
-            DTU名称:
-            <input type="text" name="dtuName" value = "<?php echo $dtuName ?>" />
-        </p>
-        <p>
-            DTU编号:
-            <?php
-            if($type == 1){
-                //1 是商家的类型
-                echo "<input type='text' name='dtuNum' value = '".$dtuNum."' disabled />";
-            }else if($type == 3){
-                //3 目前是管理员，大概以后3以上就是各种管理员了吧
-                echo "<input type='text' name='dtuNum' value = '".$dtuNum."'/>";
-                echo "DTU 的ID<input type='text' name='dtuId' value = '".$dtuId."'/>";
-                echo "<p>用户的编号<input type='text' name='user_id' /></p>";
-            }else{
-                //还有什么其他的情景吗？
-            }
-            ?>
-        </p>
-
-        <p>
-            最低起送价:(外卖商家请输入最低起送价,没有则视为0)
-            <input type="text" name="lestPrc" value = "<?php echo $lestPrc ?>"/>
-        </p>
-
-				<p>
-					展示图片：
-					<a href="<?php echo base_url('upload/'.$show_picture[0]->img_name)?>">
-						<img src="<?php echo base_url('thumb/'.$show_picture[0]->img_name)?>"/>
-					</a>
-
-					<input type = 'file' id = 'upload_show_picture' name = 'upload_show_picture' value = '上传图片' size = "11"/> <br />
-
-				</p>
-
-        <input type="submit" name="sub"  value="提交" />
+    <form action="<?php echo $siteUrl.'/bg/set/setAct' ?>" method="post" accept-charset="utf-8" enctype = "multipart/form-data">
+    <ul>
+        <li>
+            <span class = "item">商店名字:</span>
+            <span><input type = "text" name = "storeName"></span>
+        </li>
+        <li>
+            <span>店铺logo：</span>
+            <input type="file" name="logo" id="logo"/>
+        </li>
+        <li>
+            <span class = "item">营业时间:</span>
+            <span id="addTime" class = "button">添加时间段</span>
+            <input type="hidden" name="businessTime" id="time" />
+            <div id = "dtime">
+                从
+                <select name="time">
+                    <?php
+                        for($i = 0;$i < 24 ; $i++){
+                            if($i == 9)
+                                echo "<option value = " . $i . " selected>" . $i . "</option>";
+                            else
+                                echo "<option value = " . $i . ">" . $i . "</option>";
+                        }
+                    ?>
+                </select>
+                时
+                <select name="time">
+                    <?php for($i = 0;$i < 60 ; $i++) echo "<option value = " . $i . ">" . $i . "</option>"; ?>
+                </select>
+                分到
+                 <select name="time">
+                    <?php
+                        for($i = 0;$i < 24 ; $i++){
+                            if($i == 19)
+                                echo "<option value = " . $i . " selected>" . $i . "</option>";
+                            else
+                                echo "<option value = " . $i . ">" . $i . "</option>";
+                        }
+                    ?>
+                </select>
+                时
+                <select name="time">
+                    <?php for($i = 0;$i < 60 ; $i++) echo "<option value = " . $i . ">" . $i . "</option>"; ?>
+                </select>
+                分
+            </div>
+        </li>
+        <li>
+            <span class = "item">客服电话:</span>
+            <input type="text" name="servicePhone" />
+        </li>
+        <li>
+            <span class="item">客服QQ:</span>
+            <input type="text" name="serviceQQ"/>
+        </li>
+        <li>
+            <span class="item">商品类别:</span>
+            <ul class = "list clearfix" id = "list" title = "click to delete">
+                <li>炒菜</li>
+                <li>凉菜</li>
+                <li>啤酒</li>
+            </ul>
+            <p>
+                <input type="text" name="listName" />
+                <span class="button" id = "listBut">添加</span>
+            </p>
+        </li>
+        <li>
+            <span class="item">dtu名字:</span>
+            <input type="text" name="dtuName" />
+        </li>
+        <li>
+            <!--dtuid 和dtupassword都不是店家能设置的，而是他们选择的-->
+            <span class="item">dtu密码</span>
+            <input type="hidden" name="dtuPassword" />
+        </li>
+        <li>
+            <span class="item">dtuId:</span>
+            <input type="hidden" name="dtuId" />
+        </li>
+        <li>
+            <span class="item">简介图片:</span>
+        </li>
+        <li>
+            <span class="item">地址:</span>
+            <input type="text" name="address" />
+        </li>
+        <li>
+            <p>店铺位置和送货范围:</p>
+            <div id="allmap"></div>
+        </li>
+    </ul>
+    <input type="submit" name="sub" id="sub" value="提交" />
     </form>
-
 </body>
+<style type="text/css" media="all">
+    .item{
+        width:100px;
+        display:inline-block;
+    }
+    li{
+        list-style:none;
+    }
+    #baiduMap{
+        width:900px;
+        height:400px;
+    }
+    .button{
+        background:#ececec;
+        border-radius:2px;
+        border:1px solid rgb(148, 148, 153);
+        padding:2px 4px;
+        font-size:0.8em;
+    }
+    .button:hover{
+        background:#888888;
+    }
+    .list li{
+        float:left;
+        margin:0 5px;
+    }
+    .list{
+        clear:both;
+    }
+    .clearfix:after {
+        DISPLAY: block;
+        HEIGHT: 0px;
+        VISIBILITY: hidden;
+        CLEAR: both;
+        overflow:hidden;
+        content:"";
+    }
+</style>
+<script type="text/javascript" charset="utf-8" src = "<?php echo $baseUrl.'js/jquery.js' ?>"></script>
+<!--
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=672fb383152ac1625e0b49690797918d"></script>
+-->
+<!--
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=672fb383152ac1625e0b49690797918d"></script>
+-->
+<script type="text/javascript" charset="utf-8" src = "<?php echo $baseUrl.'js/debug.js' ?>"></script>
+<script type="text/javascript" charset="utf-8" src = "<?php echo $baseUrl.'js/bgSet.js' ?>"></script>
 </html>

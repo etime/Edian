@@ -49,12 +49,11 @@ class Home extends MY_Controller {
             return;
         }
         $data["type"] = $this->user->getType($this->userId);
-
         //读取admin和seller对应的配置
         $this->load->config("edian");
         $data["ADMIN"] = $this->config->item("ADMIN");
         $data["SELLER"] = $this->config->item("SELLER");
-        //$this->load->view("bghome",$data);
+        $this->load->view("bghome",$data);
     }
 
     /**
@@ -62,18 +61,22 @@ class Home extends MY_Controller {
      * 这里是添加商城设置的地方，就是需要，但是又不必在注册时候的信息,
      * 营业时间，dtu，起送价，店家公告等
      * 具体的操作处理在set 这个php里面
+     * 1,需要传入的数据,全部
+     * 2,当前登录者的权限,如果是管理员的话，还需要提供商店列表
+     * @todo 关于设置显示的问题，讨论
      */
-    public function set() {
+    public function set(){
         if($this->userId == -1) {
             $this->noLogin();
             return;
         }
-        $data = $this->user->getExtro($this->userId);//获取之前的类型
+        //$data = $this->user->getExtro($this->userId);//获取之前的类型
         $data["type"] = $this->user->getType($this->userId);//获取用户的类型，方便差异化处理
         $this->load->model("img");
-        $data["show_picture"] = $this->img->select_show_picture($this->userId);
+        //$data["show_picture"] = $this->img->select_show_picture($this->userId);
         $this->load->view("bgHomeSet",$data);
-}
+    }
+
     /**
      * 传递给 view 的数据包括：
      *     全局分类列表:dir

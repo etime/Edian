@@ -24,7 +24,7 @@ function fpasswd(){
         }
     });
 }
- function namecheck(){
+function namecheck(){
     if(!funname){
         function temp(){
             var $this = this;
@@ -74,7 +74,7 @@ function icheck(){
                         $this.flag = true;
                         report("验证码正确","#spanCheck","green");
                     }else{ report("验证码错误","#spanCheck","red");
-                        $this.flag = false;
+                    $this.flag = false;
                     }
                 })
             })
@@ -194,7 +194,7 @@ $(document).ready(function(){
     $("#content form").submit(function  () {
     })
     $("#utype").click(function  (event) {
-            //usertype 选择用户时候的控制
+        //usertype 选择用户时候的控制
         if(event.target.value == 1){
             $.alet("请允许我们对您进行定位,或您在地图上标注您的店铺位置");
             $("#typeatten").text("店家的要求和管理比较严格,可以在所有区域销售");
@@ -209,69 +209,5 @@ $(document).ready(function(){
 function report (cont,select,color) {
     $(select).text(cont);
     $(select).css("color",color);
-}
-function map () {
-    //和地图，定位有关的，都在这里
-var map = new BMap.Map("allmap");            // 创建Map实例
-map.enableScrollWheelZoom();                            //启用滚轮放大缩小
-map.enableInertialDragging();
-map.enablePinchToZoom();//双指缩放
-map.enableAutoResize();
-/*************变量的初始化*********************/
-var icon = new BMap.Icon(base_url+"favicon.ico",new BMap.Size(24,24));//站点图标logo
-var markeOpt = {//标注的样式和属性初始化
-    icon:icon,
-    enableDragging:true,
-    raiseOnDrag:true
-}
-var locinit = {
-    locationIcon:icon,
-    enableAutoLocation:true
-}//默认从开始就定位,网站性质使然
-/************定位**************/
-var loc = new BMap.GeolocationControl(locinit),point;
-function success(opt) {
-    var opts = {title:"<i style = 'font-size:10px'>贴心小提示:可以右键修改位置哦</i>"}
-    var info = new BMap.InfoWindow("您的店在这里",opts);
-    map.openInfoWindow(info,opt.point);
-    point = new BMap.Point(opt.point.lng,opt.point.lat);
-    $("#pos").val(opt.point.lng+";"+opt.point.lat);
-    map.centerAndZoom(point,18);//定位成功之后，将图片放到到比较大的位置，即使失败，也按照一般来说放大
-}
-function error (StatusCode) {
-    var lat = "30.757588",lng = "103.93707";
-    point = new BMap.Point(lng,lat);
-    map.centerAndZoom(point,18);
-}
-loc.addEventListener("locationSuccess",success);
-loc.addEventListener("locationError",error);
-map.addControl(loc);
-/*************关于右键定位******************/
-var marker = 0;
-map.addEventListener("rightclick",function  () {
-    //右键单击添加标注，之所以是右键，因为需要移除之前添加的那些
-    var menu = new BMap.ContextMenu();
-    var textItem = [{
-            text:'我的店在这里',
-            callback:function  (p) {
-                map.clearOverlays();//将之前的的自动定位之类，手动添加全部清除
-                overlay(p);//
-                map.removeContextMenu(menu);
-            }
-    }];
-    console.log(textItem[0].text);
-    var item = new BMap.MenuItem(textItem[0].text,textItem[0].callback);
-    menu.addItem(item);
-    map.addContextMenu(menu);
-})
-function overlay (po) {
-    if(marker)map.removeOverlay(marker);
-    marker = new BMap.Marker(po,markeOpt);
-    $("#pos").val(po.lng+";"+po.lat);
-    map.addOverlay(marker);
-    marker.setAnimation(BMAP_ANIMATION_BOUNCE);
-    setTimeout(function  () {
-        marker.setAnimation(null);
-    },800);//一直跳觉得有点讨厌，这里跳两下停止
 }
 }

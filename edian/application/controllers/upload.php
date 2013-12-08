@@ -3,11 +3,16 @@
  * upload controller 处理上传图片
  * ans_upload    继承自MY_Controller,处理一些配置
  * upload_insert 将上传的图片插入数据库,定义于model: img
+ *
  * @author zmdyiwei<zmdyiwei@gmail.com>
  * @since  2013-11-20 18:23
  */
-
 class Upload extends MY_Controller {
+
+    /**
+     * imgMain /thumb 功能如此接近的上传函数，居然没有复用
+     * @author      unasm
+     */
     function __construct() {
         parent::__construct();
         $this->load->model('img');
@@ -50,6 +55,8 @@ class Upload extends MY_Controller {
     /**
      * 删除图片
      * @param string $imageName 图片的名字
+     * @todo imageName false的时候应该返回，而不是应该什么都不管，这样为false还有什么意义码？
+     * @todo unlink 具体看下面的错误
      */
     public function imgDelete($imageName = false) {
         // 用户没有登录
@@ -64,6 +71,9 @@ class Upload extends MY_Controller {
         }
 
         // 删除图片
+        /*
+         * 我只是给了你名字而已，还有路径呢,这个要根据我们制订的保存规则删除
+         */
         if (file_exists($imageName)) {
             unlink($imageName);
         }
@@ -109,7 +119,6 @@ class Upload extends MY_Controller {
         } else {
             $fileName .= '.jpg';
         }
-
         // 创建用户文件夹
         if (! is_dir('./image/' . $userId)) {
             mkdir('./image/' . $userId);
@@ -127,6 +136,7 @@ class Upload extends MY_Controller {
         // 上传的主图片必须满足长宽比为 1:1，且 长度不得小于 300 像素
         if ($imageSize[0] != $imageSize[1] || $imageSize[0] < 300) {
             $this->imgDelete($path);
+
             $this->index(1);
             return;
         }
@@ -186,7 +196,11 @@ class Upload extends MY_Controller {
 
         echo('your uploaded file has stroed !<br>');
     }
-
+    /**
+     * 这里是zmdyiwei 为上传写的函数，
+     * @param  int $height 上传图片的高度
+     * @param  int $width 上传图片的宽度
+     */
     function upload_config($height = -1,$width = -1){
         //对上传进行处理的函数，去掉了jump的部分，使它更富有扩展性
         //返回数据格式为数组，flag,0,标示没有错误,1,没有登陆，2，图片重复,3,没有上传，4，其他原因

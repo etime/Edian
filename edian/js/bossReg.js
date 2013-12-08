@@ -219,17 +219,8 @@ $(document).ready(function(){
         }else return true;
         return false;
     })
+    //禁止在text中输入空格
+    $("body").delegate("input[type = 'text']","keypress",function (event) {
+        if(event.keyCode == 32)return false;
+    })
 });
-/**
- * 向后台报告出现的bug
- * 不需要返回处理
- */
-function reportBug(str) {
-    $.ajax({
-        url: site_url+"/wrong/index",type: 'POST',data:  {"text":str},
-        success: function (data, textStatus, jqXHR) {
-            console.log(data);
-            console.log(jqXHR);
-        }
-    });
-}

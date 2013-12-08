@@ -37,6 +37,7 @@ if($type == $ADMIN){
         <a href = "<?php echo $siteUrl.('/order/hist') ?>" target = "content"><li>历史订单</li></a>
     </ul>
     <ul class = "art" id = "art" >
+        <a href = "<?php echo $siteUrl.'/bg/home/set' ?>" target="content"><li>商城设置</li></a>
         <a href ="<?php  echo $siteUrl.('/bg/item/mange')?>" target="content">
             <li>商品管理</li>
         </a>
@@ -44,8 +45,6 @@ if($type == $ADMIN){
         <a href = "<?php  echo $siteUrl.('/bg/item/itemCom')?>" target="content"><li>商品评论</li></a>
         <!-- 评论分为店家看的和管理员可以修改的部分-->
         <a href = "<?php  echo $siteUrl.('/bg/home/item')?>" target="content"><li>添加商品</li></a>
-        <a href = "<?php echo $siteUrl.'/bg/home/set' ?>" target="content"><li>商城信息管理</li></a>
-        <!--个人信息，直接将之前的那个页面拿过来,这里和dit打印机绑定-->
     </ul>
 <!--这里是art的结束------>
 <!--这里是img的开始------>
