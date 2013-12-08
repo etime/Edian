@@ -1,9 +1,11 @@
 <?php
 /**
  * 设置一些商店特殊信息的地方,个性化信息，标志信息，等等
- * @name      ./set.php
- * @author    unasm < 1264310280@qq.com >
- * @since     2013-11-19 06:28:10
+ * @name        ./set.php
+ * @author      unasm < 1264310280@qq.com >
+ * @since       2013-11-19 06:28:10
+ * @package     controller
+ * @sub_package bg
  */
 class set extends MY_Controller
 {
@@ -15,12 +17,57 @@ class set extends MY_Controller
      function __construct()
     {
         parent::__construct();
-        $this->user_id = $this->user_id_get();
+        $this->user_id = $this->getUserId();
+    }
+
+    /**
+     * 这里是添加商品类别列表的函数
+     * 通过发送的POST提交中的字符串，添加到对应商户列表中
+     * @param   string  $_POST["listName"]
+     * @return  0/1 添加成功返回1，否则返回0
+     */
+    public function listAdd()
+    {
+        echo "1";
+    }
+
+    /**
+     * 通过post提交，将用户的列表中某一项删除
+     *
+     * @param   string  $_POST["listName"]
+     * @return bool/int  删除成功返回1，否则返回0
+     */
+    public function listDelete()
+    {
+        echo "1";
     }
     /**
      * setact setAction set函数对应的后台操作函数
+     * 共有14项需要设置
+     *<pre>
+     * 商店名字 ：storeName
+     * 营业时间 ：businessTime  拼接成的字符串，对应了三种情况，24小时营业，一个时间段，两个时间段
+     * 客服qq   ：serviceQQ      纯数字
+     * 客服电话 ：servicePhone   11位或者座机，这里应该允许座机的出现了吧
+     * 商店logo ：logo          这个的限制再说吧
+     * 商店列表 ：list          在禁用的字符中选一个作为拼接符号，传入的字符串
+     * dtu名字  ：dtuName
+     * dtu密码  ：dtuPassword   用户权限决定是否修改,只有管理员才可以修改
+     * dtuId    ：dtuId         每个dtu的物理编号
+     * 简介图片 ：再议，规格再说
+     * 经度     ：latitude
+     * 纬度     ：longtitude
+     * 文字位置 ：字符串的形式
+     * 送货范围 ：在地图上标记出来,如果记录送货的左上和右下角的位置,是不是更好
+     * </pre>
      */
     public function setAct(){
+        echo "testing";
+        //$this->load->library("help");
+        echo "testing";
+       // $this->help->showPost();
+        return ;
+        $this->preTest();
         if($_POST["sub"]){
             $data = $this->user->getExtro($this->user_id);//获取之前的类型
             $data["dtuName"] = trim($this->input->post("dtuName"));
@@ -52,5 +99,6 @@ class set extends MY_Controller
             }
         }
     }
+
 }
 ?>

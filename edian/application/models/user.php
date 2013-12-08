@@ -303,6 +303,7 @@ class User extends CI_Model {
      * @author farmerjian <chengfeng1992@hotmail.com>
      * @param int $userId
      * @return boolean | int
+     * @todo ,这里建议，读取配置文件，而且，貌似最新的权限设定，不是这样子的，是127最大,这个算是一个bug
      */
     public function getType($userId) {
         $res = $this->db->query("select credit from user where id = '$userId'");

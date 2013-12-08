@@ -45,15 +45,14 @@ class Test extends MY_Controller{
         $this->help->showArr($value);
     }
     function index(){
-        $flag = 0;
-        foreach ($_POST as $key => $value) {
-            if($key == "password" && $value == "1")$flag++;
-            if($key == "user" && $value == "2")$flag++;
-        }
-        if($flag == 2){
-            echo "ok";
-        }else echo "failed";
-        //$this->load->view("test");
+        $arr = array('img' => array(
+                        "http://e.hiphotos.baidu.com/image/w%3D2048/sign=3f3059418d5494ee8722081919cde2fe/241f95cad1c8a78605f992f06609c93d71cf5079.jpg",
+                        "http://h.hiphotos.baidu.com/image/w%3D310/sign=63584bc6d31b0ef46ce89e5fedc551a1/b219ebc4b74543a945bcf9241f178a82b80114b6.jpg",
+                        "http://www.edian.me/upload/1.jpg"
+                    ),
+                    "data" => array("1111asd_asdf@#@","2222太儿真人")
+                );
+        echo json_encode($arr);
     }
     function sms(){
         header("Cache-control:no-cache");

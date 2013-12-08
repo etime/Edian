@@ -196,7 +196,11 @@ class Upload extends MY_Controller {
 
         echo('your uploaded file has stroed !<br>');
     }
-
+    /**
+     * 这里是zmdyiwei 为上传写的函数，
+     * @param  int $height 上传图片的高度
+     * @param  int $width 上传图片的宽度
+     */
     function upload_config($height = -1,$width = -1){
         //对上传进行处理的函数，去掉了jump的部分，使它更富有扩展性
         //返回数据格式为数组，flag,0,标示没有错误,1,没有登陆，2，图片重复,3,没有上传，4，其他原因

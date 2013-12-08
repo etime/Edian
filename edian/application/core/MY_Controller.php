@@ -97,9 +97,11 @@ class MY_Controller extends  CI_Controller {
 
     /**
      * 通过 session 中存储的 userId 判断用户是否登录，如果登录，返回其 userId，否则返回 -1
-     * @since 2013-12-2 13:46:14
-     * @return int
-     * @author farmerjian <chengfeng1992@hotmail.com>
+     * @since   2013-12-2 13:46:14
+     * @return  int
+     * @author  farmerjian <chengfeng1992@hotmail.com>
+     * @todo    没事你改毛的user_id_get啊，现在所有调用user_id_get的地方都需要你来修改
+     * @todo    建议将返回值修改成为0，首先0号用户几乎可以确定不存在，第二，int强制转化之后，如果之前的id不对，不是纯数字，这里强制转换就会变成0，然后按照false处理，是对的
      */
     public function getUserId() {
          if ($this->session->userdata("userId") != '') {
