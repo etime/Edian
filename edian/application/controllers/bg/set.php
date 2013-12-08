@@ -24,7 +24,7 @@ class set extends MY_Controller
      * 这里是添加商品类别列表的函数
      * 通过发送的POST提交中的字符串，添加到对应商户列表中
      * @param   string  $_POST["listName"]
-     * @return  0/1 添加成功返回1，否则返回0
+     * @return  1/string 添加成功返回1，否则返回返回错误原因
      */
     public function listAdd()
     {
@@ -33,9 +33,10 @@ class set extends MY_Controller
 
     /**
      * 通过post提交，将用户的列表中某一项删除
+     * 目前对应的是ajax请求
      *
      * @param   string  $_POST["listName"]
-     * @return bool/int  删除成功返回1，否则返回0
+     * @return bool/int  删除成功返回1，否则返回错误的原因
      */
     public function listDelete()
     {
@@ -62,12 +63,9 @@ class set extends MY_Controller
      * </pre>
      */
     public function setAct(){
-        echo "testing";
-        //$this->load->library("help");
-        echo "testing";
-       // $this->help->showPost();
+        $this->load->library("help");
+        $this->help->showArr($_POST);
         return ;
-        $this->preTest();
         if($_POST["sub"]){
             $data = $this->user->getExtro($this->user_id);//获取之前的类型
             $data["dtuName"] = trim($this->input->post("dtuName"));

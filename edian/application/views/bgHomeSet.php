@@ -9,7 +9,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.8 ,maximum-scale= 1.2 user-scalable=yes" />
     <title>商城设置</title>
 <script type="text/javascript" charset="utf-8">
-    var base_url = " <?php echo $baseUrl ?>";
+    var base_url = "<?php echo $baseUrl ?>";
+    var site_url = "<?php echo $siteUrl ?>";
 </script>
 </head>
 <body>
@@ -26,6 +27,7 @@
         <li>
             <span class = "item">营业时间:</span>
             <span id="addTime" class = "button">添加时间段</span>
+            <input type="hidden" name="businessTime" id="time" />
             <div id = "dtime">
                 从
                 <select name="time">
@@ -38,10 +40,11 @@
                         }
                     ?>
                 </select>
+                时
                 <select name="time">
                     <?php for($i = 0;$i < 60 ; $i++) echo "<option value = " . $i . ">" . $i . "</option>"; ?>
                 </select>
-                到
+                分到
                  <select name="time">
                     <?php
                         for($i = 0;$i < 24 ; $i++){
@@ -52,9 +55,11 @@
                         }
                     ?>
                 </select>
+                时
                 <select name="time">
                     <?php for($i = 0;$i < 60 ; $i++) echo "<option value = " . $i . ">" . $i . "</option>"; ?>
                 </select>
+                分
             </div>
         </li>
         <li>
@@ -67,14 +72,14 @@
         </li>
         <li>
             <span class="item">商品类别:</span>
-            <ul class = "list clearfix" id = "list">
+            <ul class = "list clearfix" id = "list" title = "click to delete">
                 <li>炒菜</li>
                 <li>凉菜</li>
                 <li>啤酒</li>
             </ul>
             <p>
                 <input type="text" name="listName" />
-                <span class="button">添加</span>
+                <span class="button" id = "listBut">添加</span>
             </p>
         </li>
         <li>
@@ -124,6 +129,9 @@
         padding:2px 4px;
         font-size:0.8em;
     }
+    .button:hover{
+        background:#888888;
+    }
     .list li{
         float:left;
         margin:0 5px;
@@ -144,6 +152,9 @@
 <!--
 <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=672fb383152ac1625e0b49690797918d"></script>
 -->
+<!--
 <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=672fb383152ac1625e0b49690797918d"></script>
+-->
+<script type="text/javascript" charset="utf-8" src = "<?php echo $baseUrl.'js/debug.js' ?>"></script>
 <script type="text/javascript" charset="utf-8" src = "<?php echo $baseUrl.'js/bgSet.js' ?>"></script>
 </html>

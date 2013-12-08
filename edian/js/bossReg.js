@@ -224,16 +224,3 @@ $(document).ready(function(){
         if(event.keyCode == 32)return false;
     })
 });
-/**
- * 向后台报告出现的bug
- * 不需要返回处理
- */
-function reportBug(str) {
-    $.ajax({
-        url: site_url+"/wrong/index",type: 'POST',data:  {"text":str},
-        success: function (data, textStatus, jqXHR) {
-            console.log(data);
-            console.log(jqXHR);
-        }
-    });
-}

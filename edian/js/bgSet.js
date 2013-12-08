@@ -97,10 +97,11 @@ function funMap () {
  * 所有的特殊字符都去掉了，除了一个-,45号,40,41号对应的是()
  */
 function keydel() {
-    var arr = [33, 34, 35, 36, 37, 38, 39, 40, 43, 44, 46, 47, 58, 59, 60, 61, 62, 63, 64, 91, 92, 93, 94, 95, 96 ,123, 124, 125, 126] ;
+    var arr = [32 ,33, 34, 35, 36, 37, 38, 39, 40, 43, 44, 46, 47, 58, 59, 60, 61, 62, 63, 64, 91, 92, 93, 94, 95, 96 ,123, 124, 125, 126] ;
     //特殊符号对应的keyCode
     $("body").delegate("input[type = 'text']","keypress",function (event) {
         var key = event.keyCode;
+        console.log(key);
         for (var i = 0, l = arr.length; i < l; i ++) {
             if(arr[i] == key) return false;
         }
@@ -116,15 +117,79 @@ function busTime() {
         var select = $("#dtime").find("select");
         var lstTime = $(select[2]).val();
         var select = $(Dtime).find("select");
+        //设置时间
         $(select[0]).val( Math.min(lstTime - 0 + 2 ,23) );
         $(select[2]).val( Math.min(lstTime - 0 + 6 ,23) );
         $("#dtime").after(Dtime);
         $(this).css("display","none");
+        //清空内存
+        select = null;
+        lstTime = null;
+        Dtime = null;
+    })
+}
+function listAdd() {
+    var list = $("#list");
+    $("#listBut").click(function () {
+        var val = $("input[name = 'listName']").val();
+        if(!val) return false;
+        $("input[name = 'listName']").val("");//清空，防止无意中的二次发送
+        $.ajax({
+            url: site_url+"/bg/set/listAdd" ,
+            type: 'POST',
+            data:  {"listName":val},
+            success: function (data, textStatus, jqXHR) {
+                if(textStatus == "success"){
+                    if(data.indexOf("1") != -1){
+                        list.append("<li>"+val+"</li>");
+                    }
+                    else {
+                        reportBug("在bgset.js/listAdd/的success返回处理中data=" + data + ",val = " + val);
+                    }
+                }else{
+                    reportBug("在BgSet.js/listAdd函数中返回值为"+textStatus + ",返回的data为" + data);
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                reportBug("在BgSet.js/listAdd/中返回状态为" + textStatus + ",post value 为" + val);
+            }
+        });
+    })
+    list.delegate("li","click",function (){
+        if(confirm("s您确定删除该类别？如果存在属于该类别的商品，会导致删除失败")){
+            var $this = this;
+            console.log($this);
+            var val = $($this).text();
+            $.ajax({
+                url: site_url + "/bg/set/listdelete",
+                type: 'POST',
+                data: {"listName" : val},
+                success: function (data, textStatus, jqXHR) {
+                    if(textStatus == "success"){
+                        if(data.indexOf("1") == -1){
+                            alert(data);
+                        }else
+                            $($this).empty();
+                    }else{
+                        reportBug("bgSet/listdelete的时候，输入" + val + ",返回" + textStatus +"请检查一下");
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+
+                }
+            });
+        }
     })
 }
 $(document).ready(function () {
     keydel();
     busTime();
+    listAdd();
+    $("form").submit(function () {
+        var time = $("select[name = 'time']");
+        console.log(time.length);
+        return false;
+    })
     /*
     var map = new BMap.Map("allmap");
     var point = new BMap.Point(116.331398,39.897445);

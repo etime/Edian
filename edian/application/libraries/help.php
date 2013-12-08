@@ -33,18 +33,5 @@ class CI_Help
              }
          }
      }
-
-    /**
-     * 显示post中所有的数值和value
-     */
-    protected function showPost()
-    {
-        foreach ($_POST as $key => $value) {
-            var_dump($key);
-            echo "=>";
-            echo var_dump($value);
-            echo "<br/>";
-        }
-    }
 }
 ?>
