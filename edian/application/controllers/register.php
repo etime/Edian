@@ -98,6 +98,16 @@ class Register extends CI_Controller {
             return false;
         }
 
+        // 判断 loginName 是否全是数字
+        if (preg_match("/^\d+$/", $loginName)) {
+            if (isset($_SERVER["HTTP_X_REQUESTED_WITH"]) && strtolower($_SERVER["HTTP_X_REQUESTED_WITH"]) == 'xmlhttprequest') {
+                echo "false";
+            } else {
+                $this->_errorJump('用户名不能全部由数字组成，请重新输入', $url, $urlName);
+            }
+            return false;
+        }
+
         // 判断用户的登录名是否已经存在
         $ans = $this->user->isUserExistByLoginName($loginName);
         if ($ans) {
@@ -221,13 +231,14 @@ class Register extends CI_Controller {
         if (! $this->checkLoginName($data['loginName'], $url, $urlName)) return;
 
         // 检测姓名输入是否合法
-        if (strlen($data['nickname'] > 10)) {
+        $len = strlen($data['nickname']);
+        if ($len > 10) {
             $this->_errorJump('姓名不要超过 10 个字，如果实在太长，请用昵称取代', $url, $urlName);
             return;
         }
 
-        $len = strlen($data['password']);
         // 检测密码的合法性
+        $len = strlen($data['password']);
         if ($len < 6 || $len > 20) {
             $this->_errorJump('请输入正确长度的密码', $url, $urlName);
             return;
