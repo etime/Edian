@@ -34,6 +34,10 @@ class Test extends MY_Controller{
     {
         echo "testing";
     }
+    public function map()
+    {
+        $this->load->view("test");
+    }
     public function abc()
     {
         $value = Array(
@@ -46,11 +50,11 @@ class Test extends MY_Controller{
     }
     function index(){
         $arr = array('img' => array(
-                        "http://e.hiphotos.baidu.com/image/w%3D2048/sign=3f3059418d5494ee8722081919cde2fe/241f95cad1c8a78605f992f06609c93d71cf5079.jpg",
-                        "http://h.hiphotos.baidu.com/image/w%3D310/sign=63584bc6d31b0ef46ce89e5fedc551a1/b219ebc4b74543a945bcf9241f178a82b80114b6.jpg",
+                        "http://edian.me/upload/month_1308/201308101340054962.jpg",
+                        "http://www.edian.me/upload/1367920625.jpg",
                         "http://www.edian.me/upload/1.jpg"
                     ),
-                    "data" => array("1111asd_asdf@#@","2222太儿真人")
+                    "data" => array("第一张是一个烤鱼的图片","第二个是美人的图片//或许","第三章是不存在的图片")
                 );
         echo json_encode($arr);
     }

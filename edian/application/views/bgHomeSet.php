@@ -118,10 +118,13 @@
     li{
         list-style:none;
     }
-    #baiduMap{
+/*
+    #allmap{
         width:900px;
         height:400px;
     }
+*/
+    body, html,#allmap {width: 500px;height: 500px;overflow: hidden;margin:0;}
     .button{
         background:#ececec;
         border-radius:2px;
@@ -151,10 +154,9 @@
 <script type="text/javascript" charset="utf-8" src = "<?php echo $baseUrl.'js/jquery.js' ?>"></script>
 <!--
 <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=672fb383152ac1625e0b49690797918d"></script>
--->
-<!--
 <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=672fb383152ac1625e0b49690797918d"></script>
 -->
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=f0uIeSS1Zgh8O3CBdVUM5xRN"></script>
 <script type="text/javascript" charset="utf-8" src = "<?php echo $baseUrl.'js/debug.js' ?>"></script>
 <script type="text/javascript" charset="utf-8" src = "<?php echo $baseUrl.'js/bgSet.js' ?>"></script>
 </html>

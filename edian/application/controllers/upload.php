@@ -30,7 +30,6 @@ class Upload extends MY_Controller {
         if ($type == 'image/png') return true;
         return false;
     }
-
     /**
      * 显示上传商品图片的具体页面，传递给 view 处理上传的图片的处理函数
      * @param int $flag $flag 为 1 表示上传的是 1:1 的 mainThumbnail，否则为其他情况

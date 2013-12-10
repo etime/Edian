@@ -47,7 +47,8 @@ class set extends MY_Controller
      * 共有14项需要设置
      *<pre>
      * 商店名字 ：storeName
-     * 营业时间 ：businessTime  拼接成的字符串，对应了三种情况，24小时营业，一个时间段，两个时间段
+     * 营业时间 ：businessTime  拼接成的字符串,对应了两种情况，一个时间段，两个时间段
+     *                          格式为9:0-19:0&21:0-23:0 和 9:0-19:0两种
      * 客服qq   ：serviceQQ      纯数字
      * 客服电话 ：servicePhone   11位或者座机，这里应该允许座机的出现了吧
      * 商店logo ：logo          这个的限制再说吧

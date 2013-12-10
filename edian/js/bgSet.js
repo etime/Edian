@@ -1,15 +1,73 @@
-var objMap ;
 /**
- * 地图的操作集中
+ * 这里对应的是view/bgHomeSet.php
+ * @name        bgSet.js
+ * @since       2013-12-09 10:53:35
+ * @author      unasm<1264310280@qq.com>
  */
-function funMap () {
-    var map = new BMap.Map("baiduMap");            // 创建Map实例
+/* 地图的对象，*/
+var objMap;
+/**
+ * 百度地图的操作集中
+ */
+function testMap() {
+    //var map = new BMap.Map("allmap");
+
+    // 初始化
     /*
     map.enableScrollWheelZoom();                            //启用滚轮放大缩小
     map.enableInertialDragging();
     map.enablePinchToZoom();//双指缩放
     map.enableAutoResize();
     */
+    //自动定位的实现
+    /*
+    var geolocation = new BMap.Geolocation();
+    geolocation.getCurrentPosition(function(location){
+        if(this.getStatus() == BMAP_STATUS_SUCCESS){
+            var mk = new BMap.Marker(location.point);
+            map.centerAndZoom(location.point, 12);
+            console.log(location.point);
+            map.addOverlay(mk);
+            map.panTo(location.point);
+        }
+        else {
+        var point = new BMap.Point(103.94095284007, 30.759532535854);
+        map.centerAndZoom(point,12);
+            console.log("failed");
+            //alert("定位失败，请手动定位");
+            reportBug("百度地图出现bug，无法定位,错误代码为:" + this.getStatus());
+        }
+    },{enableHighAccuracy: true})
+    */
+}
+function funMap () {
+    var map = new BMap.Map("allmap");
+
+    // 初始化
+    map.enableScrollWheelZoom();                            //启用滚轮放大缩小
+    map.enableInertialDragging();
+    map.enablePinchToZoom();//双指缩放
+    map.enableAutoResize();
+
+    //自动定位的实现
+    var geolocation = new BMap.Geolocation();
+    geolocation.getCurrentPosition(function(location){
+        if(this.getStatus() == BMAP_STATUS_SUCCESS){
+            var mk = new BMap.Marker(location.point);
+            map.centerAndZoom(location.point, 12);
+            console.log(location.point);
+            map.addOverlay(mk);
+            map.panTo(location.point);
+        }
+        else {
+        var point = new BMap.Point(103.94095284007, 30.759532535854);
+        map.centerAndZoom(point,12);
+            console.log("failed");
+            //alert("定位失败，请手动定位");
+            reportBug("百度地图出现bug，无法定位,错误代码为:" + this.getStatus());
+        }
+    },{enableHighAccuracy: true})
+
     //站点图标logo
     //var icon = new BMap.Icon(base_url+"favicon.ico",new BMap.Size(24,24));
 
@@ -101,7 +159,6 @@ function keydel() {
     //特殊符号对应的keyCode
     $("body").delegate("input[type = 'text']","keypress",function (event) {
         var key = event.keyCode;
-        console.log(key);
         for (var i = 0, l = arr.length; i < l; i ++) {
             if(arr[i] == key) return false;
         }
@@ -127,6 +184,24 @@ function busTime() {
         lstTime = null;
         Dtime = null;
     })
+}
+/**
+ * 构建时间，将时间按照一定的格式进行组织的函数
+ */
+function timeForm() {
+    var time = $("select[name = 'time']");
+    var val = "";
+    for (var i = 0, l = time.length; i < l; i ++) {
+        console.log($(time[i]).val());
+    }
+    //严重依赖dom
+    for (var i = 0, l = time.length; i < l; i ++) {
+        if(val)val += "&";
+        val += $(time[i]).val() + ":" + $(time[i + 1]).val();
+        i+=3;
+        val += "-" + $(time[i - 1]).val() + ":" + $(time[i]).val();
+    }
+    $("#time").val(val);
 }
 function listAdd() {
     var list = $("#list");
@@ -175,7 +250,7 @@ function listAdd() {
                     }
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
-
+                    reportBug("bgset.js/listAdd中的函数删除遇到错误,listName  = " + val);
                 }
             });
         }
@@ -185,29 +260,13 @@ $(document).ready(function () {
     keydel();
     busTime();
     listAdd();
+    testMap();
     $("form").submit(function () {
-        var time = $("select[name = 'time']");
-        console.log(time.length);
+        /**  对时间的操作，整理时间的格式 */
+        timeForm();
         return false;
     })
-    /*
-    var map = new BMap.Map("allmap");
-    var point = new BMap.Point(116.331398,39.897445);
-    map.centerAndZoom(point,12);
 
-    var geolocation = new BMap.Geolocation();
-    geolocation.getCurrentPosition(function(r){
-            if(this.getStatus() == BMAP_STATUS_SUCCESS){
-                var mk = new BMap.Marker(r.point);
-                map.addOverlay(mk);
-                map.panTo(r.point);
-                alert('您的位置：'+r.point.lng+','+r.point.lat);
-            }
-            else {
-            alert('failed'+this.getStatus());
-        }
-    },{enableHighAccuracy: true})
-    */
     //关于状态码
     //BMAP_STATUS_SUCCESS 检索成功。对应数值“0”。
     //BMAP_STATUS_CITY_LIST   城市列表。对应数值“1”。

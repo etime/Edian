@@ -1,9 +1,11 @@
 <?php
 /**
  * 这里是处理错误情况的，将来这里会不断的丰富的，目前只是处理打印失败的，
- *  @name :         ../controllers/bg/wrong.php
- *  @Author :       unasm <1264310280@qq.com>
- *  @since :        2013-08-18 10:02:56
+ *  @name       ../controllers/bg/wrong.php
+ *  @author     unasm <1264310280@qq.com>
+ *  @since      2013-08-18 10:02:56
+ *  @package    controllers
+ *  @subpackage bg
  */
 class Wrong extends MY_Controller
 {
