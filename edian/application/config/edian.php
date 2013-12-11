@@ -39,12 +39,22 @@ $config["lineNum"] = 4;//代表每行，如水果饮料 显示的数据量
 
 $config["maxStoreNum"] = 65535; //最大的库存量，这个数字视为诬陷数量，从不递减
 
-/**
-确定用户的权限
- */
+// 确定用户的权限
 $config['userCreditMin'] = 0;
 $config['userCreditMax'] = 100;
 $config['bossCredit'] = 110;
 $config['adminCredit'] = 120;
 
+
+// 确定图片的大小不能超过 5M
+$config['imageSize'] = 5 * 1024 * 1024;
+
+// 确定 1:1 图片最小宽度，图片存在 main 中
+$config['mainLength'] = 400;
+
+// 确定 thumb 图片中的 big 中的短边的宽度，图片存在 big 中
+$config['bigLength'] = 700;
+
+// 确定 thumb 图片中的 small 中的短边的宽度，图片存在 small 中
+$config['smallLength'] = 400;
 ?>

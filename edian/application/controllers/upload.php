@@ -16,6 +16,7 @@ class Upload extends MY_Controller {
     function __construct() {
         parent::__construct();
         $this->load->model('img');
+        $this->load->config('edian');
     }
 
     /**
@@ -83,8 +84,8 @@ class Upload extends MY_Controller {
      * 对 mainThumbnail 上传，通过 post 方式提交回来的变量名为 userfile
      * 对 mainThumbnail 的要求：
      *     长宽比为 1:1
-     *     最少为 300*300 像素
-     *     文件不得大于 300kb
+     *     最少为 400*400 像素
+     *     文件不得大于 5Mb
      */
     public function imgMain() {
         // 用户没有登录
@@ -105,7 +106,7 @@ class Upload extends MY_Controller {
         }
 
         // 上传的文件太大
-        if ($size > 300 * 1024) {
+        if ($size > $this->config->item('imageSize')) {
             $this->index(1);
             return;
         }
@@ -119,13 +120,19 @@ class Upload extends MY_Controller {
         } else {
             $fileName .= '.jpg';
         }
-        // 创建用户文件夹
+
+        // 创建 image/"userId"
         if (! is_dir('./image/' . $userId)) {
             mkdir('./image/' . $userId);
         }
 
+        // 创建 image/"userId"/main 文件夹
+        if (! is_dir('./image/' . $userId . '/main')) {
+            mkdir('./image/' . $userId . '/main');
+        }
+
         // 定义用户上传的图片的存储地址和名字
-        $path = './image/' . $userId . '/' . $fileName;
+        $path = './image/' . $userId . '/main/' . $fileName;
 
         // 上传图片
         move_uploaded_file($_FILES['userfile']['tmp_name'], $path);
@@ -134,9 +141,8 @@ class Upload extends MY_Controller {
         $imageSize = getimagesize($path);
 
         // 上传的主图片必须满足长宽比为 1:1，且 长度不得小于 300 像素
-        if ($imageSize[0] != $imageSize[1] || $imageSize[0] < 300) {
+        if ($imageSize[0] != $imageSize[1] || $imageSize[0] < $this->config->item('mainLength')) {
             $this->imgDelete($path);
-
             $this->index(1);
             return;
         }
@@ -145,9 +151,53 @@ class Upload extends MY_Controller {
     }
 
     /**
+     * 将给定的图片缩小成 w*h 的新图片并保存在相应文件夹中
+     * @param int      $oldW        原始的图片的宽度
+     * @param int      $oldH        原始的图片的高度
+     * @param int      $newW        缩小后图片的宽度
+     * @param int      $newH        缩小后图片的高度
+     * @param string   $oldParh     原始的图片的存放地址
+     * @param string   $newPath     缩小后图片的存放地址
+     * @param string   $name        图片的名字
+     * @param int      $flag        用于判断图片的格式：1 代表 jpg；2 代表 png；3 代表 gif
+     */
+    private function _shrinkImage($oldW, $oldH, $newW, $newH, $oldPath, $newPath, $name, $flag) {
+        // 确定原始图片和剪切后图片的路径
+        $oldImage = $oldPath . '/' . $name;
+        $newImage = $newPath . '/' . $name;
+
+        // 得到原始图片的资源类型对象
+        if ($flag == 1) {
+            $srcImage = ImageCreateFromJpeg($oldImage);
+        } else if ($flag == 2) {
+            $srcImage = ImageCreateFromPng($oldImage);
+        } else if ($flag == 3) {
+            $srcImage = ImageCreateFromGif($oldImage);
+        } else {
+            return;
+        }
+
+        // 新建一个资源类型的剪切后图像对象，设置为真彩色
+        $dstImage = ImageCreateTrueColor($newW, $newH);
+
+        // 复制原始图像制定范围内的像素到新建图像中
+        ImageCopyResized($dstImage, $srcImage, 0, 0, 0, 0, $newW, $newH, $oldW, $oldH);
+
+        // 把新的到的图像保存
+        if ($flag == 1) {
+            ImageJpeg($dstImage, $newImage);
+        } else if ($flag == 2) {
+            ImagePng($dstImage, $newImage);
+        } else if ($flag == 3) {
+            Imagegif($dstImage, $newImage);
+        }
+    }
+
+    /**
      * 对 thumbnail 上传，通过 post 方式提交回来的变量名为 userfile
      * 对 thumbnail 的要求：
      *     文件不得大于 300kb
+     *     短边长度不得小于 700，长边:短边 <= 2，缩小成两份图片，一份的短边为 700 存在 big 里面，一份的短边为 400 存在 small 里面
      */
     public function thumb() {
         // 用户没有登录
@@ -168,24 +218,40 @@ class Upload extends MY_Controller {
         }
 
         // 上传的文件太大
-        if ($size > 300 * 1024) {
+        if ($size > $this->config->item('imageSize')) {
             $this->index(0);
             return;
         }
 
         // 对上传的文件进行重命名
+        $flag = -1;
         $fileName = $userId . '_' . date('Y-m-d_H-i-s');
         if ($type == 'image/gif') {
             $fileName .= '.gif';
+            $flag = 3;
         } else if ($type == 'image/png') {
             $fileName .= '.png';
+            $flag = 2;
         } else {
             $fileName .= '.jpg';
+            $flag = 1;
         }
 
-        // 创建用户文件夹
+        // 创建 image/"userId" 文件夹
         if (! is_dir('./image/' . $userId)) {
             mkdir('./image/' . $userId);
+        }
+        // 创建 image/"userId"/thumb 文件夹
+        if (! is_dir('./image/' . $userId . '/thumb')) {
+            mkdir('./image/' . $userId . '/thumb');
+        }
+        // 创建 image/"userId"/thumb/big 文件夹
+        if (! is_dir('./image/' . $userId . '/thumb/big')) {
+            mkdir('./image/' . $userId . '/thumb/big');
+        }
+        // 创建 image/"userId"/thumb/small 文件夹
+        if (! is_dir('./image/' . $userId . '/thumb/small')) {
+            mkdir('./image/' . $userId . '/thumb/small');
         }
 
         // 定义用户上传的图片的存储地址和名字
@@ -193,6 +259,54 @@ class Upload extends MY_Controller {
 
         // 上传图片
         move_uploaded_file($_FILES['userfile']['tmp_name'], $path);
+
+        // 获得图片的 size
+        $imageSize = getimagesize($path);
+        $oldW = $imageSize[0];
+        $oldH = $imageSize[1];
+
+        // 上传的图片的短边必须大于 700，且长边:短边 <=2
+        if (min($oldW, $oldH) < $this->config->item('bigLength')) {
+            $this->imgDelete($path);
+            $this->index(0);
+            return;
+        } else if (max($oldW, $oldH) / min($oldW, $oldH) > 2) {
+            $this->imgDelete($path);
+            $this->index(0);
+            return;
+        }
+
+        // 确定原始图片的存放地址
+        $oldPath = './image/' . $userId;
+
+        // 确定存到 big 文件夹中的图片的 w 和 h
+        if ($oldW > $oldH) {
+            $newW = $this->config->item('bigLength');
+            $newH = $oldH / $oldW * $newW;
+        } else {
+            $newH = $this->config->item('bigLength');
+            $newW = $oldH / $oldW * $newH;
+        }
+
+        // 对原始图片进行缩小，并存放进 image/"userId"/thumb/big 文件夹中
+        $newPath = './image/' . $userId . '/thumb/big';
+        $this->_shrinkImage($oldW, $oldH, $newW, $newH, $oldPath, $newPath, $fileName, $flag);
+
+        // 确定存到 small 文件夹中的图片的 w 和 h
+        if ($oldW > $oldH) {
+            $newW = $this->config->item('smallLength');
+            $newH = $oldH / $oldW * $newW;
+        } else {
+            $newH = $this->config->item('smallLength');
+            $newW = $oldH / $oldW * $newH;
+        }
+
+        // 对原始图片进行缩小，并存放进 image/"userId"/thumb/small 文件夹中
+        $newPath = './image/' . $userId . '/thumb/small';
+        $this->_shrinkImage($oldW, $oldH, $newW, $newH, $oldPath, $newPath, $fileName, $flag);
+
+        // 删除原始图片
+        $this->imgDelete($path);
 
         echo('your uploaded file has stroed !<br>');
     }

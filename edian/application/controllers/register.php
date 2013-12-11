@@ -108,6 +108,16 @@ class Register extends CI_Controller {
             return false;
         }
 
+        // 用户输入的 loginName 不能含有空格
+        if (preg_match("/^\S+$/", $loginName)) {
+            if (isset($_SERVER["HTTP_X_REQUESTED_WITH"]) && strtolower($_SERVER["HTTP_X_REQUESTED_WITH"]) == 'xmlhttprequest') {
+                echo "false";
+            } else {
+                $this->_errorJump('用户名不能含有空格，请重新输入', $url, $urlName);
+            }
+            return false;
+        }
+
         // 判断用户的登录名是否已经存在
         $ans = $this->user->isUserExistByLoginName($loginName);
         if ($ans) {
@@ -211,13 +221,13 @@ class Register extends CI_Controller {
         // 检测客户端是否频繁注册
         if (! $this->_checkRegisterTimes($url, $urlName)) return;
 
-        $data['loginName']  = $this->input->post('loginName');
-        $data['nickname']   = $this->input->post('nickname');
+        $data['loginName']  = trim($this->input->post('loginName'));
+        $data['nickname']   = trim($this->input->post('nickname'));
         $data['password']   = $this->input->post('password');
         $data['confirm']    = $this->input->post('confirm');
-        $data['phoneNum']   = $this->input->post('phoneNum');
-        $data['checkNum']   = $this->input->post('checkNum');
-        $data['email']      = $this->input->post('email');
+        $data['phoneNum']   = trim($this->input->post('phoneNum'));
+        $data['checkNum']   = trim($this->input->post('checkNum'));
+        $data['email']      = trim($this->input->post('email'));
 
         // 检测必选输入是否为空
         if ($this->_isInputNull($data['loginName'], '请输入登录名', $url, $urlName)) return;
@@ -298,13 +308,13 @@ class Register extends CI_Controller {
         // 检测客户端是否频繁注册
         if (! $this->_checkRegisterTimes($url, $urlName)) return;
 
-        $data['loginName']  = $this->input->post('loginName');
-        $data['nickname']   = $this->input->post('nickname');
+        $data['loginName']  = trim($this->input->post('loginName'));
+        $data['nickname']   = trim($this->input->post('nickname'));
         $data['password']   = $this->input->post('password');
         $data['confirm']    = $this->input->post('confirm');
-        $data['phoneNum']   = $this->input->post('phoneNum');
-        $data['checkNum']   = $this->input->post('checkNum');
-        $data['email']      = $this->input->post('email');
+        $data['phoneNum']   = trim($this->input->post('phoneNum'));
+        $data['checkNum']   = trim($this->input->post('checkNum'));
+        $data['email']      = trim($this->input->post('email'));
 
         // 检测必选输入是否为空
         if ($this->_isInputNull($data['loginName'], '请输入登录名', $url, $urlName)) return;
