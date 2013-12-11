@@ -6,159 +6,109 @@
  */
 /* 地图的对象，*/
 var objMap;
-/**
- * 百度地图的操作集中
- */
+/** 百度地图的操作集中 */
 function testMap() {
-    //var map = new BMap.Map("allmap");
-
-    // 初始化
-    /*
-    map.enableScrollWheelZoom();                            //启用滚轮放大缩小
-    map.enableInertialDragging();
-    map.enablePinchToZoom();//双指缩放
-    map.enableAutoResize();
-    */
-    //自动定位的实现
-    /*
-    var geolocation = new BMap.Geolocation();
-    geolocation.getCurrentPosition(function(location){
-        if(this.getStatus() == BMAP_STATUS_SUCCESS){
-            var mk = new BMap.Marker(location.point);
-            map.centerAndZoom(location.point, 12);
-            console.log(location.point);
-            map.addOverlay(mk);
-            map.panTo(location.point);
-        }
-        else {
-        var point = new BMap.Point(103.94095284007, 30.759532535854);
-        map.centerAndZoom(point,12);
-            console.log("failed");
-            //alert("定位失败，请手动定位");
-            reportBug("百度地图出现bug，无法定位,错误代码为:" + this.getStatus());
-        }
-    },{enableHighAccuracy: true})
-    */
-}
-function funMap () {
     var map = new BMap.Map("allmap");
-
-    // 初始化
+    var $this = this;
+    $this._point = null;
+    $this._dist = $("#distance").val();
+    //设置图标的样式;
+    var Icon = new BMap.Icon(baseUrl + "bgimage/elogo.png",new BMap.Size(64,64));
+    var mkopt = {
+        icon:Icon,
+        title:"您的店铺位置",
+        raiseOnDrag:true,       //拖拽的时候的效果设定
+        enableDragging:true     //默认启用拖拽
+    }
+    var circleOpt = {
+        fillColor:"#00f",
+        fillOpacity:0.2,
+        strokeOpacity:0,
+        strokeWeight:"0px"
+    }
+    //给出一个默认的位置，然后试图去定位
+    setPoint( new BMap.Point(103.940, 30.759532) );
+    // 对地图的初始化
     map.enableScrollWheelZoom();                            //启用滚轮放大缩小
     map.enableInertialDragging();
     map.enablePinchToZoom();//双指缩放
     map.enableAutoResize();
 
-    //自动定位的实现
+    //对地图的定位
     var geolocation = new BMap.Geolocation();
     geolocation.getCurrentPosition(function(location){
         if(this.getStatus() == BMAP_STATUS_SUCCESS){
-            var mk = new BMap.Marker(location.point);
-            map.centerAndZoom(location.point, 12);
-            console.log(location.point);
-            map.addOverlay(mk);
-            map.panTo(location.point);
-        }
-        else {
-        var point = new BMap.Point(103.94095284007, 30.759532535854);
-        map.centerAndZoom(point,12);
+            console.log("yes");
+            setPoint(location.point);
+        } else {
             console.log("failed");
-            //alert("定位失败，请手动定位");
-            reportBug("百度地图出现bug，无法定位,错误代码为:" + this.getStatus());
+            //reportBug("百度地图出现bug，无法定位,错误代码为:" + this.getStatus());
         }
     },{enableHighAccuracy: true})
-
-    //站点图标logo
-    //var icon = new BMap.Icon(base_url+"favicon.ico",new BMap.Size(24,24));
-
-    //标注的样式和属性初始化
-    /*
-    var markeOpt = {
-        icon:icon,
-        enableDragging:true,
-        raiseOnDrag:true
-    }
-    */
-    //默认从开始就定位,网站性质使然
-    /*
-    var locinit = {
-        locationIcon:icon,
-        enableAutoLocation:true
+    var maker,circle;
+    $("#but").click(function () {
+        if(circle){
+            $this._dist = $("#distance").val();
+            circle.setRadius($this._dist);
         }
-    */
-   /*
-    var geolocation = new BMap.Geolocation();
-    geolocation.getCurrentPosition(function (status) {
-        if(this.getStatus()  == BMAP_STATUS_SUCCESS)console.log("yes");
-        else console.log("no");
     })
-    */
-    /*
-    var loc = new BMap.GeolocationControl(locinit),point;
-    function success(opt) {
-        var opts = {title:"<i style = 'font-size:10px'>贴心小提示:可以右键修改位置哦</i>"}
-        var info = new BMap.InfoWindow("您的店在这里",opts);
-        map.openInfoWindow(info,opt.point);
-        console.log(opt.point);
-        //point = new BMap.Point(opt.point.lng,opt.point.lat);
-        console.log(point);
-        //$("#pos").val(opt.point.lng+";"+opt.point.lat);
-        map.centerAndZoom(point,18);//定位成功之后，将图片放到到比较大的位置，即使失败，也按照一般来说放大
+    //when change point
+    function setPoint( point ) {
+        $this._point = point;
+        mk = null;
+        mk = new BMap.Marker(point , mkopt);
+        map.centerAndZoom(point, 15);
+        map.clearOverlays();    //清除之前的marker
+        map.addOverlay(mk);
+        map.panTo(point);
+        circle = new BMap.Circle(point ,$this._dist , circleOpt);
+        map.addOverlay( circle );
+        mk.addEventListener("dragend",function (event) {
+            //可以拖拽，确定店家的位置
+            //$this._point = event.point
+            setPoint(event.point);
+        })
+        mk.addEventListener("dragging",function (event) {
+            setTimeout(function() {
+                //setPoint(event,point)
+                circle.setCenter(event.point);
+            }, 100);
+        })
     }
-    */
-    /*
-    function error () {
-        var lat = "30.757588",lng = "103.93707";
-        point = new BMap.Point(lng,lat);
-        map.centerAndZoom(point,18);
-    }
-    */
-    /*
-    loc.addEventListener("locationSuccess",success);
-    loc.addEventListener("locationError",error);
-    map.addControl(loc);
-    */
-    /*************关于右键定位******************/
-    /*
-    var marker = 0;
-    map.addEventListener("rightclick",function  () {
-        //右键单击添加标注，之所以是右键，因为需要移除之前添加的那些
-        var menu = new BMap.ContextMenu();
-        var textItem = [{
-            text:'我的店在这里',
-            callback:function  (p) {
-                map.clearOverlays();//将之前的的自动定位之类，手动添加全部清除
-                overlay(p);//
-                map.removeContextMenu(menu);
+
+    //use when want to change by rightclick
+    var textMenu = [{   text:"放大",
+            callback:function () {
+                map.zoomIn();
             }
-        }];
-        console.log(textItem[0].text);
-        var item = new BMap.MenuItem(textItem[0].text,textItem[0].callback);
-        menu.addItem(item);
-        map.addContextMenu(menu);
-    })
-    //添加覆盖物物品
-    function overlay (po) {
-        if(marker)map.removeOverlay(marker);
-        marker = new BMap.Marker(po,markeOpt);
-        $("#pos").val(po.lng+";"+po.lat);
-        map.addOverlay(marker);
-        marker.setAnimation(BMAP_ANIMATION_BOUNCE);
-        setTimeout(function  () {
-            marker.setAnimation(null);
-        },800);
+        },{
+            text:"缩放",
+            callback:function () {
+                map.zoomOut();
+            }
+        },{
+            text:"我的店在这里",
+            callback:function (p) {
+                setPoint(p);
+            }
+        }]
+    var contextMenu = new BMap.ContextMenu();
+    for (var i = 0, l = textMenu.length; i < l; i ++) {
+        contextMenu.addItem( new BMap.MenuItem(textMenu[i].text , textMenu[i].callback,100));
+        contextMenu.addSeparator();
     }
-    */
+    map.addContextMenu(contextMenu);
 }
 /**
  * 过滤掉不允许输入的字符
  * 所有的特殊字符都去掉了，除了一个-,45号,40,41号对应的是()
  */
 function keydel() {
-    var arr = [32 ,33, 34, 35, 36, 37, 38, 39, 40, 43, 44, 46, 47, 58, 59, 60, 61, 62, 63, 64, 91, 92, 93, 94, 95, 96 ,123, 124, 125, 126] ;
+    var arr = [32 ,33, 34, 35, 36, 37, 38, 39, 42, 43, 44, 46, 47, 58, 59, 60, 61, 62, 63, 64, 91, 92, 93, 94, 95, 96 ,123, 124, 125, 126] ;
     //特殊符号对应的keyCode
     $("body").delegate("input[type = 'text']","keypress",function (event) {
         var key = event.keyCode;
+        console.log(key);
         for (var i = 0, l = arr.length; i < l; i ++) {
             if(arr[i] == key) return false;
         }
@@ -169,20 +119,18 @@ function keydel() {
  * 添加一个营业时间
  */
 function busTime() {
+    var cnt = 0;
     $("#addTime").click(function () {
-        var Dtime = $("#dtime").clone();
-        var select = $("#dtime").find("select");
-        var lstTime = $(select[2]).val();
-        var select = $(Dtime).find("select");
-        //设置时间
-        $(select[0]).val( Math.min(lstTime - 0 + 2 ,23) );
-        $(select[2]).val( Math.min(lstTime - 0 + 6 ,23) );
-        $("#dtime").after(Dtime);
-        $(this).css("display","none");
-        //清空内存
-        select = null;
-        lstTime = null;
-        Dtime = null;
+        var dlast = $(".dtime").last();
+        $("#tarea").append($(dlast).clone());
+        cnt++;
+        if( cnt == 2 ){
+            $(this).css("display","none");
+            //清空内存
+            select = null;
+            lstTime = null;
+            Dtime = null;
+        }
     })
 }
 /**

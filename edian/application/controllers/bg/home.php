@@ -72,6 +72,17 @@ class Home extends MY_Controller {
         }
         //$data = $this->user->getExtro($this->userId);//获取之前的类型
         $data["type"] = $this->user->getType($this->userId);//获取用户的类型，方便差异化处理
+        $data["type"] = 0;//普通用户
+        //选择当前登录者的权限，根据不同的权限，决定不同的事情
+        $data["type"] = 2;
+        if($data["type"] == 2){
+            $data["store"] = array(
+                'id' => array("1","2","3"),
+                "storeName" => array(
+                    "壮士店","烤鱼店","呵呵店"
+                )
+            );
+        }
         $this->load->model("img");
         //$data["show_picture"] = $this->img->select_show_picture($this->userId);
         $this->load->view("bgHomeSet",$data);
@@ -95,6 +106,8 @@ class Home extends MY_Controller {
      *     上架时间：putawayTime
      *     简要描述：briefInfo
      *  @todo 对图片的使用，需要再次商量
+     *  @todo 对管理员和店家进行两种不同的操作
+     *  @todo 需要将店家之前的信息显示提供出来，为管理员提供接口，可以选择店家的信息，然后设置
      */
     public function item() {
         if ($this->userId == -1) {
@@ -103,7 +116,8 @@ class Home extends MY_Controller {
         }
         $data['title']="添加商品";
         $data["dir"] = $this->part;
-        $data["userType"] = $this->user->getType($this->userId);
+        $data["credit"] = $this->user->getType($this->userId);
+
         $this->load->model("img");
         //得到属于该用户的图片，方便二次添加,另议
         $data["img"] = $this->img->getImgName($this->userId);

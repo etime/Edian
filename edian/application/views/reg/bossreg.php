@@ -19,7 +19,7 @@
             <tr>
                 <td>登录名:</td>
                 <td>
-                    <input type="text" name="loginName" />
+                    <input type="text" name="loginName" maxlength = "20"/>
                     <!--中英文字幕字符-->
                     <span></span>
                 </td>
@@ -29,7 +29,7 @@
                     联系人姓名<span class = "xx">*</span>：
                 </td>
                 <td>
-                    <input type="text" name="nickname" />
+                    <input type="text" name="nickname" maxlength = "20"/>
                     <span id = "nameCheck"></span>
                 </td>
             </tr>
@@ -38,14 +38,14 @@
                     <span class = "xx">*</span>：
                 </td>
                 <td>
-                    <input type="password" name="password" />
+                    <input type="password" name="password" maxlength = "20"/>
                     <span id = "pass"></span>
                 </td>
             </tr>
             <tr>
                 <td>确认密码<span class = "xx">*</span>：</td>
                 <td>
-                    <input type="password" name="confirm" />
+                    <input type="password" name="confirm" maxlength = "20"/>
                     <span></span>
                 </td>
             </tr>
@@ -54,7 +54,7 @@
                     <span class = "xx">*</span>：
                 </td>
                 <td>
-                    <input type="text" name="phoneNum" /><span id = "contra"></span>
+                    <input type="text" name="phoneNum" maxlength = "11"/><span id = "contra"></span>
                 </td>
             </tr>
             <tr>

@@ -1,6 +1,7 @@
 <?php
     $siteUrl = site_url();
     $baseUrl = base_url();
+
 ?>
 <!Doctype  html>
 <html lang = "en">
@@ -9,77 +10,83 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.8 ,maximum-scale= 1.2 user-scalable=yes" />
     <title>商城设置</title>
 <script type="text/javascript" charset="utf-8">
-    var base_url = "<?php echo $baseUrl ?>";
-    var site_url = "<?php echo $siteUrl ?>";
+    var baseUrl = "<?php echo $baseUrl ?>";
+    var siteUrl = "<?php echo $siteUrl ?>";
 </script>
 </head>
 <body>
     <form action="<?php echo $siteUrl.'/bg/set/setAct' ?>" method="post" accept-charset="utf-8" enctype = "multipart/form-data">
+    <?php
+    echo $type;
+        if($type == 2){
+            echo "<select name = 'storeName'>";
+            for ($i = 0,$len = count($store) ; $i < $len ;$i++){
+                echo "<option value = " .$store["id"] . ">" . $store["storeName"] . "</option>";
+            }
+            echo "</select>";
+        }
+    ?>
     <ul>
         <li>
             <span class = "item">商店名字:</span>
-            <span><input type = "text" name = "storeName"></span>
+            <span><input type = "text" name = "storeName" maxlength = "10"></span>
         </li>
         <li>
             <span>店铺logo：</span>
             <input type="file" name="logo" id="logo"/>
         </li>
         <li>
-            <span class = "item">营业时间:</span>
-            <span id="addTime" class = "button">添加时间段</span>
-            <input type="hidden" name="businessTime" id="time" />
-            <div id = "dtime">
-                从
-                <select name="time">
-                    <?php
-                        for($i = 0;$i < 24 ; $i++){
-                            if($i == 9)
-                                echo "<option value = " . $i . " selected>" . $i . "</option>";
-                            else
-                                echo "<option value = " . $i . ">" . $i . "</option>";
-                        }
-                    ?>
-                </select>
-                时
-                <select name="time">
-                    <?php for($i = 0;$i < 60 ; $i++) echo "<option value = " . $i . ">" . $i . "</option>"; ?>
-                </select>
-                分到
-                 <select name="time">
-                    <?php
-                        for($i = 0;$i < 24 ; $i++){
-                            if($i == 19)
-                                echo "<option value = " . $i . " selected>" . $i . "</option>";
-                            else
-                                echo "<option value = " . $i . ">" . $i . "</option>";
-                        }
-                    ?>
-                </select>
-                时
-                <select name="time">
-                    <?php for($i = 0;$i < 60 ; $i++) echo "<option value = " . $i . ">" . $i . "</option>"; ?>
-                </select>
-                分
-            </div>
-        </li>
-        <li>
             <span class = "item">客服电话:</span>
-            <input type="text" name="servicePhone" />
+            <input type="text" name="servicePhone" maxlength = "11" />
         </li>
         <li>
             <span class="item">客服QQ:</span>
-            <input type="text" name="serviceQQ"/>
+            <input type="text" name="serviceQQ" maxlength = "11"/>
+        </li>
+        <li>
+            <span class = "item">营业时间:</span>
+            <span id="addTime" class = "button">添加时间段</span>
+            <input type="hidden" name="businessTime" id="time" />
+            <div id = "tarea">
+                <p class = "dtime">
+                    从
+                    <select name="time">
+                        <?php
+                            for($i = 0;$i < 24 ; $i++){
+                                echo "<option value = " . $i . ">" . $i . "</option>";
+                            }
+                        ?>
+                    </select>
+                    时
+                    <select name="time">
+                        <?php for($i = 0;$i < 60 ; $i++) echo "<option value = " . $i . ">" . $i . "</option>"; ?>
+                    </select>
+                    分到
+                     <select name="time">
+                        <?php
+                            for($i = 0;$i < 24 ; $i++){
+                                echo "<option value = " . $i . ">" . $i . "</option>";
+                            }
+                        ?>
+                    </select>
+                    时
+                    <select name="time">
+                        <?php for($i = 0;$i < 60 ; $i++) echo "<option value = " . $i . ">" . $i . "</option>"; ?>
+                    </select>
+                    分
+                </p>
+            </div>
         </li>
         <li>
             <span class="item">商品类别:</span>
-            <ul class = "list clearfix" id = "list" title = "click to delete">
+            <ul class = "list clearfix" id = "list" title = "点击删除">
                 <li>炒菜</li>
                 <li>凉菜</li>
                 <li>啤酒</li>
             </ul>
             <p>
                 <input type="text" name="listName" />
-                <span class="button" id = "listBut">添加</span>
+                <span class="button" id = "listBut">添加类别</span>
             </p>
         </li>
         <li>
@@ -103,7 +110,7 @@
             <input type="text" name="address" />
         </li>
         <li>
-            <p>店铺位置和送货范围:</p>
+            <p>店铺位置和送货范围 <input type="text" name="distance" id="distance" value="1000" />米 <input type="button" name="but" id="but" value="确定" />:</p>
             <div id="allmap"></div>
         </li>
     </ul>
@@ -111,12 +118,17 @@
     </form>
 </body>
 <style type="text/css" media="all">
+    #distance{
+        width:50px;
+    }
     .item{
         width:100px;
         display:inline-block;
     }
     li{
         list-style:none;
+        line-height:1.5em;
+        border-bottom:1px solid rgb(0, 181, 226);
     }
 /*
     #allmap{
@@ -156,7 +168,9 @@
 <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=672fb383152ac1625e0b49690797918d"></script>
 <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=672fb383152ac1625e0b49690797918d"></script>
 -->
-<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=f0uIeSS1Zgh8O3CBdVUM5xRN"></script>
 <script type="text/javascript" charset="utf-8" src = "<?php echo $baseUrl.'js/debug.js' ?>"></script>
 <script type="text/javascript" charset="utf-8" src = "<?php echo $baseUrl.'js/bgSet.js' ?>"></script>
+<!--
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=f0uIeSS1Zgh8O3CBdVUM5xRN"></script>
+-->
 </html>

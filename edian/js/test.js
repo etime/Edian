@@ -68,8 +68,7 @@ $(document).ready(function(){
     }
 
     //use when want to change by rightclick
-    var textMenu = [
-        {   text:"放大",
+    var textMenu = [{   text:"放大",
             callback:function () {
                 map.zoomIn();
             }
@@ -83,8 +82,7 @@ $(document).ready(function(){
             callback:function (p) {
                 setPoint(p);
             }
-        }
-    ]
+        }]
     var contextMenu = new BMap.ContextMenu();
     for (var i = 0, l = textMenu.length; i < l; i ++) {
         contextMenu.addItem( new BMap.MenuItem(textMenu[i].text , textMenu[i].callback,100));
