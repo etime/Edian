@@ -123,7 +123,7 @@ class User extends CI_Model {
      * @param int $userId
      * @return boolean | int
      */
-    public function getType($userId) {
+    public function getCredit($userId) {
         $res = $this->db->query("select credit from user where id = '$userId'");
         $res = $res->result_array();
         if (count($res) == 0) return false;

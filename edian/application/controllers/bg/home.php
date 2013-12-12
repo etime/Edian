@@ -48,7 +48,7 @@ class Home extends MY_Controller {
             $this->noLogin();
             return;
         }
-        $data["type"] = $this->user->getType($this->userId);
+        $data["type"] = $this->user->getCredit($this->userId);
         //读取admin和seller对应的配置
         $this->load->config("edian");
         $data["ADMIN"] = $this->config->item("ADMIN");
@@ -116,7 +116,7 @@ class Home extends MY_Controller {
         }
         $data['title']="添加商品";
         $data["dir"] = $this->part;
-        $data["credit"] = $this->user->getType($this->userId);
+        $data["credit"] = $this->user->getCredit($this->userId);
 
         $this->load->model("img");
         //得到属于该用户的图片，方便二次添加,另议
