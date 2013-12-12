@@ -37,7 +37,7 @@ if($type == $ADMIN){
         <a href = "<?php echo $siteUrl.('/order/hist') ?>" target = "content"><li>历史订单</li></a>
     </ul>
     <ul class = "art" id = "art" >
-        <a href = "<?php echo $siteUrl.'/bg/home/set' ?>" target="content"><li>商城设置</li></a>
+        <a href = "<?php echo $siteUrl.'/bg/set/setAct' ?>" target="content"><li>商城设置</li></a>
         <a href ="<?php  echo $siteUrl.('/bg/item/mange')?>" target="content">
             <li>商品管理</li>
         </a>

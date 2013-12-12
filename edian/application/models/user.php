@@ -128,9 +128,9 @@ class User extends CI_Model {
         $res = $res->result_array();
         if (count($res) == 0) return false;
         $this->load->config("edian");
-        if($data[0]["credit"] >= $this->config->item("adminCredit") ){
+        if($res[0]["credit"] >= $this->config->item("adminCredit") ){
             return 2;
-        }else if($data[0]["credit"] >= $this->config->item("bossCredit") ){
+        }else if($res[0]["credit"] >= $this->config->item("bossCredit") ){
             return 1;
         }
         return 0;

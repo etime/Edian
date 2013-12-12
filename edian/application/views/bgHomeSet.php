@@ -17,11 +17,10 @@
 <body>
     <form action="<?php echo $siteUrl.'/bg/set/setAct' ?>" method="post" accept-charset="utf-8" enctype = "multipart/form-data">
     <?php
-    echo $type;
         if($type == 2){
-            echo "<select name = 'storeName'>";
+            echo "<select name = 'storeId'>";
             for ($i = 0,$len = count($store) ; $i < $len ;$i++){
-                echo "<option value = " .$store["id"] . ">" . $store["storeName"] . "</option>";
+                echo "<option value = " .$store[$i]["id"] . ">" . $store[$i]["name"] . "</option>";
             }
             echo "</select>";
         }

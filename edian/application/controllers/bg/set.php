@@ -17,6 +17,7 @@ class set extends MY_Controller
      function __construct()
     {
         parent::__construct();
+        $this->load->model("user");
         $this->user_id = $this->getUserId();
     }
 
@@ -43,31 +44,54 @@ class set extends MY_Controller
         echo "1";
     }
     /**
-     * setact setAction set函数对应的后台操作函数
+     * setact setAction set函数对应的后台操作函数和view显示函数
      * 共有14项需要设置
      *<pre>
-     * 商店名字 ：storeName
-     * 营业时间 ：businessTime  拼接成的字符串,对应了两种情况，一个时间段，两个时间段
+     *      商店名字 ：storeName
+     *      营业时间 ：businessTime  拼接成的字符串,对应了两种情况，一个时间段，两个时间段
      *                          格式为9:0-19:0&21:0-23:0 和 9:0-19:0两种
-     * 客服qq   ：serviceQQ      纯数字
-     * 客服电话 ：servicePhone   11位或者座机，这里应该允许座机的出现了吧
-     * 商店logo ：logo          这个的限制再说吧
-     * 商店列表 ：list          在禁用的字符中选一个作为拼接符号，传入的字符串
-     * dtu名字  ：dtuName
-     * dtu密码  ：dtuPassword   用户权限决定是否修改,只有管理员才可以修改
-     * dtuId    ：dtuId         每个dtu的物理编号
-     * 简介图片 ：再议，规格再说
-     * 经度     ：latitude
-     * 纬度     ：longtitude
-     * 文字位置 ：字符串的形式
-     * 送货范围 ：在地图上标记出来,如果记录送货的左上和右下角的位置,是不是更好
+     *      客服qq   ：serviceQQ      纯数字
+     *      客服电话 ：servicePhone   11位或者座机，这里应该允许座机的出现了吧
+     *      商店logo ：logo          这个的限制再说吧
+     *      商店列表 ：list          在禁用的字符中选一个作为拼接符号，传入的字符串
+     *      dtu名字  ：dtuName
+     *      dtu密码  ：dtuPassword   用户权限决定是否修改,只有管理员才可以修改
+     *      dtuId    ：dtuId         每个dtu的物理编号
+     *      简介图片 ：再议，规格再说
+     *      经度     ：latitude
+     *      纬度     ：longtitude
+     *      文字位置 ：字符串的形式
+     *      送货范围 ：在地图上标记出来,如果记录送货的左上和右下角的位置,是不是更好
      * </pre>
      */
     public function setAct(){
         $this->load->library("help");
         $this->help->showArr($_POST);
-        return ;
-        if($_POST["sub"]){
+        if($this->user_id == -1){
+            $this->noLogin( site_url("bg/set/setAct") );
+            return;
+        }
+        $data["type"] = $this->user->getType($this->user_id);//获取用户的类型，方便差异化处理
+        echo $data["type"];
+        //选择当前登录者的权限，根据不同的权限，决定不同的事情
+        if($data["type"] == 2){
+            //为管理员提取不同店的名字和id
+            $data["store"] = array(
+                array('id' =>1,"name" =>"壮士店" ),
+                array('id' =>1,"name" =>"壮士店" ),
+                array('id' =>1,"name" =>"壮士店" )
+            );
+            //优先选择店，在没有的情况下选择一个默认的店
+            $storeId = $this->input->post("storeId");
+            if(!$storeId){
+                $storeId = 1;
+            }
+        }else{
+            $storeId = $this->session->userdata("storeId");
+        }
+        echo "tesing";
+        echo $storeId;
+        if($this->input->post("check")){
             $data = $this->user->getExtro($this->user_id);//获取之前的类型
             $data["dtuName"] = trim($this->input->post("dtuName"));
             $data["intro"] = trim($this->input->post("intro"));
@@ -97,6 +121,14 @@ class set extends MY_Controller
                 else echo "插入失败";
             }
         }
+    }
+    /**
+     * 对用户没有登录的情况进行处理
+     */
+    protected function noLogin( $url )
+    {
+        $data["url"]  = $url;
+        $this->load->view("login", $data);
     }
 
 }

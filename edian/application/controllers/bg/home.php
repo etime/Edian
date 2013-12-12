@@ -64,6 +64,7 @@ class Home extends MY_Controller {
      * 1,需要传入的数据,全部
      * 2,当前登录者的权限,如果是管理员的话，还需要提供商店列表
      * @todo 关于设置显示的问题，讨论
+     * @deprecated 因为没有办法处理 管理员选择店家的操作，因此废弃
      */
     public function set(){
         if($this->userId == -1) {
@@ -77,10 +78,9 @@ class Home extends MY_Controller {
         $data["type"] = 2;
         if($data["type"] == 2){
             $data["store"] = array(
-                'id' => array("1","2","3"),
-                "storeName" => array(
-                    "壮士店","烤鱼店","呵呵店"
-                )
+                array('id' =>1,"storeName" =>"壮士店" ),
+                array('id' =>1,"storeName" =>"壮士店" ),
+                array('id' =>1,"storeName" =>"壮士店" )
             );
         }
         $this->load->model("img");
