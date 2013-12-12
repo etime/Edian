@@ -33,9 +33,6 @@ function forbid() {
 $(document).ready(function  () {
     var value,NoImg = 1,doc = document;
     dir = eval(dir);
-    $(".part input").last().click(function  () {
-        alert("抱歉，让您选择\"其他\"是我们分类的不够细致，请联系管理员"+admin+"帮忙");
-    })
     forbid();//处理禁止输入的字符
     $("input[type = 'file']").change(function  () {
         value = $.trim($(this).val());
@@ -203,15 +200,14 @@ function part (list) {
      * 当用户点击的时候，根据动作，添加对应的信息
      */
     part.delegate("input","click",function () {
-        var texts = $(this.nextSibling).text();
-        getSon(texts);
+        getSon( $(this).val() );
     })
     /**
      * 在刚开始的时候，检验那些已经被选择了
      */
     $("#part input").each(function  () {
         if(this.checked){
-            getSon($(this.nextSibling).text());
+            getSon( $(this).val() );
         }
     })
     /**

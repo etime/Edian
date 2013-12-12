@@ -30,7 +30,7 @@
                     ?>
                     <!--js控制选择-->
                     <?php foreach ($dir as $key => $value):?>
-                        <input type="radio" name="part" value="<?php echo $key ?>" />
+                        <input type="radio" name="keyi" value="<?php echo $key ?>" />
                             <span><?php echo $key?></span>
                     <?php endforeach?>
                 </p>
