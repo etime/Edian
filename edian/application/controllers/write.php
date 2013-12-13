@@ -397,10 +397,10 @@ class Write extends MY_Controller
      *     keyk           :     string      商品第三级关键字
      *     category       :     string      商品在本店中的分类
      *     price          :     float       商品单价
-     *     mainThumbnail  :     string      商品主图，一个，商品的名字
+     *     mainThumbnail  :     string      商品主图，一个，保存在 image/"userId"/main
      *     attr           :     string      属性，用特殊的格式编码
      *     storeNum       :     int         库存
-     *     thumbnail      :     string      商品图片，多个，用 ';' 分开
+     *     thumbnail      :     string      商品图片，多个，用 ';' 分开，保存在 image/"userId"/thumb/big(在 small 中还有一份镜像)
      *     title          :     string      商品名字，一个
      *     detail         :     string      商品详细信息
      *
@@ -496,6 +496,15 @@ class Write extends MY_Controller
 
         // 判断本店分类是否合法
         $stroeCategory = $this->store->getCategoryByStoreId($data['belongsTo']);
+        $flag = false;
+        foreach ($stroeCategory as $key => $val) {
+            if ($val == $data['category']) $flag = true;
+            if ($flag) break;
+        }
+        if (! $flag) {
+            $this->_errorJump('本店分类不合法', $url, $urlName);
+            return;
+        }
 
         // 判断商品价格是否合法
         if (! preg_match("/\d[.\d]?\d/", $data['price'])) {
@@ -504,6 +513,7 @@ class Write extends MY_Controller
         }
 
         // 判断商品主图片是否合法
+        
 
         // 判断商品属性是否合法
 
