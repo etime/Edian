@@ -15,16 +15,19 @@
 </script>
 </head>
 <body>
-    <form action="<?php echo $siteUrl.'/bg/set/setAct' ?>" method="post" accept-charset="utf-8" enctype = "multipart/form-data">
     <?php
         if($type == 2){
-            echo "<select name = 'storeId'>";
+            $check = '<form action=\'' . $siteUrl . '/bg/set/setAct\'  method=\'post\' id = \'switch\' accept-charset=\'utf-8\' enctype = \'multipart/form-data\'>';
+            $check .= '<select name = \'storeId\'>';
             for ($i = 0,$len = count($store) ; $i < $len ;$i++){
-                echo "<option value = " .$store[$i]["id"] . ">" . $store[$i]["name"] . "</option>";
+                $check .= '<option value = ' .$store[$i]["id"] . '>' . $store[$i]['name'] . '</option>';
             }
-            echo "</select>";
+            $check .= '</select>';
+            $check .= '<input type=submit name=sub  value=switch /></form>';
+            echo $check;
         }
     ?>
+    <form action="<?php echo $siteUrl.'/bg/set/setAct' ?>" method="post" id = "change" accept-charset="utf-8" enctype = "multipart/form-data">
     <ul>
         <li>
             <span class = "item">商店名字:</span>
@@ -90,7 +93,7 @@
         </li>
         <li>
             <span class="item">dtu名字:</span>
-            <input type="text" name="dtuName" />
+            <input type="text" name="dtuName"  maxlength = "15"/>
         </li>
         <li>
             <!--dtuid 和dtupassword都不是店家能设置的，而是他们选择的-->
@@ -106,7 +109,7 @@
         </li>
         <li>
             <span class="item">地址:</span>
-            <input type="text" name="address" />
+            <input type="text" name="address" maxlength = "250"/>
         </li>
         <li>
             <p>店铺位置和送货范围 <input type="text" name="distance" id="distance" value="1000" />米 <input type="button" name="but" id="but" value="确定" />:</p>
@@ -135,7 +138,9 @@
         height:400px;
     }
 */
-    body, html,#allmap {width: 500px;height: 500px;overflow: hidden;margin:0;}
+    /*
+ *   body, html,#allmap {width: 500px;height: 500px;overflow: hidden;margin:0;}
+ */
     .button{
         background:#ececec;
         border-radius:2px;

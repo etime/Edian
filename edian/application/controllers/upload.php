@@ -85,6 +85,7 @@ class Upload extends MY_Controller {
      *     长宽比为 1:1
      *     最少为 400*400 像素
      *     文件不得大于 5Mb
+     *  @todo return value wite these format <input type = 'hidden' name = 'value' id = 'value' value = '{ the data value }'>
      */
     public function imgMain() {
         // 用户没有登录
