@@ -7,6 +7,8 @@
  * @package     controller
  * @sub_package bg
  */
+
+define("TEST","1");
 class set extends MY_Controller
 {
     /** 来到这里的人必须有权限检查 */
@@ -71,31 +73,33 @@ class set extends MY_Controller
             $this->noLogin( site_url("bg/set/setAct") );
             return;
         }
-        $data["type"] = $this->user->getType($this->user_id);//获取用户的类型，方便差异化处理
-        echo $data["type"];
+        $data["type"] = $this->user->getCredit($this->user_id);//获取用户的类型，方便差异化处理
+        if(TEST)
+            $data["type"] = 2;
         //选择当前登录者的权限，根据不同的权限，决定不同的事情
         if($data["type"] == 2){
-            //为管理员提取不同店的名字和id
-            $data["store"] = array(
-                array('id' =>1,"name" =>"壮士店" ),
-                array('id' =>1,"name" =>"壮士店" ),
-                array('id' =>1,"name" =>"壮士店" )
-            );
-            //优先选择店，在没有的情况下选择一个默认的店
-            $storeId = $this->input->post("storeId");
-            if(!$storeId){
-                $storeId = 1;
+            if(TEST){
+                $data["store"] = array(
+                    array('id' =>1,"name" =>"壮士店1" ),
+                    array('id' =>2,"name" =>"壮士店2" ),
+                    array('id' =>3,"name" =>"壮士店3" )
+                );
+            }else{
+                $data["store"] = $this->store->getStoreList();
             }
+            //优先选择店，在没有的情况下选择一个默认的店
+            $data["storeId"] = $this->input->post("storeId");
+            if(!$data["storeId"])
+                $data["storeId"] = 1;
         }else{
-            $storeId = $this->session->userdata("storeId");
+            //强制转换，如果发现为0，报错
+            $data["storeId"] = (int)$this->session->userdata("storeId");
         }
-        echo "tesing";
-        echo $storeId;
-        if($this->input->post("check")){
+        if($this->input->post("sub")){
             $data = $this->user->getExtro($this->user_id);//获取之前的类型
             $data["dtuName"] = trim($this->input->post("dtuName"));
-            $data["intro"] = trim($this->input->post("intro"));
-            $data["lestPrc"] = trim($this->input->post("lestPrc"));
+            $data["intro"] = trim( $this->input->post("intro") );
+            $data["lestPrc"] = trim( $this->input->post("lestPrc") );
             $sms = trim($this->input->post("smsOrd"));
             if($sms){
                 $data["smsOrd"] = 1;
@@ -121,6 +125,7 @@ class set extends MY_Controller
                 else echo "插入失败";
             }
         }
+        $this->load->view("bgHomeSet",$data);
     }
     /**
      * 对用户没有登录的情况进行处理

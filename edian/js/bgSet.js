@@ -51,6 +51,7 @@ function testMap() {
             $this._dist = $("#distance").val();
             circle.setRadius($this._dist);
         }
+        return false;
     })
     //when change point
     function setPoint( point ) {
@@ -135,13 +136,11 @@ function busTime() {
 }
 /**
  * 构建时间，将时间按照一定的格式进行组织的函数
+ * 严重依赖dom的情况，可不好
  */
 function timeForm() {
     var time = $("select[name = 'time']");
     var val = "";
-    for (var i = 0, l = time.length; i < l; i ++) {
-        console.log($(time[i]).val());
-    }
     //严重依赖dom
     for (var i = 0, l = time.length; i < l; i ++) {
         if(val)val += "&";
@@ -158,7 +157,7 @@ function listAdd() {
         if(!val) return false;
         $("input[name = 'listName']").val("");//清空，防止无意中的二次发送
         $.ajax({
-            url: site_url+"/bg/set/listAdd" ,
+            url: siteUrl+"/bg/set/listAdd" ,
             type: 'POST',
             data:  {"listName":val},
             success: function (data, textStatus, jqXHR) {
@@ -184,7 +183,7 @@ function listAdd() {
             console.log($this);
             var val = $($this).text();
             $.ajax({
-                url: site_url + "/bg/set/listdelete",
+                url: siteUrl + "/bg/set/listdelete",
                 type: 'POST',
                 data: {"listName" : val},
                 success: function (data, textStatus, jqXHR) {
@@ -208,8 +207,9 @@ $(document).ready(function () {
     keydel();
     busTime();
     listAdd();
-    testMap();
-    $("form").submit(function () {
+    //testMap();
+    $("#change").submit(function (event) {
+        debugger;
         /**  对时间的操作，整理时间的格式 */
         timeForm();
         return false;

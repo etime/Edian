@@ -1,7 +1,7 @@
 <?php
  /**
    * 这里的item对应了mysql的item表，集中了item的所有的操作
-
+   * category "keyi;keyj;keyk;category|"
    * art_id : 表明这个行的唯一id <br><br>
    * title : 商品信息的标题，也是搜索的主要依据<br><br>
    * content : 主要介绍内容          <br><br>
