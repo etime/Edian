@@ -31,10 +31,11 @@ class Write extends MY_Controller
         define('imgDir',"upload/");
         define('THUMB',"upload/");
         $this->defaultImg = "real.png";
-        $this->userId = $this->user_id_get();
+        $this->userId = $this->getUserId();
         $this->load->model("art");
         $this->load->model("mwrong");
         $this->load->model("mitem");//调出model
+        $this->load->model('store');
     }
 
     /**
@@ -360,52 +361,185 @@ class Write extends MY_Controller
     }
 
     /**
+     * 当商家填写的信息出错时，自动跳转，跳转前，返回给 view 出错的信息
+     *
+     * @param string $content  出错时，返回给 view 的信息
+     * @param string $url      出错时，跳转到的页面的 url
+     * @param string $urlName  出错时，跳转到的页面的 title
+     */
+    private function _errorJump($content, $url, $urlName) {
+        $data['atten'] = $content;
+        $data['uri'] = $url;
+        $data['uriName'] = $urlName;
+        $this->load->view("jump", $data);
+    }
+
+    /**
+     * 用于判断用户提交的表单的内容是否为空，如果为空，跳转到相应的页面
+     *
+     * @param string $val      需要判断的变量
+     * @param string $content  出错时，返回给 view 的信息
+     * @param string $url      出错时，跳转到的页面的 url
+     * @param string $urlName  出错时，跳转到的页面的 title
+     * @return boolean         变量不为空，返回 false，否则返回 true
+     */
+    private function _isInputNull($val, $content, $url, $urlName) {
+        if ($val != '') return false;
+        $this->_errorJump($content, $url, $urlName);
+        return true;
+    }
+
+    /**
      * 后台添加数据后的处理函数
      * 由 view 提供的数据应该包括：
-     *     title          :     string      商品名字，一个
-     *     mainThumbnail  :     string      商品主缩略图，一个，商品的名字
-     *     thumbnail      :     string      商品缩略图，多个，用分隔符分开
-     *     storeNum       :     int         库存
-     *     attr           :     string      属性，分隔符分开
+     *     keyi           :     string      商品第一级关键字
+     *     keyj           :     string      商品第二级关键字
+     *     keyk           :     string      商品第三级关键字
+     *     category       :     string      商品在本店中的分类
      *     price          :     float       商品单价
-     *     category       :     string      商品所属分类，分隔符分开
+     *     mainThumbnail  :     string      商品主图，一个，商品的名字
+     *     attr           :     string      属性，用特殊的格式编码
+     *     storeNum       :     int         库存
+     *     thumbnail      :     string      商品图片，多个，用 ';' 分开
+     *     title          :     string      商品名字，一个
      *     detail         :     string      商品详细信息
-     *     putawayTime    :     string      上架时间
-     *     briefInfo      :     string      简要描述
      *
      * 由后台自己得到的数据应该包括：
      *     belongsTo      :     int         所属商店的 id 号码
+     * @todo 一系列的 judge 以及商品信息添加到数据库中
      */
-    public function bgAdd()
-    {
+    public function bgAdd() {
+        // 判断用户登录否
         if ($this->userId == -1) {
             die();
         }
-        if ($_POST["sub"]) {
-            $re = null;
-            $data = $this->insert();
-            if($data === false) return;
-            $data["value"] = time();
-            //value ，标示一个帖子含金量的函数,初始的值为当时的事件辍
-            $data["author_id"] = $this->userId;
-            $re = $this->mitem->insert($data);
-            if($re){
-                $data["time"] = 3;
-                $data["title"] = "恭喜你，成功了";
-                //$data["uri"] = site_url("showart/index/".$re);
-                $data["uri"] = site_url("bg/home/itemadd");
-                $data["uriName"] = "新品";
-                $data["atten"] = "成功,可喜可贺";
-                $this->load->view("jump2",$data);
-            }else {
-                $data["time"] = 5;
-                $data["title"] = "出错了，请联系客服";
-                $data["uri"] = site_url("bg/home/itemadd");
-                $data["uriName"] = "新品上架";
-                $data["atten"] = "出错了，请联系客服帮助解决";
-                $this->load->view("jump",$data);
+
+        // 判断用户权限够否
+        ;
+
+        // 从 view 回收所有数据
+        $data['keyi']          = trim($this->input->post('keyi'));
+        $data['keyj']          = trim($this->input->post('keyj'));
+        $data['keyk']          = trim($this->input->post('keyk'));
+        $data['category']      = trim($this->input->post('category'));
+        $data['price']         = trim($this->input->post('price'));
+        $data['mainThumbnail'] = trim($this->input->post('mainThumbnail'));
+        $data['attr']          = trim($this->input->post('attr'));
+        $data['storeNum']      = trim($this->input->post('storeNum'));
+        $data['thumbnail']     = trim($this->input->post('thumbnail'));
+        $data['title']         = trim($this->input->post('title'));
+        $data['detail']        = trim($this->input->post('detail'));
+
+        // 由后代自己判断得到的数据
+        $data['belongsTo']     = $this->session->userdata('storeId');
+
+        // 设置用户填写商品信息出错时跳转的 url，和跳转页面的 title
+        $url = site_url('bg/home/item');
+        $urlName = '添加商品';
+
+        // 判断返回的必须值是否为空
+        if ($this->_isInputNull($data['keyi'], '第一级关键字不能为空', $url, $urlName)) return;
+        if ($this->_isInputNull($data['keyj'], '第二级关键字不能为空', $url, $urlName)) return;
+        if ($this->_isInputNull($data['keyk'], '第三级关键字不能为空', $url, $urlName)) return;
+        if ($this->_isInputNull($data['category'], '商品在您商店中的关键字不能为空', $url, $urlName)) return;
+        if ($this->_isInputNull($data['price'], '商品价格不能为空', $url, $urlName)) return;
+        if ($this->_isInputNull($data['mainThumbnail'], '商品主图不能为空', $url, $urlName)) return;
+        if ($this->_isInputNull($data['storeNum'], '商品库存不能为空', $url, $urlName)) return;
+        if ($this->_isInputNull($data['thumbnail'], '商品图片不能为空', $url, $urlName)) return;
+        if ($this->_isInputNull($data['title'], '商品名字不能为空', $url, $urlName)) return;
+        if ($this->_isInputNull($data['detail'], '商品详细信息不能为空', $url, $urlName)) return;
+
+        // 获取全局分类数组
+        $categoryArray = $this->part;
+
+        // 判断第一级关键字是否合法
+        $flag = false;
+        foreach ($categoryArray as $keyi => $vali) {
+            if ($data['keyi'] == $keyi) $flag = true;
+            if ($flag) break;
+        }
+        if (! $flag) {
+            $this->_errorJump('第一级关键字不合法', $url, $urlName);
+            return;
+        }
+
+        // 判断第二级关键字是否合法
+        $flag = false;
+        foreach ($categoryArray as $keyi => $vali) {
+            if ($flag) break;
+            foreach ($vali as $keyj => $valj) {
+                if ($keyj == $data['keyj']) $flag = true;
+                if ($flag) break;
             }
         }
+        if (! $flag) {
+            $this->_errorJump('第二级关键字不合法', $url, $urlName);
+            return;
+        }
+
+        // 判断第三级关键字是否合法
+        $flag = false;
+        foreach ($categoryArray as $keyi => $vali) {
+            if ($flag) break;
+            foreach ($vali as $keyj => $valj) {
+                if ($flag) break;
+                foreach ($valj as $keyk => $valk) {
+                    if ($valk == $data['keyk']) $flag = true;
+                    if ($flag) break;
+                }
+            }
+        }
+        if (! $flag) {
+            $this->_errorJump('第三级关键字不合法', $url, $urlName);
+            return;
+        }
+
+        // 判断本店分类是否合法
+        $stroeCategory = $this->store->getCategoryByStoreId($data['belongsTo']);
+
+        // 判断商品价格是否合法
+        if (! preg_match("/\d[.\d]?\d/", $data['price'])) {
+            $this->_errorJump('商品价格设置不合法', $url, $urlName);
+            return;
+        }
+
+        // 判断商品主图片是否合法
+
+        // 判断商品属性是否合法
+
+        // 判断商品库存是否合法
+
+        // 判断商品图片是否合法
+
+        // 判断商品标题是否合法
+
+        // 判断商品详细信息是否合法
+
+//        if ($_POST["sub"]) {
+//            $re = null;
+//            $data = $this->insert();
+//            if($data === false) return;
+//            $data["value"] = time();
+//            //value ，标示一个帖子含金量的函数,初始的值为当时的事件辍
+//            $data["author_id"] = $this->userId;
+//            $re = $this->mitem->insert($data);
+//            if($re){
+//                $data["time"] = 3;
+//                $data["title"] = "恭喜你，成功了";
+//                //$data["uri"] = site_url("showart/index/".$re);
+//                $data["uri"] = site_url("bg/home/itemadd");
+//                $data["uriName"] = "新品";
+//                $data["atten"] = "成功,可喜可贺";
+//                $this->load->view("jump2",$data);
+//            }else {
+//                $data["time"] = 5;
+//                $data["title"] = "出错了，请联系客服";
+//                $data["uri"] = site_url("bg/home/itemadd");
+//                $data["uriName"] = "新品上架";
+//                $data["atten"] = "出错了，请联系客服帮助解决";
+//                $this->load->view("jump",$data);
+//            }
+//        }
     }
 
     /**
