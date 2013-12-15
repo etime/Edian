@@ -390,6 +390,30 @@ class Write extends MY_Controller
     }
 
     /**
+     * 判断一个名字为 $fileName 的文件是否在 $dir 这个文件夹中
+     *
+     * @param $dir        需要存储的文件夹
+     * @param $fileName   需要判断的文件名字
+     * @return boolean    如果文件夹存在且文件在文件夹中存在，返回 true，否则返回 false
+     */
+    private function _isFileExit($dir, $fileName) {
+        $handle = opendir($dir);
+        if (! $handle) {
+            return false;
+        }
+        while (($file = readdir($handle)) !== false) {
+            if ($file == $fileName) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private function _isIllegalString($val) {
+        return preg_match("/[;|]+/", $val);
+    }
+
+    /**
      * 后台添加数据后的处理函数
      * 由 view 提供的数据应该包括：
      *     keyi           :     string      商品第一级关键字
@@ -400,7 +424,7 @@ class Write extends MY_Controller
      *     mainThumbnail  :     string      商品主图，一个，保存在 image/"userId"/main
      *     attr           :     string      属性，用特殊的格式编码
      *     storeNum       :     int         库存
-     *     thumbnail      :     string      商品图片，多个，用 ';' 分开，保存在 image/"userId"/thumb/big(在 small 中还有一份镜像)
+     *     thumbnail      :     string      商品图片，多个，用 '|' 分开，保存在 image/"userId"/thumb/big(在 small 中还有一份镜像)
      *     title          :     string      商品名字，一个
      *     detail         :     string      商品详细信息
      *
@@ -431,7 +455,7 @@ class Write extends MY_Controller
         $data['title']         = trim($this->input->post('title'));
         $data['detail']        = trim($this->input->post('detail'));
 
-        // 由后代自己判断得到的数据
+        // 由后台自己判断得到的数据
         $data['belongsTo']     = $this->session->userdata('storeId');
 
         // 设置用户填写商品信息出错时跳转的 url，和跳转页面的 title
@@ -459,6 +483,7 @@ class Write extends MY_Controller
             if ($data['keyi'] == $keyi) $flag = true;
             if ($flag) break;
         }
+        $flag = $flag && (! $this->_isIllegalString($data['keyi']));
         if (! $flag) {
             $this->_errorJump('第一级关键字不合法', $url, $urlName);
             return;
@@ -473,6 +498,7 @@ class Write extends MY_Controller
                 if ($flag) break;
             }
         }
+        $flag = $flag && (! $this->_isIllegalString($data['keyj']));
         if (! $flag) {
             $this->_errorJump('第二级关键字不合法', $url, $urlName);
             return;
@@ -490,6 +516,7 @@ class Write extends MY_Controller
                 }
             }
         }
+        $flag = $flag && (! $this->_isIllegalString($data['keyk']));
         if (! $flag) {
             $this->_errorJump('第三级关键字不合法', $url, $urlName);
             return;
@@ -502,6 +529,7 @@ class Write extends MY_Controller
             if ($val == $data['category']) $flag = true;
             if ($flag) break;
         }
+        $flag = $flag && (! $this->_isIllegalString($data['category']));
         if (! $flag) {
             $this->_errorJump('本店分类不合法', $url, $urlName);
             return;
@@ -515,17 +543,8 @@ class Write extends MY_Controller
 
         // 判断商品主图片是否合法
         $dir = './image/' . $this->session->userdata('userId') . '/main';
-        $handle = opendir($dir);
-        if (! $handle) {
-            $this->_errorJump('选择的商品主图片不合法', $url, $urlName);
-            return;
-        }
-        $flag = false;
-        while (($file = readdir($handle)) !== false) {
-            if ($file == $data['mainThumbnail']) $flag = true;
-            if ($flag) break;
-        }
-        if ($flag) {
+        $flag = $this->_isFileExit($dir, $data['mainThumbnail']);
+        if (! $flag) {
             $this->_errorJump('选择的商品主图片不合法', $url, $urlName);
             return;
         }
@@ -538,7 +557,16 @@ class Write extends MY_Controller
             return;
         }
 
-        // 判断商品图片是否合法，这个需要和前端商量接口和编码的问题，暂时不做
+        // 判断商品图片是否合法，这个需要和前端商量接口和编码的问题
+        $tmp = explode('|', $data['thumbnail']);
+        $dir = './image/' . $this->session->userdata('userId') . '/thumb/big';
+        foreach ($tmp as $key => $val) {
+            $flag = $this->_isFileExit($dir, $val);
+            if (! $flag) {
+                $this->_errorJump('商品图片格式非法', $url, $urlName);
+                return;
+            }
+        }
 
         // 判断商品标题是否合法，暂时不做
 
