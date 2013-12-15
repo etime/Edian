@@ -50,13 +50,75 @@ class Mitem extends Ci_Model
      * @prama array $data
      * @return string
      */
-    public function encodeCategory($data) {
+    private function _encodeCategory($data) {
         $ans = '';
         $ans .= $data['keyi'] . ';';
         $ans .= $data['keyj'] . ';';
         $ans .= $data['keyk'] . ';';
         $ans .= $data['category'] . '|';
         return $ans;
+    }
+
+    /**
+     * 对数据库中提取出来的 category 进行解码
+     *      keyi           第一级关键字
+     *      keyj           第二级关键字
+     *      keyk           第三级关键字
+     *      category       本店分类
+     * @param string $category  数据库中提取出来的字符串
+     * @return array            返回的数组，必须使用以上四个单词作为键值
+     */
+    private function _decode($category) {
+        $res = explode(';', $category);
+        $ans['keyi'] = $res[0];
+        $ans['keyj'] = $res[1];
+        $ans['keyk'] = substr($res[2], 0, -1);
+        return $ans;
+    }
+
+    /**
+     * 商店添加商品的函数，必须包含以下信息:
+     * <br>    keyi           :     string      商品第一级关键字
+     * <br>    keyj           :     string      商品第二级关键字
+     * <br>    keyk           :     string      商品第三级关键字
+     * <br>    category       :     string      商品在本店中的分类
+     * <br> 以上四个需要 encode 之后，存为 item 表中的 category
+     * <br>    price          :     float       商品单价
+     * <br>    mainThumbnail  :     string      商品主图，一个，保存在 image/"userId"/main
+     * <br>    attr           :     string      属性，用特殊的格式编码
+     * <br>    storeNum       :     int         库存
+     * <br>    thumbnail      :     string      商品图片，多个，用 ';' 分开，保存在 image/"userId"/thumb/big(在 small 中还有一份镜像)
+     * <br>    title          :     string      商品名字，一个
+     * <br>    detail         :     string      商品详细信息
+     * <br>    belongsTo      :     int         所属商店的 id 号码
+     * @param array $data
+     */
+    public function addItem($data) {
+        // 把分类列表进行编码
+        $data['category'] = $this->_encodeCategory($data);
+
+        // 将所有要存入数据库中的数据进行转义
+        foreach ($data as $key => $val) {
+            $data[$key] = mysql_real_escape_string($val);
+        }
+
+        // sql 语句，因为语句太长，添加的字段太长，于是折段写，更加清晰
+        $sql = "INSERT INTO item(" .
+               "category, price, mainThumbnail, attr, storeNum, thumbnail, title, detail， belongsTo)" .
+               "VALUES(" .
+               "'$data[category]'" .
+               "'$data[price]'" .
+               "'$data[mainThumbnail]'" .
+               "'$data[attr]'" .
+               "'$data[storeNum]'" .
+               "'$data[thumbnail]'" .
+               "'$data[title]'" .
+               "'$data[detail]'" .
+               "'$data[belongsTo]'" .
+               ")";
+
+        // 调用 CI 的数据库函数
+        $this->db->query($sql);
     }
 
 

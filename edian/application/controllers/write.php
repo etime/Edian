@@ -406,7 +406,8 @@ class Write extends MY_Controller
      *
      * 由后台自己得到的数据应该包括：
      *     belongsTo      :     int         所属商店的 id 号码
-     * @todo 一系列的 judge 以及商品信息添加到数据库中
+     * @todo 判断商品属性是否合法
+     * @todo
      */
     public function bgAdd() {
         // 判断用户登录否
@@ -513,18 +514,38 @@ class Write extends MY_Controller
         }
 
         // 判断商品主图片是否合法
-        
+        $dir = './image/' . $this->session->userdata('userId') . '/main';
+        $handle = opendir($dir);
+        if (! $handle) {
+            $this->_errorJump('选择的商品主图片不合法', $url, $urlName);
+            return;
+        }
+        $flag = false;
+        while (($file = readdir($handle)) !== false) {
+            if ($file == $data['mainThumbnail']) $flag = true;
+            if ($flag) break;
+        }
+        if ($flag) {
+            $this->_errorJump('选择的商品主图片不合法', $url, $urlName);
+            return;
+        }
 
-        // 判断商品属性是否合法
+        // 判断商品属性是否合法，目前暂时不做
 
         // 判断商品库存是否合法
+        if (! preg_match("/\d/", $data['storeNum'])) {
+            $this->_errorJump('商品库存设置不合法', $url, $urlName);
+            return;
+        }
 
-        // 判断商品图片是否合法
+        // 判断商品图片是否合法，这个需要和前端商量接口和编码的问题，暂时不做
 
-        // 判断商品标题是否合法
+        // 判断商品标题是否合法，暂时不做
 
-        // 判断商品详细信息是否合法
+        // 判断商品详细信息是否合法，暂时不做
 
+        // 经过重重难关，终于能够上传了！
+        $this->mitem->addItem($data);
 //        if ($_POST["sub"]) {
 //            $re = null;
 //            $data = $this->insert();
