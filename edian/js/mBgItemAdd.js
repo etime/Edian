@@ -53,11 +53,7 @@ $(document).ready(function  () {
             $.alet("请输入价格");
             return false;
         }
-        value = $.trim($("#key").val());
-        if(value.length == 0){
-            $.alet("为方便顾客查找，请输入关键字");
-            return false;
-        }
+
         value = $.trim($("#title").val());
         if(value.length == 0){
             $.alet("忘记添加标题");

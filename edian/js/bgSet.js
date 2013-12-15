@@ -209,10 +209,8 @@ $(document).ready(function () {
     listAdd();
     //testMap();
     $("#change").submit(function (event) {
-        debugger;
         /**  对时间的操作，整理时间的格式 */
         timeForm();
-        return false;
     })
 
     //关于状态码

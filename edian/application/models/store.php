@@ -94,13 +94,13 @@ class Store extends CI_Model {
                 $val = mysql_real_escape_string($val);
                 //做所以会出现val为false的情况，我想是因为val不合法，被更改成为false了
                 if($cnt){
-                    $cnt .= ', ' .$key . '=' . $val;
+                    $cnt .= ', ' .$key . '=' . '\''. $val . '\'';
                 }else{
-                    $cnt = $key . '=' . $val;
+                    $cnt = $key . '=' .'\'' . $val . '\'';
                 }
             }
         }
-        $sql .= $cnt . 'where id = ' .$storeId;
+        $sql .= $cnt . ' where id = ' .$storeId;
         return $this->db->query($sql);
     }
     /**
