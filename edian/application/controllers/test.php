@@ -36,7 +36,8 @@ class Test extends MY_Controller{
     }
     public function map()
     {
-        $this->load->view("test");
+        phpinfo();
+        //$this->load->view("test");
     }
     public function abc()
     {

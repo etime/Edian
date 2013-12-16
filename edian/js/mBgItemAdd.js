@@ -35,6 +35,7 @@ $(document).ready(function  () {
     dir = eval(dir);//对dir数组进行编码
     forbid();       //处理禁止输入的字符
     $("form").submit(function  () {
+        debugger;
         var value = $.trim($("input[name = 'price']").val());
         if(value.length  == 0){
             $.alet("请输入价格");
@@ -78,26 +79,28 @@ $(document).ready(function  () {
  * 构成thumbnail图片的格式
  */
 function formThumb() {
-    function getName(tag){
-        temp = reg.exec(tag);
-        if(temp)return temp[0];
-        return tag;
+    function getName(ans){
+        var pos = ans.lastIndexOf("/");
+        if(pos !== -1){
+            return ans.substring(pos + 1);
+        }
+        return "";
     }
     var oimg = $("#thumbnail").find("img");
     var img = "";
     for (var i = Math.min(oimg.length-1,5); i >= 0; i --) {
-       temp = $(oimg[i]).attr("src");
-        temp = getName(temp);
-        img+=temp+"|";
+        console.log($(oimg[i]).attr("src"));
+        console.log(getName($(oimg[i]).attr("src")));
+        img += getName( $(oimg[i]).attr("src") ) + '|';
     }
-    if(img.length == 0){
-       $.alet("请选择图片");
-       return false;
+    if(!img){
+        alert("请选择商品图片");
+        return false;
     }
     if(img[img.length -1]=='|'){
        img = img.substring(0,img.length - 1);
     }
-    $("#Img").attr("value",img);
+    $("input[name = 'thumbnail']").attr("value",img);
 }
 /**
  * 构成库存和对应属性的价格
@@ -307,6 +310,7 @@ function proAdd () {
  */
 function mainThum() {
     var main = $("#main");
+
     $("#mainInput").click(function () {
         main.fadeIn();
         $("#mainImg").load(function (event) {
@@ -317,6 +321,10 @@ function mainThum() {
                 var toImg = $("#toImgMain");
                 destoryImg( toImg.attr("src") );        //如果之前有图片的话，发送请求删除，;
                 toImg.attr("src" , ans);            //添加新的图片
+                var pos = ans.lastIndexOf("/");
+                if(pos !== -1){
+                    $("input[name = 'mainThumbnail']").val(ans.substring(pos + 1));
+                }
                 main.fadeOut();
             }
         })

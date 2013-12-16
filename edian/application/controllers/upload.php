@@ -223,6 +223,7 @@ class Upload extends MY_Controller {
         $url = base_url('image/' . $userId . '/main/' . $fileName);
         $info = "<input type = 'hidden' name = 'value' id = 'value' value = ".$url." />";
         echo($info);
+        $this->index(1);
     }
 
     /**
@@ -354,6 +355,7 @@ class Upload extends MY_Controller {
         $url = base_url('image/' . $userId . '/thumb/small/' . $fileName);
         $info = "<input type = 'hidden' name = 'value' id = 'value' value = ".$url." />";
         echo($info);
+        $this->index();
     }
     /**
      * 这里是zmdyiwei 为上传写的函数，

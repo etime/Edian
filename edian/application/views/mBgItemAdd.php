@@ -56,6 +56,7 @@
                 <span class = "item">商品主图<span>*</span>:</span>
                 <!-- <input type="file" name="userfile" size = "14"/> -->
                 <input type = "button" name = "mainInput" value = "上传图片"  id = "mainInput"/>
+                <input type="hidden" name="mainThumbnail" />
                 <span id = "imgAtten">请用800*800以下图片,超过标准会压缩</span>
                 <img src = "" id = "toImgMain"/>
             </p>
@@ -99,7 +100,7 @@
                     <input type = "button" name = "thumbButton" id = "thumbButton" value = "上传图片" />
                 </p>
             </div>
-            <input type="hidden" name="Img" id="Img" />
+            <input type="hidden" name="thumbnail" id="Img" />
             <!--通过js 修改value 所有图片的集合-->
             <input type="hidden" name="attr" id="attr" />
 
@@ -120,7 +121,7 @@
             </p>
             <p class = "col"><span class = "item">商品描述<span>*</span>:</span></p>
             <tr id = "tcont">
-                <td><textarea name="cont" id = "cont" style = "width:100%"> <?php echo "测试信息" ?></textarea></td>
+                <td><textarea name="detail" id = "cont" style = "width:100%"> <?php echo "测试信息" ?></textarea></td>
             </tr>
          <input type="submit" name = "sub" class = "button" value="发表" />
         </form>
