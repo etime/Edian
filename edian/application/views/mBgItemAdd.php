@@ -115,8 +115,7 @@
             </div>
             <p class = "clearfix label col">
                 <span class = "item">标题<span>*</span></span>
-                <input type="text" name="title" id = "title" class = "title"  value = "物美价廉"/>
-                <label for = "title">请用简短的描述商品,尽量包含名称和特点，尽量50字以内哦</label>
+                <input type="text" name="title" id = "title" class = "title"  placeholder = "请用简短的描述商品,尽量包含名称和特点，尽量50字以内哦"/>
                 <!----------------title太差劲了。,学习以下taobao了-------->
             </p>
             <p class = "col"><span class = "item">商品描述<span>*</span>:</span></p>
