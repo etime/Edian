@@ -31,7 +31,7 @@
     <ul>
         <li>
             <span class = "item">商店名字:</span>
-            <span><input type = "text" name = "storeName" maxlength = "10"></span>
+            <span><input type = "text" name = "storeName" maxlength = "10" value = "abc"></span>
         </li>
         <li>
             <span>店铺logo：</span>
@@ -39,11 +39,15 @@
         </li>
         <li>
             <span class = "item">客服电话:</span>
-            <input type="text" name="servicePhone" maxlength = "11" />
+            <input type="text" name="servicePhone" maxlength = "11" value = "13653033299"/>
         </li>
         <li>
             <span class="item">客服QQ:</span>
-            <input type="text" name="serviceQQ" maxlength = "11"/>
+            <input type="text" name="serviceQQ" maxlength = "11" value = "232"/>
+        </li>
+        <li>
+            最低起送价：
+            <input type="text" name="lestPrc" id="lestPrc"/>
         </li>
         <li>
             <span class = "item">营业时间:</span>
@@ -113,6 +117,8 @@
         </li>
         <li>
             <p>店铺位置和送货范围 <input type="text" name="distance" id="distance" value="1000" />米 <input type="button" name="but" id="but" value="确定" />:</p>
+            <input type="hidden" name="latitude" value = "122.2132"/>
+            <input type="hidden" name="longtitude" value = "123212.1"/>
             <div id="allmap"></div>
         </li>
     </ul>

@@ -127,13 +127,16 @@ class User extends CI_Model {
         $res = $this->db->query("select credit from user where id = '$userId'");
         $res = $res->result_array();
         if (count($res) == 0) return false;
+        return $res[0]["credit"];
+        /*
         $this->load->config("edian");
-        if($res[0]["credit"] >= $this->config->item("adminCredit") ){
+        if($res[0]["credit"] == $this->config->item("adminCredit") ){
             return 2;
-        }else if($res[0]["credit"] >= $this->config->item("bossCredit") ){
+        }else if($res[0]["credit"] == $this->config->item("bossCredit") ){
             return 1;
         }
         return 0;
+         */
     }
 
 

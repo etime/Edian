@@ -101,6 +101,7 @@ class Upload extends MY_Controller {
 
         // 上传的文件格式非法
         if (! $this->_isImg($type)) {
+            echo"非合法格式";
             $this->index(1);
             return;
         }

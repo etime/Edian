@@ -31,31 +31,13 @@ function forbid() {
     })
 }
 $(document).ready(function  () {
-    var value,NoImg = 1,doc = document;
-    dir = eval(dir);
-    forbid();//处理禁止输入的字符
-    $("input[type = 'file']").change(function  () {
-        value = $.trim($(this).val());
-        console.log(value);
-        reg = /.[gif|jpg|jpeg|png]$/i;//图片只允许gif,jpg,png三个格式
-        if(!reg.exec(value)){
-            $("#imgAtten").text("只有gif,png,jpg格式图片可以");
-        }
-        var size = $(this)[0].files[0].size / 1000;
-        size = parseInt(size)/1000;
-        if(size>2){
-            $("#imgAtten").text(size+"超过2M了，上传失败的风险很大");
-        }
-    })
+    var NoImg = 1,doc = document;
+    dir = eval(dir);//对dir数组进行编码
+    forbid();       //处理禁止输入的字符
     $("form").submit(function  () {
-        value = $.trim($("input[name = 'price']").val());
+        var value = $.trim($("input[name = 'price']").val());
         if(value.length  == 0){
             $.alet("请输入价格");
-            return false;
-        }
-        value = $.trim($("#key").val());
-        if(value.length == 0){
-            $.alet("为方便顾客查找，请输入关键字");
             return false;
         }
         value = $.trim($("#title").val());
@@ -69,6 +51,58 @@ $(document).ready(function  () {
             $.alet("请添加内容");
             return false;
         }
+        formData();
+        formThumb();
+    })
+    /************控制title中的字体显隐**************/
+    /*
+    $(".title").focus(function(){
+        $(this).siblings("label").css("display","none");
+    }).blur(function  () {
+        value = $.trim($(this).val());
+        if(value.length == 0){
+            $(this).siblings("label").css("display","block");
+        }
+    });
+    */
+    part(dir);
+    property = new proAdd();
+    store();
+    objImgSix = new funoimgUp();
+    mainThum();
+    displayHandle();
+    objThumb = new thumbnailUpload();
+})
+
+/**
+ * 构成thumbnail图片的格式
+ */
+function formThumb() {
+    function getName(tag){
+        temp = reg.exec(tag);
+        if(temp)return temp[0];
+        return tag;
+    }
+    var oimg = $("#thumbnail").find("img");
+    var img = "";
+    for (var i = Math.min(oimg.length-1,5); i >= 0; i --) {
+       temp = $(oimg[i]).attr("src");
+        temp = getName(temp);
+        img+=temp+"|";
+    }
+    if(img.length == 0){
+       $.alet("请选择图片");
+       return false;
+    }
+    if(img[img.length -1]=='|'){
+       img = img.substring(0,img.length - 1);
+    }
+    $("#Img").attr("value",img);
+}
+/**
+ * 构成库存和对应属性的价格
+ */
+function formData() {
        var reg = /\d+\.jpg/,attr;
         var pro2s = $("#store").find(".valTr"),item = Array();
        if(prokey.length == 1){
@@ -150,46 +184,7 @@ $(document).ready(function  () {
            attr = attr.substring(0,attr.length - 1);
        }
        $("#attr").attr("value",attr);
-       /*********下面是对图片的处理*********************/
-       var oimg = $("#thumbnail").find("img");
-       var img = "";
-       for (var i = Math.min(oimg.length-1,5); i >= 0; i --) {
-           temp = $(oimg[i]).attr("src");
-            temp = getName(temp);
-            img+=temp+"|";
-       }
-       if(img.length == 0){
-           $.alet("请选择图片");
-           return false;
-       }
-       if(img[img.length -1]=='|'){
-           img = img.substring(0,img.length - 1);
-       }
-       $("#Img").attr("value",img);
-       /*******图像的处理结束************************************/
-       function getName(tag){
-            temp = reg.exec(tag);
-            if(temp)return temp[0];
-            return tag;
-       }
-    })
-    /************控制title中的字体显隐**************/
-    $(".title").focus(function(){
-        $(this).siblings("label").css("display","none");
-    }).blur(function  () {
-        value = $.trim($(this).val());
-        if(value.length == 0){
-            $(this).siblings("label").css("display","block");
-        }
-    });
-    part(dir);
-    property = new proAdd();
-    store();
-    objImgSix = new funoimgUp();
-    mainThum();
-    displayHandle();
-    objThumb = new thumbnailUpload();
-})
+}
 /**
  * 这里是控制分区，全站类别的显示
  * @param {arr} list 是全站的数组传递 进来的变量
