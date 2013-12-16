@@ -31,6 +31,64 @@ class Upload extends MY_Controller {
         if ($type == 'image/png') return true;
         return false;
     }
+
+    /**
+     * 将给定的图片缩小成 w*h 的新图片并保存在相应文件夹中
+     * @param int      $oldW        原始的图片的宽度
+     * @param int      $oldH        原始的图片的高度
+     * @param int      $newW        缩小后图片的宽度
+     * @param int      $newH        缩小后图片的高度
+     * @param string   $oldParh     原始的图片的存放地址
+     * @param string   $newPath     缩小后图片的存放地址
+     * @param string   $name        图片的名字
+     * @param int      $flag        用于判断图片的格式：1 代表 jpg；2 代表 png；3 代表 gif
+     */
+    private function _shrinkImage($oldW, $oldH, $newW, $newH, $oldPath, $newPath, $name, $flag) {
+        // 确定原始图片和剪切后图片的路径
+        $oldImage = $oldPath . '/' . $name;
+        $newImage = $newPath . '/' . $name;
+
+        // 得到原始图片的资源类型对象
+        if ($flag == 1) {
+            $srcImage = ImageCreateFromJpeg($oldImage);
+        } else if ($flag == 2) {
+            $srcImage = ImageCreateFromPng($oldImage);
+        } else if ($flag == 3) {
+            $srcImage = ImageCreateFromGif($oldImage);
+        } else {
+            return;
+        }
+
+        // 新建一个资源类型的剪切后图像对象，设置为真彩色
+        $dstImage = ImageCreateTrueColor($newW, $newH);
+
+        // 复制原始图像制定范围内的像素到新建图像中
+        ImageCopyResized($dstImage, $srcImage, 0, 0, 0, 0, $newW, $newH, $oldW, $oldH);
+
+        // 把新的到的图像保存
+        if ($flag == 1) {
+            ImageJpeg($dstImage, $newImage);
+        } else if ($flag == 2) {
+            ImagePng($dstImage, $newImage);
+        } else if ($flag == 3) {
+            ImageGif($dstImage, $newImage);
+        }
+    }
+
+    /**
+     * 自动跳转，跳转前，返回给 view 出错的信息
+     *
+     * @param string $content  出错时，返回给 view 的信息
+     * @param string $url      出错时，跳转到的页面的 url
+     * @param string $urlName  出错时，跳转到的页面的 title
+     */
+    private function _errorJump($content, $url, $urlName) {
+        $data['atten'] = $content;
+        $data['uri'] = $url;
+        $data['uriName'] = $urlName;
+        $this->load->view("jump", $data);
+    }
+
     /**
      * 显示上传商品图片的具体页面，传递给 view 处理上传的图片的处理函数
      * @param int $flag $flag 为 1 表示上传的是 1:1 的 mainThumbnail，否则为其他情况
@@ -85,7 +143,8 @@ class Upload extends MY_Controller {
      *     长宽比为 1:1
      *     最少为 400*400 像素
      *     文件不得大于 5Mb
-     *  @todo return value wite these format <input type = 'hidden' name = 'value' id = 'value' value = '{ the data value }'>
+     *  @todo return value with these format: <input type = 'hidden' name = 'value' id = 'value' value = '{ "MY_string" }'>
+     * @todo 处理用户权限不够的问题
      */
     public function imgMain() {
         // 用户没有登录
@@ -95,20 +154,30 @@ class Upload extends MY_Controller {
             return;
         }
 
+        // 用户的权限不够
+        ;
+
+        // 跳转的 url 和 urlName
+        $url = site_url('upload/index/1');
+        $urlName = '上传图片';
+
         // 获取文件的类型和大小
         $type = $_FILES['userfile']['type'];
         $size = $_FILES['userfile']['size'];
 
         // 上传的文件格式非法
         if (! $this->_isImg($type)) {
-            echo"非合法格式";
-            $this->index(1);
+//            $info = "<input type = 'hidden' name = 'value' id = 'value' value = '{非法文件格式}'";
+            $info = "文件格式非法";
+            $this->_errorJump($info, $url, $urlName);
             return;
         }
 
         // 上传的文件太大
         if ($size > $this->config->item('imageSize')) {
-            $this->index(1);
+//            $info = "<input type = 'hidden' name = 'value' id = 'value' value = '{图片太大}'";
+            $info = "图片太大";
+            $this->_errorJump($info, $url, $urlName);
             return;
         }
 
@@ -142,56 +211,23 @@ class Upload extends MY_Controller {
         $imageSize = getimagesize($path);
 
         // 上传的主图片必须满足长宽比为 1:1，且 长度不得小于 300 像素
-        if ($imageSize[0] != $imageSize[1] || $imageSize[0] < $this->config->item('mainLength')) {
+        if ($imageSize[0] != $imageSize[1]) {
             $this->imgDelete($path);
-            $this->index(1);
+//            $info = "<input type = 'hidden' name = 'value' id = 'value' value = '{图片的长宽比必须为 1:1}'";
+            $info = "图片长宽比必须为 1:1";
+            $this->_errorJump($info, $url, $urlName);
             return;
         }
-
-        echo('your uploaded file has stroed !<br>');
-    }
-
-    /**
-     * 将给定的图片缩小成 w*h 的新图片并保存在相应文件夹中
-     * @param int      $oldW        原始的图片的宽度
-     * @param int      $oldH        原始的图片的高度
-     * @param int      $newW        缩小后图片的宽度
-     * @param int      $newH        缩小后图片的高度
-     * @param string   $oldParh     原始的图片的存放地址
-     * @param string   $newPath     缩小后图片的存放地址
-     * @param string   $name        图片的名字
-     * @param int      $flag        用于判断图片的格式：1 代表 jpg；2 代表 png；3 代表 gif
-     */
-    private function _shrinkImage($oldW, $oldH, $newW, $newH, $oldPath, $newPath, $name, $flag) {
-        // 确定原始图片和剪切后图片的路径
-        $oldImage = $oldPath . '/' . $name;
-        $newImage = $newPath . '/' . $name;
-
-        // 得到原始图片的资源类型对象
-        if ($flag == 1) {
-            $srcImage = ImageCreateFromJpeg($oldImage);
-        } else if ($flag == 2) {
-            $srcImage = ImageCreateFromPng($oldImage);
-        } else if ($flag == 3) {
-            $srcImage = ImageCreateFromGif($oldImage);
-        } else {
+        if ($imageSize[0] < $this->config->item('mainLength')) {
+            $this->imgDelete($path);
+//            $info = "<input type = 'hidden' name = 'value' id = 'value' value = '{图片的边长不能小于 300px}'";
+            $info = "图片宽度不能小于 300px";
+            $this->_errorJump($info, $url, $urlName);
             return;
         }
-
-        // 新建一个资源类型的剪切后图像对象，设置为真彩色
-        $dstImage = ImageCreateTrueColor($newW, $newH);
-
-        // 复制原始图像制定范围内的像素到新建图像中
-        ImageCopyResized($dstImage, $srcImage, 0, 0, 0, 0, $newW, $newH, $oldW, $oldH);
-
-        // 把新的到的图像保存
-        if ($flag == 1) {
-            ImageJpeg($dstImage, $newImage);
-        } else if ($flag == 2) {
-            ImagePng($dstImage, $newImage);
-        } else if ($flag == 3) {
-            Imagegif($dstImage, $newImage);
-        }
+//        $info = "<input type = 'hidden' name = 'value' id = 'value' value = '{上传成功}'";
+        $info = "上传成功！";
+        echo($info);
     }
 
     /**
@@ -208,19 +244,28 @@ class Upload extends MY_Controller {
             return;
         }
 
+        // 用户权限不够
+        ;
+
         // 获取文件的类型和大小
         $type = $_FILES['userfile']['type'];
         $size = $_FILES['userfile']['size'];
 
+        // 跳转页面的 url 和 urlName
+        $url = site_url('upload/index/0');
+        $urlName = '上传图片';
+
         // 上传的文件格式非法
         if (! $this->_isImg($type)) {
-            $this->index(0);
+            $info = "文件格式非法";
+            $this->_errorJump($info, $url, $urlName);
             return;
         }
 
         // 上传的文件太大
         if ($size > $this->config->item('imageSize')) {
-            $this->index(0);
+            $info = "图片太大";
+            $this->_errorJump($info, $url, $urlName);
             return;
         }
 
@@ -269,11 +314,13 @@ class Upload extends MY_Controller {
         // 上传的图片的短边必须大于 700，且长边:短边 <=2
         if (min($oldW, $oldH) < $this->config->item('bigLength')) {
             $this->imgDelete($path);
-            $this->index(0);
+            $info = "图片的最小宽度不能小于 700px";
+            $this->_errorJump($info, $url, $urlName);
             return;
         } else if (max($oldW, $oldH) / min($oldW, $oldH) > 2) {
             $this->imgDelete($path);
-            $this->index(0);
+            $info = "图片的 长:宽 不能大于 2";
+            $this->_errorJump($info, $url, $urlName);
             return;
         }
 
@@ -309,7 +356,8 @@ class Upload extends MY_Controller {
         // 删除原始图片
         $this->imgDelete($path);
 
-        echo('your uploaded file has stroed !<br>');
+        $info = '成功上传！';
+        echo($info);
     }
     /**
      * 这里是zmdyiwei 为上传写的函数，
