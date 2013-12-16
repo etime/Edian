@@ -143,7 +143,6 @@ class Upload extends MY_Controller {
      *     长宽比为 1:1
      *     最少为 400*400 像素
      *     文件不得大于 5Mb
-     *  @todo return value with these format: <input type = 'hidden' name = 'value' id = 'value' value = '{ "MY_string" }'>
      * @todo 处理用户权限不够的问题
      */
     public function imgMain() {
@@ -167,7 +166,6 @@ class Upload extends MY_Controller {
 
         // 上传的文件格式非法
         if (! $this->_isImg($type)) {
-//            $info = "<input type = 'hidden' name = 'value' id = 'value' value = '{非法文件格式}'";
             $info = "文件格式非法";
             $this->_errorJump($info, $url, $urlName);
             return;
@@ -175,7 +173,6 @@ class Upload extends MY_Controller {
 
         // 上传的文件太大
         if ($size > $this->config->item('imageSize')) {
-//            $info = "<input type = 'hidden' name = 'value' id = 'value' value = '{图片太大}'";
             $info = "图片太大";
             $this->_errorJump($info, $url, $urlName);
             return;
@@ -213,20 +210,18 @@ class Upload extends MY_Controller {
         // 上传的主图片必须满足长宽比为 1:1，且 长度不得小于 300 像素
         if ($imageSize[0] != $imageSize[1]) {
             $this->imgDelete($path);
-//            $info = "<input type = 'hidden' name = 'value' id = 'value' value = '{图片的长宽比必须为 1:1}'";
             $info = "图片长宽比必须为 1:1";
             $this->_errorJump($info, $url, $urlName);
             return;
         }
         if ($imageSize[0] < $this->config->item('mainLength')) {
             $this->imgDelete($path);
-//            $info = "<input type = 'hidden' name = 'value' id = 'value' value = '{图片的边长不能小于 300px}'";
             $info = "图片宽度不能小于 300px";
             $this->_errorJump($info, $url, $urlName);
             return;
         }
-//        $info = "<input type = 'hidden' name = 'value' id = 'value' value = '{上传成功}'";
-        $info = "上传成功！";
+        $url = base_url('image/' . $userId . '/main/' . $fileName);
+        $info = "<input type = 'hidden' name = 'value' id = 'value' value = ".$url." />";
         echo($info);
     }
 
@@ -356,7 +351,8 @@ class Upload extends MY_Controller {
         // 删除原始图片
         $this->imgDelete($path);
 
-        $info = '成功上传！';
+        $url = base_url('image/' . $userId . '/thumb/small/' . $fileName);
+        $info = "<input type = 'hidden' name = 'value' id = 'value' value = ".$url." />";
         echo($info);
     }
     /**
