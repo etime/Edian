@@ -21,7 +21,7 @@ class set extends MY_Controller
         parent::__construct();
         $this->load->model("user");
         $this->load->model("store");
-        $this->load->model("mwrong");
+        //$this->load->model("mwrong");
         $this->user_id = $this->getUserId();
     }
 
@@ -64,7 +64,7 @@ class set extends MY_Controller
         $data["deliveryArea"] = trim( $this->input->post("distance"));
         $data["servicePhone"] = trim( $this->input->post("servicePhone"));
         $data["serviceQQ"]    = trim( $this->input->post("serviceQQ"));
-        $data['longitude']    = trim( $this->input->post('longtitude'));
+        $data['longitude']    = trim( $this->input->post('longitude'));
         $data['latitude']     = trim( $this->input->post('latitude'));
         $data['address']      = trim( $this->input->post('address'));
         $data['lestPrc']      = trim( $this->input->post('lestPrc'));
@@ -172,8 +172,6 @@ class set extends MY_Controller
             //强制转换，如果发现为0，报错
             $data["storeId"] = (int)$this->session->userdata("storeId");
         }
-
-        echo "tesing";
         //对提交的判断，数据的获取
         if($this->input->post("sub") === '提交'){
             $inputData = $this->setGet();
@@ -187,10 +185,12 @@ class set extends MY_Controller
             if($flag)echo "插入成功";
             else exit("插入失败");
         }else{
+            $this->store->getSetInfo($data['storeId']);
             //在不是提交的情况下，重新读取
-            $data = array_merge($data , $this->store->get($data["storeId"] ));
+            $data = array_merge($data , $this->store->getSetInfo($data['storeId'] ));
             //本店的列表的编码和解码和get,
         }
+        $this->help->showArr($data);
         $this->load->view("bgHomeSet",$data);
     }
     /**

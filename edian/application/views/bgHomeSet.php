@@ -31,7 +31,7 @@
     <ul>
         <li>
             <span class = "item">商店名字:</span>
-            <span><input type = "text" name = "storeName" maxlength = "10" value = "abc"></span>
+            <span><input type = "text" name = "storeName" maxlength = "10" value = " <?php echo $name ?>"></span>
         </li>
         <li>
             <span>店铺logo：</span>
@@ -39,11 +39,11 @@
         </li>
         <li>
             <span class = "item">客服电话:</span>
-            <input type="text" name="servicePhone" maxlength = "11" value = "13653033299"/>
+            <input type="text" name="servicePhone" maxlength = "11" value = " <?php echo $servicePhone ?>"/>
         </li>
         <li>
             <span class="item">客服QQ:</span>
-            <input type="text" name="serviceQQ" maxlength = "11" value = "232"/>
+            <input type="text" name="serviceQQ" maxlength = "11" value = " <?php echo $serviceQQ ?>"/>
         </li>
         <li>
             最低起送价：
@@ -86,9 +86,9 @@
         <li>
             <span class="item">商品类别:</span>
             <ul class = "list clearfix" id = "list" title = "点击删除">
-                <li>炒菜</li>
-                <li>凉菜</li>
-                <li>啤酒</li>
+                <?php foreach($category as $val):?>
+                <li> <?php echo $val?></li>
+                <?php endforeach?>
             </ul>
             <p>
                 <input type="text" name="listName" />
@@ -97,17 +97,25 @@
         </li>
         <li>
             <span class="item">dtu名字:</span>
-            <input type="text" name="dtuName"  maxlength = "15"/>
+            <input type="text" name="dtuName"  maxlength = "15" value = "<?php echo @$more['dtuName'] ?>"/>
         </li>
-        <li>
-            <!--dtuid 和dtupassword都不是店家能设置的，而是他们选择的-->
-            <span class="item">dtu密码</span>
-            <input type="hidden" name="dtuPassword" />
+<?php
+if($type == 2){
+    $pass = @$more['dtuPassword'];
+    $id   = @$more['dtuId'];
+echo <<<eod
+    <li>
+        <span class=item>dtu密码</span>
+        <input type=text name=dtuPassword value = ' $pass '/>
         </li>
-        <li>
-            <span class="item">dtuId:</span>
-            <input type="hidden" name="dtuId" />
-        </li>
+    <li>
+        <span class="item">dtuId:</span>
+        <input type="text" name="dtuId"  value=' $id '/>
+    </li>
+eod;
+    }
+?>
+<!--
         <li>
             <span class="item">简介图片:</span>
         </li>
@@ -115,10 +123,11 @@
             <span class="item">地址:</span>
             <input type="text" name="address" maxlength = "250"/>
         </li>
+-->
         <li>
-            <p>店铺位置和送货范围 <input type="text" name="distance" id="distance" value="1000" />米 <input type="button" name="but" id="but" value="确定" />:</p>
-            <input type="hidden" name="latitude" value = "122.2132"/>
-            <input type="hidden" name="longtitude" value = "123212.1"/>
+        <p>店铺位置和送货范围 <input type="text" name="distance" id="distance" value=" <?php echo $deliveryArea ? $deliveryArea :1500 ?>" />米 <input type="button" name="but" id="but" value="确定" />:</p>
+            <input type="hidden" name="latitude" value = " <?php echo $latitude ?>"/>
+            <input type="hidden" name="longitude" value = "<?php echo $longitude?>"/>
             <div id="allmap"></div>
         </li>
     </ul>

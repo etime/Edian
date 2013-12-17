@@ -1,6 +1,24 @@
 <?php
 /**
- *
+ * 对store进行操作的文件
+ * 不同字段的内容作用介绍<br/>
+ * <pre>
+ *      name:       商店的名字
+ *      id:         商店在后台对应的唯一id，primary ，主键
+ *      topPicture: 商店首部的装饰图片，可选,在考虑要不要放到more中
+ *      serviceQQ:  客服QQ
+ *      servicePhone:客服电话
+ *      address:    商店的地址
+ *      longtitude: 商店所在的经纬度
+ *      latitude:   商店所在的经纬度
+ *      category:   商店内部商品的分类,所有的分类都保存在一个字段里面，将一维数组以|分隔符分开
+ *      briefInfo:  商店的自身简介
+ *      owerId：    对应的boss中的id，所属者的id
+ *      deliveryTime:商店的送货时间，营业时间
+ *      deliveryArea:送货范围
+ *      credit:     商店的评分
+ *      more：      保存了不值得单独存储一个字段，但是或许有些店有，有些店没有的东西
+ * </pre>
  * @since 2013-11-24 09:52:12
  * @author farmerjian <chengfeng1992@hotmail.com>
  * @todo 完成所有对 store 表中数据的相关操作
@@ -46,11 +64,11 @@ class Store extends CI_Model {
         $arr = Array();
         $tmpArr = explode("|" , $str);
         for($i = 0,$len = count($tmpArr) ; $i < $len; $i++){
-            $keyval = explode('=' , $tmpArr);
+            $keyval = explode('=' , $tmpArr[$i]);
             if(count($keyval) === 2){
                 array_push($arr, Array($keyval[0] => $keyval[1]) );
             }else{
-                $this->mwong->insert("model/store/". __LINE__ . "行count的结果大于2，不应该出现,此时对应的参数str = " . $str);
+                $this->mwrong->insert("model/store/". __LINE__ . "行count的结果大于2，不应该出现,此时对应的参数str = " . $str);
             }
         }
         return $arr;
@@ -133,6 +151,75 @@ class Store extends CI_Model {
         $sql = "SELECT category FROM store WHERE id = $storeId";
         $res = $this->db->query($sql)->result_array();
         return $res[0];
+    }
+    /**
+     * 通过store信息，为bg/set服务
+     */
+    public function getSetInfo($storeId)
+    {
+        $storeId = (int)$storeId;
+        if(!$storeId)return false;
+        $res = $this->db->query("select name,logo,serviceQQ,servicePhone,address,longitude,latitude,category,more,deliveryArea from store where id = ".$storeId);
+        if($res->num_rows){
+            $res = $res->result_array();
+            $ansArr = $res[0];
+            $ansArr['category'] = $this->decodeCategory($ansArr['category']);
+            $ansArr['more'] = $this->decodeMore($ansArr['more']);
+
+            return $ansArr;
+        }else{
+            $this->mwrong->insert("在model/store/getSetInfo/中num_rows 位0，有人对不应该存在的storeId进行了索引,storeId = ".$storeId);
+        }
+        return false;
+    }
+    /**
+     *  对cagegory 进行解码,从字符串变成数组;
+     *  @param  string  $category category在数据库中保存成的数组
+     *  @return array   对category进行解码形成的数组
+     */
+    protected function decodeCategory($category)
+    {
+        if($category)
+            return explode("|",$category);
+        return Array();
+    }
+    /**
+     * 对category进行编码，从数组变成字符串
+     * @param array $cateArr    category构成的字符串
+     * @return string
+     */
+    protected function encodeCategory($cateArr)
+    {
+        $res = "";
+        for($i = 0,$len = count($cateArr); $i < $len ;$i++){
+            if(!$cateArr[$i])continue;
+            $res .= ($i === 0) ? $cateArr[$i] : ("|" . $cateArr[$i]);
+        }
+        return $res;
+    }
+    /**
+     * 添加商店的分类
+     * @param   string $toAdd     将要添加的商品分类
+     * @return  boolen
+     */
+    public function changeCategory($toAdd , $storeId)
+    {
+        $storeId = (int)$storeId;
+        if(!$storeId)return false;
+        $toAdd = mysql_real_escape_string($toAdd);
+        $res = $this->db->query("select category from store where id = " . $storeId);
+        if($res->num_rows ){
+            $res = $res->result_array();
+            $res = $this->decodeCategory($res[0]['category']);
+            //检验重复性
+            foreach ($res as $value) {
+                if($value == $toAdd)return true;
+            }
+            $str = $this->encodeCategory( array_push($toAdd,$res) );
+            return $this->db->query("update store set category = '$str' where id = ".$storeId );
+        }else{
+            $this->mwrong->insert(__LINE__."行model/store/changeCategory/查询了一个不存在的storeId,storeId = " . $storeId);
+        }
     }
 }
 ?>

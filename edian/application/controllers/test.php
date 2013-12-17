@@ -50,14 +50,31 @@ class Test extends MY_Controller{
         $this->help->showArr($value);
     }
     function index(){
-        $arr = array('img' => array(
-                        "http://edian.me/upload/month_1308/201308101340054962.jpg",
-                        "http://www.edian.me/upload/1367920625.jpg",
-                        "http://www.edian.me/upload/1.jpg"
-                    ),
-                    "data" => array("第一张是一个烤鱼的图片","第二个是美人的图片//或许","第三章是不存在的图片")
-                );
-        echo json_encode($arr);
+        $start = microtime(true)*1000;
+        $str = "323242";
+        $len = 1000000;
+        /*
+        for($i = 0;$i < $len;$i++){
+            $trans = (int)$str;
+            if($trans)$flag = 1;
+            else $flag = 0;
+        }
+        //231.208
+         */
+        /*
+        for($i = 0;$i < $len;$i++){
+            for($j = 0,$lenj = strlen($str) ;$j < $lenj; $j++){
+                if($str[$j]<='0' && $str[$j] >= '9')$flag = 1;
+            }
+        }
+*/
+        // 2506
+        for($i = 0;$i < $len; $i++){
+            if(preg_match("/^\d+$/" , $str))$flag = 1;
+            else $flag = 0;
+        }
+        $end = microtime(true)*1000;
+        echo $end - $start;
     }
     function sms(){
         header("Cache-control:no-cache");
