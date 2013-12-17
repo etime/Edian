@@ -75,7 +75,7 @@ class Register extends CI_Controller {
      */
     public function checkLoginName($loginName = false, $url = '', $urlName = '') {
         if ($loginName == false) {
-            $loginName = @$_GET["loginName"];
+            $loginName = trim(@$_GET["loginName"]);
         }
 
         // 判断用户输入的登录名是否含有非法字符
@@ -109,7 +109,7 @@ class Register extends CI_Controller {
         }
 
         // 用户输入的 loginName 不能含有空格
-        if (preg_match("/^\S+$/", $loginName)) {
+        if (preg_match("/^\s+$/", $loginName)) {
             if (isset($_SERVER["HTTP_X_REQUESTED_WITH"]) && strtolower($_SERVER["HTTP_X_REQUESTED_WITH"]) == 'xmlhttprequest') {
                 echo "false";
             } else {
