@@ -102,10 +102,12 @@ class Upload extends MY_Controller {
         }
 
         // 不同情况下选择不同的后台处理函数
-        if($flag) {
+        if($flag == 1) {
             $data["url"] = site_url("upload/imgMain");
-        } else {
+        } else if ($flag == 0) {
             $data["url"] = site_url("upload/thumb");
+        } else if ($flag == 2) {
+            $data['url'] = site_url('upload/uploadStoreLogo');
         }
         $this->load->view('uploadImg', $data);
     }
@@ -125,7 +127,7 @@ class Upload extends MY_Controller {
 
         // 如果是 ajax 调用，设置 imageName
         if ($imageName == false) {
-            ;
+            $imageName = './image/' . trim($this->input->post('imageName'));
         }
 
         // 删除图片
@@ -355,8 +357,90 @@ class Upload extends MY_Controller {
         $url = base_url('image/' . $userId . '/thumb/small/' . $fileName);
         $info = "<input type = 'hidden' name = 'value' id = 'value' value = ".$url." />";
         echo($info);
-        $this->index();
+        $this->index(0);
     }
+
+    /**
+     */
+    public function uploadStoreLogo() {
+        // 用户没有登录
+        $userId = $this->getUserId();
+        if ($userId == -1) {
+            $this->load->view('login');
+            return;
+        }
+
+        // 用户权限不够
+        ;
+
+        // 跳转页面的 url 和 urlName
+        $url = site_url('upload/index/2');
+        $urlName = '上传图片';
+
+        // 获取文件的类型和大小
+        $type = $_FILES['userfile']['type'];
+        $size = $_FILES['userfile']['size'];
+
+        // 上传的文件格式非法
+        if (! $this->_isImg($type)) {
+            $info = "文件格式非法";
+            $this->_errorJump($info, $url, $urlName);
+            return;
+        }
+
+        // 对上传的文件进行重命名
+        $flag = -1;
+        $fileName = $userId . '_' . date('Y-m-d_H-i-s');
+        if ($type == 'image/gif') {
+            $fileName .= '.gif';
+            $flag = 3;
+        } else if ($type == 'image/png') {
+            $fileName .= '.png';
+            $flag = 2;
+        } else {
+            $fileName .= '.jpg';
+            $flag = 1;
+        }
+
+        // 创建 image/"userId" 文件夹
+        if (! is_dir('./image/' . $userId)) {
+            mkdir('./image/' . $userId);
+        }
+        // 创建 image/"userId"/mix 文件夹
+        if (! is_dir('./image/' . $userId . '/mix')) {
+            mkdir('./image/' . $userId . '/mix');
+        }
+
+        // 定义用户上传的图片的存储地址和名字
+        $path = './image/' . $userId . '/' . $fileName;
+
+        // 上传图片
+        move_uploaded_file($_FILES['userfile']['tmp_name'], $path);
+
+        // 获得图片的 size
+        $imageSize = getimagesize($path);
+        $oldW = $imageSize[0];
+        $oldH = $imageSize[1];
+
+        // 确定原始图片的存放地址
+        $oldPath = './image/' . $userId;
+
+        // 确定存到 mix 文件夹中的图片的 w 和 h
+        $newW = $this->config->item('storeLogoW');
+        $newH = $this->config->item('storeLogoH');
+
+        // 对原始图片进行缩小，并存放进 image/"userId"/mix 文件夹中
+        $newPath = './image/' . $userId . '/mix';
+        $this->_shrinkImage($oldW, $oldH, $newW, $newH, $oldPath, $newPath, $fileName, $flag);
+
+        // 删除原始图片
+        $this->imgDelete($path);
+
+        $url = base_url('image/' . $userId . '/mix/' . $fileName);
+        $info = "<input type = 'hidden' name = 'value' id = 'value' value = ".$url." />";
+        echo($info);
+    }
+
     /**
      * 这里是zmdyiwei 为上传写的函数，
      * @param  int $height 上传图片的高度
@@ -447,7 +531,5 @@ class Upload extends MY_Controller {
             $this->load->view("jump2",$data);
         }
     }
-
-
 }
 ?>
