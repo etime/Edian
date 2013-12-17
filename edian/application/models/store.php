@@ -144,15 +144,21 @@ class Store extends CI_Model {
      * 在判断出 storeId 存在的情况下，提取它的分类列表
      *
      * @param int $storeId
-     * @return string
+     * @return array
      */
     public function getCategoryByStoreId($storeId) {
         // 对要匹配的字符串进行转义
         $storeId = mysql_real_escape_string($storeId);
 
+        // 通过 sql 语句获取想要的结果
         $sql = "SELECT category FROM store WHERE id = $storeId";
-        $res = $this->db->query($sql)->result_array();
-        return $res[0];
+        $res = $this->db->query($sql);
+        $res = $res->result_array();
+
+        // 将所有的 category 解码
+        $res = explode('|', $res[0]['category']);
+
+        return $res;
     }
     /**
      * 通过store信息，为bg/set服务

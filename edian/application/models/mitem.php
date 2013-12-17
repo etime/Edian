@@ -91,7 +91,9 @@ class Mitem extends Ci_Model
      * <br>    title          :     string      商品名字，一个
      * <br>    detail         :     string      商品详细信息
      * <br>    belongsTo      :     int         所属商店的 id 号码
+     *
      * @param array $data
+     * @return int 上传的商品的 id 号
      */
     public function addItem($data) {
         // 把分类列表进行编码
@@ -104,21 +106,28 @@ class Mitem extends Ci_Model
 
         // sql 语句，因为语句太长，添加的字段太长，于是折段写，更加清晰
         $sql = "INSERT INTO item(" .
-               "category, price, mainThumbnail, attr, storeNum, thumbnail, title, detail， belongsTo)" .
-               "VALUES(" .
-               "'$data[category]'" .
-               "'$data[price]'" .
-               "'$data[mainThumbnail]'" .
-               "'$data[attr]'" .
-               "'$data[storeNum]'" .
-               "'$data[thumbnail]'" .
-               "'$data[title]'" .
-               "'$data[detail]'" .
+               "category, price, mainThumbnail, attr, storeNum, thumbnail, title, detail, belongsTo)" .
+               " VALUES(" .
+               "'$data[category]', " .
+               "'$data[price]', " .
+               "'$data[mainThumbnail]', " .
+               "'$data[attr]', " .
+               "'$data[storeNum]', " .
+               "'$data[thumbnail]', " .
+               "'$data[title]', " .
+               "'$data[detail]', " .
                "'$data[belongsTo]'" .
                ")";
 
         // 调用 CI 的数据库函数
         $this->db->query($sql);
+
+        // 获取当前上传的商品的 id
+        $sql = "SELECT last_insert_id()";
+        $res = $this->db->query($sql);
+        $res = $res->result_array();
+
+        return $res[0]['last_insert_id()'];
     }
 
 

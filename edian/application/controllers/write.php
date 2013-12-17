@@ -430,10 +430,15 @@ class Write extends MY_Controller
      *
      * 由后台自己得到的数据应该包括：
      *     belongsTo      :     int         所属商店的 id 号码
+     *
+     * 说明：老板上传成功商品之后，跳转到该商品的商品详情页面
      * @todo 判断商品属性是否合法
-     * @todo
      */
     public function bgAdd() {
+        // 这个仅用于测试使用
+        $this->session->set_userdata('storeId', 1);
+        $this->session->set_userdata('bossId', 3);
+
         // 判断用户登录否
         if ($this->userId == -1) {
             die();
@@ -573,32 +578,12 @@ class Write extends MY_Controller
         // 判断商品详细信息是否合法，暂时不做
 
         // 经过重重难关，终于能够上传了！
-        $this->mitem->addItem($data);
-//        if ($_POST["sub"]) {
-//            $re = null;
-//            $data = $this->insert();
-//            if($data === false) return;
-//            $data["value"] = time();
-//            //value ，标示一个帖子含金量的函数,初始的值为当时的事件辍
-//            $data["author_id"] = $this->userId;
-//            $re = $this->mitem->insert($data);
-//            if($re){
-//                $data["time"] = 3;
-//                $data["title"] = "恭喜你，成功了";
-//                //$data["uri"] = site_url("showart/index/".$re);
-//                $data["uri"] = site_url("bg/home/itemadd");
-//                $data["uriName"] = "新品";
-//                $data["atten"] = "成功,可喜可贺";
-//                $this->load->view("jump2",$data);
-//            }else {
-//                $data["time"] = 5;
-//                $data["title"] = "出错了，请联系客服";
-//                $data["uri"] = site_url("bg/home/itemadd");
-//                $data["uriName"] = "新品上架";
-//                $data["atten"] = "出错了，请联系客服帮助解决";
-//                $this->load->view("jump",$data);
-//            }
-//        }
+        $itemId = $this->mitem->addItem($data);
+
+        // 跳转到该商品的详情页面
+        $url = site_url('item/index/' . $itemId);
+        $urlName = '商品详情';
+        $this->_errorJump('上传成功！', $url, $urlName);
     }
 
     /**
