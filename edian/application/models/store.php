@@ -51,7 +51,6 @@ class Store extends CI_Model {
             else
                 $str = $key . '=' .$val;
         }
-        echo $str;
         return $str;
     }
     /**
@@ -62,11 +61,13 @@ class Store extends CI_Model {
     protected function decodeMore($str)
     {
         $arr = Array();
+        if(!$str)return $arr;
         $tmpArr = explode("|" , $str);
         for($i = 0,$len = count($tmpArr) ; $i < $len; $i++){
             $keyval = explode('=' , $tmpArr[$i]);
-            if(count($keyval) === 2){
-                array_push($arr, Array($keyval[0] => $keyval[1]) );
+            if(count($keyval) === 2 && $keyval[1]){
+                //array_push($arr, Array($keyval[0] => $keyval[1]) );
+                $arr = array_merge($arr, Array($keyval[0] => $keyval[1]) );
             }else{
                 $this->mwrong->insert("model/store/". __LINE__ . "行count的结果大于2，不应该出现,此时对应的参数str = " . $str);
             }
@@ -87,10 +88,10 @@ class Store extends CI_Model {
         $orginMore = $this->decodeMore($res[0]["more"]);
         foreach ($more as $key => $val) {
             if(!$val) continue;//如果没有对应的值更新，不更改，也不添加
-            if(array_key_exists($key,$more)){
-                $orginMore[$key] = $val;
+            if(array_key_exists($key,$orginMore)){
+                $orginMore[$key] = $val;//如果存在，就更新
             }else{
-                array_push($orginMore,Array($key => $val));
+                $orginMore = array_merge($orginMore,Array($key => $val));
             }
         }
         return $this->encodeMore($orginMore);
@@ -107,6 +108,7 @@ class Store extends CI_Model {
     {
         $sql = 'update store set ';
         $cnt = false;
+        $arr["more"] = $this->formMore($more,$storeId);
         foreach ($arr as $key => $val) {
             if($val){
                 $val = mysql_real_escape_string($val);

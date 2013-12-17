@@ -33,6 +33,7 @@ function forbid() {
 $(document).ready(function  () {
     var NoImg = 1,doc = document;
     dir = eval(dir);//对dir数组进行编码
+    destoryImg();
     forbid();       //处理禁止输入的字符
     $("form").submit(function  () {
         debugger;
@@ -334,13 +335,22 @@ function mainThum() {
  * 无论是否成功，都不再报错返回
  */
 function destoryImg(name) {
+    name = "http://www.edian.cn/image/52/main/52_2013-12-16_15-12-51.jpg";
+    name = $.trim(name);
     if(name ){
         //将名字发送过去
-        var url = site_url + "/upload/imgDelete/" + name.substr(name.lastIndexOf("/") + 1);
-        $.get(url,function (data,textStatus) {
-            console.log(data);
-            console.log("yes");
-        })
+        name = name.substring( name.indexOf("image") + 6);
+        $.ajax({
+            url: site_url + '/upload/imgDelete',
+            type: 'POST',
+            data: {"imgName" : name},
+            success: function (data, textStatus, jqXHR) {
+                console.log("success");
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log(jqXHR);
+            }
+        });
     }
 }
 /**

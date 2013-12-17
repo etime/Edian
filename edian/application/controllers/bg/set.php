@@ -67,7 +67,7 @@ class set extends MY_Controller
         $data['longitude']    = trim( $this->input->post('longitude'));
         $data['latitude']     = trim( $this->input->post('latitude'));
         $data['address']      = trim( $this->input->post('address'));
-        $data['lestPrc']      = trim( $this->input->post('lestPrc'));
+        $data['sendPrice']      = trim( $this->input->post('lestPrc'));
         //不能存在除-()之外一切特殊字符
         if( preg_match("/[~!@#$%^&*_+`\\=\\|\\{\\}:\\\">\\?<\\[\\];',\/\\.\\\\]/", $data['name']) ) {
             $data['name'] = false;
@@ -107,8 +107,9 @@ class set extends MY_Controller
         if( preg_match("/[~!@#$%^&*_+`\\=\\|\\{\\}:\\\">\\?<\\[\\];',\/\\.\\\\]/", $data['address']) ) {
             $data['address'] = false;
         }
-        if(!preg_match('/^\d+[.\d]?\d*$/' , $data['lestPrc'])){
-            $data['lestPrc'] = false;
+        //标准的来说，应该是只有一个小数的
+        if(!preg_match('/^\d+[.\d]?\d*$/' , $data['sendPrice'])){
+            $data['sendPrice'] = false;
         }
         return $data;
     }
@@ -166,8 +167,7 @@ class set extends MY_Controller
             }
             //优先选择店，在没有的情况下选择一个默认的店 ,1号
             $data["storeId"] = $this->input->post("storeId");
-            if(!$data["storeId"])
-                $data["storeId"] = 1;
+            if(!$data["storeId"]) $data["storeId"] = 1;
         }else{
             //强制转换，如果发现为0，报错
             $data["storeId"] = (int)$this->session->userdata("storeId");
@@ -177,20 +177,19 @@ class set extends MY_Controller
             $inputData = $this->setGet();
             $more['dtuName'] = $this->input->post('dtuName');
             if($data["type"] == 2){
-                $more['dtuPassword'] = $this->input->post("dtuPassword");
+                $more['dtuPassword'] = trim( $this->input->post("dtuPassword") );
                 $more['dtuId']       = trim($this->input->post('dtuId'));
             }
             $flag = $this->store->update($inputData, $more ,$data["storeId"]);
-            $data = array_merge($data,$inputData);
-            if($flag)echo "插入成功";
-            else exit("插入失败");
+            //$data = array_merge($data,$inputData);
+            if(!$flag){
+                exit("插入失败");
+            }
         }else{
-            $this->store->getSetInfo($data['storeId']);
             //在不是提交的情况下，重新读取
-            $data = array_merge($data , $this->store->getSetInfo($data['storeId'] ));
             //本店的列表的编码和解码和get,
         }
-        $this->help->showArr($data);
+        $data = array_merge($data , $this->store->getSetInfo($data['storeId'] ));
         $this->load->view("bgHomeSet",$data);
     }
     /**

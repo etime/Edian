@@ -49,32 +49,15 @@ class Test extends MY_Controller{
         $this->load->library("help");
         $this->help->showArr($value);
     }
+    public function test()
+    {
+        $_POST["test"] = "heh ,中计了";
+        $this->input->post("test") = "hhaah";
+        $this->index();
+    }
     function index(){
-        $start = microtime(true)*1000;
-        $str = "323242";
-        $len = 1000000;
-        /*
-        for($i = 0;$i < $len;$i++){
-            $trans = (int)$str;
-            if($trans)$flag = 1;
-            else $flag = 0;
-        }
-        //231.208
-         */
-        /*
-        for($i = 0;$i < $len;$i++){
-            for($j = 0,$lenj = strlen($str) ;$j < $lenj; $j++){
-                if($str[$j]<='0' && $str[$j] >= '9')$flag = 1;
-            }
-        }
-*/
-        // 2506
-        for($i = 0;$i < $len; $i++){
-            if(preg_match("/^\d+$/" , $str))$flag = 1;
-            else $flag = 0;
-        }
-        $end = microtime(true)*1000;
-        echo $end - $start;
+        echo "tesgting";
+        echo $this->input->post("test");
     }
     function sms(){
         header("Cache-control:no-cache");

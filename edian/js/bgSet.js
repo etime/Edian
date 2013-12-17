@@ -207,10 +207,11 @@ $(document).ready(function () {
     keydel();
     busTime();
     listAdd();
-    //testMap();
+    testMap();
     $("#change").submit(function (event) {
         /**  对时间的操作，整理时间的格式 */
         timeForm();
+        //event.preventDefault();
     })
 
     //关于状态码
