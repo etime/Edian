@@ -140,6 +140,7 @@ class Store extends CI_Model {
         $ownerId = mysql_real_escape_string($ownerId);
 
         $sql = "SELECT count(*) FROM store WHERE id = $storeId && ownerId = $ownerId";
+
         $res = $this->db->query($sql)->result_array();
         return $res[0]['count(*)'] == 1 ? true : false;
     }
@@ -271,8 +272,17 @@ class Store extends CI_Model {
     {
         $ownerId = (int)$ownerId;
         if(!$ownerId){
-            exit("")
+            $this->mwrong->insert('model/store/' . __LINE__ . '行出现了不应该出现的bug，ownerId在强制转换之后成为了0');
+            return false;
         }
+
+        $res = $this->db->query("insert into store(ownerId) values('$ownerId')");
+        if($res){
+            $res = $this->db->query('select last_insert_id()');
+            $res = $res->result_array();
+            return $res[0]['last_insert_id()'];
+        }
+        return false;
     }
 }
 ?>

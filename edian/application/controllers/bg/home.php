@@ -58,11 +58,10 @@ class Home extends MY_Controller {
             $this->noLogin();
             return;
         }
-
-        $this->_setBossId();
-        //如果还没有选择店铺，就选择店铺
+        //每一个用户，进入的时候都意味着设置bossId和storeId,为了避免刷新的时候重复设置.进行判断
         if(!$this->session->userdata("storeId")){
-            $this->choseStore();
+            $bossId = $this->_setBossId();
+            $this->choseStore($bossId);
         }else{
             $data["type"] = $this->user->getCredit($this->userId);
             //读取admin和seller对应的配置
@@ -158,37 +157,40 @@ class Home extends MY_Controller {
     /**
      *  选择店铺，
      * 通过session获取老板的所有商店的 id 和 name
-     * @return array
+     * @param int $ownerId  店铺的拥有者的id
      */
-    public function choseStore() {
-        $ownerId = $this->session->userdata('bossId');
+    public function choseStore($ownerId  = -1 ) {
+        //$ownerId = $this->session->userdata('bossId');
         $this->load->model("store");
         $data["store"] = $this->store->getIdNameByOwnerId($ownerId);
         $data["len"] = count($data["store"]);
-        //在没有设置店铺的情况下，进入店铺设置，如果有一个，就直接跳转到店铺，如果有多个，就选择
+        //在没有设置店铺的情况下，进入店铺设置，
+        //如果有一个，就直接跳转到店铺，
+        //如果有多个，就给出选择页面
         if($data['len'] == 0){
-            $this->store->insertStore($ownerId);
-            /*
-            $arugment['type'] = 0;
-            $this->load->view("bgHomeSet" , $arugment);
-             */
+            $storeId = $this->store->insertStore($ownerId);
+            $this->receiveStoreId($storeId , $ownerId);
         }else if($data['len'] == 1){
-            $this->receiveStoreId($data["store"][0]["id"]);
+            $this->receiveStoreId($data["store"][0]["id"] , $ownerId);
         }else{
             $this->load->view("choseStore" , $data);
         }
     }
 
     /**
-     * 获取老板选择的商店的 storeId
+     * 初始化storeId,表示店家在选择了店铺的操作
+     * 对应了直接页面提交和其他函数提交的两种情况
+     *
+     * @param int $storeId  表示选择的storId
      */
-    public function receiveStoreId($storeId) {
-        //$storeId = trim($this->input->post('storeId'));
+    public function receiveStoreId($storeId  = -1 ) {
         $storeId = (int)$storeId;
-
+        $bossId = $this->session->userdata("bossId");
         // 判断该老板是否拥有该商店
-        if (! $this->store->isMatch($storeId, $this->session->userdata('bossId'))) {
-            return;
+        if (! $this->store->isMatch($storeId, $bossId)) {
+            echo "请选择您名下的商店";
+            $this->mwrong->insert('controller/bg/home/receiveStoreId/'. __LINE__ .'bossId为'. $bossId . '的用户选择索引了一个不属于自己的名下的storeid'. $storeId);
+            return false;
         }
         // 将 storeId 存入 session 中
         $this->session->set_userdata('storeId', $storeId);

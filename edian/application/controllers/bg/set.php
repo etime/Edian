@@ -78,7 +78,7 @@ class set extends MY_Controller
 
         // 将删除后的分类进行编码
         $newCategory = '';
-        foreach ($list = as $key => $val) {
+        foreach ($list  as $key => $val) {
             if ($val == $listName) {
                 continue;
             }
