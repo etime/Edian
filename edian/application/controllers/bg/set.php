@@ -28,7 +28,7 @@ class set extends MY_Controller
 
     /**
      * 这里是添加商品类别列表的函数
-     * 通过发送的POST提交中的字符串，添加到对应商户列表中
+     b* 通过发送的POST提交中的字符串，添加到对应商户列表中
      * @param   string  $_POST["listName"]
      * @return  1/string 添加成功返回1，否则返回返回错误原因
      */
@@ -53,8 +53,42 @@ class set extends MY_Controller
      * @param   string  $_POST["listName"]
      * @return bool/int  删除成功返回1，否则返回错误的原因
      */
-    public function listDelete()
-    {
+    public function listDelete() {
+        // 接收数据
+        $listName = trim($this->input->post('listName'));
+
+        // 从 session 中获取当前商店的 storeId
+        $storeId = $this->session->userdata('storeId');
+
+        // 获取当前商店的所有分类列表
+        $list = $this->store->getCategoryByStoreId($storeId);
+
+        // 判断要删除的分类是否在分类列表中
+        $flag = false;
+        foreach ($list as $key => $val) {
+            if ($val == $listName) {
+                $flag = true;
+                break;
+            }
+        }
+        if (! $flag) {
+            echo '该分类不存在';
+            return;
+        }
+
+        // 将删除后的分类进行编码
+        $newCategory = '';
+        foreach ($list = as $key => $val) {
+            if ($val == $listName) {
+                continue;
+            }
+            if ($newCategory == '') {
+                $newCategory .= $val;
+            } else {
+                $newCategory .= '|' . $val;
+            }
+        }
+        $this->store->updateCategoryByStoreId($newCategory, $storeId);
         echo "1";
     }
     /**

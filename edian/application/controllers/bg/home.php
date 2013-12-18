@@ -155,11 +155,26 @@ class Home extends MY_Controller {
      * 通过session获取老板的所有商店的 id 和 name
      * @return array
      */
-    private function _getStoreIdName() {
+    public function getStoreIdName() {
         $ownerId = $this->session->userdata('bossId');
         $ans = $this->store->getIdNameByOwnerId($ownerId);
         return $ans;
     }
 
+    /**
+     * 获取老板选择的商店的 storeId
+     */
+    public function receiveStoreId() {
+        $storeId = trim($this->input->post('storeId'));
+        $storeId = (int)$storeId;
+
+        // 判断该老板是否拥有该商店
+        if (! $this->store->isMatch($storeId, $this->session->userdata('bossId'))) {
+            return;
+        }
+
+        // 将 storeId 存入 session 中
+        $this->session->set_userdata('storeId', $storeId);
+    }
 }
 ?>

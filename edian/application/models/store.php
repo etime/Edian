@@ -182,6 +182,16 @@ class Store extends CI_Model {
         $res = $res->result_array();
         return $res;
     }
+
+    /**
+     * 更新商店的本店分类
+     * @param $newCategory
+     * @param $storeId
+     */
+    public function updateCategoryByStoreId($newCategory, $storeId) {
+        $sql = "";
+    }
+
     /**
      * 通过store信息，为bg/set服务
      */
