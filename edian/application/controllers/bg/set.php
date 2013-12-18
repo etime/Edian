@@ -16,13 +16,23 @@ class set extends MY_Controller
     /**
      * 进入后台的人必须有id，对应的model应该有model
      */
-     function __construct()
-    {
+    function __construct() {
         parent::__construct();
-        $this->load->model("user");
-        $this->load->model("store");
+        $this->load->model('user');
+        $this->load->model('store');
+        $this->load->model('boss');
         //$this->load->model("mwrong");
         $this->user_id = $this->getUserId();
+    }
+
+    /**
+     * 获取老板的所有商店的 id 和 name
+     * @return array
+     */
+    private function _getStoreIdName() {
+        $ownerId = $this->session->userdata('bossId');
+        $ans = $this->store->getIdNameByOwnerId($ownerId);
+        return $ans;
     }
 
     /**
@@ -113,6 +123,7 @@ class set extends MY_Controller
         }
         return $data;
     }
+
     /**
      * setact setAction set函数对应的后台操作函数和view显示函数
      * 共有14项需要设置
