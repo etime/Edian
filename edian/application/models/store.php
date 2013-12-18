@@ -164,6 +164,24 @@ class Store extends CI_Model {
 
         return $res;
     }
+
+    /**
+     * 通过拥有者的 Id 获取该拥有者的所有商店的 id 和 name
+     * @param int $ownerId
+     * @return array
+     */
+    public function getIdNameByOwnerId($ownerId) {
+        // 确保 $ownerId 是一个整数
+        $ownerId = (int)$ownerId;
+
+        // sql 语句
+        $sql = "SELECT id, name FROM store WHERE ownerId = $ownerId";
+
+        // 进行查询并返回结果
+        $res = $this->db->query($sql);
+        $res = $res->result_array();
+        return $res;
+    }
     /**
      * 通过store信息，为bg/set服务
      */

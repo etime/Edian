@@ -125,12 +125,28 @@ class Login extends CI_Controller {
 
         // 对返回的错误代码进行分析
         if ($flag != -1) {
+
             // 用户登录成功，只可能是两种情况：loginName(1) 登录和 phoneNum(2) 登录
             if ($flag == 2) {
-                $this->session->set_userdata('userId', $this->user->getuserIdByPhone($userName));
+
+                // 获取用户的 userId 和 loginName
+                $userId = $this->user->getuserIdByPhone($userName);
+                $loginName = $this->user->getLoginNameByUserId($userId);
+
+                // 将用户的 userId 和 loginName 存到 session 中
+                $this->session->set_userdata('userId', $userId);
+                $this->session->set_userdata('loginName', $loginName);
             } else if ($flag == 1) {
-                $this->session->set_userdata('userId', $this->user->getUserIdByLoginName($userName));
+
+                // 获取用户的 userId 和 loginName
+                $userId = $this->user->getUserIdByLoginName;
+                $loginName = $userName;
+
+                // 将用户的 userId 和 loginName 存到 session 中
+                $this->session->set_userdata('userId', $userId);
+                $this->session->set_userdata('loginName', $loginName);
             }
+
             // 跳转到用户登录之前访问的页面
 			header("Location: $url");
         } else {

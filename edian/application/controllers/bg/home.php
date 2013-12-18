@@ -27,6 +27,7 @@ class Home extends MY_Controller {
         parent::__construct();
         $this->load->model("bghome");
         $this->load->model("user");
+        $this->load->model('boss');
         $this->userId = $this->getUserId();
     }
 
@@ -40,6 +41,15 @@ class Home extends MY_Controller {
     }
 
     /**
+     * 获取老板的 bossId，并将其保存在 session 中
+     */
+    private function _setBossId() {
+        $loginName = $this->session->userdata('loginName');
+        $bossId = $this->boss->getBossIdByLoginName($loginName);
+        $this->session->set_userdata('bossId', $bossId);
+    }
+
+    /**
      * 后台的入口view函数
      */
     function index() {
@@ -48,6 +58,9 @@ class Home extends MY_Controller {
             $this->noLogin();
             return;
         }
+
+        $this->_setBossId();
+
         $data["type"] = $this->user->getCredit($this->userId);
         //读取admin和seller对应的配置
         $this->load->config("edian");

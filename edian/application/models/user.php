@@ -139,6 +139,18 @@ class User extends CI_Model {
          */
     }
 
+    /**
+     * 通过用户的 userId 提取他的 loginName
+     * @param int $userId
+     * @return string | boolean
+     */
+    public function getLoginNameByUserId($userId) {
+        $userId = (int)$userId;
+        $sql = "SELECT loginName FROM user WHERE id = $userId";
+        $res = $this->db->query($sql);
+        $res = $res->result_array();
+        return $res[0]['loginName'];
+    }
 
 
 /**********************************************************************************************************************/
