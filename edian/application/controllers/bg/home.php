@@ -60,13 +60,17 @@ class Home extends MY_Controller {
         }
 
         $this->_setBossId();
-
-        $data["type"] = $this->user->getCredit($this->userId);
-        //读取admin和seller对应的配置
-        $this->load->config("edian");
-        $data["ADMIN"] = $this->config->item("ADMIN");
-        $data["SELLER"] = $this->config->item("SELLER");
-        $this->load->view("bghome",$data);
+        //如果还没有选择店铺，就选择店铺
+        if(!$this->session->userdata("storeId")){
+            $this->choseStore();
+        }else{
+            $data["type"] = $this->user->getCredit($this->userId);
+            //读取admin和seller对应的配置
+            $this->load->config("edian");
+            $data["ADMIN"] = $this->config->item("ADMIN");
+            $data["SELLER"] = $this->config->item("SELLER");
+            $this->load->view("bghome",$data);
+        }
     }
 
     /**
@@ -152,29 +156,44 @@ class Home extends MY_Controller {
     }
 
     /**
+     *  选择店铺，
      * 通过session获取老板的所有商店的 id 和 name
      * @return array
      */
-    public function getStoreIdName() {
+    public function choseStore() {
         $ownerId = $this->session->userdata('bossId');
-        $ans = $this->store->getIdNameByOwnerId($ownerId);
-        return $ans;
+        $this->load->model("store");
+        $data["store"] = $this->store->getIdNameByOwnerId($ownerId);
+        $data["len"] = count($data["store"]);
+        //在没有设置店铺的情况下，进入店铺设置，如果有一个，就直接跳转到店铺，如果有多个，就选择
+        if($data['len'] == 0){
+            $this->store->insertStore($ownerId);
+            /*
+            $arugment['type'] = 0;
+            $this->load->view("bgHomeSet" , $arugment);
+             */
+        }else if($data['len'] == 1){
+            $this->receiveStoreId($data["store"][0]["id"]);
+        }else{
+            $this->load->view("choseStore" , $data);
+        }
     }
 
     /**
      * 获取老板选择的商店的 storeId
      */
-    public function receiveStoreId() {
-        $storeId = trim($this->input->post('storeId'));
+    public function receiveStoreId($storeId) {
+        //$storeId = trim($this->input->post('storeId'));
         $storeId = (int)$storeId;
 
         // 判断该老板是否拥有该商店
         if (! $this->store->isMatch($storeId, $this->session->userdata('bossId'))) {
             return;
         }
-
         // 将 storeId 存入 session 中
         $this->session->set_userdata('storeId', $storeId);
+        //对storeId初始化之后，开始选择进入后台，进行操作
+        $this->index();
     }
 }
 ?>

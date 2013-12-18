@@ -52,12 +52,11 @@ class Test extends MY_Controller{
     public function test()
     {
         $_POST["test"] = "heh ,中计了";
-        $this->input->post("test") = "hhaah";
-        $this->index();
     }
     function index(){
-        echo "tesgting";
-        echo $this->input->post("test");
+        $this->load->library("help");
+        $this->help->showArr($_POST);
+        $this->load->view("choseStore");
     }
     function sms(){
         header("Cache-control:no-cache");

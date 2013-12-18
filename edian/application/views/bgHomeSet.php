@@ -17,6 +17,7 @@
 </head>
 <body>
     <?php
+        //type为2是管理员，为1添加是店家，为0，代表添加新增店铺
         if($type == 2){
             $check = '<form action=\'' . $siteUrl . '/bg/set/setAct\'  method=\'post\' id = \'switch\' accept-charset=\'utf-8\' enctype = \'multipart/form-data\'>';
             $check .= '<select name = \'storeId\'>';

@@ -264,5 +264,15 @@ class Store extends CI_Model {
             $this->mwrong->insert(__LINE__."行model/store/changeCategory/查询了一个不存在的storeId,storeId = " . $storeId);
         }
     }
+    /**
+     *  对用户的
+     */
+    public function insertStore($ownerId)
+    {
+        $ownerId = (int)$ownerId;
+        if(!$ownerId){
+            exit("")
+        }
+    }
 }
 ?>

@@ -122,7 +122,6 @@ class Login extends CI_Controller {
 
         // 进行登录验证
         $flag = $this->checkMatch($userName, $password);
-
         // 对返回的错误代码进行分析
         if ($flag != -1) {
 
@@ -139,7 +138,7 @@ class Login extends CI_Controller {
             } else if ($flag == 1) {
 
                 // 获取用户的 userId 和 loginName
-                $userId = $this->user->getUserIdByLoginName;
+                $userId = $this->user->getUserIdByLoginName($userName);
                 $loginName = $userName;
 
                 // 将用户的 userId 和 loginName 存到 session 中
