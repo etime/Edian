@@ -150,5 +150,16 @@ class Home extends MY_Controller {
         $data['imgall']=$this->img->userImgAll($this->userId);
         $this->load->view("m-bg-imglist",$data);
     }
+
+    /**
+     * 通过session获取老板的所有商店的 id 和 name
+     * @return array
+     */
+    private function _getStoreIdName() {
+        $ownerId = $this->session->userdata('bossId');
+        $ans = $this->store->getIdNameByOwnerId($ownerId);
+        return $ans;
+    }
+
 }
 ?>

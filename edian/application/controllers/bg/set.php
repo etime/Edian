@@ -25,15 +25,6 @@ class set extends MY_Controller
         $this->user_id = $this->getUserId();
     }
 
-    /**
-     * 获取老板的所有商店的 id 和 name
-     * @return array
-     */
-    private function _getStoreIdName() {
-        $ownerId = $this->session->userdata('bossId');
-        $ans = $this->store->getIdNameByOwnerId($ownerId);
-        return $ans;
-    }
 
     /**
      * 这里是添加商品类别列表的函数
