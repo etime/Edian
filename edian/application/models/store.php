@@ -185,11 +185,14 @@ class Store extends CI_Model {
 
     /**
      * 更新商店的本店分类
-     * @param $newCategory
-     * @param $storeId
+     * @param string $newCategory
+     * @param int $storeId
      */
     public function updateCategoryByStoreId($newCategory, $storeId) {
-        $sql = "";
+        $newCategory = mysql_real_escape_string($newCategory);
+        $storeId = (int)$storeId;
+        $sql = "UPDATE store SET category = '$newCategory' WHERE id = $ownerID";
+        $this->db->query($sql);
     }
 
     /**
