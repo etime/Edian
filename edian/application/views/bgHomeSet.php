@@ -11,7 +11,8 @@
     <title>商城设置</title>
 <script type="text/javascript" charset="utf-8">
     var baseUrl = "<?php echo $baseUrl ?>";
-    var siteUrl = "<?php echo $siteUrl ?>";
+    var site_url = "<?php echo $siteUrl ?>";
+    var busTime = " <?php echo @$deliveryTime ?>";//对busTime的处理在fBusTime中进行
 </script>
 </head>
 <body>
@@ -54,6 +55,7 @@
             <span id="addTime" class = "button">添加时间段</span>
             <input type="hidden" name="businessTime" id="time" />
             <div id = "tarea">
+<!--
                 <p class = "dtime">
                     从
                     <select name="time">
@@ -81,6 +83,7 @@
                     </select>
                     分
                 </p>
+-->
             </div>
         </li>
         <li>
@@ -180,6 +183,7 @@ eod;
         content:"";
     }
 </style>
+
 <script type="text/javascript" charset="utf-8" src = "<?php echo $baseUrl.'js/jquery.js' ?>"></script>
 <!--
     <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=672fb383152ac1625e0b49690797918d"></script>

@@ -5,9 +5,8 @@
  * @author      unasm<1264310280@qq.com>
  */
 /* 地图的对象，*/
-var objMap;
 /** 百度地图的操作集中 */
-function testMap() {
+var objMap = (function testMap() {
     var map = new BMap.Map("allmap");
     var $this = this;
     $this._point = null;
@@ -26,8 +25,13 @@ function testMap() {
         strokeOpacity:0,
         strokeWeight:"0px"
     }
+    var longtitude = $.trim($("input[name = 'longitude']").val());
+    var latitude =  $.trim($("input[name = 'latitude']").val());
+    if(longtitude && latitude){
+        setPoint( new BMap.Point(longtitude, latitude) );
+    }else
+        setPoint( new BMap.Point(103.940, 30.759532) );
     //给出一个默认的位置，然后试图去定位
-    setPoint( new BMap.Point(103.940, 30.759532) );
     // 对地图的初始化
     map.enableScrollWheelZoom();                            //启用滚轮放大缩小
     map.enableInertialDragging();
@@ -48,7 +52,7 @@ function testMap() {
     var maker,circle;
     $("#but").click(function () {
         if(circle){
-            $this._dist = $("#distance").val();
+            $this._dist = $.trim($("#distance").val());
             circle.setRadius($this._dist);
         }
         return false;
@@ -99,7 +103,13 @@ function testMap() {
         contextMenu.addSeparator();
     }
     map.addContextMenu(contextMenu);
-}
+    //返回具体的定位点;
+    return {
+        "getPoint":function () {
+            return $this._point;
+        }
+    }
+})();
 /**
  * 过滤掉不允许输入的字符
  * 所有的特殊字符都去掉了，除了一个-,45号,40,41号对应的是()
@@ -118,19 +128,68 @@ function keydel() {
 /**
  * business time 营业时间的处理
  * 添加一个营业时间
+ * @param {str} busTime 这里是将全局变量busTime进行处理完善的函数
  */
-function busTime() {
+function fBusTime() {
+    busTime = $.trim(busTime);
+    busTime = busTime.split("&");
+
+    //构成添加到dom中的节点，每次一组时间
+    function formTimeStr(oneTime) {
+        var dtime = '<p class = dtime>从<select name = time >';
+        for (var j = 0 ; j < 24; j ++) {
+            if(oneTime[0] == j)
+                dtime += '<option value = ' + j +' selected = selected> ' + j + '</option>';
+            else
+                dtime += '<option value = ' + j +'> ' + j + '</option>';
+        }
+        dtime += '</select>时<select name = time>';
+        for (var j = 0 ; j < 60; j ++) {
+            if(oneTime[1] == j)
+                dtime += '<option value = ' + j +' selected = selected> ' + j + '</option>';
+            else
+                dtime += '<option value = ' + j +'> ' + j + '</option>';
+        }
+        dtime += '</select>分到<select name = time>';
+        for (var j = 0 ; j < 24; j ++) {
+            if(oneTime[2] == j)
+                dtime += '<option value = ' + j +' selected = selected> ' + j + '</option>';
+            else
+                dtime += '<option value = ' + j +'> ' + j + '</option>';
+        }
+        dtime += '</select>时<select name = time>';
+        for (var j = 0 ; j < 60; j ++) {
+            if(oneTime[3] == j)
+                dtime += '<option value = ' + j +' selected = selected> ' + j + '</option>';
+            else
+                dtime += '<option value = ' + j +'> ' + j + '</option>';
+        }
+        dtime += '</select>分';
+        dtime += '</p>';
+        $("#tarea").append(dtime);
+        return dtime;
+    }
     var cnt = 0;
-    $("#addTime").click(function () {
-        var dlast = $(".dtime").last();
-        $("#tarea").append($(dlast).clone());
+    for (var i = 0, l = busTime.length; i < l && i < 3; i ++) {
+        var oneTime = busTime[i].split(/[-:]/);//时间由起至的时分构成
+        if(oneTime.length != 4){
+            reportBug("在fBusTime中oneTime的长度不为3");
+            continue;
+        }
+        formTimeStr(oneTime);
         cnt++;
-        if( cnt == 2 ){
+    }
+    $("#addTime").click(function () {
+        if( cnt >= 2 ){
             $(this).css("display","none");
             //清空内存
             select = null;
             lstTime = null;
             Dtime = null;
+        }else{
+            cnt++;
+            formTimeStr([0,0,0,0]);
+            //$("#tarea").append( formTimeStr([0,0,0,0]));
         }
     })
 }
@@ -150,6 +209,9 @@ function timeForm() {
     }
     $("#time").val(val);
 }
+/**
+ * 添加本店的列表菜单
+ */
 function listAdd() {
     var list = $("#list");
     $("#listBut").click(function () {
@@ -157,8 +219,7 @@ function listAdd() {
         if(!val) return false;
         $("input[name = 'listName']").val("");//清空，防止无意中的二次发送
         $.ajax({
-            url: siteUrl+"/bg/set/listAdd" ,
-            type: 'POST',
+            url: site_url +"/bg/set/listAdd" ,type: 'POST',
             data:  {"listName":val},
             success: function (data, textStatus, jqXHR) {
                 if(textStatus == "success"){
@@ -180,10 +241,9 @@ function listAdd() {
     list.delegate("li","click",function (){
         if(confirm("s您确定删除该类别？如果存在属于该类别的商品，会导致删除失败")){
             var $this = this;
-            console.log($this);
             var val = $($this).text();
             $.ajax({
-                url: siteUrl + "/bg/set/listdelete",
+                url: site_url + "/bg/set/listdelete",
                 type: 'POST',
                 data: {"listName" : val},
                 success: function (data, textStatus, jqXHR) {
@@ -205,11 +265,15 @@ function listAdd() {
 }
 $(document).ready(function () {
     keydel();
-    busTime();
+    fBusTime();
     listAdd();
-    testMap();
     $("#change").submit(function (event) {
         /**  对时间的操作，整理时间的格式 */
+        var point = objMap.getPoint();
+        if(point){
+            $("input[name = 'latitude']").val(point.lat);
+            $("input[name = 'longitude']").val(point.lng);
+        }
         timeForm();
         //event.preventDefault();
     })

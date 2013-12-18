@@ -31,13 +31,17 @@ class set extends MY_Controller
      * @param   string  $_POST["listName"]
      * @return  1/string 添加成功返回1，否则返回返回错误原因
      */
-    public function listAdd()
+    public function listAdd($name)
     {
-        $name = $this->input->post("listName");
-        if( preg_match("/[~!@#$%^&*_+`\\=\\|\\{\\}:\\\">\\?<\\[\\];',\/\\.\\\\]/", $data['name']) ) {
+        $name = trim( $this->input->post("listName") );
+        if( preg_match("/[~!@#$%^&*_+`\\=\\|\\{\\}:\\\">\\?<\\[\\];',\/\\.\\\\]/", $name) ) {
             echo '包涵非法字符';
         }else{
-            $this->store->categoryAdd($name);//插入category
+            if(TEST)$storeId = 1;
+            else $storeId = $this->session->userdata("storeId");
+            $flag = $this->store->changeCategory($name,$storeId);//插入category
+            if($flag)echo 1;
+            else echo "添加失败";
         }
     }
 
@@ -185,11 +189,15 @@ class set extends MY_Controller
             if(!$flag){
                 exit("插入失败");
             }
-        }else{
+        }
+        /*
+        else{
             //在不是提交的情况下，重新读取
             //本店的列表的编码和解码和get,
         }
+         */
         $data = array_merge($data , $this->store->getSetInfo($data['storeId'] ));
+        $this->help->showArr($data);
         $this->load->view("bgHomeSet",$data);
     }
     /**

@@ -18,6 +18,10 @@
  *      deliveryArea:送货范围
  *      credit:     商店的评分
  *      more：      保存了不值得单独存储一个字段，但是或许有些店有，有些店没有的东西
+ *      state:      标志商店现在的状态，歇业,整顿，修改中
+ *          0，修改审核中
+ *          1,正常营业中
+ *          2,歇业中
  * </pre>
  * @since 2013-11-24 09:52:12
  * @author farmerjian <chengfeng1992@hotmail.com>
@@ -167,13 +171,12 @@ class Store extends CI_Model {
     {
         $storeId = (int)$storeId;
         if(!$storeId)return false;
-        $res = $this->db->query("select name,logo,serviceQQ,servicePhone,address,longitude,latitude,category,more,deliveryArea from store where id = ".$storeId);
+        $res = $this->db->query("select name,logo,serviceQQ,servicePhone,address,longitude,latitude,category,more,deliveryTime,deliveryArea from store where id = ".$storeId);
         if($res->num_rows){
             $res = $res->result_array();
             $ansArr = $res[0];
             $ansArr['category'] = $this->decodeCategory($ansArr['category']);
             $ansArr['more'] = $this->decodeMore($ansArr['more']);
-
             return $ansArr;
         }else{
             $this->mwrong->insert("在model/store/getSetInfo/中num_rows 位0，有人对不应该存在的storeId进行了索引,storeId = ".$storeId);
@@ -223,7 +226,8 @@ class Store extends CI_Model {
             foreach ($res as $value) {
                 if($value == $toAdd)return true;
             }
-            $str = $this->encodeCategory( array_push($toAdd,$res) );
+            array_push($res,$toAdd);
+            $str = $this->encodeCategory( $res );
             return $this->db->query("update store set category = '$str' where id = ".$storeId );
         }else{
             $this->mwrong->insert(__LINE__."行model/store/changeCategory/查询了一个不存在的storeId,storeId = " . $storeId);
