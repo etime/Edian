@@ -179,8 +179,11 @@ function fBusTime() {
         formTimeStr(oneTime);
         cnt++;
     }
+    if(cnt === 0){
+        formTimeStr([0,0,0,0]);
+    }
     $("#addTime").click(function () {
-        if( cnt >= 2 ){
+        if( cnt > 2 ){
             $(this).css("display","none");
             //清空内存
             select = null;
@@ -199,15 +202,20 @@ function fBusTime() {
  */
 function timeForm() {
     var time = $("select[name = 'time']");
-    var val = "";
+    var ans = "";
     //严重依赖dom
     for (var i = 0, l = time.length; i < l; i ++) {
-        if(val)val += "&";
-        val += $(time[i]).val() + ":" + $(time[i + 1]).val();
+        var sum = parseInt ( $(time[i]).val() ) + parseInt( $(time[i + 1]).val() );
+        var val = $(time[i]).val() + ":" + $(time[i + 1]).val();
         i+=3;
+        sum += parseInt( $(time[i -1]).val()) + parseInt( $(time[i]).val() );
         val += "-" + $(time[i - 1]).val() + ":" + $(time[i]).val();
+        if(sum !== 0){
+            if(ans)ans += '&' + val;
+            else ans += val;
+        }
     }
-    $("#time").val(val);
+    $("#time").val(ans);
 }
 /**
  * 添加本店的列表菜单

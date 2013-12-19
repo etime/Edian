@@ -49,14 +49,17 @@ class Test extends MY_Controller{
         $this->load->library("help");
         $this->help->showArr($value);
     }
-    public function test()
+    protected function enCodeStr($post)
     {
-        $_POST["test"] = "heh ,中计了";
+
     }
-    function index(){
-        $this->load->library("help");
+    public function curl($data){
+
+    }
+    public function get()
+    {
+        $this->load->library('help');
         $this->help->showArr($_POST);
-        $this->load->view("choseStore");
     }
     function sms(){
         header("Cache-control:no-cache");

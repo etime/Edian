@@ -18,6 +18,12 @@
 </style>
     <body>
         <ul>
+<?php
+if(!isset($store)){
+    echo "die";
+    die;
+}
+?>
         <?php foreach ($store as $value):?>
             <li>
                 <input type="radio" name="storeId" id="<?php echo $value['id']?>" value="<?php echo $value['id']?>" />

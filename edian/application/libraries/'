@@ -66,7 +66,6 @@ class CI_Help
      }
     /**
      * 将一个post数组转化成为string发送出去
-     * post数组在网络传输中的格式有一点不同
      * @param array $post   想要转化成为字符串的数组
      * @return string       转化成为的字符串
      */
