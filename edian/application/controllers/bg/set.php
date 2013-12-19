@@ -21,6 +21,7 @@ class set extends MY_Controller
         $this->load->model('user');
         $this->load->model('store');
         $this->load->model('boss');
+        $this->load->model('mitem');
         //$this->load->model("mwrong");
         $this->user_id = $this->getUserId();
     }
@@ -56,13 +57,10 @@ class set extends MY_Controller
     public function listDelete() {
         // 接收数据
         $listName = trim($this->input->post('listName'));
-
         // 从 session 中获取当前商店的 storeId
         $storeId = $this->session->userdata('storeId');
-
         // 获取当前商店的所有分类列表
         $list = $this->store->getCategoryByStoreId($storeId);
-
         // 判断要删除的分类是否在分类列表中
         $flag = false;
         foreach ($list as $key => $val) {
@@ -73,6 +71,13 @@ class set extends MY_Controller
         }
         if (! $flag) {
             echo '该分类不存在';
+            return;
+        }
+
+        // 判断是否有商品属于要删除的分类
+        $flag = $this->mitem->isCategoryUsed($listName, $storeId);
+        if ($flag) {
+            echo '该分类正被使用中，不能删除';
             return;
         }
 

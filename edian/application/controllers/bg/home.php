@@ -47,6 +47,7 @@ class Home extends MY_Controller {
         $loginName = $this->session->userdata('loginName');
         $bossId = $this->boss->getBossIdByLoginName($loginName);
         $this->session->set_userdata('bossId', $bossId);
+        return $bossId;
     }
 
     /**
@@ -59,7 +60,7 @@ class Home extends MY_Controller {
             return;
         }
         //每一个用户，进入的时候都意味着设置bossId和storeId,为了避免刷新的时候重复设置.进行判断
-        if(!$this->session->userdata("storeId")){
+        if(!$this->session->userdata("storeId")) {
             $bossId = $this->_setBossId();
             $this->choseStore($bossId);
         }else{
@@ -169,9 +170,9 @@ class Home extends MY_Controller {
         //如果有多个，就给出选择页面
         if($data['len'] == 0){
             $storeId = $this->store->insertStore($ownerId);
-            $this->receiveStoreId($storeId , $ownerId);
+            $this->receiveStoreId($storeId);
         }else if($data['len'] == 1){
-            $this->receiveStoreId($data["store"][0]["id"] , $ownerId);
+            $this->receiveStoreId($data["store"][0]["id"]);
         }else{
             $this->load->view("choseStore" , $data);
         }
@@ -183,8 +184,9 @@ class Home extends MY_Controller {
      *
      * @param int $storeId  表示选择的storId
      */
-    public function receiveStoreId($storeId  = -1 ) {
+    public function receiveStoreId($storeId = -1 ) {
         $storeId = (int)$storeId;
+        echo $storeId . '<br>';
         $bossId = $this->session->userdata("bossId");
         // 判断该老板是否拥有该商店
         if (! $this->store->isMatch($storeId, $bossId)) {

@@ -130,7 +130,12 @@ class Mitem extends Ci_Model
         return $res[0]['last_insert_id()'];
     }
 
-
+    // 判断 storeId 的商店中有没有商品使用本店分类 category
+    public function isCategoryUsed($category, $storeId) {
+        $sql = "SELECT count(*) FROM item WHERE belongsTo = $storeId && category LIKE '%;$category|'";
+        $res = $this->$this->db->query($sql)->result_array();
+        return $res[0]['count(*)'] == 0 ? false : true;
+    }
 /**********************************************************************************************************************/
 /**********************************************************************************************************************/
 /**********************************************************************************************************************/
