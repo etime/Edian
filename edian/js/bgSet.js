@@ -271,6 +271,74 @@ function listAdd() {
         }
     })
 }
+/**
+ * 通过iframe实现异步上传
+ * 需要传入对应的控制节点，方便复用
+ * @param {node}    tofile     tofile 文件上传之后，返回的值需要保存的地方
+ * @param {string}  url        控制文件上传的地方
+ * @param {node}    toImg    控制图片上传后显示地方
+ */
+function formUploadFile(url , tofile ,toImg) {
+    var dom = "<div id = 'dlogo' >
+                    <a class = 'close' title = '关闭'></a>
+    <iframe id = 'diframe' src = " + url + " frameborder = '0'></iframe>
+    </div>";
+    $("body").append(dom);
+    var topNode = $("#dlogo");//控制显示区域的最上成node
+    topNode.delegate("close",click,function (event) {
+        area.fadeOut();
+        event.preventDefault();
+    });
+    $("#diframe").load(function () {
+        var ans = getElementByIdInFrame(document.getElementById("diframe"),'value');
+        ans = $.trim($(ans).val());
+        if(ans){
+            //var toImg = $("#toImgMain");
+            destoryImg( toImg.attr("src") );        //如果之前有图片的话，发送请求删除，;
+            toImg.attr("src" , ans);            //添加新的图片
+            var pos = ans.lastIndexOf("/");
+            if(pos !== -1){
+                tofile.val(ans.substring(pos + 1));
+            }
+            topNode.fadeOut();//完毕之后，消失
+        }
+    })
+    //销毁图片
+    function destoryImg(name) {
+        name = $.trim(name);
+        if(name ){
+            //将名字发送过去
+            name = name.substring( name.indexOf("image") + 6);
+            $.ajax({
+                url: site_url + '/upload/imgDelete',
+                type: 'POST',
+                data: {"imgName" : name},
+                success: function (data, textStatus, jqXHR) {
+                    console.log("success");
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.log(jqXHR);
+                }
+            });
+        }
+    }
+    /**
+     * 取得iframe中的节点的元素
+     */
+    function getElementByIdInFrame(objFrame,idInFrame) {
+        var obj;
+        if(objFrame.contentDocument)obj = objFrame.contentDocument.getElementById(idInFrame);
+        else if(objFrame.contentWindow) obj = objFrame.contentDocument.getElementById(idInFrame);
+        else obj = objFrame.document.getElementById(idInFrame);
+        return obj;
+    }
+}
+/**
+ * 上传logo
+ */
+function logo() {
+    formUploadFile( $("input[name = 'logo']") , $("#logo") , )
+}
 $(document).ready(function () {
     keydel();
     fBusTime();

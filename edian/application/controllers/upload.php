@@ -91,7 +91,10 @@ class Upload extends MY_Controller {
 
     /**
      * 显示上传商品图片的具体页面，传递给 view 处理上传的图片的处理函数
-     * @param int $flag $flag 为 1 表示上传的是 1:1 的 mainThumbnail，否则为其他情况
+     * @param int $flag
+     *              $flag 为 1 表示上传的是 1:1 的 mainThumbnail
+     *              $falg 为 2 表示上传到mis文件夹中的图片，目前针对的是logo
+     *              $flag 为 0 的情况是商品的缩略图的文件
      */
     public function index($flag = 0) {
         // 用户没有登录
