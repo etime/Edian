@@ -39,10 +39,11 @@
             <span>店铺logo：</span>
 <!--
             <input type="file" name="logo" id="logo"/>
--->
             <span class="button" id = "butLogo">上传图片</span>
-            <input type="hidden" name="logo" value="" />
-            <img src="" alt="logo图片" />
+-->
+            <input type="button" name="butLogo" id="butLogo" value="上传图片" />
+            <input type="hidden" name="logo" />
+            <img  id = "afterUpload"  />
         </li>
         <li>
             <span class = "item">客服电话:</span>
@@ -108,10 +109,6 @@
             <span class="item">dtu名字:</span>
             <input type="text" name="dtuName"  maxlength = "15" value = "<?php echo @$more['dtuName'] ?>"/>
         </li>
-        <div id = "dlogo">
-            <a href = "close" href = "#">关闭</a>
-            <iframe id="logo" src="<?php echo $baseUrl.'upload/index/2' ?>" frameborder="0"></iframe>
-        </div>
 <?php
 if($type == 2){
     $pass = @$more['dtuPassword'];
@@ -191,6 +188,18 @@ eod;
         CLEAR: both;
         overflow:hidden;
         content:"";
+    }
+/*
+ * 对应的是关闭空间的css
+ */
+    .close{
+        width:52px;
+        height:52px;
+        DISPLAY:block;
+        background:url(../../../bgimage/arrow.png) -108 no-repeat;
+        margin-top:-25px;
+        position:absolute;
+        right:-30px;
     }
 </style>
 
