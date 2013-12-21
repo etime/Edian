@@ -16,11 +16,24 @@
  */
 class ComItem extends Ci_Model{
     var $lenDay;
-    function __construct()
-    {
+    function __construct() {
         parent::__construct();
         $this->lenDay = 86400;
     }
+
+    public function selItem($itemId) {
+        $sql = "SELECT id, score, context, time, user_id FROM comItem WHERE item_id = '$itemId'";
+        $res = $this->db->query($sql);
+        return $res->result_array();
+    }
+
+/**********************************************************************************************************************/
+/**********************************************************************************************************************/
+/**********************************************************************************************************************/
+/**********************************************************************************************************************/
+/**********************************************************************************************************************/
+/**********************************************************************************************************************/
+
     public function insert($data)
     {
         $data["text"] = addslashes($data["text"]);
@@ -61,18 +74,7 @@ class ComItem extends Ci_Model{
         }
         return false;
     }
-    public function selItem($itemId)
-    {
-        $res = $this->db->query("select id,score,context,time,user_id from comItem where item_id = '$itemId'");
-        return $this->dataFb($res->result_array());
-    }
-    public function dataFb($res)
-    {
-        for ($i = 0,$len = count($res);$i < $len;$i++) {
-            $res[$i]["context"] = stripslashes($res[$i]["context"]);
-        }
-        return $res;
-    }
+
     public function getSomeDate($date)
     {
         $date = $this->lenDay*$date;

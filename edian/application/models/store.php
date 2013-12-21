@@ -3,25 +3,25 @@
  * 对store进行操作的文件
  * 不同字段的内容作用介绍<br/>
  * <pre>
- *      name:       商店的名字
- *      id:         商店在后台对应的唯一id，primary ，主键
- *      topPicture: 商店首部的装饰图片，可选,在考虑要不要放到more中
- *      serviceQQ:  客服QQ
- *      servicePhone:客服电话
- *      address:    商店的地址
- *      longtitude: 商店所在的经纬度
- *      latitude:   商店所在的经纬度
- *      category:   商店内部商品的分类,所有的分类都保存在一个字段里面，将一维数组以|分隔符分开
- *      briefInfo:  商店的自身简介
- *      owerId：    对应的boss中的id，所属者的id
- *      deliveryTime:商店的送货时间，营业时间
- *      deliveryArea:送货范围
- *      credit:     商店的评分
- *      more：      保存了不值得单独存储一个字段，但是或许有些店有，有些店没有的东西
- *      state:      标志商店现在的状态，歇业,整顿，修改中
- *          0，修改审核中
- *          1,正常营业中
- *          2,歇业中
+ *      name:         商店的名字
+ *      id:           商店在后台对应的唯一id，primary ，主键
+ *      topPicture:   商店首部的装饰图片，可选,在考虑要不要放到more中
+ *      serviceQQ:    客服QQ
+ *      servicePhone: 客服电话
+ *      address:      商店的地址
+ *      longtitude:   商店所在的经纬度
+ *      latitude:     商店所在的经纬度
+ *      category:     商店内部商品的分类,所有的分类都保存在一个字段里面，将一维数组以|分隔符分开
+ *      briefInfo:    商店的自身简介
+ *      owerId:       对应的boss中的id，所属者的id
+ *      deliveryTime: 商店的送货时间，营业时间
+ *      deliveryArea: 送货范围
+ *      credit:       商店的评分
+ *      more:         保存了不值得单独存储一个字段，但是或许有些店有，有些店没有的东西
+ *      state:        标志商店现在的状态，歇业,整顿，修改中
+ *          0, 修改审核中
+ *          1, 正常营业中
+ *          2, 歇业中
  * </pre>
  * @since 2013-11-24 09:52:12
  * @author farmerjian <chengfeng1992@hotmail.com>
@@ -40,14 +40,14 @@ class Store extends CI_Model {
         parent::__construct();
         $this->load->model("mwrong");
     }
+
     /**
-     * 构成more中的数组，
+     * 构成more中的数组
      *
      * 注意，为了实现反转码，必须不能存在|=两种字符串
      * @param array $arr 想转化为字符串的一维数组
      */
-    protected function encodeMore($arr)
-    {
+    protected function encodeMore($arr) {
         $str = "";
         foreach ($arr as $key => $val) {
             if($str)
@@ -57,13 +57,13 @@ class Store extends CI_Model {
         }
         return $str;
     }
+
     /**
      * 将more从一个字符串的状态变幻成为数组
      * @param string $str more在数据库中的存储数组
      * @return array
      */
-    protected function decodeMore($str)
-    {
+    protected function decodeMore($str) {
         $arr = Array();
         if(!$str)return $arr;
         $tmpArr = explode("|" , $str);
@@ -78,6 +78,7 @@ class Store extends CI_Model {
         }
         return $arr;
     }
+
     /**
      * 根据传入的more在对应的数据库中进行查找更改，修改数据库的more内容
      * 并不在这里插入,之所以这样，首先是想减少一次sql修改，第二，更加灵活吧，交给调用的地方进行处理
@@ -85,8 +86,7 @@ class Store extends CI_Model {
      * @param int   storeId 修改more内容的商店id
      * @return 返回需要插入的字符串
      */
-    protected function formMore($more , $storeId)
-    {
+    protected function formMore($more , $storeId) {
         $res = $this->db->query("select more from store where id = ". $storeId);
         $res = $res->result_array();
         $orginMore = $this->decodeMore($res[0]["more"]);
@@ -100,6 +100,7 @@ class Store extends CI_Model {
         }
         return $this->encodeMore($orginMore);
     }
+
     /**
      * 修改store信息的时候使用的函数
      *
@@ -108,8 +109,7 @@ class Store extends CI_Model {
      * @author  unasm
      * @since   2013-12-13 20:38:16
      */
-    public function update($arr , $more ,$storeId)
-    {
+    public function update($arr , $more ,$storeId) {
         $sql = 'update store set ';
         $cnt = false;
         $arr["more"] = $this->formMore($more,$storeId);
@@ -127,6 +127,7 @@ class Store extends CI_Model {
         $sql .= $cnt . ' where id = ' .$storeId;
         return $this->db->query($sql);
     }
+
     /**
      * 利用提供的 storeId 和 ownerId，判断一个 owner 是否拥有这个 store
      *
@@ -215,24 +216,24 @@ class Store extends CI_Model {
         }
         return false;
     }
+
     /**
      *  对cagegory 进行解码,从字符串变成数组;
      *  @param  string  $category category在数据库中保存成的数组
      *  @return array   对category进行解码形成的数组
      */
-    protected function decodeCategory($category)
-    {
+    protected function decodeCategory($category) {
         if($category)
             return explode("|",$category);
         return Array();
     }
+
     /**
      * 对category进行编码，从数组变成字符串
      * @param array $cateArr    category构成的字符串
      * @return string
      */
-    protected function encodeCategory($cateArr)
-    {
+    protected function encodeCategory($cateArr) {
         $res = "";
         for($i = 0,$len = count($cateArr); $i < $len ;$i++){
             if(!$cateArr[$i])continue;
@@ -240,13 +241,13 @@ class Store extends CI_Model {
         }
         return $res;
     }
+
     /**
      * 添加商店的分类
      * @param   string $toAdd     将要添加的商品分类
      * @return  boolen
      */
-    public function changeCategory($toAdd , $storeId)
-    {
+    public function changeCategory($toAdd , $storeId) {
         $storeId = (int)$storeId;
         if(!$storeId)return false;
         $toAdd = mysql_real_escape_string($toAdd);
@@ -265,11 +266,11 @@ class Store extends CI_Model {
             $this->mwrong->insert(__LINE__."行model/store/changeCategory/查询了一个不存在的storeId,storeId = " . $storeId);
         }
     }
+
     /**
      *  对用户的
      */
-    public function insertStore($ownerId)
-    {
+    public function insertStore($ownerId) {
         $ownerId = (int)$ownerId;
         if(!$ownerId){
             $this->mwrong->insert('model/store/' . __LINE__ . '行出现了不应该出现的bug，ownerId在强制转换之后成为了0');
@@ -283,6 +284,36 @@ class Store extends CI_Model {
             return $res[0]['last_insert_id()'];
         }
         return false;
+    }
+
+    /**
+     * 通过 storeId 获取商店的详细信息
+     * <pre>
+     * 主要包括以下字段：
+     *     name
+     *     serviceQQ
+     *     servicePhone
+     *     address
+     *     longitude
+     *     latitude
+     *     briefInfo
+     *     deliveryTime
+     *     deliveryArea
+     *     sendPrice
+     * </pre>
+     * @param int $ownerId
+     * @return boolean | array
+     */
+    public function getStoreInfo($ownerId) {
+        $sql = "SELECT name, serviceQQ, servicePhone, address, longitude, latitude, briefInfo, deliveryTime, " .
+            "deliveryArea, sendPrice FROM store WHERE id = $ownerId";
+        $res = $this->db->query($sql);
+        $res = $res->result_array();
+        if (count($res) == 0) {
+            return false;
+        } else {
+            return $res[0];
+        }
     }
 }
 ?>

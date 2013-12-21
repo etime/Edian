@@ -3,7 +3,6 @@
  * 用于处理所有和 user 这个表有关的数据信息
  * @author  farmerjian <chengfeng1992@hotmail.com>
  * @since   2013-11-24 23:29:38
- * @todo    对所有的插入和进行转义,使用mysql_real_escape_string,单独列出成为一个函数
  * @todo    http://wudi.in/archives/127.html  看下这个。。
  *
  */
@@ -104,21 +103,31 @@ class User extends CI_Model {
 
     /**
      * 向 user 表中新增加一个用户
+     * <pre>
+     * 需要添加的字段有：
+     *     nickname      用户昵称
+     *     loginName     用户登陆名
+     *     password      用户密码
+     *     credit        用户信用度
+     *     registerTime  用户注册时间
+     *     email         用户邮箱地址
+     *     phone         用户手机号码
+     * </pre>
      * @param array $data
      */
     public function addUser($data) {
         foreach ($data as $key => $val) {
             $data[$key] = $this->_escape($val);
         }
-        $sql = "INSERT INTO user(nickname, loginName, password, credit, registerTime, email, phone) VALUES('$data[nickname]', '$data[loginName]', '$data[password]', '$data[credit]', now(), '$data[email]', '$data[phoneNum]')";
+        $sql = "INSERT INTO user(nickname, loginName, password, credit, registerTime, email, phone) " .
+            "VALUES('$data[nickname]', '$data[loginName]', '$data[password]', '$data[credit]', now()" .
+            ", '$data[email]', '$data[phoneNum]')";
         $this->db->query($sql);
     }
 
     /**
-     * 获取用户的权限
-     *
-     * 通过查询用户的 credit 的值来获取用户的权限，其中，credit 在[0, 100]为普通用户，为 255 的为老板，为 250 的为超级管理员
-     *
+     * 获取用户的信用度
+     * 通过对用户的信用度的获取，可以判别用户的权限：普通、老板、网站管理员
      * @author farmerjian <chengfeng1992@hotmail.com>
      * @param int $userId
      * @return boolean | int
@@ -126,17 +135,11 @@ class User extends CI_Model {
     public function getCredit($userId) {
         $res = $this->db->query("select credit from user where id = '$userId'");
         $res = $res->result_array();
-        if (count($res) == 0) return false;
-        return $res[0]["credit"];
-        /*
-        $this->load->config("edian");
-        if($res[0]["credit"] == $this->config->item("adminCredit") ){
-            return 2;
-        }else if($res[0]["credit"] == $this->config->item("bossCredit") ){
-            return 1;
+        if (count($res) == 0) {
+            return false;
+        } else {
+            return $res[0]['credit'];
         }
-        return 0;
-         */
     }
 
     /**
@@ -152,51 +155,52 @@ class User extends CI_Model {
         return $res[0]['loginName'];
     }
 
-
-/**********************************************************************************************************************/
-/**********************************************************************************************************************/
-/**********************************************************************************************************************/
-/**********************************************************************************************************************/
-/**********************************************************************************************************************/
-
-
-
-
     /**
-     * 这个函数在我之前的实现里面，是为了去除转义的字符而用的
+     * 获取用户的 昵称，注册时间，头像
+     * @param int $userId
+     * @return boolean | array
      */
-    private function dataFb($array) {
-        if (count($array)) {
-            if (array_key_exists('passwd', $array["0"])) {
-                for ($i = 0, $len = count($array); $i < $len; $i ++) {
-                    $array[$i]["passwd"] = stripslashes($array[$i]["passwd"]);
-                }
-            }
-            if(array_key_exists('user_name', $array["0"])) {
-                for ($i = 0, $len = count($array); $i < $len; $i ++) {
-                    $array[$i]["user_name"] = stripslashes($array[$i]["user_name"]);
-                }
-            }
+    public function getPubById($userId) {
+        $res = $this->db->query("SELECT nickname, registerTime, photo FROM user WHERE id  = $userId");
+        $res = $res->result_array();
+        if (count($res) == 0) {
+            return false;
+        } else {
+            return $res[0];
         }
-        return $array;
     }
 
     /**
-     * 处理 mysql 查询的返回结果只有单独一条的情况
-     *
-     * 因为mysql对于数据的处理是返回$array[0][content]的形式，但是对于很多单独数据的情况下不是这个样子的，只是有一条的情况，则处理为返回content
-     *
-     * @param array $array
-     * @return array|boolean
+     * 通过用户的 id 获取用户的所有信息
+     * @param int $id
+     * @return boolean | array
      */
-    private function getArray($array) {
-        if(count($array) == 1) {
-            $array = $this->dataFb($array);
-            return $array[0];
+    public function getInfoById($userId) {
+        $sql="SELECT * FROM user WHERE id = $userId";
+        $res=$this->db->query($sql)->result_array();
+        if (count($res) == 0) {
+            return false;
+        } else {
+            return $res[0];
+        }
+    }
+
+    public function getExtro($userId) {
+        $sql = "SELECT extro from user where user_id = $userId";
+        $res = $this->db->query("select extro from user where user_id = $userId ");
+        if($res){
+            $res = $res->result_array();
+            if(count($res)){
+                return $this->deExtro($res[0]["extro"]);
+            }
         }
         return false;
     }
-
+/**********************************************************************************************************************/
+/**********************************************************************************************************************/
+/**********************************************************************************************************************/
+/**********************************************************************************************************************/
+/**********************************************************************************************************************/
     private function author_check($permit_level)
     {//用户级别查询吗？
         //check the author of the user
@@ -206,26 +210,6 @@ class User extends CI_Model {
         return true;
     }
 
-    /**
-     * 通过用户的 id 获取用户的相关信息
-     *
-     * @param int $id
-     * @return Ambigous <boolean, array>
-     */
-    public function getInfoById($id) {
-        $sql="select * from user where id = $id";
-        $res=$this->db->query($sql);
-        return $this->getArray($res->result_array());
-    }
-
-    public function getPubById($user_id)
-    {
-        //输出的都是显示的内容，不涉及用户的隐私，不知道这样会不会加快速度
-        $res = $this->db->query("select  user_name,reg_time,user_photo from user where user_id  = $user_id");
-        $res = $this->dataFb($res->result_array());
-        if(count($res))return $res[0];
-        return  false;
-    }
     public function getNess($user_id)
     {
         //getPubById 的升级版本
@@ -416,21 +400,7 @@ class User extends CI_Model {
         $res = $this->db->query("select mailNum,comNum from user where user_id = '$userId'");
         return $this->getArray($res->result_array());
     }
-    public function getItem($userId){
-        //为item提供的数据，包含商家一些主要的信息,通过查找
-        $res = $this->db->query("select user_type,work,operst,opered,contract1,contract2,email,intro,addr,lng,lat,user_name,impress,user_photo from user where user_id = $userId");
-        if(!$res)return false;
-            $res = $res->result_array();
-        $res = $res[0];
-        /**************对时间的处理************************/
-        preg_match("/^[\d]{1,2}\:[\d]{1,2}/",$res["operst"],$res["operst"]);
-        $res["operst"] = $res["operst"][0];
-        preg_match("/^[\d]{1,2}\:[\d]{1,2}/",$res["opered"],$res["opered"]);
-        $res["opered"] = $res["opered"][0];
-        /*******************************/
-        $res["addr"] = $this->divAddr($res["addr"]);
-        return $res;
-    }
+
     public function appaddr($addr,$userId)
     {
         $sql = "update user set addr  = concat(addr,'".$addr."') where user_id = $userId";
@@ -472,17 +442,7 @@ class User extends CI_Model {
         //return $this->db->query("insert into user(extro) values('$str') where user_id = $userId");
         return $this->db->query("update user set extro = '$str' where user_id = $userId");
     }
-    public function getExtro($userId)
-    {
-        $res = $this->db->query("select extro from user where user_id = $userId ");
-        if($res){
-            $res = $res->result_array();
-            if(count($res)){
-                return $this->deExtro($res[0]["extro"]);
-            }
-        }
-        return false;
-    }
+
     /**
      * 分解extro，得到包含的数据
      *

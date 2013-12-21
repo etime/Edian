@@ -23,7 +23,7 @@ class Order extends My_Controller{
         $this->load->model("user");
         $this->load->model("mwrong");//其实都是不太可能出现错误的地方
         $this->load->library('pagesplit');
-        $this->user_id = $this->user_id_get();
+        $this->user_id = $this->getUserId();
     }
 
     /**

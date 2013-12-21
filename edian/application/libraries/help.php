@@ -82,8 +82,8 @@ class CI_Help
      /**
       * 通过curl的方式发起post请求
       * 确切说是通过curl的方式发起向某一个url发起post请求,当然，get也一样,只是get没有必要专门写一个函数
-      * @param array    $post 想要向另一个页面发起的post数据
-      * @param string   数据的接收地址
+      * @param array   $post    想要向另一个页面发起的post数据
+      * @param string  $url     数据的接收地址
       * @return string
       * @author unasm<1264310280@qq.com>
       */

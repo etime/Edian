@@ -10,66 +10,21 @@
  */
 class item extends MY_Controller
 {
-    var $user_id;
+    // 存储用户的 userId
+    var $userId;
+
     /**
-     * 开始声明user_id,因为用到的地方比较多，My_controller中集成了几个经常用到的操作
+     * 开始声明userId,因为用到的地方比较多，My_controller中集成了几个经常用到的操作
      */
-     function __construct()
-    {
+    function __construct() {
         parent::__construct();
-        $this->user_id = $this->user_id_get();
-        $this->load->model("mitem");
+        $this->userId = $this->getUserId();
+        $this->load->model('mitem');
+        $this->load->model('user');
+        $this->load->model('store');
+        $this->load->model('comitem');
     }
-    public function index($itemId = -1)
-    {
-        if($itemId == -1){
-            show_404();
-            return;
-        }
-        $det = $this->mitem->getDetail($itemId);//属性的列表中不可以是数字，这个在将来修复
-        if($det == false){
-            show_404();
-            return;
-        }
-        $det["img"] = explode("|",$det["img"]);//对img进行切割，处理出各个图片
 
-        /****进行attr的数据解码***/
-            $attr = explode("|",$det["attr"]);
-            $attr[0] = explode(",",$attr[0]);
-            $attr[0] = $this->formAttr($attr[0]);
-            $det["attr"] = $attr;
-        /****进行attr的数据解码***/
-
-        $this->load->model("user");
-        $author = $this->user->getItem($det["author_id"]);//关于店主的个人信息
-        //开始准备写最后的计算
-        $data = array_merge($det,$author);
-        /*
-         * lestPrc 信息保存在js中，php的将在原来购物车没有的情况下添加
-         */
-        $extro = $this->user->getExtro($det["author_id"]);
-        //$this->showArray($extro);
-        if($extro && array_key_exists("lestPrc",$extro))
-            $data["lestPrc"] = $extro["lestPrc"];//将最低起送价加到data中，前台处理
-        else $data["lestPrc"] = 0;//0代表没有起送价
-        $data["itemId"] = $itemId;
-        $this->load->model("comitem");
-        //$data["comt"] = $this->comitem->selItem($itemId);
-        $comt = $this->comitem->selItem($itemId);
-        $data["comt"] = Array();
-        $cnt = 0;
-        //接下来的查询可以分为两种，有机会对比下性能之比,一种是sql不停的or还有下面for一下
-        for ($i = count($comt)-1; $i >= 0; $i--) {
-            $temp = $this->user->getPubById($comt[$i]["user_id"]);
-            if($temp){
-                $data["comt"][$cnt] = array_merge($temp,$comt[$i]);
-                $data["comt"][$cnt]["context"] = explode("&",$comt[$i]["context"]);
-                $cnt++;
-            }
-        }
-        $this->load->view("item",$data);
-        $this->mitem->addvisitor($itemId);
-    }
     /**
      * 对Attr进行解码和重组，
      *
@@ -78,12 +33,11 @@ class item extends MY_Controller
      * @param string $attr attr等信息构成的字符串，需要解析
      * @return string html标签构成的页面内容；
      */
-    private function formAttr($attr)
-    {
+    private function _formAttr($attr) {
         $reg = "/^\d+$/";
         $len = count($attr);
-        $ans = "";
-        if(($len > 4)&&preg_match($reg,$attr[1])){
+        $ans = '';
+        if (($len > 4) && preg_match($reg,$attr[1])) {
             //对是两个属性
             $ans = "<p class = 'attr'><span class = 'item'>".$attr[2].":</span><br/>";
             $leni = ($attr[0]+4);//从第五个开始是真正的属性值
@@ -91,7 +45,7 @@ class item extends MY_Controller
             $ans.="</p><p class = 'attr'><span class = 'item'>".$attr[3].":</span><br/>";
             $ans.=$this->pinAttr(4+$attr[0],$attr[1],$attr);
             $ans.="</p>";
-        }else if($len > 2){
+        } else if ($len > 2) {
             //只有一个属性
             $ans = "<p class = 'attr'><span class = 'item'>".$attr[1].":</span><br/>";
             $ans.=$this->pinAttr(2,$attr[0],$attr);
@@ -99,6 +53,72 @@ class item extends MY_Controller
         }
         return $ans;
     }
+
+    public function test($data) {
+        header("Content-type: text/html; charset=utf-8");
+        foreach ($data as $key => $val) {
+            if (is_array($val)) {
+                echo '--------------<br>';
+                echo 'there is an array: <br>';
+                $this->test($val);
+                echo '--------------<br>';
+            } else {
+                echo $key . '=>' . $val . '<br>';
+            }
+        }
+    }
+
+    // 显示商品的接口
+    public function index($itemId = -1) {
+        // 商品不存在
+        if ($itemId == -1) {
+            show_404();
+            return;
+        }
+        $itemInfo = $this->mitem->getItemInfo($itemId);
+
+        // 商品不存在
+        if ($itemInfo == false) {
+            show_404();
+            return;
+        }
+
+        // 进行attr的数据解码
+        $attr = explode('|', $itemInfo['attr']);
+        $attr[0] = explode(',', $attr[0]);
+        $attr[0] = $this->_formAttr($attr[0]);
+
+        // 设置商品的属性
+        $itemInfo['attr'] = $attr;
+
+        // 获取商品所属商店的信息
+        $storeInfo = $this->store->getStoreInfo($itemInfo['belongsTo']);
+
+        $data = array_merge($itemInfo, $storeInfo);
+        $data['itemId'] = $itemId;
+
+        // 获取商品评论
+        $comt = $this->comitem->selItem($itemId);
+        $data['comt'] = Array();
+        $cnt = 0;
+        //接下来的查询可以分为两种，有机会对比下性能之比,一种是sql不停的or还有下面for一下
+        for ($i = count($comt)-1; $i >= 0; $i --) {
+            $temp = $this->user->getPubById($comt[$i]['user_id']);
+            if($temp) {
+                $data['comt'][$cnt] = array_merge($temp, $comt[$i]);
+                $data['comt'][$cnt]['context'] = explode('&', $comt[$i]['context']);
+                $cnt ++;
+            }
+        }
+        $this->mitem->addvisitor($itemId);
+        $this->load->view("item", $data);
+    }
+
+/**********************************************************************************************************************/
+/**********************************************************************************************************************/
+/**********************************************************************************************************************/
+/**********************************************************************************************************************/
+
     private function pinAttr($st,$len,$attr)
     {
         //构成 Attr中的一部分,重复度很高，所以独立
@@ -123,13 +143,13 @@ class item extends MY_Controller
     public function newcom($itemId = -1){
         //以后要返回插入的com id,对具体的item的评论进行的操作
         $res["flag"] = -1;
-        if(!$this->user_id){
+        if(!$this->userId){
             $res["atten"] = "没有登录";
         }
         $data["text"] = $this->input->post("context");
         $data["score"] = $this->input->post("score");
         $data["item_id"] = $itemId;
-        $data["user_id"] = $this->user_id;
+        $data["user_id"] = $this->userId;
     //    $this->showArray($data);
         $this->load->model("comitem");
         $ans = $this->comitem->insert($data);
@@ -141,7 +161,7 @@ class item extends MY_Controller
     public function appcom($comId)
     {
         $res["flag"] = -1;
-        if(!$this->user_id){
+        if(!$this->userId){
             $res["atten"] = "没有登录";
         }
         $data["text"] = $this->input->post("context");

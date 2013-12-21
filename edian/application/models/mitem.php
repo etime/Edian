@@ -130,11 +130,70 @@ class Mitem extends Ci_Model
         return $res[0]['last_insert_id()'];
     }
 
-    // 判断 storeId 的商店中有没有商品使用本店分类 category
+    /**
+     * 判断 storeId 的商店中有没有商品使用本店分类 category
+     * @param string $category
+     * @param int $storeId
+     * @return boolean
+     */
     public function isCategoryUsed($category, $storeId) {
         $sql = "SELECT count(*) FROM item WHERE belongsTo = $storeId && category LIKE '%;$category|'";
         $res = $this->$this->db->query($sql)->result_array();
         return $res[0]['count(*)'] == 0 ? false : true;
+    }
+
+    /**
+     * 获取商品详细介绍页面的信息
+     * <pre>
+     * 主要获取以下信息：
+     *     title              商品的名字
+     *     detail             商品的详情介绍
+     *     price              商品价格
+     *     belongsTo          商品所属商店的 id
+     *     mainThumbnail      商品的主缩略图
+     *     satisfyScore       用户对商品的满意度
+     *     attr               商品的属性
+     *     storeNum           商品的库存
+     *     putawayTime        商品的上架时间
+     *     orderNum           商品的订单数量
+     *</pre>
+     *
+     * @param $id
+     * @return bool
+     */
+    public function getItemInfo($itemId) {
+        $sql = "SELECT title, detail, price, belongsTo, mainThumbnail, thumbnail, satisfyScore, attr, storeNum, " .
+            "putawayTime FROM item WHERE id = $itemId";
+        $res = $this->db->query($sql);
+        $res = $res->result_array();
+
+        // 如果没有筛选到相应的商品
+        if (count($res) == 0) {
+            return false;
+        }
+
+        $res = $res[0];
+
+        // 筛选该商品的订单数量
+        $sql = "SELECT count(*) FROM ord WHERE item_id = $itemId && state";
+        $temp = $this->db->query($sql);
+
+        if ($temp) {
+            $temp = $temp->result_array();
+            $res['orderNum'] = $temp[0]['count(*)'];
+            return $res;
+        }
+
+        return false;
+    }
+
+    /**
+     * 给商品添加一个访问量
+     * @param int $itemId
+     */
+    public function addvisitor($itemId) {
+        $sql = "UPDATE item SET visitorNum = visitorNum + 1 WHERE id = $itemId";
+        $this->db->query($sql);
     }
 /**********************************************************************************************************************/
 /**********************************************************************************************************************/
@@ -151,14 +210,7 @@ class Mitem extends Ci_Model
         $res = $this->db->query($sql);
         return $res;
     }
-    private function dataFb($res)
-    {//对body，title反转义
-        for($i = 0; $i < count($res);$i++){
-            $res[$i]["title"] = stripslashes($res[$i]["title"]);
-            $res[$i]["content"] = stripslashes($res[$i]["content"]);
-        }
-        return $res;
-    }
+
     private function titleFb($res){
         //对title进行反转义
         for($i = 0; $i < count($res);$i++){
@@ -252,24 +304,7 @@ class Mitem extends Ci_Model
         }
         return $res;
     }
-    public function getDetail($id)
-    {
-        //获得详细商品介绍页面的信息
-        // 评价和订单数目通过查找获得，
-        $sql = "select title,content,price,author_id,img,judgescore,promise,attr,visitor_num,store_num,time from item where id = $id";
-        $res = $this->db->query($sql);
-        $res = $res->result_array();
-        if(!$res)return false;//如果长度为0，则返回，需要测试
-        $res = $this->dataFb($res);
-        $res = $res[0];
-        $temp = $this->db->query("select count(*) from ord where item_id = $id && state");
-        if($temp){
-            $temp = $temp->result_array();
-            $res["order_num"] = $temp[0]["count(*)"];
-            return $res;
-        }
-        return false;
-    }
+
     public function addValue($artId)
     {//为art添加浏览者数目,因为和用户想要的没有太大关系，所以不需要什么返回值,增加value
         $this->db->query("update item set value = value + 10  where art_id = '$artId'");
@@ -323,11 +358,7 @@ class Mitem extends Ci_Model
         //只匹配在销售的商品
         return $res->result_array();
     }
-    public function addvisitor($itemId)
-    {
-        //添加访问量
-        $this->db->query("update item set visitor_num = visitor_num +1 where id = $itemId");
-    }
+
     public function getBgList($userId)
     {
         $res = $this->db->query("select id,title,store_num,price,state from item where author_id = $userId");
