@@ -335,7 +335,6 @@ function mainThum() {
  * 无论是否成功，都不再报错返回
  */
 function destoryImg(name) {
-    name = "http://www.edian.cn/image/52/main/52_2013-12-16_15-12-51.jpg";
     name = $.trim(name);
     if(name ){
         //将名字发送过去

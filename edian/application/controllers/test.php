@@ -41,19 +41,13 @@ class Test extends MY_Controller{
     }
     public function abc()
     {
-        $value = Array(
-            "abc" => "1",
-            "aaa" => "2",
-            "bbb" => array("1" => "value")
-        );
-        $this->load->library("help");
-        $this->help->showArr($value);
+        $this->load->view("test");
     }
     protected function enCodeStr($post)
     {
 
     }
-    public function curl($data){
+    public function curl(){
 
     }
     public function get()

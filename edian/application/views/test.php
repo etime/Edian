@@ -18,11 +18,10 @@ body, html,#allmap {width: 500px;height: 300px;overflow: hidden;margin:0;}
     </p>
     <div id = "allmap"></div>
 </body>
-<script type="text/javascript" charset="utf-8">
+<script  type="text/javascript" charset="utf-8">
     var siteUrl = "<?php echo site_url()?>";
     var baseUrl = "<?php echo base_url()?>";
 </script>
-<script type="text/javascript" charset="utf-8" src = "<?php echo $baseUrl.'js/jquery.js'?>"></script>
-<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=f0uIeSS1Zgh8O3CBdVUM5xRN"></script>
-<script type="text/javascript" charset="utf-8" src = "<?php echo $baseUrl.'js/test.js'?>"></script>
+<script type="text/javascript" charset="utf-8" src = " <?php echo base_url('js/jquery.js')?>"></script>
+<script type="text/javascript" charset="utf-8" src = " <?php echo base_url('js/test.js')?>"></script>
 </html>
