@@ -138,7 +138,9 @@ class Mitem extends Ci_Model
      */
     public function isCategoryUsed($category, $storeId) {
         $sql = "SELECT count(*) FROM item WHERE belongsTo = $storeId && category LIKE '%;$category|'";
-        $res = $this->$this->db->query($sql)->result_array();
+        $res = $this->db->query($sql);
+        $res = $res->result_array();
+        //$res = $this->$this->db->query($sql)->result_array();//为了纪念，留下了
         return $res[0]['count(*)'] == 0 ? false : true;
     }
 

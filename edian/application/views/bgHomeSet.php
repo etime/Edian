@@ -43,7 +43,7 @@
 -->
             <input type="button" name="butLogo" id="butLogo" value="上传图片" />
             <input type="hidden" name="logo" />
-            <img  id = "afterUpload"  />
+            <img  id = "afterUpload" src = "<?php echo @$logo ?>" />
         </li>
         <li>
             <span class = "item">客服电话:</span>

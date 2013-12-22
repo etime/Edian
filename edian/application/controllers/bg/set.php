@@ -8,7 +8,7 @@
  * @sub_package bg
  */
 
-define("TEST","1");
+define("TEST",0);
 class set extends MY_Controller
 {
     /** 来到这里的人必须有权限检查 */
@@ -22,7 +22,7 @@ class set extends MY_Controller
         $this->load->model('store');
         $this->load->model('boss');
         $this->load->model('mitem');
-        //$this->load->model("mwrong");
+        $this->load->model("mwrong");
         $this->user_id = $this->getUserId();
     }
 
@@ -46,7 +46,21 @@ class set extends MY_Controller
             else echo "添加失败";
         }
     }
-
+    /**
+     * 这个是用来测试下面的listDelete的函数
+     *
+     * @return void
+     * @author unasm
+     */
+    public function testListDelete()
+    {
+        $this->load->library("help");
+        $val = array("adb",'saf','sdba','sdfa');
+        foreach ($val as $key) {
+            $data["listName"] = $key;
+            $this->help->curl($data , site_url('bg/set/listDelete'));
+        }
+    }
     /**
      * 通过post提交，将用户的列表中某一项删除
      * 目前对应的是ajax请求
@@ -58,7 +72,18 @@ class set extends MY_Controller
         // 接收数据
         $listName = trim($this->input->post('listName'));
         // 从 session 中获取当前商店的 storeId
-        $storeId = $this->session->userdata('storeId');
+        $storeId = trim($this->session->userdata('storeId'));
+        $storeId = (int)$storeId;
+        if(!$storeId){
+            echo "请首先登录";
+            $storeId = 2;//这里是为了测试
+        }
+        if( preg_match("/[~!@#$%^&*_+`\\=\\|\\{\\}:\\\">\\?<\\[\\];',\/\\.\\\\]/", $listName) ) {
+            $this->mwrong->insert('controller/bg/set/listDelete' . __LINE__  .'中有非法字符,此时输入的字符为listName = ' .$listName .'，storeId为' . $storeId);
+            sleep(1000);//延迟和误导
+            echo "请正确输入";
+            return false;
+        }
         // 获取当前商店的所有分类列表
         $list = $this->store->getCategoryByStoreId($storeId);
         // 判断要删除的分类是否在分类列表中
@@ -73,7 +98,6 @@ class set extends MY_Controller
             echo '该分类不存在';
             return;
         }
-
         // 判断是否有商品属于要删除的分类
         $flag = $this->mitem->isCategoryUsed($listName, $storeId);
         if ($flag) {
@@ -93,7 +117,10 @@ class set extends MY_Controller
                 $newCategory .= '|' . $val;
             }
         }
-        $this->store->updateCategoryByStoreId($newCategory, $storeId);
+        $flag = $this->store->updateCategoryByStoreId($newCategory, $storeId);
+        if(!$flag){
+            $this->mwrong->insert(__LINE__."行set/listDelete/update失败了");
+        }
         echo "1";
     }
     /**
@@ -101,7 +128,7 @@ class set extends MY_Controller
      * 当一个数值不符合规定的时候，就赋值位false，表示表示不再修改,和change的特殊用法有关系
      * @todo logo 还没有做，复用fj代码
      */
-    protected function setGet()
+    public function setGet()
     {
         $data["name"]         = trim( $this->input->post("storeName"));
         $data["deliveryTime"] = trim( $this->input->post("businessTime") );
@@ -112,6 +139,7 @@ class set extends MY_Controller
         $data['latitude']     = trim( $this->input->post('latitude'));
         $data['address']      = trim( $this->input->post('address'));
         $data['sendPrice']      = trim( $this->input->post('lestPrc'));
+        $data['logo']         = trim( $this->input->post("logo"));
         //不能存在除-()之外一切特殊字符
         if( preg_match("/[~!@#$%^&*_+`\\=\\|\\{\\}:\\\">\\?<\\[\\];',\/\\.\\\\]/", $data['name']) ) {
             $data['name'] = false;
@@ -141,13 +169,6 @@ class set extends MY_Controller
         if(!preg_match('/^\d+[.\d]?\d*$/' , $data['latitude'])){
             $data['latitude'] = false;
         }
-        /*
-            $data["address"] = "sdf斯蒂芬";
-            $data["address"] = "sdf斯蒂芬)";
-            $data["address"] = "sdf斯蒂芬)-";
-            $data["address"] = "sdf斯蒂芬)-d@#";
-            echo $data["address"];
-        */
         if( preg_match("/[~!@#$%^&*_+`\\=\\|\\{\\}:\\\">\\?<\\[\\];',\/\\.\\\\]/", $data['address']) ) {
             $data['address'] = false;
         }
@@ -155,9 +176,11 @@ class set extends MY_Controller
         if(!preg_match('/^\d+[.\d]?\d*$/' , $data['sendPrice'])){
             $data['sendPrice'] = false;
         }
+        if(!preg_match('/^[\d-_]+\.(jpg|png|gif)$/' , $data['logo'])){
+            $data['logo'] = false;
+        }
         return $data;
     }
-
     /**
      * setact setAction set函数对应的后台操作函数和view显示函数
      * 共有14项需要设置
@@ -231,14 +254,12 @@ class set extends MY_Controller
                 exit("插入失败");
             }
         }
-        /*
-        else{
-            //在不是提交的情况下，重新读取
-            //本店的列表的编码和解码和get,
-        }
-         */
         $data = array_merge($data , $this->store->getSetInfo($data['storeId'] ));
-        $this->help->showArr($data);
+        //之前为了和扩展，只在数据库中保存了名字，现在补全对应的路径,logo存放在mix文件架下面
+        if($data['logo']){
+            $data['logo']  = base_url('image/' . $this->user_id . '/mix/' . $data['logo']);
+        }
+        //$this->help->showArr($data);
         $this->load->view("bgHomeSet",$data);
     }
     /**

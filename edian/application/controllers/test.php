@@ -41,7 +41,18 @@ class Test extends MY_Controller{
     }
     public function abc()
     {
-        $this->load->view("test");
+        $this->load->library("help");
+        $val = array(
+            "32323.jpg",
+            "52_2013-12-16_13-49-20.jpg",
+            "52_2013-12-16_13-49-20.png",
+            "52_2013-12-16_13-49-20.gif");
+        foreach ($val  as $key) {
+            $data["logo"] = "52_2013-12-16_13-49-20.jpg";
+            $data['logo'] = $key;
+            $this->help->curl($data , site_url("bg/set/setGet"));
+            echo "<br/>";
+        }
     }
     protected function enCodeStr($post)
     {

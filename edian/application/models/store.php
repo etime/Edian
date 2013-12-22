@@ -163,7 +163,6 @@ class Store extends CI_Model {
 
         // 将所有的 category 解码
         $res = explode('|', $res[0]['category']);
-
         return $res;
     }
 
@@ -193,8 +192,8 @@ class Store extends CI_Model {
     public function updateCategoryByStoreId($newCategory, $storeId) {
         $newCategory = mysql_real_escape_string($newCategory);
         $storeId = (int)$storeId;
-        $sql = "UPDATE store SET category = '$newCategory' WHERE id = $ownerID";
-        $this->db->query($sql);
+        $sql = "UPDATE store SET category = '$newCategory' WHERE id = $storeId";
+        return $this->db->query($sql);
     }
 
     /**
@@ -314,6 +313,19 @@ class Store extends CI_Model {
         } else {
             return $res[0];
         }
+    }
+    /**
+     * 获取商店的名字和id的列表
+     * @return array
+     * @author unasm
+     */
+    public function getStoreList()
+    {
+        $res = $this->db->query("select name,id from store ");
+        if($res->num_rows){
+            return $res->result_array();
+        }
+        return false;
     }
 }
 ?>

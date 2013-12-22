@@ -87,13 +87,17 @@ class CI_Help
       * @return string
       * @author unasm<1264310280@qq.com>
       */
-     public function curl($post = false , $url = false)
+     public function curl($data = false , $url = false)
      {
         //设置默认值
-        if($data === false)
+        if($data === false){
             $data = array('userName' => '名字','passwd' => '密码');
-        if($url === false)
+            echo "没有设置post数组";
+        }
+        if($url === false){
             $url = site_url('test/get');
+            echo "没有设置url";
+        }
 
         $string = $this->enCodeStr($data);
         $header = 'Content-type: text/html';

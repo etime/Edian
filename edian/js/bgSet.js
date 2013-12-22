@@ -299,7 +299,7 @@ function listAdd() {
  * @return {node}               返回头节点，方便以后处理
  */
 function formUploadFile(url , tofile ,toImg) {
-    var dom = "<div id = 'dlogo' style = 'width:100%;height:100%;background:rgba(0,0,0,0.6);position:fixed;top:0px'><div style = 'margin:0px auto;width:300px;border-radius:2px;margin-top:20px;background:white;position:relative'><a class = 'close' title = '关闭' ></a><iframe id = 'diframe' src = " + url + " frameborder = '0' ></iframe></div></div>";
+    var dom = "<div id = 'dlogo' style = 'width:100%;height:100%;background:rgba(0,0,0,0.6);position:fixed;top:0px;display:none'><div style = 'margin:0px auto;width:300px;border-radius:2px;margin-top:20px;background:white;position:relative'><a class = 'close' title = '关闭' ></a><iframe id = 'diframe' src = " + url + " frameborder = '0' ></iframe></div></div>";
     $("body").append(dom);
     var topNode = $("#dlogo");//控制显示区域的最上成node
     topNode.delegate(".close","click",function (event) {
