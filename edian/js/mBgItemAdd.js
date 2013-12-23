@@ -1,15 +1,18 @@
-var prokey = new  Array(),proans =  new Array(),objThumb, objImgSix , property;
+var prokey = [],proans =  [],objThumb, objImgSix , property;
 /**
  * 处理禁止输入字符的问题
  */
 function forbid() {
+    var forbiden = [34,35,36,37,38,39,58,59,60,61,62,96,123,124,125];
+    var len = forbiden.length;
     $("#pro").delegate("input","keypress",function(event){
         //|{}` & '" = <>=;:  都是不允许输入的
-        if(event.which == 96)return false;
-        if((event.which < 40)&&(event.which > 33))return false;
-        if(event.which < 63 && (event.which > 57))return false;
-        if(event.which < 126 && event.which > 122)return false;
-    })
+        for (var i = 0; i < len; i ++) {
+            if(parseInt(event.which , 10) === forbiden[i]){
+                return false;
+            }
+        }
+    });
     $("#content").delegate(".price","keypress",function(event){
             console.log("testing");
         if((event.which<46)||(event.which>57)){
@@ -17,10 +20,16 @@ function forbid() {
         }
         //之前有针对keypress unbind 其实不需要，因为只会针对price才会检测
     })
-    var name;
+    //var name;
     $("#store").delegate("input","keypress",function(event){
-        name = $(this).attr("name");
-        console.log(event.which);
+        //name = $(this).attr("name");
+        //不是很理解input中禁止输入一些字符应该是很正常的，input
+        for (var i = 0; i < len; i ++) {
+            if(parseInt(event.which , 10) === forbiden[i]){
+                return false;
+            }
+        }
+        /*
         if(name == "store"){
             if(event.which < 48  || event.which > 57)return false;
         }else{
@@ -28,28 +37,29 @@ function forbid() {
                 return false;
             }
         }
+        */
     })
 }
 $(document).ready(function  () {
     var NoImg = 1,doc = document;
     dir = eval(dir);//对dir数组进行编码
     destoryImg();
+    listAdd();
     forbid();       //处理禁止输入的字符
-    $("form").submit(function  () {
-        debugger;
+    $("form").submit(function () {
         var value = $.trim($("input[name = 'price']").val());
-        if(value.length  == 0){
+        if(value.length  === 0){
             $.alet("请输入价格");
             return false;
         }
         value = $.trim($("#title").val());
-        if(value.length == 0){
+        if(value.length === 0){
             $.alet("忘记添加标题");
             return false;
         }
         value = doc.getElementById("cont");
         value = $.trim(value.value);
-        if(value.length == 0){
+        if(value.length === 0){
             $.alet("请添加内容");
             return false;
         }
@@ -90,8 +100,6 @@ function formThumb() {
     var oimg = $("#thumbnail").find("img");
     var img = "";
     for (var i = Math.min(oimg.length-1,5); i >= 0; i --) {
-        console.log($(oimg[i]).attr("src"));
-        console.log(getName($(oimg[i]).attr("src")));
         img += getName( $(oimg[i]).attr("src") ) + '|';
     }
     if(!img){
@@ -107,9 +115,9 @@ function formThumb() {
  * 构成库存和对应属性的价格
  */
 function formData() {
-       var reg = /\d+\.jpg/,attr;
-        var pro2s = $("#store").find(".valTr"),item = Array();
-       if(prokey.length == 1){
+        var reg = /\d+\.jpg/,attr;
+        var pro2s = $("#store").find(".valTr"),item = [];
+        if(prokey.length == 1){
     /*
            attr的格式为color
                 2,2,"颜色","重量",红色,绿色,1kg,3kg|//第一个属性，第二个属性，颜色的个数，重量的个数,方便数据处理
@@ -126,8 +134,12 @@ function formData() {
             attrleft = "";
             for(var i = 0;i<length;i++){
                 temp = reg.exec(proans[0][1][i]);//1是图片，0是文字
-                if(temp)temp = temp[0];//提取图片的名字
-                else temp = " ";
+                if(temp){
+                    temp = temp[0];//提取图片的名字
+                }
+                else {
+                    temp = ' ';
+                }
                 attr+=","+proans[0][0][i]+":"+temp;//item的0是库存，1是价格
                 attrleft+=item[0][i]+","+item[1][i]+";";
                 if((!item[0][i]) ||(!item[1][i])){
@@ -135,31 +147,30 @@ function formData() {
                     return false;
                 }
             }
-            if(attrleft == ""){
+            if(attrleft === ''){
                 //有颜色等属性值，却没有库存，是因为没有填写库存表
                 attr="";
+            } else {
+                attr+="|"+attrleft;
             }
-            else attr+="|"+attrleft;
        }else if(prokey.length == 2){
             attr = proans[1][0].length+","+proans[0][0].length+","+prokey[1]+","+prokey[0];
             //先从2开始，然后读取长度和内容
             var temp;
-            for(var i = 0,len = proans[1][0].length;i<len;i++){
+            for(var i = 0,len = proans[1][0].length ; i < len ; i++){
                 temp = reg.exec(proans[1][1][i]);
-                if(temp)temp = temp[0];
-                else temp = " ";
+                temp = temp ? temp[0] : ' ';
                 attr+=","+proans[1][0][i]+":"+temp;
             }
             for(var j = 0,lenj = proans[0][0].length;j<lenj;j++){
                 temp = reg.exec(proans[0][1][j]);
-                if(temp)temp = temp[0];
-                else temp = " ";
-                attr+=","+proans[0][0][j]+":"+temp;
+                temp = temp ? temp[0] : ' ';
+                attr += ","+proans[0][0][j]+":"+temp;
             }
             attr+="|";
-            for (var i = 0, l = pro2s.length; i < l; i ++) {
+            for (i = 0, l = pro2s.length; i < l; i ++) {
                 temp = getTabData(pro2s[i]);
-                for (var j = 0, l = temp[0].length; j < l; j ++) {
+                for (j = 0, l = temp[0].length; j < l; j ++) {
                     attr+=temp[0][j]+","+temp[1][j]+";";
                     if((!temp[0][j]) ||(!temp[1][j])){
                         $.alet("为方便游客购物,请补全填库存表");
@@ -167,14 +178,14 @@ function formData() {
                     }
                 }
             }
-            if(pro2s.length == 0)attr = "";//没有数据的话，清空
+            //没有数据的话，清空
+            if(pro2s.length === 0){
+                attr = "";
+            }
        }
        function getTabData(fnode){
-           //检查完毕，无误
-           var res = new  Array(
-                new Array(),
-                new Array()
-           )//res 第0层对应的是键值，1对应的是存货量，2对应的是价格
+           //res 第0层对应的是键值，1对应的是存货量，2对应的是价格
+           var res = [[],[]];
            var store = $(fnode).find("input[name = 'store']");
            var sprice = $(fnode).find("input[name = 'sprice']");
            var len = store.length;
@@ -194,11 +205,11 @@ function formData() {
  * @param {arr} list 是全站的数组传递 进来的变量
  */
 function part (list) {
-    var part = $("#part"),temp,tempk = null,flag = 0;
+    var partId = $("#part"),temp,tempk = null,flag = 0;
     /**
      * 当用户点击的时候，根据动作，添加对应的信息
      */
-    part.delegate("input","click",function () {
+    partId.delegate("input","click",function () {
         getSon( $(this).val() );
     })
     /**
@@ -214,22 +225,30 @@ function part (list) {
      */
     function getSon (text) {
         //清空之前添加的，防止错误
-        if(tempk)$("#kk").detach();
-        if (temp)$("#kj").detach();
+        if(tempk){
+            $("#kk").detach();
+        }
+        if (temp){
+            $("#kj").detach();
+        }
         $.each(list,function  (key,value) {
             if(key == text){
                 flag = 1;
-                if (temp)  $("#kj").detach();
+                if (temp)  {
+                    $("#kj").detach();
+                }
                 temp = "<p id = 'kj'><span class = 'item'>"+text+"</span>";
                 for(var keyj in value){
                     temp+="<input type = 'radio' name = 'keyj' value = "+keyj+"><span>"+keyj+"</span>";
                 }
                 temp+="<input type = 'radio' name = 'keyj' value = '其他'><span>其他</span>";
                 temp+="</p>";
-                part.after(temp);
+                partId.after(temp);
                 $("#kj").delegate("input","click",function  () {
                     text = $(this.nextSibling).text();
-                    if(tempk)$("#kk").detach();
+                    if(tempk){
+                        $("#kk").detach();
+                    }
                     $.each(value,function  (keyj,vj) {
                         if(text == keyj){
                             vj = decodeURI(vj).split(",");
@@ -245,7 +264,7 @@ function part (list) {
                     })
                 })
                 return;
-            };
+            }
         })
     }
 }
@@ -276,7 +295,9 @@ function proAdd () {
                 cnt++;
             }
         }
-        if(cnt < 2)  $(vpar).append(tr);
+        if(cnt < 2)  {
+            $(vpar).append(tr);
+        }
     }).delegate(".uploadImg","click",function(event){
         //添加图片
         var src = $(this).attr("class");
@@ -352,6 +373,41 @@ function destoryImg(name) {
         });
     }
 }
+
+/**
+ * 添加本店的列表菜单
+ */
+function listAdd() {
+    $("#listBut").click(function () {
+        var val = $("input[name = 'listName']").val();
+        if(!val) {
+            return false;
+        }
+        $("input[name = 'listName']").val("");//清空，防止无意中的二次发送
+        $.ajax({
+            url: site_url +"/bg/set/listAdd" ,type: 'POST',
+            data:  {"listName":val},
+            success: function (data, textStatus, jqXHR) {
+                if(textStatus === 'success'){
+                    if(data.indexOf("1") !== -1){
+                        $("#category").append("<input type = 'radio' name = 'category' value = '" + val + "'/><span>" + val + "</span>");
+                        //list.append("<li>"+val+"</li>");
+                    }
+                    else {
+                        reportBug("在mbgItemadd.js/listAdd/的success返回处理中data=" + data + ",val = " + val);
+                        alert(data);
+                    }
+                }else{
+                    reportBug("在mbgItemadd/listAdd 函数中返回值为"+textStatus + ",返回的data为" + data);
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                reportBug("在BgSet.js/listAdd/中返回状态为" + textStatus + ",post value 为" + val);
+            }
+        });
+    });
+}
+
 /**
  * 对上传东西,选择图片，等需要全屏的操作关闭的控制
  */
@@ -368,9 +424,13 @@ function displayHandle() {
  */
 function getElementByIdInFrame(objFrame,idInFrame) {
     var obj;
-    if(objFrame.contentDocument)obj = objFrame.contentDocument.getElementById(idInFrame);
-    else if(objFrame.contentWindow) obj = objFrame.contentDocument.getElementById(idInFrame);
-    else obj = objFrame.document.getElementById(idInFrame);
+    if(objFrame.contentDocument){
+        obj = objFrame.contentDocument.getElementById(idInFrame);
+    }else if(objFrame.contentWindow){
+        obj = objFrame.contentDocument.getElementById(idInFrame);
+    }else {
+        obj = objFrame.document.getElementById(idInFrame);
+    }
     return obj;
 }
 /**
@@ -383,9 +443,12 @@ function store() {
         var cntkey = 0;
         // proKey提高到全局变量的级别
         $(".proBl").each(function(){
+            var ans = [[],[]];
+            /*
             var ans =  new Array(
                 new Array(),new  Array()
             );
+            */
             var temp = $.trim($(this).find("input[name = 'proKey']").val()),temp;
             if(temp){
                 prokey[cntkey++] = temp;
@@ -410,7 +473,7 @@ function store() {
             }else if((flag == 1)&&(ans[0].length)){
                 proans[flag] = ans;//将ans保存到全局变量中
                 flag++;
-                var temp = "";
+                temp = '';
                 for(var i = 0,len = ans[0].length;i < len;i++){
                     if(ans[1][i]){
                         td = "<td>"+ans[0][i]+"<img src = "+ans[1][i]+" />"+"</td>";
@@ -438,16 +501,16 @@ function store() {
     function getTab(index) {
         //将table做好，如果有第二个属性的话，就将它包含在一个td内部
         var price = $.trim($("#sale").val());
-        if(price.length == 0){
+        if(price.length === 0){
             price = $.trim($("#price").val());
         }
         var res = "<table class = 'valTr'>";
         var ps = "<td><input type = 'text' name = 'store'/></td><td><input type = 'text' name = 'sprice'  value = '"+price+"' /></td>";
         //如果之前输入了价格，则在这里输入价格
         for (var i = 0,len = index[0].length;i<len;i++) {
-            if(index[1][i])
+            if(index[1][i]){
                 res+="<tr class = 'trnd'><td class = 'attrB'>"+index[0][i]+"<img src = '"+index[1][i]+"' /></td>"+ps+"</tr>";
-            else{
+            } else {
                 res+="<tr class = 'trnd'><td class = 'attrB'>"+index[0][i]+"</td>"+ps+"</tr>";
             }
         }

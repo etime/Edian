@@ -197,3 +197,14 @@ input[type = "text"]{
 .part .col{
     border-bottom:none;
 }
+.button{
+    background:#ececec;
+    border-radius:2px;
+    border:1px solid rgb(148, 148, 153);
+    padding:2px 4px;
+    font-size:0.8em;
+    color:black;
+}
+.button:hover{
+    background:#888888;
+}

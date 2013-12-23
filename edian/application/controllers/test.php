@@ -36,8 +36,8 @@ class Test extends MY_Controller{
     }
     public function map()
     {
-        phpinfo();
-        //$this->load->view("test");
+        //phpinfo();
+        $this->load->view("test");
     }
     public function abc()
     {
@@ -58,8 +58,27 @@ class Test extends MY_Controller{
     {
 
     }
-    public function curl(){
+    public function voteAct()
+    {
+        if($this->input->post("sub")){
+            $filename = trim($this->input->post("fileName"));
+            $name     = trim($this->input->post("name"));
+            $content  = trim($this->input->post('content'));
+            if($filename && $name && $content){
+                $filename = mysql_real_escape_string($filename);
+                $name     = mysql_real_escape_string($name);
+                $content  = mysql_real_escape_string($content);
+                $this->db->query("insert into vote(filename,name,content) values('$filename' , '$name' , '$content')");
+            }
+        }
+        header("Location:" . site_url("test/vote"));
+    }
+    public function vote()
+    {
 
+        $res = $this->db->query("select name,filename,content from vote");
+        $data['com'] = $res->result_array();
+        $this->load->view("complete" , $data);
     }
     public function get()
     {

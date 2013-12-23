@@ -134,9 +134,15 @@ class Home extends MY_Controller {
         $data['title']="添加商品";
         $data["dir"] = $this->part;
         $data["credit"] = $this->user->getCredit($this->userId);
-
-        $this->load->model("img");
+        $this->load->model("store");
+        $storeId = $this->session->userdata("storeId");
+        if($storeId){
+            $data['category'] = $this->store->getCategoryByStoreId($storeId);
+        }else{
+            exit("请登录");
+        }
         //得到属于该用户的图片，方便二次添加,另议
+        $this->load->model("img");
         $data["img"] = $this->img->getImgName($this->userId);
         $this->load->view("mBgItemAdd",$data);
     }

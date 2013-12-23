@@ -22,12 +22,6 @@
             <div class = "part">
                 <p class = "col" id = "part">
                         <span class = "item">全站类别<span class = "X">*</span>:</span>
-                    <?php
-                        $count = 1;
-                        $category = array(
-                            "苹果","香蕉","梨子"
-                        )
-                    ?>
                     <!--js控制选择-->
                     <?php foreach ($dir as $key => $value):?>
                         <input type="radio" name="keyi" value="<?php echo $key ?>" />
@@ -35,32 +29,35 @@
                     <?php endforeach?>
                 </p>
             </div>
-            <p class = "col">
+            <li class = "col">
                 <span class = "item">本店分类<span class = "X">*</span>:</span>
+                <div id = "category">
                 <?php foreach ($category as $value):?>
                     <input type = "radio" name = "category" value = "<?php echo $value?>" >
                     <span>
                         <?php echo $value;?>
                     </span>
                 <?php endforeach?>
-            </p>
-            <p class = "col">
+                </div>
+                <input type="text" name="listName" /><span class = "button" id = "listBut">添加分类</span>
+            </li>
+            <li class = "col">
                 <span class = "item">商品价格
                     <span>*</span>:
                 </span>
                 <input type="text" name="price" class = "price" id = "price" />
                 <span>(元)</span>
                 <span class = "item" style = "display:none">促销价格:(元)</span><input type="hidden" name="sale" id = "sale"  class = "price"/><span id = "patten"></span>
-            </p>
-            <p  class = "col">
+            </li>
+            <li  class = "col">
                 <span class = "item">商品主图<span>*</span>:</span>
                 <!-- <input type="file" name="userfile" size = "14"/> -->
                 <input type = "button" name = "mainInput" value = "上传图片"  id = "mainInput"/>
                 <input type="hidden" name="mainThumbnail" />
                 <span id = "imgAtten">请用800*800以下图片,超过标准会压缩</span>
                 <img src = "" id = "toImgMain"/>
-            </p>
-            <p class = "col">
+            </li>
+            <li class = "col">
                 <span class = "item">商品属性:</span>
                 <span>可以在下面灰色框添加至多两组属性,如颜色,重量,规格,口味等，右边添加黄色,绿色,或者是选用图片 </span>
                 </p>
@@ -85,12 +82,12 @@
             <!--下面两个div  是为了上传图片准备的，一个是选择，一个是上传-->
 
 
-            <p class = "col">
+            <li class = "col">
                 <span class = "item">总库存量<span >*</span>:</span>
                 <input type = "text" name = "storeNum" id = "storeNum" class = "price">
                 <span id = "as"></span>
                 <!--attten store-->
-            </p>
+            </li>
             <!--final ans 最终所有的答案都需要到这里查找-->
             <div id = "store"  >
             </div>
@@ -114,12 +111,12 @@
                         </div>
                 </div>
             </div>
-            <p class = "clearfix label col">
+            <li class = "clearfix label col">
                 <span class = "item">标题<span>*</span></span>
                 <input type="text" name="title" id = "title" class = "title"  placeholder = "请用简短的描述商品,尽量包含名称和特点，尽量50字以内哦"/>
                 <!----------------title太差劲了。,学习以下taobao了-------->
-            </p>
-            <p class = "col"><span class = "item">商品描述<span>*</span>:</span></p>
+            </li>
+            <li class = "col"><span class = "item">商品描述<span>*</span>:</span></li>
             <tr id = "tcont">
                 <td><textarea name="detail" id = "cont" style = "width:100%"> <?php echo "测试信息" ?></textarea></td>
             </tr>
