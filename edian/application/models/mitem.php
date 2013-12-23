@@ -32,17 +32,31 @@
    * @name:          ../models/item.php
    * @package        model
    */
-class Mitem extends Ci_Model
-{
-
+class Mitem extends Ci_Model {
     static  $pageNum;//每次前端申请的数据条数
-    function __construct()
-    {
+
+    /**
+     * 构造函数
+     */
+    function __construct() {
         parent::__construct();
         $this->pageNum = 30;
         $this->load->config("edian");
         $this->load->model("mwrong");// mwrong就像一个检测机器，有可能出错的地方都需要load
         $this->pageNum = $this->config->item("pageNum");
+    }
+
+    /**
+     * 通过商品的 itemId 判断一个商品是否存在
+     * @param int $itemId 商品的 itemId
+     * @return boolean 如果商品存在，返回 true，否则返回 false
+     */
+    public function isItemExistByItemId($itemId) {
+        $itemId = (int)$itemId;
+        $sql = "SELECT COUNT(*) FROM item WHERE id = $itemId";
+        $res = $this->db->query($sql);
+        $res = $res->result_array();
+        return count($res) == 0 ? false : true;
     }
 
     /**
@@ -191,11 +205,37 @@ class Mitem extends Ci_Model
 
     /**
      * 给商品添加一个访问量
-     * @param int $itemId
+     * @param int $itemId 商品的 itemId
+     * @return boolean 如果添加商品的访问量成功，返回 true，否则返回 false
      */
     public function addvisitor($itemId) {
+        $itemId = (int)$itemId;
+        if (! $this->isItemExistByItemId($itemId)) {
+            return false;
+        }
         $sql = "UPDATE item SET visitorNum = visitorNum + 1 WHERE id = $itemId";
         $this->db->query($sql);
+        return true;
+    }
+
+    /**
+     * 找到商品对应的 store
+     * @param int $itemId 商品的 itemId
+     * @return boolean | array 如果商品不存在，返回 false，否则返回商品所属商店的 id
+     */
+    public function  getMaster($itemId) {
+        $itemId = (int)$itemId;
+        if (! $this->isItemExistByItemId($itemId)) {
+            return false;
+        }
+        $sql = "SELECT belongsTo FROM item WHERE id = $itemId";
+        $res = $this->db->query($sql);
+        $res = $res->result_array();
+        if(count($res) == 0) {
+            return false;
+        } else {
+            return $res[0];
+        }
     }
 /**********************************************************************************************************************/
 /**********************************************************************************************************************/
@@ -327,16 +367,7 @@ class Mitem extends Ci_Model
         }
         return false;
     }
-    public function  getMaster($itemId){
-        //找到商品对应的主人
-        $res = $this->db->query("select author_id from item where id = $itemId");
-        //如果搜一个没有id的主键id，结果会是什么,$res还会是true吗？
-        if($res){
-            $res = $res->result_array();
-            return $res[0];//id是主键，有的话，结果必然只有一个
-        }
-        return false;
-    }
+
     /**
      * 获取商品的title
      * @param int $itemId 商品序列的id

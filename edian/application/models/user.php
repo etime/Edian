@@ -19,7 +19,6 @@ class User extends CI_Model {
     /**
      * 将输入的字符串转义后返回
      * 这样做的好处：经过转义的字符串，在一定程度上能够防止 sql 注入，对网站安全性的提高会有一点作用
-     *
      * @param  string $val
      * @return string
      */
@@ -29,11 +28,11 @@ class User extends CI_Model {
 
     /**
      * 通过用户的 loginName 判断一个用户是否存在
-     *
      * @param string $loginName 用户的登录名
      * @return boolean 如果用户存在，返回 true，否则返回 false
      */
     public function isUserExistByLoginName($loginName) {
+        $loginName = $this->_escape($loginName);
     	$sql = "select count(*) from user where loginName = '$loginName'";
     	$res = $this->db->query($sql);
     	$res = $res->result_array();
@@ -42,15 +41,28 @@ class User extends CI_Model {
 
     /**
      * 通过用户的 phoneNum 判断一个用户是否存在
-     *
      * @param string $phoneNum 用户的登录名
      * @return boolean 如果用户存在，返回 true，否则返回 false
      */
     public function isUserExistByPhone($phoneNum) {
+        $phoneNum = $this->_escape($phoneNum);
     	$sql = "select count(*) from user where phone = '$phoneNum'";
     	$res = $this->db->query($sql);
     	$res = $res->result_array();
     	return $res[0]['count(*)'] == 1 ? true : false;
+    }
+
+    /**
+     * 用过用户的 userId 判断一个用户是否存在
+     * @param int $userId 用户的 userId
+     * @return boolean 如果用户存在，返回 true，否则返回 false
+     */
+    public function isUserExistByUserId($userId) {
+        $userId = (int)$userId;
+        $sql = "SELECT COUNT(*) FROM user WHERE id = $userId";
+        $res = $this->db->query($sql);
+        $res = $res->result_array();
+        return $res[0]['COUNT(*)'] == 1 ? true : false;
     }
 
     /**
@@ -59,22 +71,38 @@ class User extends CI_Model {
      * @return int
      */
     public function getUserIdByLoginName($loginName) {
-        $sql = "select id from user where loginName = '$loginName'";
+        $loginName = $this->_escape($loginName);
+        if (! $this->isUserExistByLoginName($loginName)) {
+            return false;
+        }
+        $sql = "SELECT id FROM user WHERE loginName = '$loginName'";
         $res = $this->db->query($sql);
         $res = $res->result_array();
-        return $res[0]['id'];
+        if (count($res) == 0) {
+            return false;
+        } else {
+            return $res[0]['id'];
+        }
     }
 
     /**
      * 通过用户的电话号码查询其 id
-     * @param string $phoneNum
-     * @return int
+     * @param string $phoneNum 用户的手机号码
+     * @return int 用户的 userId
      */
     public function getuserIdByPhone($phoneNum) {
-    	$sql = "select id from user where phone = '$phoneNum'";
+        $phoneNum = $this->_escape($phoneNum);
+        if (! $this->isUserExistByPhone($phoneNum)) {
+            return false;
+        }
+    	$sql = "SELECT id FROM user WHERE phone = '$phoneNum'";
     	$res = $this->db->query($sql);
     	$res = $res->result_array();
-    	return $res[0]['id'];
+        if (count($res) == 0) {
+            return false;
+        } else {
+            return $res[0]['id'];
+        }
     }
 
     /**
@@ -83,10 +111,18 @@ class User extends CI_Model {
      * @return string 用户登录名对应的密码
      */
 	public function getUserPasswordByLoginName($loginName) {
-		$sql = "select password from user where loginName = '$loginName'";
+        $loginName = $this->_escape($loginName);
+        if (! $this->isUserExistByLoginName($loginName)) {
+            return false;
+        }
+		$sql = "SELECT password FROM user WHERE loginName = '$loginName'";
 		$res = $this->db->query($sql);
 		$res = $res->result_array();
-		return $res[0]['password'];
+        if (count($res) == 0) {
+            return false;
+        } else {
+            return $res[0]['password'];
+        }
 	}
 
 	/**
@@ -95,10 +131,18 @@ class User extends CI_Model {
 	 * @return string  用户手机号码对应的密码
 	 */
 	public function getUserPasswordByPhone($phoneNum) {
-		$sql = "select password from user where phone = '$phoneNum'";
+        $phoneNum = $this->_escape($phoneNum);
+        if (! $this->isUserExistByPhone($phoneNum)) {
+            return false;
+        }
+		$sql = "SELECT password FROM user WHERE phone = '$phoneNum'";
 		$res = $this->db->query($sql);
 		$res = $res->result_array();
-		return $res[0]['password'];
+        if (count($res) == 0) {
+            return false;
+        } else {
+            return $res[0]['password'];
+        }
 	}
 
     /**
@@ -128,12 +172,16 @@ class User extends CI_Model {
     /**
      * 获取用户的信用度
      * 通过对用户的信用度的获取，可以判别用户的权限：普通、老板、网站管理员
-     * @author farmerjian <chengfeng1992@hotmail.com>
-     * @param int $userId
-     * @return boolean | int
+     * @param int $userId 用户的 userId
+     * @return boolean | int 如果用户存在，返回其信用度，否则返回 false
      */
     public function getCredit($userId) {
-        $res = $this->db->query("select credit from user where id = '$userId'");
+        $userId = (int)$userId;
+        if (! $this->isUserExistByUserId($userId)) {
+            return false;
+        }
+        $sql = "SELECT credit FROM user WHERE id = $userId";
+        $res = $this->db->query($sql);
         $res = $res->result_array();
         if (count($res) == 0) {
             return false;
@@ -144,15 +192,22 @@ class User extends CI_Model {
 
     /**
      * 通过用户的 userId 提取他的 loginName
-     * @param int $userId
-     * @return string | boolean
+     * @param int $userId 用户的 userId
+     * @return string | boolean 如果用户存在，返回其登录名，够则返回 false
      */
     public function getLoginNameByUserId($userId) {
         $userId = (int)$userId;
+        if (! $this->isUserExistByUserId($userId)) {
+            return false;
+        }
         $sql = "SELECT loginName FROM user WHERE id = $userId";
         $res = $this->db->query($sql);
         $res = $res->result_array();
-        return $res[0]['loginName'];
+        if (count($res) == 0) {
+            return false;
+        } else {
+            return $res[0]['loginName'];
+        }
     }
 
     /**
@@ -161,7 +216,12 @@ class User extends CI_Model {
      * @return boolean | array
      */
     public function getPubById($userId) {
-        $res = $this->db->query("SELECT nickname, registerTime, photo FROM user WHERE id  = $userId");
+        $userId = (int)$userId;
+        if (! $this->isUserExistByUserId($userId)) {
+            return false;
+        }
+        $sql = "SELECT nickname, registerTime, photo FROM user WHERE id  = $userId";
+        $res = $this->db->query($sql);
         $res = $res->result_array();
         if (count($res) == 0) {
             return false;
@@ -176,8 +236,13 @@ class User extends CI_Model {
      * @return boolean | array
      */
     public function getInfoById($userId) {
+        $userId = (int)$userId;
+        if (! $this->isUserExistByUserId($userId)) {
+            return false;
+        }
         $sql="SELECT * FROM user WHERE id = $userId";
-        $res=$this->db->query($sql)->result_array();
+        $res=$this->db->query($sql);
+        $res = $res->result_array();
         if (count($res) == 0) {
             return false;
         } else {
@@ -186,16 +251,46 @@ class User extends CI_Model {
     }
 
     public function getExtro($userId) {
-        $sql = "SELECT extro from user where user_id = $userId";
-        $res = $this->db->query("select extro from user where user_id = $userId ");
-        if($res){
+        $userId = (int)$userId;
+        if (! $this->isUserExistByUserId($userId)) {
+            return false;
+        }
+        $sql = "SELECT extro FROM user WHERE id = $userId";
+        $res = $this->db->query($sql);
+        if ($res) {
             $res = $res->result_array();
-            if(count($res)){
+            if (count($res) != 0) {
                 return $this->deExtro($res[0]["extro"]);
             }
         }
         return false;
     }
+
+    /**
+     * 获取用户的 昵称，头像，手机号码，地址，邮箱，经纬度
+     * @param int $userId
+     * @return array
+     */
+    public function getNess($userId) {
+        $userId = (int)$userId;
+        if (! $this->isUserExistByUserId($userId)) return false;
+        $sql = "SELECT  nickname, photo, phone, address, email, longitude, latitude FROM user WHERE id  = $userId";
+        $res = $this->db->query($sql);
+        $res = $res->result_array();
+        if (count($res) == 0) {
+            return false;
+        } else {
+            return $res[0];
+        }
+    }
+
+//    public function getNum($userId) {
+//        $userId = (int)$userId;
+//        $sql = "SELECT mailNum, comNum FROM user WHERE id = '$userId'";
+//        $res = $this->db->query($sql);
+//        $res = $res->result_array();
+//        return $res[0];
+//    }
 /**********************************************************************************************************************/
 /**********************************************************************************************************************/
 /**********************************************************************************************************************/
@@ -210,13 +305,6 @@ class User extends CI_Model {
         return true;
     }
 
-    public function getNess($user_id)
-    {
-        //getPubById 的升级版本
-        //添加上邮箱吧，不要这么小家子气
-        $res = $this->db->query("select  user_name,user_photo,contract1,addr,email,lng,lat from user where user_id  = $user_id");
-        return $this->getArray($res->result_array());
-    }
     public function getSeller($pos)
     {
         //获得这一定范围内所有的商店的信息
@@ -394,11 +482,6 @@ class User extends CI_Model {
         $ans = $ans->result_array();
         $res["0"]["comNum"]= $ans["0"]["count(*)"];
         return $this->getArray($res);
-    }
-    public function getNum($userId)
-    {
-        $res = $this->db->query("select mailNum,comNum from user where user_id = '$userId'");
-        return $this->getArray($res->result_array());
     }
 
     public function appaddr($addr,$userId)

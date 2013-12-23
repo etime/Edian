@@ -9,55 +9,51 @@
  **/
 class Home extends MY_Controller
 {
-    //var $userInfo;
-    function __construct()
-    {
+    /**
+     * 构造函数
+     */
+    function __construct() {
         parent::__construct();
-        $this->load->model("art");
-        $this->load->model("user");
-        $this->load->library("session");
+        $this->load->model('art');
+        $this->load->model('user');
+        $this->load->library('session');
     }
-    private function showArr($arr)
-    {
-        foreach($arr as $idx => $val){
-            echo $idx." => ".$val."<br/>";
-        }
-    }
-    public function index($id  = 0)
-    {//首页，每页20个，开始首先通过php传入一个，之后通过ajax传入第二个，其他的，通过滚动添加了
-        /********为了避免url申请的时候出现跨域的情况redirect**************/
-        $url = "http://".$_SERVER["HTTP_HOST"]."/";
-        $base = base_url();
-            /*
-            if($url != $base){
-                redirect($base);
-                return ;
+
+    /**
+     * 首页的入口函数
+     * @author FarmerJian <chengfeng1992@hotmail.com>
+     */
+    public function index() {
+        $userId = $this->getUserId();
+        $data = array();
+        if ($userId != -1) {
+            $data = $this->user->getNess($userId);
+            $temp = array();
+            //$temp = $this->user->getNum($userId);
+            if($data != false) {
+                $data = array_merge($data, $temp);
+            } else {
+                $data = array();
             }
-             */
-        /**********************/
-        $user_id = $this->getUserId();
-        $data = null;
-        if($user_id){
-            $data = $this->user->getNess($user_id);
-            $temp = $this->user->getNum($user_id);
-            if($data){
-                $data = array_merge($data,$temp);
-            }else $data = null;
         }
-        //这里准备只是画面框架的内容，没有具体的信息，其他的，由js申请
-        $data["dir"] = $this->part;
-        //$data["cont"] = $this->infoDel($id);//0 获取热区的内容
-        $this->load->view("home",$data);
+        $data['dir'] = $this->part;
+        $this->load->view('home', $data);
     }
+
+/**********************************************************************************************************************/
+/**********************************************************************************************************************/
+/**********************************************************************************************************************/
+/**********************************************************************************************************************/
+
     public function test($id = 0)
     {
         //只是为添加新的特性而测试的函数
-        $user_id = $this->getUserId();
+        $userId = $this->getUserId();
         $this->load->model("user");
         $data = null;
-        if($user_id){
-            $data = $this->user->getNess($user_id);
-            $temp = $this->user->getNum($user_id);
+        if($userId){
+            $data = $this->user->getNess($userId);
+            $temp = $this->user->getNum($userId);
             if($data){
                 $data = array_merge($data,$temp);
             }else $data = null;
