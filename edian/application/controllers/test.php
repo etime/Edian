@@ -78,6 +78,11 @@ class Test extends MY_Controller{
 
         $res = $this->db->query("select name,filename,content from vote");
         $data['com'] = $res->result_array();
+        for($i = 0,$len = count($data['com']); $i <  $len ;$i ++){
+            $data['com'][$i]['name']     = htmlspecialchars($data['com'][$i]['name']);
+            $data['com'][$i]['content']  = htmlspecialchars($data['com'][$i]['content']);
+            $data['com'][$i]['filename'] = htmlspecialchars($data['com'][$i]['filename']);
+        }
         $this->load->view("complete" , $data);
     }
     public function get()

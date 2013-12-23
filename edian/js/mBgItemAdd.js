@@ -43,7 +43,6 @@ function forbid() {
 $(document).ready(function  () {
     var NoImg = 1,doc = document;
     dir = eval(dir);//对dir数组进行编码
-    destoryImg();
     listAdd();
     forbid();       //处理禁止输入的字符
     $("form").submit(function () {
@@ -519,7 +518,7 @@ function store() {
     }
 }
 /**
- * 用来上传选择商品的1-6个缩略图
+ * 用来上传选择商品的1-6个缩略图和删除已经上传的
  */
 function funoimgUp () {
     var six = 6,ochose = $("#ochose"),oimg = $("#thumbnail");//这些算是个优化了，不用第二次进行dom检索
@@ -539,6 +538,11 @@ function funoimgUp () {
         oimg.append("<img src = '"+src+"' />");
         six >= 1 ? ochose.fadeOut() : ( six-- );
         //if(six == 0) ochose.fadeOut();
+    })
+    oimg.delegate("img" , 'dblclick',function (event) {
+        console.log("双击了");
+        destoryImg($(this).attr("src"));
+        $(this).detach();
     })
 }
 /**

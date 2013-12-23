@@ -91,7 +91,7 @@
             <!--final ans 最终所有的答案都需要到这里查找-->
             <div id = "store"  >
             </div>
-            <div id = "thumbnail" class = "col">
+            <div id = "thumbnail" class = "col" title = "双击图片删除">
                 <p>
                     <span class = "item">商品图片<span>*</span></span>
                     <input type = "button" name = "thumbButton" id = "thumbButton" value = "上传图片" />
