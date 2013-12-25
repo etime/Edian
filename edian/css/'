@@ -1,0 +1,75 @@
+/**
+ * @name        ../../css/item2.css
+ * @author      unasm < 1264310280@qq.com >
+ * @since       2013-12-23 19:16:10
+*/
+body{
+    width:1200px;
+    margin:0px auto;
+    padding:0;
+    overflow:hidden;
+}
+#header{
+    background:blue;
+}
+.logo{
+    height:120px;
+    background:red;
+    overflow:hidden;
+    width:200px;
+    text-align:center;
+    float:left;
+}
+/** 这里是搜索的开始  */
+.search{
+    float:left;
+    margin:68px 0 0 387px;
+    width:500px;
+}
+input[name = 'key']{
+    box-shadow:1px 1px 4px rgb(182, 182, 182) inset;
+    width:73%;
+    padding:2px;
+    height:26px;
+    border-radius:4px 0px 0px 4px;
+    border-right:0;
+    outline:none;
+}
+input[name = 'key']:focus{
+    box-shadow:1px 1px 6px rgb(150,150,150) inset;
+}
+input[name = 'sub']{
+    height:34px;
+    margin-left:-4px;
+    border:none;
+    border-radius:0 3px 3px 0;
+    width:80px;
+    outline:none;
+}
+input[name = 'sub']:active{
+    background:rgb(120,120,120);
+}
+/***********tab的开始 搜索的结束**********/
+.tab ul{
+    clear:both;
+    padding:0px;
+    list-style:none;
+    background:red;
+    clear:both;
+    height:25px;
+    margin:0px auto;
+    width:50%;
+}
+li{
+    float:left;
+    width:70px;
+    text-align:center;
+    margin:3px;
+}
+.clearfix:after{
+    visibility:hidden;
+    display:block;
+    content:"";
+    height:0px;
+    clear:both;
+}

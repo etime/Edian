@@ -85,6 +85,10 @@ class Test extends MY_Controller{
         }
         $this->load->view("complete" , $data);
     }
+    public function view2()
+    {
+        $this->load->view("item2.html");
+    }
     public function get()
     {
         $this->load->library('help');
