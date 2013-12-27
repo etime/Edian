@@ -91,8 +91,27 @@ class Test extends MY_Controller{
     }
     public function get()
     {
+        /*
         $this->load->library('help');
         $this->help->showArr($_POST);
+         */
+        $len = 100000;
+        $stime = time();
+        for ($i = 0; $i < $len; $i++) {
+            $var = 1233;
+        }
+        $end = time();
+        echo $end - $stime;
+        flush();
+        $this->load->model('boss');
+        $stime = time();
+        for ($i = 0; $i < $len; $i++) {
+            $this->boss->getBossIdByLoginName("tianyi");
+        }
+        $end = time();
+        echo "<br/>". $stime."<br/>";
+        echo $end ."<br/>";
+        echo  $end - $stime;
     }
     function sms(){
         header("Cache-control:no-cache");

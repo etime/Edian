@@ -220,22 +220,30 @@ class Mitem extends Ci_Model {
 
     /**
      * 找到商品对应的 store
-     * @param int $itemId 商品的 itemId
-     * @return boolean | array 如果商品不存在，返回 false，否则返回商品所属商店的 id
+     * @param   int     $itemId     商品的 itemId
+     * @return  boolean | array     如果商品不存在，返回 false，否则返回商品所属商店的 id
+     * @todo    减少sql请求会加快效率
      */
     public function  getMaster($itemId) {
         $itemId = (int)$itemId;
+        //感觉完全没有必要在之前检查一遍，因为如果没有这个商品的话，belongsTo会是0，检查那个就好了
+        /*
         if (! $this->isItemExistByItemId($itemId)) {
             return false;
         }
+         */
         $sql = "SELECT belongsTo FROM item WHERE id = $itemId";
         $res = $this->db->query($sql);
-        $res = $res->result_array();
+        //没有必要count一下,num_rows中可以直接获取到返回的行数，其次，都已经0了，还有必要获取array吗？
+        /*
         if(count($res) == 0) {
+            $res = $res->result_array();
             return false;
         } else {
             return $res[0];
         }
+         */
+        return $res->num_rows ? $res->result_array() : false;
     }
 /**********************************************************************************************************************/
 /**********************************************************************************************************************/

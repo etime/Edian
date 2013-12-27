@@ -14,8 +14,7 @@ require 'dsprint.class.php';
  *  @todo 完成打印/通知的功能，完成状态为订单打印完毕,发货中
  */
 class Order extends My_Controller{
-    protected $userId;
-
+    var  $userId;
     /**
      * 构造函数
      */
@@ -26,7 +25,8 @@ class Order extends My_Controller{
         $this->load->model('user');
         $this->load->model('mwrong');
         $this->load->library('pagesplit');
-        $this->$userId = $this->getUserId();
+        $this->userId = $this->getUserId();
+        echo $this->userId;
     }
 
     /**
@@ -37,54 +37,74 @@ class Order extends My_Controller{
         $data['url'] = $url;
         $this->load->view('login', $data);
     }
-
+    /**
+     * 测试下面的add的函数
+     *
+     * @author unasm
+     */
+    public function testAdd()
+    {
+        echo $this->userId;
+        $this->load->library('help');
+        //构造的否定的add get方式的数据,主要是info的问题
+        $url = array(
+            site_url('order/add/1'),
+            site_url('order/add/0'),
+            site_url('order/add/absd'),
+            site_url('order/add/-1')    //这个例子证明了不能通过get的方式提交数据
+        );
+        $arr = Array();
+        foreach ($url as $key) {
+            $this->help->curl($arr , $key);
+        }
+    }
     /**
      * 向购物车里面添加商品
      *
      * 这里更多对应的应该是ajax请求，可以的话，设置成双重的,因为只有在具体页面或者是列表页才可以加入购物车，总之，不会在这个页面的index加入，
      * 不会通过具体页面加入，其实后面的参数，更多的是无用的，price是通过数据库查找的，所有的参数中，只有有info,itemid,buynum是有效的
+     * 没有检查库存的数量和下单的数量关系，交给店家处理
+     * <pre>
+     *  下面的参数通过post提交
+     *      string    $info       备注信息，用户希望添加的备注(100)
+     *      int       $buyNum     表示希望购买的商品数目，虽然一般都是1，但是却必须保存
+     *      float     $price      价格信息
+     *</pre>
      * @param int       $itemId     商品的id
-     * @param string    $info       备注信息，用户希望添加的备注
-     * @param int       $buyNum     表示希望购买的商品数目
-     * @param float     $price      价格信息
+     * @todo    这里的设计有问题，在ci中是不能包含中文的url的，而info中很可能导致这种情况;
      */
-    public function add($itemId = 0, $info = '', $buyNum = '', $price = '') {
-        $res['flag'] = 0;
-
+    public function add($itemId = 0) {
         // 用户未登录
-        if ($this->$userId == -1) {
+        $res['flag'] = 0;
+        $this->userId = 52;
+        if ($this->userId === -1) {
             $res['atten'] = '请首先登录再下单';
             echo json_encode($res);
             return;
         }
-
         // 查找商品所属的商店的 id 号
         $data = $this->mitem->getMaster($itemId);
-
+        if($data === false){
+            echo "no<br/>";
+        }else{
+            var_dump($data);
+        }
+        return  false;
         // 如果查找失败，返回商品不存在信息
-        if ($data == false) {
+        if ($data === false) {
             $res['atten'] = '没有找到该商品';
             echo json_encode($res);
             return;
         }
 
-        // 信息的两种来源：调用和 ajax 请求
-        if (! $buyNum) {
-            // 这里的info是款式信息,这些和备注混合在一起,他们就是备注
-            $data['info'] = $this->input->post('info');
-            $data['price'] = $this->input->post('price');
-            // 数据信息涉及到对比和倍乘，比较重要
-            $data['orderNum'] = $this->input->post('buyNum');
-        } else {
-            $data['price'] = $price;
-            $data['info'] = $info;
-            $data['orderNum'] = $buyNum;
-        }
+        // 这里的info是款式信息,这些和备注混合在一起,他们就是备注
+        $data['info'] = $this->input->post('info');//或许不应该分开呢
+        $data['price'] = $this->input->post('price');
+        $data['orderNum'] = $this->input->post('buyNum');
 
         //对比下订单的数目和库存的关系
-        //算了，这点没有意义，因为如果加上信息的话，就会分得很细，只是比较总的库存没有太大意义，看店家处理吧
         $data['itemId'] = $itemId;
-        $data['ordor'] = $this->$userId;
+        $data['ordor'] = $this->userId;
         $id = $this->morder->insert($data);
         if ($id) {
             if ($buyNum) return $id;
@@ -130,7 +150,7 @@ class Order extends My_Controller{
      */
     public function index($ajax) {
 //        $ajax = isset($_SERVER["HTTP_X_REQUESTED_WITH"]) && strtolower($_SERVER["HTTP_X_REQUESTED_WITH"]) == 'xmlhttprequest';
-        if ($this->$userId != -1) {
+        if ($this->userId != -1) {
             if ($ajax) {
                 echo json_encode(0);
             } else {
@@ -162,11 +182,11 @@ class Order extends My_Controller{
                 $data["lsp"] = $this->getLsp($data["cart"]);
             }
         }else{
-            $cart = $this->delCart($this->morder->getCart($this->$userId));//取得cart的信息
+            $cart = $this->delCart($this->morder->getCart($this->userId));//取得cart的信息
             $data["lsp"] = $this->getLsp($cart);
             $data["cart"]  = $cart;//这里，其实已经按照卖家进行了分组
         }
-        $data["buyer"] = $this->addrDecode($this->user->ordaddr($this->$userId));
+        $data["buyer"] = $this->addrDecode($this->user->ordaddr($this->userId));
         if($ajax == 1){//等于1的时候是ajax申请数据
             echo json_encode($data);
         }else{
@@ -186,7 +206,7 @@ class Order extends My_Controller{
      */
     public function myorder($ajax = 0)
     {
-        if(!$this->$userId){
+        if(!$this->userId){
             if($ajax){
                 echo json_encode(0);
             }else{
@@ -194,7 +214,7 @@ class Order extends My_Controller{
             }
             return;
         }
-        $data["cart"] = $this->morder->allMyOrder($this->$userId);
+        $data["cart"] = $this->morder->allMyOrder($this->userId);
         //$this->showArr($data["cart"]);
         if($data["cart"]){
             for ($i = 0,$len = count($data["cart"]); $i < $len; $i++) {
@@ -312,12 +332,12 @@ class Order extends My_Controller{
         if($orderId == -1){
             echo json_encode(0);
         }
-        if(!$this->$userId){
+        if(!$this->userId){
             echo json_encode(0);
             //将来要不要报一个没有登录呢？不过，可以没有登录删除的，应该是黑客吧
         }
         $this->load->config("edian");
-        $flag = $this->morder->setFive($orderId,$this->$userId,$this->config->item("afDel"));
+        $flag = $this->morder->setFive($orderId,$this->userId,$this->config->item("afDel"));
         //并不真正删除，而是设置成5，表示假死吧，将来分析数据用
         if($flag) echo json_encode(1);
         else echo json_encode(0);
@@ -326,7 +346,7 @@ class Order extends My_Controller{
     {
         //处理上传的地址信息,通过ajax提交
         $res["flag"] = 0;
-        if(!$this->$userId){
+        if(!$this->userId){
             //其实没有什么意义了，因为是ajax提交的
             $res["atten"] = "请首先登录";
             echo json_encode($res);
@@ -336,7 +356,7 @@ class Order extends My_Controller{
         $addr = $this->input->post("addr");
         $geter = $this->input->post("geter");
         $ans = "&".$geter."|".$phone."|".$addr;
-        if($this->user->appaddr($ans,$this->$userId)){
+        if($this->user->appaddr($ans,$this->userId)){
             $res["flag"] = 1;
             $res["atten"] = $ans;
         }
@@ -365,7 +385,7 @@ class Order extends My_Controller{
         if(!preg_match("/^\d+[&\d]*$/",$res["orderId"])){
             $res["failed"] = "订单号不正确";
             $temp["text"] = "在order/getData/".__LINE__."行orderId格式不符合要求,res[orderId] = ".
-                $res["orderId"]."，当前用户的id为".$this->$userId;
+                $res["orderId"]."，当前用户的id为".$this->userId;
             $this->mwrong->insert($temp);
             return $res;
         }
@@ -373,7 +393,7 @@ class Order extends My_Controller{
         if(!preg_match("/^\d+[&\d]*$/",$res["buyNum"])){
             $res["failed"] = "商品的购买量不对";
             $temp["text"] = "在order/getData/".__LINE__."行buyNums格式不符合要求,res[buyNum] = ".
-                $res["buyNum"]."，当前用户的id为".$this->$userId;
+                $res["buyNum"]."，当前用户的id为".$this->userId;
             $this->mwrong->insert($temp);
             return $res;
         }
@@ -384,7 +404,7 @@ class Order extends My_Controller{
         if(preg_match("/[^\x{4e00}-\x{9fa5}\x{ff01}\x{3002}\x{ff0c}\x{ff1f}\x{ff1a}\x{ff1b}0-9a-zA-Z.?!,:;-&]+/u",$res["more"])){
             $res["failed"] = "在备注中请不要输入特殊字符";
             $temp["text"] = "在order/getData/".__LINE__."行出现不允许的特殊字符:".
-                $res["more"].";请检查，当前用户为$userId = ".$this->$userId;
+                $res["more"].";请检查，当前用户为$userId = ".$this->userId;
             $this->mwrong->insert($temp);
             return $res;
         }
@@ -393,7 +413,7 @@ class Order extends My_Controller{
         if(preg_match("/[\s\\\"\\\'\\\\{}*;|=><]/" ,$res["more"])){
             $res["failed"] = "在备注中请不要输入特殊字符";
             $temp["text"] = "在order/getData/".__LINE__."行出现不允许的特殊字符:".
-            $res["more"].";请检查，当前用户为$userId = ".$this->$userId;
+            $res["more"].";请检查，当前用户为$userId = ".$this->userId;
             $this->mwrong->insert($temp);
             return $res;
         }
@@ -410,7 +430,7 @@ class Order extends My_Controller{
     public function set()
     {
         $res["flag"]  = 0;
-        if(!$this->$userId){
+        if(!$this->userId){
             $res["atten"] = "没有登录";
             echo json_encode($res);
             return ;
@@ -557,7 +577,7 @@ class Order extends My_Controller{
     public function setPrint()
     {
         $res["flag"]  = 0;
-        if(!$this->$userId){
+        if(!$this->userId){
             $res["atten"] = "没有登录";
             echo json_encode($res);
             return false;
@@ -641,7 +661,7 @@ class Order extends My_Controller{
                 return "pr";//返回pr代表打印成功
             }else{
                 $temp["text"] = $text;
-                $temp["userId"] = $this->$userId;
+                $temp["userId"] = $this->userId;
                 $temp["pntState"] = $flag;//如果打印失败，pntstate 是判断错误类型为打印失败的重要依据
                 //其他为失败,失败则不处理，将检测到的信息和错误码发给管理员？
                 //将将ordInfo保存起来，省得再次读取，将它们写道到一个新的表中，交给管理员处理
@@ -694,7 +714,7 @@ class Order extends My_Controller{
      */
     private function getUser($adIdx)
     {
-        $user = $this->user->ordaddr($this->$userId);
+        $user = $this->user->ordaddr($this->userId);
         $user = $this->addrDecode($user);
         return $user[$adIdx];
         //获取用户的地址，名字和联系方式的函数
@@ -712,6 +732,16 @@ class Order extends My_Controller{
         }
         return $res;
     }
+
+    /**
+     * 测试下面的ontime的函数
+     * @author unasm
+     */
+    public function testOntime()
+    {
+        $this->load->library("help");
+        $this->help->curl($data);
+    }
     /**
      * 显示当前正要处理的订单信息
      *
@@ -720,31 +750,33 @@ class Order extends My_Controller{
      */
     public function ontime($pageId = 1, $pageSize = 2)
     {
-    	if (isset($_GET['pageId'])) {
-    		$pageId = $_GET['pageId'];
-    	}
-        if(!$this->$userId){
+        if (isset($_GET['pageId'])) {
+            $pageId = $_GET['pageId'];
+        }
+        if(!$this->userId){
             $this->nologin(site_url()."/order/ontime");
             return;
         }
         $data = Array();
-        $type = $this->user->getType($this->$userId);
+        $type = $this->user->getCredit($this->userId);
         $this->load->config("edian");
         if($type == $this->config->item("ADMIN")){
             $data["order"] = $this->morder->getAllOntime();
         }else{
-            $data["order"] = $this->morder->getOntime($this->$userId);
+            $data["order"] = $this->morder->getOntime($this->userId);
         }
         //$this->showArr($data["order"]);
         if ($data['order']) {
-        	$temp = $this->pagesplit->split($data['order'], $pageId, $pageSize);
-        	$data['order'] = $temp['newData'];
-        	$commonUrl = site_url() . '/order/ontime';
-        	$data['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount']);
+            $temp = $this->pagesplit->split($data['order'], $pageId, $pageSize);
+            $data['order'] = $temp['newData'];
+            $commonUrl = site_url() . '/order/ontime';
+            $data['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount']);
         }
+        /*
         if($data["order"])
             $data["order"] = $this->formData($data["order"]);
         echo $data['pageNumFooter'] . '<br>';
+         */
         $this->load->view("onTimeOrder",$data);
     }
     /**
@@ -754,26 +786,26 @@ class Order extends My_Controller{
      */
     public function hist($pageId = 1, $pageSize = 10)
     {
-        if(!$this->$userId){
+        if(!$this->userId){
             $this->nologin(site_url()."/order/ontime");
             return;
         }
         if (isset($_GET['pageId'])) {
-        	$pageId = $_GET['pageId'];
+            $pageId = $_GET['pageId'];
         }
-        $type = $this->user->getType($this->$userId);
+        $type = $this->user->getType($this->userId);
         $data = Array();
         $this->load->config("edian");
         if($type == $this->config->item("ADMIN")){
             $data["order"] = $this->morder->histAll();
         }else{
-            $data["order"] = $this->morder->hist($this->$userId);
+            $data["order"] = $this->morder->hist($this->userId);
         }
-    	if ($data['order']) {
-        	$temp = $this->pagesplit->split($data['order'], $pageId, $pageSize);
-        	$data['order'] = $temp['newData'];
-        	$commonUrl = site_url() . '/order/hist';
-        	$data['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount']);
+        if ($data['order']) {
+            $temp = $this->pagesplit->split($data['order'], $pageId, $pageSize);
+            $data['order'] = $temp['newData'];
+            $commonUrl = site_url() . '/order/hist';
+            $data['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount']);
         }
         echo $data['pageNumFooter'];
         if($data["order"])
@@ -844,20 +876,20 @@ class Order extends My_Controller{
      */
     public function today($pageId = 1, $pageSize = 2)
     {
-        if(!$this->$userId){
+        if(!$this->userId){
             $this->nologin(site_url()."/order/today");
             return;
         }
         if (isset($_GET['pageId'])) {
-        	$pageId = $_GET['pageId'];
+            $pageId = $_GET['pageId'];
         }
-        $type = $this->user->getType($this->$userId);
+        $type = $this->user->getType($this->userId);
         $ans = Array();
         $this->load->config("edian");
         if($type == $this->config->item("edian")){
             $ans = $this->morder->getAllToday();
         }else{
-            $ans = $this->morder->getToday($this->$userId);
+            $ans = $this->morder->getToday($this->userId);
         }
         for($i = 0,$len = count($ans);$i < $len ;$i++){
             $temp = $this->mitem->getTitle($ans[$i]["item_id"]);
@@ -866,11 +898,11 @@ class Order extends My_Controller{
             $ans[$i]["user_name"] = $temp["user_name"];
         }
         $data["today"] = $ans;
-    	if ($data['today']) {
-        	$temp = $this->pagesplit->split($data['today'], $pageId, $pageSize);
-        	$data['today'] = $temp['newData'];
-        	$commonUrl = site_url() . '/order/Today';
-        	$data['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount']);
+        if ($data['today']) {
+            $temp = $this->pagesplit->split($data['today'], $pageId, $pageSize);
+            $data['today'] = $temp['newData'];
+            $commonUrl = site_url() . '/order/Today';
+            $data['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount']);
         }
         echo $data['pageNumFooter'];
         $this->load->view("ordtoday",$data);

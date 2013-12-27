@@ -45,7 +45,7 @@
                 <span class = "item">商品价格
                     <span>*</span>:
                 </span>
-                <input type="text" name="price" class = "price" id = "price" />
+                <input type="text" name="price" class = "float" id = "price" />
                 <span>(元)</span>
                 <span class = "item" style = "display:none">促销价格:(元)</span><input type="hidden" name="sale" id = "sale"  class = "price"/><span id = "patten"></span>
             </li>
@@ -84,7 +84,7 @@
 
             <li class = "col">
                 <span class = "item">总库存量<span >*</span>:</span>
-                <input type = "text" name = "storeNum" id = "storeNum" class = "price">
+                <input type = "text" name = "storeNum" id = "storeNum" class = "float">
                 <span id = "as"></span>
                 <!--attten store-->
             </li>
