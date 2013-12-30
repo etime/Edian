@@ -13,9 +13,6 @@
 a{
     text-decoration:none;
 }
-p{
-    line-height:1.2em;
-}
 a:hover{
     text-decoration:underline;
 }
@@ -60,7 +57,7 @@ body{
 /** 这里是搜索的开始  */
 .search{
     float:left;
-    margin:68px 0 0 387px;
+    margin:15px 0 0 387px;
     width:500px;
 }
 .search div{
@@ -115,6 +112,7 @@ input[name = 'sub']:active{
     text-align:center;
     padding:4px 0;
     height:100%;
+    font-size:1.2em;
 }
 
 .tab li:hover{
@@ -186,14 +184,14 @@ input[name = 'sub']:active{
     max-height:100%;
 }
 .thumb img{
-    width:62px;
-    height:62px;
+    width:58px;
+    height:58px;
 }
 .suply{
     font-size:0.8em;
     color:gray;
     text-indent:2em;
-    margin:0.2em 0;
+    margin:1.5em 0;
 }
 .details{
     margin:0px;
@@ -216,7 +214,7 @@ input[name = 'sub']:active{
 }
 h2{
     text-align:center;
-    margin:0.5em 0 0.2em;
+    margin:1em 0 0.2em;
 }
 .ps{
     margin-right:30px;

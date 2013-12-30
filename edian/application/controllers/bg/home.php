@@ -25,7 +25,6 @@ class Home extends MY_Controller {
      */
     function __construct() {
         parent::__construct();
-        $this->load->model("bghome");
         $this->load->model("user");
         $this->load->model('boss');
         $this->userId = $this->getUserId();
@@ -164,7 +163,7 @@ class Home extends MY_Controller {
     /**
      *  选择店铺，
      * 通过session获取老板的所有商店的 id 和 name
-     * @param int $ownerId  店铺的拥有者的id
+     * @param int $ownerId  店铺的拥有者boss的id
      */
     public function choseStore($ownerId  = -1 ) {
         //$ownerId = $this->session->userdata('bossId');

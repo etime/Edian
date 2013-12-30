@@ -170,7 +170,7 @@ class User extends CI_Model {
     }
 
     /**
-     * 获取用户的信用度
+     * 获取用户的信用度,同时也是身份验证判别的依据
      * 通过对用户的信用度的获取，可以判别用户的权限：普通、老板、网站管理员
      * @param int $userId 用户的 userId
      * @return boolean | int 如果用户存在，返回其信用度，否则返回 false

@@ -85,9 +85,19 @@ class Test extends MY_Controller{
         }
         $this->load->view("complete" , $data);
     }
-    public function view2()
+    public function hack()
     {
-        $this->load->view("item2.html");
+        $this->load->library('help');
+        //$url = "http://bbs.stuhome.net/member.php?mod=logging&action=login&loginsubmit=yes&frommessage&loginhash=LTM9n";
+        $url = site_url('test/hackget');
+        $data['username'] = "石室印象";
+        $data['password'] = "1232x232";
+        $this->help->test($data,$url);
+    }
+    public function hackget()
+    {
+        $this->load->library("help");
+        $this->help->showArr($_POST);
     }
     public function get()
     {

@@ -32,7 +32,7 @@ if($type == $ADMIN){
     </ul>
 -->
     <ul id = "order" class = "order">
-        <a href = "<?php echo $siteUrl.('/order/ontime') ?>" target = "content"><li>待处理订单</li></a>
+        <a href = "<?php echo $siteUrl.('/bg/order/ontime') ?>" target = "content"><li>待处理订单</li></a>
         <a href = "<?php echo $siteUrl.('/order/Today') ?>" target = "content"><li>今日订单</li></a>
         <a href = "<?php echo $siteUrl.('/order/hist') ?>" target = "content"><li>历史订单</li></a>
     </ul>

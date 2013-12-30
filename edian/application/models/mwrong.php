@@ -16,17 +16,23 @@ class Mwrong extends Ci_Model
     {
         parent::__construct();
     }
+     /**
+      * 向数据库报错，检查各种意外情况，监控系统运行
+      *
+      * @param  string   $text   想要插入的内容，最初设计为数组，现在慢慢想变成插入string,其他的内容，如id,时间，都是自动
+      * @todo   废弃掉数组插入的形式
+      */
      public function insert($text)
      {
         $wrong  = "";
         if(is_array($text)){
-            $text["text"] .= ", 现在时间是".date("m-d h:i:s");//添加上时间，更好辨别,分析
+            //$text["text"] .= ", 现在时间是".date("m-d h:i:s");//添加上时间，更好辨别,分析
             //对数组进行编码
             foreach($text as $key => $value){
                 $wrong .= $key."&[".$value."&]";//通过转义的分号，应该是没有重复的可能性吧
             }
         }else {
-            $wrong = $text;
+            $wrong = mysql_real_escape_string($text);
         }
         $this->db->query("insert into wrong(content) values('$wrong')");
      }

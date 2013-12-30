@@ -13,6 +13,8 @@ require 'dsprint.class.php';
  *  @package    controller
  *  @todo 完成打印/通知的功能，完成状态为订单打印完毕,发货中
  */
+define('TEST',1);
+//测试完成之后，修改成0，或者是删除
 class Order extends My_Controller{
     var  $userId;
     /**
@@ -26,7 +28,6 @@ class Order extends My_Controller{
         $this->load->model('mwrong');
         $this->load->library('pagesplit');
         $this->userId = $this->getUserId();
-        echo $this->userId;
     }
 
     /**
@@ -37,40 +38,21 @@ class Order extends My_Controller{
         $data['url'] = $url;
         $this->load->view('login', $data);
     }
+
     /**
-     * 测试下面的add的函数
-     *
-     * @author unasm
-     */
-    public function testAdd()
-    {
-        echo $this->userId;
-        $this->load->library('help');
-        //构造的否定的add get方式的数据,主要是info的问题
-        $url = array(
-            site_url('order/add/1'),
-            site_url('order/add/0'),
-            site_url('order/add/absd'),
-            site_url('order/add/-1')    //这个例子证明了不能通过get的方式提交数据
-        );
-        $arr = Array();
-        foreach ($url as $key) {
-            $this->help->curl($arr , $key);
-        }
-    }
-    /**
-     * 向购物车里面添加商品
+     * 向购物车里面添加商品,
      *
      * 这里更多对应的应该是ajax请求，可以的话，设置成双重的,因为只有在具体页面或者是列表页才可以加入购物车，总之，不会在这个页面的index加入，
      * 不会通过具体页面加入，其实后面的参数，更多的是无用的，price是通过数据库查找的，所有的参数中，只有有info,itemid,buynum是有效的
      * 没有检查库存的数量和下单的数量关系，交给店家处理
+     * 测试完毕,by unasm
      * <pre>
      *  下面的参数通过post提交
      *      string    $info       备注信息，用户希望添加的备注(100)
      *      int       $buyNum     表示希望购买的商品数目，虽然一般都是1，但是却必须保存
-     *      float     $price      价格信息
      *</pre>
      * @param int       $itemId     商品的id
+     * @return array    其中的flag为0的时候代表失败，atten是失败的原因，flag > 1的时候，成功，flag代表orderId
      * @todo    这里的设计有问题，在ci中是不能包含中文的url的，而info中很可能导致这种情况;
      */
     public function add($itemId = 0) {
@@ -82,14 +64,17 @@ class Order extends My_Controller{
             echo json_encode($res);
             return;
         }
-        // 查找商品所属的商店的 id 号
-        $data = $this->mitem->getMaster($itemId);
-        if($data === false){
-            echo "no<br/>";
-        }else{
-            var_dump($data);
+        if(! is_int($itemId + 1)){
+            //非测试情况下通过sleep的形式减缓伤害攻击速度,争取时间吧
+            if(!TEST){
+                $this->mwrong->insert('order/add/' . __LINE__ . ' 行出现非数字的itemId :' . $itemId);
+                sleep(100);
+            }
+            echo "商品的编号错误";
+            return false;
         }
-        return  false;
+        // 查找商品所属的商店的 id 号
+        $data = $this->mitem->getAddInfo($itemId);
         // 如果查找失败，返回商品不存在信息
         if ($data === false) {
             $res['atten'] = '没有找到该商品';
@@ -97,21 +82,35 @@ class Order extends My_Controller{
             return;
         }
 
-        // 这里的info是款式信息,这些和备注混合在一起,他们就是备注
-        $data['info'] = $this->input->post('info');//或许不应该分开呢
-        $data['price'] = $this->input->post('price');
+        $data['info']     = $this->input->post('info');
         $data['orderNum'] = $this->input->post('buyNum');
-
-        //对比下订单的数目和库存的关系
+        //这里和controller/write/bgadd中的attr保持一致,放过了对()-的检查
+        if(preg_match("/[\[\]\\\"\/?@=#&<>%$\{\}\\\~`^*]/",$data["info"])){
+            if(!TEST){
+                $this->mwrong->insert('order/add/' . __LINE__ . ' 行出现不合法字符 :' . $data['info']);
+                sleep(100);
+            }
+            $res['atten'] = "请正确输入内容";
+            echo json_encode($res);
+            return false;
+        }
+        //检验orderNum
+        if(!is_int($data['orderNum'] + 1)){
+            if(!TEST){
+                $this->mwrong->insert('order/add/' . __LINE__ . ' 行出现非数字的orderNum :' . $data['orderNum']);
+                sleep(100);
+            }
+            $res['atten'] = '请输入正确的订单数目';
+            echo json_encode($res);
+            return ;
+        }
         $data['itemId'] = $itemId;
-        $data['ordor'] = $this->userId;
+        $data['ordor']  = $this->userId;
         $id = $this->morder->insert($data);
         if ($id) {
-            if ($buyNum) return $id;
             $res['flag'] = $id;
             echo json_encode($res);
         } else {
-            if ($buyNum)return false;
             $res['atten'] = '加入购物车失败';
             echo json_encode($res);
         }
@@ -362,16 +361,7 @@ class Order extends My_Controller{
         }
         echo json_encode($res);
     }
-    private function showArr($array)
-    {
-        foreach($array as $index => $value){
-            var_dump($index);
-            echo "   =>   ";
-            var_dump($value);
-            echo "<br>";
-            echo "<br>";
-        }
-    }
+
     /**
      * 这里应该是因为set/setprint的读取数据相同，所以都是从这个函数得到内容
      * @return array $res 从input读取的内容
@@ -733,52 +723,7 @@ class Order extends My_Controller{
         return $res;
     }
 
-    /**
-     * 测试下面的ontime的函数
-     * @author unasm
-     */
-    public function testOntime()
-    {
-        $this->load->library("help");
-        $this->help->curl($data);
-    }
-    /**
-     * 显示当前正要处理的订单信息
-     *
-     * 为后台实时刷新的页面提供数据,显示正要处理的订单信息
-     * 为买家量身定做的
-     */
-    public function ontime($pageId = 1, $pageSize = 2)
-    {
-        if (isset($_GET['pageId'])) {
-            $pageId = $_GET['pageId'];
-        }
-        if(!$this->userId){
-            $this->nologin(site_url()."/order/ontime");
-            return;
-        }
-        $data = Array();
-        $type = $this->user->getCredit($this->userId);
-        $this->load->config("edian");
-        if($type == $this->config->item("ADMIN")){
-            $data["order"] = $this->morder->getAllOntime();
-        }else{
-            $data["order"] = $this->morder->getOntime($this->userId);
-        }
-        //$this->showArr($data["order"]);
-        if ($data['order']) {
-            $temp = $this->pagesplit->split($data['order'], $pageId, $pageSize);
-            $data['order'] = $temp['newData'];
-            $commonUrl = site_url() . '/order/ontime';
-            $data['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount']);
-        }
-        /*
-        if($data["order"])
-            $data["order"] = $this->formData($data["order"]);
-        echo $data['pageNumFooter'] . '<br>';
-         */
-        $this->load->view("onTimeOrder",$data);
-    }
+
     /**
      * 历史订单的显示
      *
@@ -793,21 +738,22 @@ class Order extends My_Controller{
         if (isset($_GET['pageId'])) {
             $pageId = $_GET['pageId'];
         }
-        $type = $this->user->getType($this->userId);
+        $type = $this->user->getCredit($this->userId);
         $data = Array();
         $this->load->config("edian");
-        if($type == $this->config->item("ADMIN")){
+        if($type == $this->config->item("adminCredit")){
             $data["order"] = $this->morder->histAll();
-        }else{
+        }else if($type == $this->config->item('bossCredit')){
             $data["order"] = $this->morder->hist($this->userId);
+        }else{
+            exit("权限不足");
         }
         if ($data['order']) {
             $temp = $this->pagesplit->split($data['order'], $pageId, $pageSize);
             $data['order'] = $temp['newData'];
             $commonUrl = site_url() . '/order/hist';
             $data['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount']);
-        }
-        echo $data['pageNumFooter'];
+        } echo $data['pageNumFooter'];
         if($data["order"])
             $data["order"] = $this->histForm($data["order"]);
         $this->load->view("histOrder",$data);

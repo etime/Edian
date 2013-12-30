@@ -3,41 +3,23 @@ var prokey = [],proans =  [],objThumb, objImgSix , property;
  * 处理禁止输入字符的问题
  */
 function forbid() {
-    var forbiden = [34,35,36,37,38,39,58,59,60,61,62,96,123,124,125];
-    var len = forbiden.length;
-    $("#pro").delegate("input","keypress",function(event){
-        //|{}` & '" = <>=;:  都是不允许输入的
-        for (var i = 0; i < len; i ++) {
-            if(parseInt(event.which , 10) === forbiden[i]){
-                return false;
-            }
-        }
-    });
-    $("#content").delegate(".price","keypress",function(event){
-            console.log("testing");
-        if((event.which<46)||(event.which>57)){
+                //  !,//                , * ,/,                ?     [, ]       ^,_
+    var forbiden = [33,34,35,36,37,38,39,42,47,58,59,60,61,62,63,64,91,93,94,95,96,123,124,125,126];
+    //上面标示的是具体的符号
+    //浮点数的输入控制
+    $("#content").delegate(".float","keypress",function(event){
+        if( ( event.which<46 )||( event.which > 57 )|| ( event.which === 47 )){
             return false;
         }
         //之前有针对keypress unbind 其实不需要，因为只会针对price才会检测
     })
-    //var name;
-    $("#store").delegate("input","keypress",function(event){
-        //name = $(this).attr("name");
-        //不是很理解input中禁止输入一些字符应该是很正常的，input
-        for (var i = 0; i < len; i ++) {
-            if(parseInt(event.which , 10) === forbiden[i]){
+    $(document).delegate("input","keypress",function (event) {
+        console.log(event.which);
+        for (var i = 0,len = forbiden.length; i < len; i ++) {
+            if(event.which === forbiden[i]){
                 return false;
             }
         }
-        /*
-        if(name == "store"){
-            if(event.which < 48  || event.which > 57)return false;
-        }else{
-            if((event.which<46)||(event.which>57)){
-                return false;
-            }
-        }
-        */
     })
 }
 $(document).ready(function  () {
@@ -46,36 +28,71 @@ $(document).ready(function  () {
     listAdd();
     forbid();       //处理禁止输入的字符
     $("form").submit(function () {
-        var value = $.trim($("input[name = 'price']").val());
+        //检查全站分类
+        var value = $("input[name = 'keyk']"),flag = 0;
+        for (var i = 0, l = value.length; i < l; i ++) {
+            console.log($(value[i]).attr("checked"));
+            if($(value[i]).attr('checked')){
+                flag = 1;
+                break;
+            }
+        }
+        if(flag === 0){
+            $.alet('请选择全站本类');
+            return false;
+        }
+        //检查本店分类
+        value = $("input[name = 'category']"),flag = 0;
+        for (i = 0, l = value.length; i < l ; i++) {
+            if($(value[i]).attr('checked')){
+                flag = 1;
+                break;
+            }
+        }
+        if(flag === 0 || value.length === 0){
+            $.alet("请添加或者选择店内分类");
+            return false;
+        }
+        //检验价格
+        value = $.trim($("input[name = 'price']").val());
         if(value.length  === 0){
             $.alet("请输入价格");
             return false;
         }
+
+        //对标题进行检验
         value = $.trim($("#title").val());
         if(value.length === 0){
             $.alet("忘记添加标题");
+            $("#title").focus();
             return false;
         }
+        //对总库存量进行检验
+        value = $.trim($("#storeNum").val());
+        if(value.length === 0){
+            $.alet("请输入总库存");
+            $("#storeNum").focus();
+            return false;
+        }
+
+        //检验内容
         value = doc.getElementById("cont");
         value = $.trim(value.value);
         if(value.length === 0){
             $.alet("请添加内容");
             return false;
         }
-        formData();
-        formThumb();
-    })
-    /************控制title中的字体显隐**************/
-    /*
-    $(".title").focus(function(){
-        $(this).siblings("label").css("display","none");
-    }).blur(function  () {
-        value = $.trim($(this).val());
-        if(value.length == 0){
-            $(this).siblings("label").css("display","block");
+        //检验主图片
+        value = $.trim( $("#toImgMain").attr("src") );
+        if(value.length === 0){
+            $.alet("请上传主图");
+            return false;
         }
-    });
-    */
+
+        if(!( formData() && formThumb())){
+            return false;
+        }
+    })
     part(dir);
     property = new proAdd();
     store();
@@ -108,7 +125,9 @@ function formThumb() {
     if(img[img.length -1]=='|'){
        img = img.substring(0,img.length - 1);
     }
-    $("input[name = 'thumbnail']").attr("value",img);
+    //$("input[name = 'thumbnail']").attr("value",img);
+    $("input[name = 'thumbnail']").val(img);
+    return true;
 }
 /**
  * 构成库存和对应属性的价格
@@ -198,6 +217,7 @@ function formData() {
            attr = attr.substring(0,attr.length - 1);
        }
        $("#attr").attr("value",attr);
+       return true;
 }
 /**
  * 这里是控制分区，全站类别的显示

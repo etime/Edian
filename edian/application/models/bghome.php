@@ -1,8 +1,11 @@
 <?php
+/**
+ * 应该是废弃了。如
+ */
 class Bghome extends Ci_Model{
 		function __construct(){
 				parent::__construct()		;
-		}		
+		}
 		function artlist_all(){
 				$res=$this->db->query("select time,author_id,title,art_id from art ");
 				return $res->result();
@@ -16,4 +19,4 @@ class Bghome extends Ci_Model{
 				return $res->result();
 		}
 }
-?>	
+?>

@@ -110,6 +110,7 @@ class item extends MY_Controller
                 $cnt ++;
             }
         }
+        var_dump($data);
         $this->mitem->addvisitor($itemId);
         $this->load->view("item", $data);
     }
@@ -118,10 +119,15 @@ class item extends MY_Controller
 /**********************************************************************************************************************/
 /**********************************************************************************************************************/
 /**********************************************************************************************************************/
-
+    /**
+     *  拼凑attr的显示内容
+     *  构成 Attr中的一部分,重复度很高，所以独立
+     *  @param  int     $st     起始的位置
+     *  @param  int     $len    字符串的长度
+     *  @param  string  $attr   对attr构成的属性字符串
+     */
     private function pinAttr($st,$len,$attr)
     {
-        //构成 Attr中的一部分,重复度很高，所以独立
         $re = "";
         $reg2 = "/^\d+\.jpg$/";
         $leni = ($len+$st);
@@ -140,6 +146,13 @@ class item extends MY_Controller
         }
         return $re;
     }
+    /**
+     * 新的评论内容页面
+     * 接下来怕是要吧评论单独分出去了，成为独立的模块
+     * @param int   $itemId     针对的评论商品id
+     * @param post  context     post提交的内容
+     * @param post  score       对商品的评分
+     */
     public function newcom($itemId = -1){
         //以后要返回插入的com id,对具体的item的评论进行的操作
         $res["flag"] = -1;

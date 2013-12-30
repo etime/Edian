@@ -61,4 +61,7 @@ $config['smallLength'] = 400;
 // 确定商店 logo 的长和宽
 $config['storeLogoH'] = 120;
 $config['storeLogoW'] = 120;
+
+//分页，每页显示的条数
+$config['pageSize'] = 2;
 ?>

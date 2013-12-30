@@ -113,5 +113,59 @@ class CI_Help
         curl_close($curl);
         echo $res;
      }
+     /**
+      * 玩的，别用
+      *
+      * @return void
+      */
+     public function hack($data,$url)
+     {
+        $string = $this->enCodeStr($data);
+        $tempIp =   '201.202.123,40';
+        $header['CLIENT-IP'] =  $tempIp;
+        $header['X-FORWARDED-FOR'] = $tempIp;
+        $headerArr = array();
+        foreach ($header as $key => $val) {
+            $headerArr[] = $key . ':' . $val;
+        }
+        //ob_start();
+        $curl = curl_init();
+        curl_setopt($curl,CURLOPT_URL,$url);
+        curl_setopt($curl,CURLOPT_RETURNTRANSFER,1);
+        curl_setopt($curl,CURLOPT_HEADER,$headerArr);
+        curl_setopt($curl,CURLOPT_POST,count($data));
+        curl_setopt($curl,CURLOPT_POSTFIELDS, $string);
+        curl_setopt($curl,CURLOPT_REFERER,"http://www.163.com/");
+        $res = curl_exec($curl);
+        if(curl_errno($curl))
+            print curl_error($curl);
+        curl_close($curl);
+        echo $res;
+        /*
+        $sec = ob_get_contents();
+        echo $sec;
+        ob_clean();
+         */
+     }
+    function test($data,$url)
+     {
+         $headers['CLIENT-IP'] = '202.103.229.40';
+         $headers['X-FORWARDED-FOR'] = '202.103.229.40';
+         $headerArr = array();
+         foreach( $headers as $n => $v ) {
+             $headerArr[] = $n .':' . $v;
+         }
+         ob_start();
+         $ch = curl_init();
+         curl_setopt ($ch, CURLOPT_URL, $url);
+         curl_setopt ($ch, CURLOPT_HTTPHEADER , $headerArr );  //构造IP
+         curl_setopt ($ch, CURLOPT_REFERER, "http://www.163.com/ ");   //构造来路
+         curl_setopt( $ch, CURLOPT_HEADER, 1);
+         curl_exec($ch);
+         curl_close ($ch);
+         $out = ob_get_contents();
+         ob_clean();
+         echo $out;
+     }
 }
 ?>

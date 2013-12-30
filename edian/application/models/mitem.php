@@ -2,7 +2,6 @@
  /**
    * 这里的item对应了mysql的item表，集中了item的所有的操作
    * category "keyi;keyj;keyk;category|"
-   * art_id : 表明这个行的唯一id <br><br>
    * title : 商品信息的标题，也是搜索的主要依据<br><br>
    * content : 主要介绍内容          <br><br>
    * time，最后的发表时间或者是修改时间<br><br>
@@ -181,19 +180,24 @@ class Mitem extends Ci_Model {
         $sql = "SELECT title, detail, price, belongsTo, mainThumbnail, thumbnail, satisfyScore, attr, storeNum, " .
             "putawayTime FROM item WHERE id = $itemId";
         $res = $this->db->query($sql);
-        $res = $res->result_array();
 
         // 如果没有筛选到相应的商品
-        if (count($res) == 0) {
+        if ($res->num_rows === 0) {
             return false;
         }
-
+        $res = $res->result_array();
         $res = $res[0];
-
+        echo $res['attr']."<br/>";
+        //对attr的编码解码应该在model中进行
+        $res['attr'] = $this->decodeAttr($res['attr'] , $itemId);
         // 筛选该商品的订单数量
+        /**
+         * 要不要在model/中进行这个操作。感觉违反了mitem每个文件只是对一个表进行操作的原则
+         * @author unasm
+         */
         $sql = "SELECT count(*) FROM ord WHERE item_id = $itemId && state";
         $temp = $this->db->query($sql);
-
+        //这里需要debug,总是觉得返回的值使用会是true
         if ($temp) {
             $temp = $temp->result_array();
             $res['orderNum'] = $temp[0]['count(*)'];
@@ -210,14 +214,32 @@ class Mitem extends Ci_Model {
      */
     public function addvisitor($itemId) {
         $itemId = (int)$itemId;
+        //没有检验的必要
+        /*
         if (! $this->isItemExistByItemId($itemId)) {
             return false;
         }
+         */
         $sql = "UPDATE item SET visitorNum = visitorNum + 1 WHERE id = $itemId";
-        $this->db->query($sql);
-        return true;
+        //update 返回的是true或者是false
+        return $this->db->query($sql);
     }
-
+    /**
+     * 获取想要添加到订单中的，但是不能从用户端获取的信息
+     *
+     * @return array
+     * @author unasm
+     */
+    public function getAddInfo($itemId)
+    {
+        $itemId = (int)$itemId;
+        $res = $this->db->query('SELECT belongsTo ,price FROM item WHERE id = ' . $itemId);
+        if($res->num_rows){
+            $res = $res->result_array();
+            return $res[0];
+        }
+        return false;
+    }
     /**
      * 找到商品对应的 store
      * @param   int     $itemId     商品的 itemId
@@ -226,24 +248,15 @@ class Mitem extends Ci_Model {
      */
     public function  getMaster($itemId) {
         $itemId = (int)$itemId;
-        //感觉完全没有必要在之前检查一遍，因为如果没有这个商品的话，belongsTo会是0，检查那个就好了
-        /*
-        if (! $this->isItemExistByItemId($itemId)) {
-            return false;
-        }
-         */
+
         $sql = "SELECT belongsTo FROM item WHERE id = $itemId";
         $res = $this->db->query($sql);
-        //没有必要count一下,num_rows中可以直接获取到返回的行数，其次，都已经0了，还有必要获取array吗？
-        /*
-        if(count($res) == 0) {
+        if($res->num_rows){
             $res = $res->result_array();
-            return false;
-        } else {
             return $res[0];
         }
-         */
-        return $res->num_rows ? $res->result_array() : false;
+        return false;
+        //return $res->num_rows ? $res->result_array() : false;
     }
 /**********************************************************************************************************************/
 /**********************************************************************************************************************/
@@ -627,7 +640,7 @@ class Mitem extends Ci_Model {
      */
    public function decodeAttr($attr,$itemId)
    {
-       if(!$attr)return false;
+       if(!$attr)return '';
        $temp = explode("|",$attr);
        $attrIdx = explode(",",$temp[0]);//将索引关键值保存到attrIdx中
        $num = explode(";",$temp[1]);
@@ -641,13 +654,11 @@ class Mitem extends Ci_Model {
             $res = $this->_oneAttr($attrIdx,$num);
        }else{
             //报错，出现了问题
-            $wrong["text"] = "在mitem.php/decodeAttr/".__LINE__."行两个flag都是0，这种情况不应个出现的，请检查一下,itemId = ".$itemId;
-            $this->mwrong->insert($wrong);
+            $this->mwrong->insert('在mitem.php/decodeAttr/' .__LINE__. '行两个flag都是0，这种情况不应个出现的，请检查一下,itemId = '.$itemId);
             return false;
        }
        if(!$res){
-            $wrong["text"] = "在mitem.php/decodeAttr/".__LINE__."出现编码不对的情况检查一下,attr : ".$attr."，商品的id为 itemId = ".$itemId;
-            $this->mwrong->insert($wrong);
+            $this->mwrong->insert('在mitem.php/decodeAttr/'.__LINE__.'出现编码不对的情况检查一下,attr : ' . $attr . '，商品的id为 itemId = '.$itemId);
        }else{
            return $res;
        }

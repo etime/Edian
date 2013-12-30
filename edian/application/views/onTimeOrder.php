@@ -1,11 +1,3 @@
-<?php
-/*************************************************************************
-    > File Name :     ../../views/onTimeOrder.php
-    > Author :        unasm
-    > Mail :          douunasm@gmail.com
-    > Last_Modified : 2013-08-06 10:20:23
-************************************************************************/
-?>
 <!DOCTYPE html>
 <html lang = "en">
 <head>
@@ -20,10 +12,8 @@ $baseUrl = base_url();
     <link rel="icon" href="<?php echo $baseUrl.'favicon.ico' ?>">
     <link rel="stylesheet" href="<?php echo $baseUrl.('css/timeorder.css') ?>" type="text/css" media="all" />
 <script type="text/javascript" >
-var site_url = "<?php echo site_url()?>";
-var base_url = "<?php echo base_url()?>";
-var user_name="<?php echo trim($this->session->userdata('user_name'))?>";
-var user_id="<?php echo trim($this->session->userdata('user_id'))?>";
+    var site_url = "<?php echo site_url()?>";
+    var base_url = "<?php echo base_url()?>";
 </script>
 </head>
 <body>

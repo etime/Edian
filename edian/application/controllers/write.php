@@ -435,13 +435,9 @@ class Write extends MY_Controller
      * @todo 判断商品属性是否合法
      */
     public function bgAdd() {
-        // 这个仅用于测试使用
-        $this->session->set_userdata('storeId', 1);
-        $this->session->set_userdata('bossId', 3);
-
         // 判断用户登录否
         if ($this->userId == -1) {
-            die();
+            die("请首先登录");
         }
 
         // 判断用户权限够否
