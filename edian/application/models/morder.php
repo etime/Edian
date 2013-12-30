@@ -333,5 +333,22 @@ class Morder extends Ci_Model
         }
         return $arr;
     }
+    /**
+     * 获取商品的下单购买数目的函数
+     *
+     * @return int
+     * @author unasm
+     */
+    public function getOrderNum($itemId = false)
+    {
+        $sql = "SELECT count(*) FROM ord WHERE item_id = $itemId && state";
+        $temp = $this->db->query($sql);
+        //这里需要debug,总是觉得返回的值使用会是true
+        if ($temp) {
+            $temp = $temp->result_array();
+            return $temp[0]['count(*)'];
+        }
+        return false;
+    }
 }
 ?>

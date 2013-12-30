@@ -173,7 +173,7 @@ class Mitem extends Ci_Model {
      *     orderNum           商品的订单数量
      *</pre>
      *
-     * @param $id
+     * @param int   $itemId 商品的标示id
      * @return bool
      */
     public function getItemInfo($itemId) {
@@ -187,24 +187,54 @@ class Mitem extends Ci_Model {
         }
         $res = $res->result_array();
         $res = $res[0];
-        echo $res['attr']."<br/>";
         //对attr的编码解码应该在model中进行
         $res['attr'] = $this->decodeAttr($res['attr'] , $itemId);
-        // 筛选该商品的订单数量
-        /**
-         * 要不要在model/中进行这个操作。感觉违反了mitem每个文件只是对一个表进行操作的原则
-         * @author unasm
-         */
-        $sql = "SELECT count(*) FROM ord WHERE item_id = $itemId && state";
-        $temp = $this->db->query($sql);
-        //这里需要debug,总是觉得返回的值使用会是true
-        if ($temp) {
-            $temp = $temp->result_array();
-            $res['orderNum'] = $temp[0]['count(*)'];
-            return $res;
+        $res['mainThumbnail'] = $this->fixImg($res['mainThumbnail'] , $res['belongsTo'] , 'main');
+        return $res;
+    }
+    /**
+     * 这里完成对img的补充修正
+     *
+     * @param string    $thumb  在数据库中thumb 的格式编码，是名字的集合
+     * @param int       $bossId 店铺老板的id
+     * @return string   对thumb 完成解码，是数组的集合
+     * @author unasm
+     */
+    protected function formThumb($thumb , $bossId)
+    {
+        $res = explode('|' , $thumb);
+        for ($i = 0 , $len = count($res); $i < $len ; $i++) {
+            $res[$i] = $this->fixImg($res[$i], $bossId , 'thumb');
         }
-
-        return false;
+        return $res;
+    }
+    /**
+     * 这里是为了将item的图片补全的函数
+     *
+     * @param   string  $thumbPath  thumb的名字
+     * @param   int     $userId     店铺拥有者的id,图片的存储和老板的id 有关系
+     * @param   boolean $big        当为false的时候，给出小图片的路径，大图片的路径为true；
+     * @return string 从http开始的完整路径
+     * @author unasm
+     */
+    protected function fixImg($imgName,$bossId , $type)
+    {
+        $pre = 'imgage/' . $bossId;
+        switch ($type) {
+            case 'thumb':
+                return base_url($pre . '/thumb/small/' . $imgName);
+            case 'big' :
+                return base_url($pre . '/thumb/big/' . $imgName);
+            case 'main':
+                return site_url($pre . '/main/' . $imgName);
+            case 'detail':
+                return site_url($pre . '/detail/' . $imgName);
+            case 'mix':
+                return site_url($pre . '/mix/' . $imgName);
+            default:
+                echo "请选择争取的图片类型";
+                break;
+        }
     }
 
     /**

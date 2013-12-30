@@ -287,6 +287,7 @@ class Store extends CI_Model {
 
     /**
      * 通过 storeId 获取商店的详细信息
+     * 目前已知在商品详情页提供显示的信息
      * <pre>
      * 主要包括以下字段：
      *     name
@@ -300,20 +301,21 @@ class Store extends CI_Model {
      *     deliveryArea
      *     sendPrice
      * </pre>
-     * @param int $ownerId
+     * @param int $ownerId 商店的标示id
      * @return boolean | array
      */
     public function getStoreInfo($ownerId) {
-        $sql = "SELECT name, serviceQQ, servicePhone, address, longitude, latitude, briefInfo, deliveryTime, " .
-            "deliveryArea, sendPrice FROM store WHERE id = $ownerId";
+        $sql = 'SELECT name, serviceQQ, servicePhone, address, longitude, latitude, briefInfo, deliveryTime, ' .
+            'deliveryArea, sendPrice FROM store WHERE id = ' . $ownerId;
         $res = $this->db->query($sql);
-        $res = $res->result_array();
-        if (count($res) == 0) {
-            return false;
-        } else {
+        if ($res->num_rows) {
+            $res = $res->result_array();
             return $res[0];
+        } else {
+            return false;
         }
     }
+
     /**
      * 获取商店的名字和id的列表
      * @return array
