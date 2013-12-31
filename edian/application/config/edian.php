@@ -64,4 +64,6 @@ $config['storeLogoW'] = 120;
 
 //分页，每页显示的条数
 $config['pageSize'] = 2;
+// 商品的映射状态，
+$config['state'] = array(0 =>'销售中', 1 => '预备', 2 => '删除', 3 => '下架');
 ?>

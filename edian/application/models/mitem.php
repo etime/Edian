@@ -442,11 +442,16 @@ class Mitem extends Ci_Model {
         //只匹配在销售的商品
         return $res->result_array();
     }
-
-    public function getBgList($userId)
+    /**
+     *  根据bossId获取用户的商品列表
+     *  @param int $bossId  商品所属boss 的id
+     *  return array | boolean 成功是数据数组，失败是false
+     */
+    public function getBgList($bossId)
     {
-        $res = $this->db->query("select id,title,store_num,price,state from item where author_id = $userId");
-        if($res){
+        $bossId = (int)$bossId;
+        $res = $this->db->query('select id,title,storeNum,price,state from item where belongsTo = ' . $bossId);
+        if($res->num_rows){
             $res = $res->result_array();
             return $res;
         }

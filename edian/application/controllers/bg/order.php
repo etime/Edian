@@ -70,6 +70,7 @@ class Order extends Home
             $data["order"] = $this->formData($data["order"]);
         echo $data['pageNumFooter'] . '<br>';
          */
+        var_dump($data['order'][0]);
         $this->load->view("onTimeOrder",$data);
     }
 }
