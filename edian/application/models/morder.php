@@ -110,8 +110,8 @@ class Morder extends Ci_Model {
 
     /**
      * 获取指定商店的所有今日订单
-     * @param $storeId
-     * @return bool
+     * @param int $storeId 商店编号
+     * @return boolean | array  商店的今日订单
      */
     public function getToday($storeId) {
         $storeId = (int)$storeId;
@@ -124,6 +124,48 @@ class Morder extends Ci_Model {
             return $this->_today($res->result_array());
         } else {
             return false;
+        }
+    }
+
+    /**
+     * 获取所有的历史订单
+     * @return boolean | array
+     */
+    public function histAll() {
+        $sql = "SELECT id, addr, info, item_id, time, ordor, state FROM ord WHERE state > 0";
+        $res = $this->db->query($sql);
+        if ($res->num_rows === 0) {
+            return false;
+        } else {
+            $res = $res->result_array();
+            for($i = 0;$i < $len; $i++){
+                $res[$i]["info"] = $this->_decodeInfo($res[$i]["info"]);
+            }
+            return $res;
+        }
+    }
+
+    /**
+     * 获取制定商店的所有历史订单
+     * @param int $storeId 商店的编号
+     * @return boolean | array 商店的所有历史订单
+     */
+    public function hist($storeId) {
+        $storeId = (int)$storeId;
+        if ($storeId === 0) {
+            return false;
+        }
+        $sql = "SELECT id, addr, info, item_id, time, ordor, state FROM ord WHERE seller = $storeId AND state > 0";
+        $res = $this->db->query($sql);
+        if ($res->num_rows === 0) {
+            return false;
+        } else {
+            $res = $res->result_array();
+            $len = count($res);
+            for ($i = 0; $i < $len; $i ++) {
+                $res[$i]['info'] = $this->_decodeInfo($res[$i]['info']);
+            }
+            return $res;
         }
     }
 /**********************************************************************************************************************/
@@ -325,39 +367,6 @@ class Morder extends Ci_Model {
                 $res[$i]["info"] = $this->_decodeInfo($res[$i]["info"]);
             }
             return $res;
-        }
-        return false;
-    }
-    public function hist($userId)
-    {
-        $userId = (int)$userId;
-        if(!$userId)return false;
-        //历史上所有的订单，暂时不分页
-        $res = $this->db->query("select id,addr,info,item_id,time,ordor,state from ord where  seller = $userId && state > 0");
-        if($res){
-            $res = $res->result_array();
-            $len = count($res);
-            if($len){
-                for($i = 0;$i < $len; $i++){
-                    $res[$i]["info"] = $this->_decodeInfo($res[$i]["info"]);
-                }
-                return $res;
-            }
-        }
-        return false;
-    }
-    public function histAll()
-    {
-        $res = $this->db->query("select id,addr,info,item_id,time,ordor,state from ord where  state > 0");
-        if($res){
-            $res = $res->result_array();
-            $len = count($res);
-            if($len){
-                for($i = 0;$i < $len; $i++){
-                    $res[$i]["info"] = $this->_decodeInfo($res[$i]["info"]);
-                }
-                return $res;
-            }
         }
         return false;
     }

@@ -71,9 +71,33 @@ class Order extends Home {
         $this->load->view('ordtoday', $data);
     }
 
-    // 今日订单的入口
-    public function index() {
-        echo "今日订单";
+    /**
+     * 历史订单的显示
+     *
+     * 通过登录者的id进行在后台查找用户的历史订单信息
+     */
+    public function history($pageId = 1) {
+        // 用户未登录
+        if ($this->userId == -1) {
+            $this->nologin(site_url('bg/order')."/order/ontime");
+            return;
+        }
+        // 通过 get 的方式得到页号
+        if (isset($_GET['pageId'])) {
+            $pageId = $_GET['pageId'];
+        }
+        $data['order'] = $this->morder->hist($this->storeId);
+        if ($data['order']) {
+            $temp = $this->pagesplit->split($data['order'], $pageId, $pageSize);
+            $data['order'] = $temp['newData'];
+            $commonUrl = site_url() . '/order/hist';
+            $data['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount']);
+            echo $data['pageNumFooter'];
+        }
+        if ($data['order']) {
+            $data['order'] = $this->histForm($data['order']);
+        }
+        $this->load->view('histOrder',$data);
     }
 
     /**

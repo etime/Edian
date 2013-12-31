@@ -724,40 +724,7 @@ class Order extends My_Controller{
     }
 
 
-    /**
-     * 历史订单的显示
-     *
-     * 通过登录者的id进行在后台查找用户的历史订单信息
-     */
-    public function hist($pageId = 1, $pageSize = 10)
-    {
-        if(!$this->userId){
-            $this->nologin(site_url()."/order/ontime");
-            return;
-        }
-        if (isset($_GET['pageId'])) {
-            $pageId = $_GET['pageId'];
-        }
-        $type = $this->user->getCredit($this->userId);
-        $data = Array();
-        $this->load->config("edian");
-        if($type == $this->config->item("adminCredit")){
-            $data["order"] = $this->morder->histAll();
-        }else if($type == $this->config->item('bossCredit')){
-            $data["order"] = $this->morder->hist($this->userId);
-        }else{
-            exit("权限不足");
-        }
-        if ($data['order']) {
-            $temp = $this->pagesplit->split($data['order'], $pageId, $pageSize);
-            $data['order'] = $temp['newData'];
-            $commonUrl = site_url() . '/order/hist';
-            $data['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount']);
-        } echo $data['pageNumFooter'];
-        if($data["order"])
-            $data["order"] = $this->histForm($data["order"]);
-        $this->load->view("histOrder",$data);
-    }
+
     /**
      * 历史订单的内容构成
      * @param array $arr 对得到的id信息进行丰富，和添加
