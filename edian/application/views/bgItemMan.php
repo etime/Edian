@@ -1,20 +1,26 @@
 <?php
-/*************************************************************************
-    > File Name :     ../../views/bgItemMan.php
-    > Author :        unasm
-    > Mail :          douunasm@gmail.com
-    > Last_Modified : 2013-08-17 01:29:38
- ************************************************************************/
-$baseUrl = base_url();
-$siteUrl = site_url();
+    $baseUrl = base_url();
+    $siteUrl = site_url();
 ?>
 <!DOCTYPE html>
 <html lang = "en">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" href="<?php echo $baseUrl.'css/pagesplit.css' ?>" type="text/css" media="all" />
     <title>商品管理</title>
 </head>
 <body>
+<?php
+    if(isset($storeList)){
+        $form = "<form action='' method='post' accept-charset='utf-8'>" .
+            "选择店铺:<select name = 'storeId'>" ;
+        foreach ($storeList  as $store) {
+            $form .= "<option value = " . $store['id'] .">" . $store['name']. "</option>";
+        }
+        $form .="</select><input type='submit' name='sub' value='提交' /></form>";
+        echo $form;
+    }
+?>
     <table border = "1">
         <tr>
             <th>标题</th>

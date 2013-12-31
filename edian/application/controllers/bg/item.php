@@ -45,10 +45,18 @@ class item extends Home
         $this->load->config("edian");
         $pageSize = $this->config->item('pageSize');
         $data = Array();
+        $credit = $this->config->item('adminCredit');
         if($credit == $this->config->item('adminCredit')){
-            $data["item"] = $this->mitem->getAllList();
+            $choseStore = trim( $this->input->post("storeId") );
+            if( ! is_int($choseStore + 1)){
+                $this->mwrong->insert('item/mange/' . __LINE__ . '行出现storeId非数字情况，请检查 . storeId = ' .$choseStore);
+                exit(-1);
+            }
+            $this->load->model("store");
+            $data['storeList'] = $this->store->getStoreList();
+            $data["item"] = $this->mitem->getBgList($choseStore);
         }else if($credit == $this->config->item('bossCredit')){
-            $data["item"] = $this->mitem->getBgList($bossId);
+            $data["item"] = $this->mitem->getBgList($storeId);
         }else{
             exit('权限不足');
         }

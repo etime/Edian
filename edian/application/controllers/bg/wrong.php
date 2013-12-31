@@ -16,7 +16,7 @@ class Wrong extends MY_Controller
     public function __construct()
     {
         parent::__construct();
-        $this->user_id = $this->user_id_get();
+        $this->user_id = $this->getUserId();
         $this->load->model("mwrong");//对wrong表操作集中的函数
         $this->load->library('pagesplit');
     }

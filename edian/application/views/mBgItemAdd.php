@@ -14,7 +14,7 @@
 <script type="text/javascript" src = "<?php echo base_url('js/cookie.js')?>"> </script>
 <script type="text/javascript" >
     var admin = "<?php echo $this->adminMail?>";
-    var dir = <?php  echo json_encode($dir)?>;
+    var dir = <?php  echo @json_encode($dir)?>;
 </script>
 <body class = "clearfix">
     <div id="content" class="contSpace">
