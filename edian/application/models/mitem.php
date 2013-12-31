@@ -486,6 +486,26 @@ class Mitem extends Ci_Model {
         return false;
         //return $res->num_rows ? $res->result_array() : false;
     }
+
+    /**
+     * 获取商品的title
+     * @param int $itemId 商品序列的id
+     * @return array/false $res 要不是false，要不是string
+     */
+    public function getTitle($itemId) {
+        $itemId = (int)$itemId;
+        if (! $itemId) {
+            return false;
+        }
+        $sql = "SELECT title FROM item WHERE id = $itemId";
+        $res = $this->db->query($sql);
+        if($res->num_rows === 0) {
+            return false;
+        } else {
+            $res = $res->result_array();
+            return $res[0]['title'];
+        }
+    }
 /**********************************************************************************************************************/
 /**********************************************************************************************************************/
 /**********************************************************************************************************************/
@@ -617,22 +637,7 @@ class Mitem extends Ci_Model {
         return false;
     }
 
-    /**
-     * 获取商品的title
-     * @param int $itemId 商品序列的id
-     * @return array/false $res 要不是false，要不是string
-     */
-    public function getTitle($itemId)
-    {
-        $itemId = (int)$itemId;
-        if(!$itemId)return false;
-        $res = $this->db->query("select title from item where id = $itemId");
-        if($res->num_rows){
-            $res = $res->result_array();
-            return $res[0];//id是主键，有的话，结果必然只有一个
-        }
-        return false;
-    }
+
     public function getIdByKey($key)
     {
         //通过关键字检索查询信息

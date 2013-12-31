@@ -12,48 +12,63 @@ include 'home.php';
 class Order extends Home {
     // 存储商店编号
     var $storeId;
+    var $pageSize;
     // 构造函数
     function __construct() {
         parent::__construct();
         $this->load->model('morder');
+            $this->load->config('edian');
+        $this->storeId = $this->session->userdata('storeId');
+        $this->pageSize = $this->config->item('pageSize');
     }
 
     /**
      * 处理今日订单
-     * @param int $pageId
-     * @param int $pageSize
+     * @param int $pageId    当前的页号
      */
-    public function today($pageId = 1, $pageSize = 2) {
+    public function today($pageId = 1) {
+        // 处理用户未登录
         if ($this->userId == -1) {
             $this->nologin(site_url('bg/order/today'));
             return;
         }
+
+        // 通过 get 的方式获取 pageId
         if (isset($_GET['pageId'])) {
             $pageId = $_GET['pageId'];
         }
-        $type = $this->user->getType($this->userId);
-        $ans = Array();
-        $this->load->config("edian");
-        if($type == $this->config->item("edian")){
-            $ans = $this->morder->getAllToday();
-        }else{
-            $ans = $this->morder->getToday($this->userId);
+
+        // 通过 storeId 获取今日订单
+        $ans = $this->morder->getToday($this->storeId);
+
+        // 对今日订单进行解码
+        for ($i = 0, $len = count($ans); $i < $len; $i ++) {
+            // 获取商品的标题
+            $temp = $this->mitem->getTitle($ans[$i]['item_id']);
+            // 商品不存在
+            if ($temp === false) {
+                $temp = '******';
+            }
+            // 设置商品的标题
+            $ans[$i]['title'] = $temp;
+            // 获取购买者的昵称
+            $temp = $this->user->getNameById($ans[$i]['ordor']);
+            // 购买者不存在
+            if ($temp === false) {
+                $temp = '******';
+            }
+            // 设置购买者的昵称
+            $ans[$i]['user_name'] = $temp['user_name'];
         }
-        for($i = 0,$len = count($ans);$i < $len ;$i++){
-            $temp = $this->mitem->getTitle($ans[$i]["item_id"]);
-            $ans[$i]["title"] = $temp["title"];
-            $temp = $this->user->getNameById($ans[$i]["ordor"]);
-            $ans[$i]["user_name"] = $temp["user_name"];
-        }
-        $data["today"] = $ans;
+        $data['today'] = $ans;
         if ($data['today']) {
             $temp = $this->pagesplit->split($data['today'], $pageId, $pageSize);
             $data['today'] = $temp['newData'];
             $commonUrl = site_url() . '/order/Today';
             $data['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount']);
+            echo $data['pageNumFooter'];
         }
-        echo $data['pageNumFooter'];
-        $this->load->view("ordtoday",$data);
+        $this->load->view('ordtoday', $data);
     }
 
     // 今日订单的入口

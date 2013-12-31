@@ -28,6 +28,7 @@ class Home extends MY_Controller {
         $this->load->model("user");
         $this->load->model('boss');
         $this->userId = $this->getUserId();
+        $this->load->config("edian");
     }
 
     /**
@@ -55,14 +56,12 @@ class Home extends MY_Controller {
      * @return int | boolean
      * @author unasm
      */
-    protected function getBossId()
-    {
+    protected function getBossId() {
         $temp = $this->session->userdata('bossId');
-
         $bossId = (int)$temp;
-        if($bossId){
+        if ($bossId) {
             return $bossId;
-        }else{
+        } else {
             $this->load->model('mwrong');
             $this->mwrong->insert('controller/bg/home/' . __LINE__ . '出现非数字的bossId = ' . $temp);
             return false;
@@ -71,6 +70,7 @@ class Home extends MY_Controller {
     }
     /**
      * 后台的入口view函数
+     * 进入后台页面后，立马将 bossId storeId 存储在 session 中
      */
     function index() {
         // 如果用户未登录
@@ -78,17 +78,16 @@ class Home extends MY_Controller {
             $this->noLogin();
             return;
         }
-        //每一个用户，进入的时候都意味着设置bossId和storeId,为了避免刷新的时候重复设置.进行判断
-        if(!$this->session->userdata("storeId")) {
+        // 设置用户的 streId
+        if (! $this->session->userdata('storeId')) {
             $bossId = $this->_setBossId();
             $this->choseStore($bossId);
-        }else{
-            $data["type"] = $this->user->getCredit($this->userId);
-            //读取admin和seller对应的配置
-            $this->load->config("edian");
-            $data["ADMIN"] = $this->config->item("ADMIN");
-            $data["SELLER"] = $this->config->item("SELLER");
-            $this->load->view("bghome",$data);
+        } else {
+            $data['type'] = $this->user->getCredit($this->userId);
+            // 读取admin和seller对应的配置
+            $data['ADMIN'] = $this->config->item('ADMIN');
+            $data['SELLER'] = $this->config->item('SELLER');
+            $this->load->view('bghome', $data);
         }
     }
 

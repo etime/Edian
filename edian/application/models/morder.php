@@ -38,18 +38,99 @@
  *  @since      2013-07-17 12:47:45
  *  @package    model
  */
-class Morder extends Ci_Model
-{
-    var $user_id,$user_name,$Ordered,$printed;
+class Morder extends Ci_Model {
+
+    var $user_id;
+    var $user_name;
+    var $Ordered;
+    var $printed;
+
     /**
-     * 涉及到订单的话，必须有个名字，必须登录，通过手机号码，短信验证码也可以，不过那个时候，手机号码就是名字
+     * 构造函数
      */
-    function __construct()
-    {
+    function __construct() {
         parent::__construct();
         $this->Ordered = 1;//下单完毕
         $this->printed = 2;//打印完毕
     }
+
+    /**
+     * 解码今日订单的具体函数
+     * @param string $str
+     * @return array
+     */
+    private function _decodeInfo($str) {
+        $temp = explode('&', $str);
+        $res['orderNum'] = $temp[0];
+        $res['more'] = (count($temp) === 4) ? $temp[3] : ' ';
+        $res['price'] = $temp[2];
+        $res['info'] = '';
+        if ($temp[1]) {
+            $temp = explode('|', $temp[1]);
+            for ($i = 0, $len = count($temp); $i < $len; $i ++) {
+                $now = explode(':', $temp[$i]);
+                if ($now[0] != 'false') {
+                    $res['info'] .= '('.$now[0].')';
+                }
+            }
+        }
+        return $res;
+    }
+
+    /**
+     * 对今日订单进行编码
+     * @param string $arr
+     * @return array
+     */
+    private function _today($arr) {
+        if ($arr) {
+            $len = count($arr);
+        } else {
+            $len = 0;
+        }
+        for ($i = 0; $i < $len; $i ++) {
+            $arr[$i]['info'] = $this->_decodeInfo($arr[$i]['info']);
+        }
+        return $arr;
+    }
+
+    /**
+     * 获取今日的所有订单
+     * @return boolean | array
+     */
+    public function getAllToday() {
+        $sql = "SELECT time, item_id, state, ordor, info FROM ord WHERE (unix_timestamp(time) > unix_timestamp(now()) - 86400) OR state = $this->printed OR state = $this->Ordered";
+        $res = $this->db->query($sql);
+        if ($res) {
+            return $this->_today($res->result_array());
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * 获取指定商店的所有今日订单
+     * @param $storeId
+     * @return bool
+     */
+    public function getToday($storeId) {
+        $storeId = (int)$storeId;
+        if (! $storeId) {
+            return false;
+        }
+        $sql = "SELECT time, item_id, state, ordor, info FROM ord WHERE seller = $storeId AND unix_timestamp(time) > unix_timestamp(now()) - 86400 OR state = $this->printed OR state = $this->Ordered";
+        $res = $this->db->query($sql);
+        if ($res) {
+            return $this->_today($res->result_array());
+        } else {
+            return false;
+        }
+    }
+/**********************************************************************************************************************/
+/**********************************************************************************************************************/
+/**********************************************************************************************************************/
+/**********************************************************************************************************************/
+/**********************************************************************************************************************/
     /**
      *  插入订单的信息
      * 插入的四个东西最为关键，明细orderinnfo，买家ordor，卖家seller，商品货号item_id
@@ -102,7 +183,7 @@ class Morder extends Ci_Model
             $len = count($res);
             if($len){
                 for($i = 0;$i < $len; $i++){
-                    $res[$i]["info"] = $this->decodeInfo($res[$i]["info"]);//对info进行解码
+                    $res[$i]["info"] = $this->_decodeInfo($res[$i]["info"]);//对info进行解码
                 }
                 return $res;
             }
@@ -124,7 +205,7 @@ class Morder extends Ci_Model
             $len = count($res);
             if($len){
                 for($i = 0;$i < $len; $i++){
-                    $res[$i]["info"] = $this->decodeInfo($res[$i]["info"]);
+                    $res[$i]["info"] = $this->_decodeInfo($res[$i]["info"]);
                 }
                 return $res;
             }
@@ -153,30 +234,7 @@ class Morder extends Ci_Model
         if(!$id)return false;
         return $this->db->query("update ord set state = $state where id = $id && ordor = $userId");
     }
-    /**
-     *  decode info 对info进行解码,并且显示
-     *  因为已经不需要进行重新保存了，所以没有必要再为编码考虑了
-     *  @param string $str info在数据库保存时候的string
-     *  @return array $res
-     */
-    private function decodeInfo($str)
-    {
-        $temp = explode("&",$str);
-        $res["orderNum"] = $temp[0];
-        $res['more'] = (count($temp) === 4) ? $temp[3] : ' ';
-        $res["price"] = $temp[2];
-        //对从数据库中取得到数据抱着相信的态度
-        $res["info"] = "";
-        if($temp[1]){
-            $temp = explode("|",$temp[1]);
-            for($i = 0,$len = count($temp);$i < $len ;$i++){
-                $now = explode(":",$temp[$i]);
-                if($now[0] != "false")
-                    $res["info"] .= "(".$now[0].")";
-            }
-        }
-        return $res;
-    }
+
     /**
      * 修改订单的状态
      *  这里的info是之前就处理好的,而且，必须之前处理好
@@ -250,7 +308,7 @@ class Morder extends Ci_Model
             $len = $res->num_rows;
             $res = $res->result_array();
             for($i = 0;$i < $len; $i++){
-                $res[$i]["info"] = $this->decodeInfo($res[$i]["info"]);
+                $res[$i]["info"] = $this->_decodeInfo($res[$i]["info"]);
             }
             return $res;
         }
@@ -264,7 +322,7 @@ class Morder extends Ci_Model
             $len = $res->num_rows;
             $res = $res->result_array();
             for($i = 0;$i < $len; $i++){
-                $res[$i]["info"] = $this->decodeInfo($res[$i]["info"]);
+                $res[$i]["info"] = $this->_decodeInfo($res[$i]["info"]);
             }
             return $res;
         }
@@ -281,7 +339,7 @@ class Morder extends Ci_Model
             $len = count($res);
             if($len){
                 for($i = 0;$i < $len; $i++){
-                    $res[$i]["info"] = $this->decodeInfo($res[$i]["info"]);
+                    $res[$i]["info"] = $this->_decodeInfo($res[$i]["info"]);
                 }
                 return $res;
             }
@@ -296,43 +354,15 @@ class Morder extends Ci_Model
             $len = count($res);
             if($len){
                 for($i = 0;$i < $len; $i++){
-                    $res[$i]["info"] = $this->decodeInfo($res[$i]["info"]);
+                    $res[$i]["info"] = $this->_decodeInfo($res[$i]["info"]);
                 }
                 return $res;
             }
         }
         return false;
     }
-    public function getToday($userId)
-    {
-        $userId = (int)$userId;
-        if(!$userId)return false;
-        $res = $this->db->query("select time,item_id,state,ordor,info from ord where seller = $userId and  unix_timestamp(time) > unix_timestamp(now()) - 86400 or state = $this->printed or state = $this->Ordered");
-        if($res){
-            //return $res->result_array();
-            return $this->today($res->result_array());
-        }
-        return false;
-    }
-    public function getAllToday()
-    {
-        //和上面的相同，都是为了order/today服务的，一个是为管理员，一个是为了商家
-        $res = $this->db->query("select time,item_id,state,ordor,info from ord where (unix_timestamp(time) > unix_timestamp(now()) - 86400) or state = $this->printed or state = $this->Ordered");
-        if($res){
-            return $this->today($res->result_array());
-        }
-        return false;
-    }
-    private function today( $arr)
-    {
-        //这个函数是为上面两个today服务的
-        if($arr)$len = count($arr);
-        else $len = 0;
-        for ($i = 0; $i < $len; $i++) {
-            $arr[$i]["info"] = $this->decodeInfo($arr[$i]["info"]);
-        }
-        return $arr;
-    }
+
+
     /**
      * 获取商品的下单购买数目的函数
      *
