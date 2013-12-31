@@ -9,19 +9,55 @@ include 'home.php';
  *  @package    controller
  *  @sub_package bg
  */
-class Order extends Home
-{
+class Order extends Home {
+    // 存储商店编号
     var $storeId;
-    /**
-     *  继承来自bg/home,逻辑上更加清晰,涉及后台的函数集中在bg/home中
-     */
-    function __construct()
-    {
+    // 构造函数
+    function __construct() {
         parent::__construct();
         $this->load->model('morder');
     }
-    public function index()
-    {
+
+    /**
+     * 处理今日订单
+     * @param int $pageId
+     * @param int $pageSize
+     */
+    public function today($pageId = 1, $pageSize = 2) {
+        if ($this->userId == -1) {
+            $this->nologin(site_url('bg/order/today'));
+            return;
+        }
+        if (isset($_GET['pageId'])) {
+            $pageId = $_GET['pageId'];
+        }
+        $type = $this->user->getType($this->userId);
+        $ans = Array();
+        $this->load->config("edian");
+        if($type == $this->config->item("edian")){
+            $ans = $this->morder->getAllToday();
+        }else{
+            $ans = $this->morder->getToday($this->userId);
+        }
+        for($i = 0,$len = count($ans);$i < $len ;$i++){
+            $temp = $this->mitem->getTitle($ans[$i]["item_id"]);
+            $ans[$i]["title"] = $temp["title"];
+            $temp = $this->user->getNameById($ans[$i]["ordor"]);
+            $ans[$i]["user_name"] = $temp["user_name"];
+        }
+        $data["today"] = $ans;
+        if ($data['today']) {
+            $temp = $this->pagesplit->split($data['today'], $pageId, $pageSize);
+            $data['today'] = $temp['newData'];
+            $commonUrl = site_url() . '/order/Today';
+            $data['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount']);
+        }
+        echo $data['pageNumFooter'];
+        $this->load->view("ordtoday",$data);
+    }
+
+    // 今日订单的入口
+    public function index() {
         echo "今日订单";
     }
 

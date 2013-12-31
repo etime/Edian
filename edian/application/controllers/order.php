@@ -816,42 +816,5 @@ class Order extends My_Controller{
         $client = new DsPrintSend('1e13cb1c5281c812','2050');
         echo $client->changeurl();
     }
-    /**
-     * 后台处理今日订单的，不止是今日的，包括之前没有处理的，包括下单状态为2，1，下单后出错和下单后没有发货了
-     * 24小时的如论什么状态都会在这里
-     */
-    public function today($pageId = 1, $pageSize = 2)
-    {
-        if(!$this->userId){
-            $this->nologin(site_url()."/order/today");
-            return;
-        }
-        if (isset($_GET['pageId'])) {
-            $pageId = $_GET['pageId'];
-        }
-        $type = $this->user->getType($this->userId);
-        $ans = Array();
-        $this->load->config("edian");
-        if($type == $this->config->item("edian")){
-            $ans = $this->morder->getAllToday();
-        }else{
-            $ans = $this->morder->getToday($this->userId);
-        }
-        for($i = 0,$len = count($ans);$i < $len ;$i++){
-            $temp = $this->mitem->getTitle($ans[$i]["item_id"]);
-            $ans[$i]["title"] = $temp["title"];
-            $temp = $this->user->getNameById($ans[$i]["ordor"]);
-            $ans[$i]["user_name"] = $temp["user_name"];
-        }
-        $data["today"] = $ans;
-        if ($data['today']) {
-            $temp = $this->pagesplit->split($data['today'], $pageId, $pageSize);
-            $data['today'] = $temp['newData'];
-            $commonUrl = site_url() . '/order/Today';
-            $data['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount']);
-        }
-        echo $data['pageNumFooter'];
-        $this->load->view("ordtoday",$data);
-    }
 }
 ?>

@@ -33,10 +33,12 @@ class Home extends MY_Controller {
     /**
      * 如果没有登录，调出登录窗口
      */
-    public function noLogin()
-    {
-        $data["url"] = site_url("bg/home");
-        $this->load->view("login", $data);
+    public function noLogin($url = false) {
+        if ($url === false) {
+            $url = site_url('bg/home');
+        }
+        $data['url'] = $url;
+        $this->load->view('login', $data);
     }
 
     /**
