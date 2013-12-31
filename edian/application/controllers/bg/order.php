@@ -9,20 +9,95 @@ include 'home.php';
  *  @package    controller
  *  @sub_package bg
  */
-class Order extends Home
-{
+class Order extends Home {
+    // 存储商店编号
     var $storeId;
-    /**
-     *  继承来自bg/home,逻辑上更加清晰,涉及后台的函数集中在bg/home中
-     */
-    function __construct()
-    {
+    var $pageSize;
+    // 构造函数
+    function __construct() {
         parent::__construct();
         $this->load->model('morder');
+            $this->load->config('edian');
+        $this->storeId = $this->session->userdata('storeId');
+        $this->pageSize = $this->config->item('pageSize');
     }
-    public function index()
-    {
-        echo "今日订单";
+
+    /**
+     * 处理今日订单
+     * @param int $pageId    当前的页号
+     */
+    public function today($pageId = 1) {
+        // 处理用户未登录
+        if ($this->userId == -1) {
+            $this->nologin(site_url('bg/order/today'));
+            return;
+        }
+
+        // 通过 get 的方式获取 pageId
+        if (isset($_GET['pageId'])) {
+            $pageId = $_GET['pageId'];
+        }
+
+        // 通过 storeId 获取今日订单
+        $ans = $this->morder->getToday($this->storeId);
+
+        // 对今日订单进行解码
+        for ($i = 0, $len = count($ans); $i < $len; $i ++) {
+            // 获取商品的标题
+            $temp = $this->mitem->getTitle($ans[$i]['item_id']);
+            // 商品不存在
+            if ($temp === false) {
+                $temp = '******';
+            }
+            // 设置商品的标题
+            $ans[$i]['title'] = $temp;
+            // 获取购买者的昵称
+            $temp = $this->user->getNameById($ans[$i]['ordor']);
+            // 购买者不存在
+            if ($temp === false) {
+                $temp = '******';
+            }
+            // 设置购买者的昵称
+            $ans[$i]['user_name'] = $temp['user_name'];
+        }
+        $data['today'] = $ans;
+        if ($data['today']) {
+            $temp = $this->pagesplit->split($data['today'], $pageId, $this->pageSize);
+            $data['today'] = $temp['newData'];
+            $commonUrl = site_url() . '/order/Today';
+            $data['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount']);
+            echo $data['pageNumFooter'];
+        }
+        $this->load->view('ordtoday', $data);
+    }
+
+    /**
+     * 历史订单的显示
+     *
+     * 通过登录者的id进行在后台查找用户的历史订单信息
+     */
+    public function history($pageId = 1) {
+        // 用户未登录
+        if ($this->userId == -1) {
+            $this->nologin(site_url('bg/order')."/order/ontime");
+            return;
+        }
+        // 通过 get 的方式得到页号
+        if (isset($_GET['pageId'])) {
+            $pageId = $_GET['pageId'];
+        }
+        $data['order'] = $this->morder->hist($this->storeId);
+        if ($data['order']) {
+            $temp = $this->pagesplit->split($data['order'], $pageId, $pageSize);
+            $data['order'] = $temp['newData'];
+            $commonUrl = site_url() . '/order/hist';
+            $data['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount']);
+            echo $data['pageNumFooter'];
+        }
+        if ($data['order']) {
+            $data['order'] = $this->histForm($data['order']);
+        }
+        $this->load->view('histOrder',$data);
     }
 
     /**

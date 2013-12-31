@@ -724,40 +724,7 @@ class Order extends My_Controller{
     }
 
 
-    /**
-     * 历史订单的显示
-     *
-     * 通过登录者的id进行在后台查找用户的历史订单信息
-     */
-    public function hist($pageId = 1, $pageSize = 10)
-    {
-        if(!$this->userId){
-            $this->nologin(site_url()."/order/ontime");
-            return;
-        }
-        if (isset($_GET['pageId'])) {
-            $pageId = $_GET['pageId'];
-        }
-        $type = $this->user->getCredit($this->userId);
-        $data = Array();
-        $this->load->config("edian");
-        if($type == $this->config->item("adminCredit")){
-            $data["order"] = $this->morder->histAll();
-        }else if($type == $this->config->item('bossCredit')){
-            $data["order"] = $this->morder->hist($this->userId);
-        }else{
-            exit("权限不足");
-        }
-        if ($data['order']) {
-            $temp = $this->pagesplit->split($data['order'], $pageId, $pageSize);
-            $data['order'] = $temp['newData'];
-            $commonUrl = site_url() . '/order/hist';
-            $data['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount']);
-        } echo $data['pageNumFooter'];
-        if($data["order"])
-            $data["order"] = $this->histForm($data["order"]);
-        $this->load->view("histOrder",$data);
-    }
+
     /**
      * 历史订单的内容构成
      * @param array $arr 对得到的id信息进行丰富，和添加
@@ -815,43 +782,6 @@ class Order extends My_Controller{
         require_once $_SERVER["DOCUMENT_ROOT"].'/dsconfig.class.php';
         $client = new DsPrintSend('1e13cb1c5281c812','2050');
         echo $client->changeurl();
-    }
-    /**
-     * 后台处理今日订单的，不止是今日的，包括之前没有处理的，包括下单状态为2，1，下单后出错和下单后没有发货了
-     * 24小时的如论什么状态都会在这里
-     */
-    public function today($pageId = 1, $pageSize = 2)
-    {
-        if(!$this->userId){
-            $this->nologin(site_url()."/order/today");
-            return;
-        }
-        if (isset($_GET['pageId'])) {
-            $pageId = $_GET['pageId'];
-        }
-        $type = $this->user->getType($this->userId);
-        $ans = Array();
-        $this->load->config("edian");
-        if($type == $this->config->item("edian")){
-            $ans = $this->morder->getAllToday();
-        }else{
-            $ans = $this->morder->getToday($this->userId);
-        }
-        for($i = 0,$len = count($ans);$i < $len ;$i++){
-            $temp = $this->mitem->getTitle($ans[$i]["item_id"]);
-            $ans[$i]["title"] = $temp["title"];
-            $temp = $this->user->getNameById($ans[$i]["ordor"]);
-            $ans[$i]["user_name"] = $temp["user_name"];
-        }
-        $data["today"] = $ans;
-        if ($data['today']) {
-            $temp = $this->pagesplit->split($data['today'], $pageId, $pageSize);
-            $data['today'] = $temp['newData'];
-            $commonUrl = site_url() . '/order/Today';
-            $data['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount']);
-        }
-        echo $data['pageNumFooter'];
-        $this->load->view("ordtoday",$data);
     }
 }
 ?>

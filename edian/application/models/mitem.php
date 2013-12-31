@@ -486,6 +486,46 @@ class Mitem extends Ci_Model {
         return false;
         //return $res->num_rows ? $res->result_array() : false;
     }
+
+    /**
+     * 获取商品的title
+     * @param int $itemId 商品序列的id
+     * @return array/false $res 要不是false，要不是string
+     */
+    public function getTitle($itemId) {
+        $itemId = (int)$itemId;
+        if (! $itemId) {
+            return false;
+        }
+        $sql = "SELECT title FROM item WHERE id = $itemId";
+        $res = $this->db->query($sql);
+        if($res->num_rows === 0) {
+            return false;
+        } else {
+            $res = $res->result_array();
+            return $res[0]['title'];
+        }
+    }
+
+    /**
+     *  根据bossId获取用户的商品列表
+     *  @param int $bossId  商品所属boss 的id
+     *  return array | boolean 成功是数据数组，失败是false
+     */
+    public function getBgList($bossId) {
+        $bossId = (int)$bossId;
+        if ($bossId == 0) {
+            return false;
+        }
+        $sql = "SELECT id, title, storeNum, price, state FROM item WHERE belongsTo = $bossId";
+        $res = $this->db->query($sql);
+        if ($res->num_rows === 0) {
+            return false;
+        } else {
+            $res = $res->result_array();
+            return $res;
+        }
+    }
 /**********************************************************************************************************************/
 /**********************************************************************************************************************/
 /**********************************************************************************************************************/
@@ -617,22 +657,7 @@ class Mitem extends Ci_Model {
         return false;
     }
 
-    /**
-     * 获取商品的title
-     * @param int $itemId 商品序列的id
-     * @return array/false $res 要不是false，要不是string
-     */
-    public function getTitle($itemId)
-    {
-        $itemId = (int)$itemId;
-        if(!$itemId)return false;
-        $res = $this->db->query("select title from item where id = $itemId");
-        if($res->num_rows){
-            $res = $res->result_array();
-            return $res[0];//id是主键，有的话，结果必然只有一个
-        }
-        return false;
-    }
+
     public function getIdByKey($key)
     {
         //通过关键字检索查询信息
@@ -640,21 +665,7 @@ class Mitem extends Ci_Model {
         //只匹配在销售的商品
         return $res->result_array();
     }
-    /**
-     *  根据bossId获取用户的商品列表
-     *  @param int $bossId  商品所属boss 的id
-     *  return array | boolean 成功是数据数组，失败是false
-     */
-    public function getBgList($bossId)
-    {
-        $bossId = (int)$bossId;
-        $res = $this->db->query('select id,title,storeNum,price,state from item where belongsTo = ' . $bossId);
-        if($res->num_rows){
-            $res = $res->result_array();
-            return $res;
-        }
-        return false;
-    }
+
     public function getAllList()
     {
         //获得全部的列表，为为后台浏览,管理员 权限

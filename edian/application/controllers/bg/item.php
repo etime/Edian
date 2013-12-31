@@ -9,68 +9,64 @@ require 'home.php';
 /*
  * 关于后台的一些item的操作集合
  */
-class item extends Home
-{
-    var $user_id,$ADMIN;
+class item extends Home {
+    var $userId;
+    var $storeId;
+    var $bossId;
+    var $ADMIN;
+    var $pageSize;
+
     /**
-     * 用户必须登录这个，才可以
+     * 构造函数
      */
-     function __construct()
-    {
+    function __construct() {
         parent::__construct();
-        $this->load->model("mitem");
-        $this->user_id = $this->getUserId();
-//        $this->load->model("user");
+        $this->load->model('mitem');
         $this->load->library('pagesplit');
-        //$this->ADMIN = 3;
+        $this->load->config("edian");
+        $this->load->library('help');
+
+        $this->userId = $this->getUserId();
+        $this->storeId = $this->session->userdata('storeId');
+        $this->bossId = $this->session->userdata('bossId');
+        $this->pageSize = $this->config->item('pageSize');
     }
 
-    public function mange($pageId = 1)
-    {
-        if(!$this->user_id){
-            $this->noLogin(site_url("bg/item/mange"));
+    /**
+     * 商品管理页面的后台
+     * @param int $pageId
+     */
+    public function mange($pageId = 1) {
+        if ($this->userId == -1) {
+            $this->noLogin(site_url('bg/item/mange'));
             return;
         }
-        $storeId = $this->session->userdata('storeId');
-        $bossId = $this->session->userdata('bossId');
-        if(!( $storeId && $bossId )){
+        if (! ($this->storeId && $this->bossId)) {
             $this->choseStore($bossId);
             return;
         }
-        $credit = $this->user->getCredit($this->user_id);
-        //page have no need to exsts
         if (isset($_GET['pageId'])) {
         	$pageId = $_GET['pageId'];
         }
-        $this->load->config("edian");
-        $pageSize = $this->config->item('pageSize');
-        $data = Array();
-        $credit = $this->config->item('adminCredit');
-        if($credit == $this->config->item('adminCredit')){
-            $choseStore = trim( $this->input->post("storeId") );
-            if( ! is_int($choseStore + 1)){
-                $this->mwrong->insert('item/mange/' . __LINE__ . '行出现storeId非数字情况，请检查 . storeId = ' .$choseStore);
-                exit(-1);
-            }
-            $this->load->model("store");
-            $data['storeList'] = $this->store->getStoreList();
-            $data["item"] = $this->mitem->getBgList($choseStore);
-        }else if($credit == $this->config->item('bossCredit')){
-            $data["item"] = $this->mitem->getBgList($storeId);
-        }else{
-            exit('权限不足');
-        }
+        $data = array();
+        $data['item'] = $this->mitem->getBgList($this->storeId);
         $data['stateMark'] = $this->config->item('state');
-        $this->load->library('help');
         if ($data['item']) {
-        	$temp = $this->pagesplit->split($data['item'], $pageId, $pageSize);
+        	$temp = $this->pagesplit->split($data['item'], $pageId, $this->pageSize);
         	$data['item'] = $temp['newData'];
         	$commonUrl = site_url() . '/bg/item/mange';
         	$data['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount']);
         }
-        //echo $data['pageNumFooter'];
-        $this->load->view("bgItemMan",$data);
+        $this->load->view('bgItemMan', $data);
     }
+/**********************************************************************************************************************/
+/**********************************************************************************************************************/
+/**********************************************************************************************************************/
+/**********************************************************************************************************************/
+/**********************************************************************************************************************/
+/**********************************************************************************************************************/
+/**********************************************************************************************************************/
+/**********************************************************************************************************************/
     public function set($state = -1,$itemId = -1)
     {
         //指定商品指定状态

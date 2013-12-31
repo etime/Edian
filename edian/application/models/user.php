@@ -284,6 +284,26 @@ class User extends CI_Model {
         }
     }
 
+    /**
+     * 根据用户编号获取用户昵称
+     * @param int $userId         用户编号
+     * @return boolean | string   用户昵称，或者返回用户不存在信息：false
+     */
+    public function getNameById($userId) {
+        $userId = (int)$userId;
+        if ($userId == 0) {
+            return false;
+        }
+        $sql = "SELECT nickname FROM user WHERE id = '$userId'";
+        $res = $this->db->query($sql);
+        if ($res->num_rows === 0) {
+            return false;
+        } else {
+            $res = $res->result_array();
+            return $res[0]['nickname'];
+        }
+    }
+
 //    public function getNum($userId) {
 //        $userId = (int)$userId;
 //        $sql = "SELECT mailNum, comNum FROM user WHERE id = '$userId'";
@@ -324,11 +344,7 @@ class User extends CI_Model {
         $res=$this->db->query($sql);
         return $this->getArray($res->result_array());
     }
-    public function getNameById($id)
-    {
-        $res = $this->db->query("select user_name from user where user_id = '$id'");
-        return $this->getArray($res->result_array());
-    }
+
     public function showUserAll()
     {
         //这个函数的作用是输出数据库中所有的用户列表的函数
