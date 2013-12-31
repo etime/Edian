@@ -24,5 +24,22 @@ class Boss extends CI_Model {
         $res = $res->result_array();
         return $res[0]['id'];
     }
+
+    /**
+     * 通过老板的 id 获取老板的 loginName
+     * @param int $bossId
+     * @return boolean | string
+     */
+    public function getLoginNameByBossId($bossId) {
+        $bossId = (int)$bossId;
+        $sql = "SELECT loginName FROM boss WHERE id = $bossId";
+        $res = $this->db->query($sql);
+        if ($res->num_rows === 0) {
+            return false;
+        } else {
+            $res = $res->result_array();
+            return $res[0]['loginName'];
+        }
+    }
 }
 ?>

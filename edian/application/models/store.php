@@ -329,5 +329,22 @@ class Store extends CI_Model {
         }
         return false;
     }
+
+    /**
+     * 通过商店的 storeId 获取其 ownerId
+     * @param $storeId 商店的编号
+     * @return boolean | int
+     */
+    public function getOwnerIdByStoreId($storeId) {
+        $storeId = (int)$storeId;
+        $sql = "SELECT ownerId FROM store WHERE id = $storeId";
+        $res = $this->db->query($sql);
+        if ($res->num_rows === 0) {
+            return false;
+        } else {
+            $res = $res->result_array();
+            return $res[0]['ownerId'];
+        }
+    }
 }
 ?>

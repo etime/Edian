@@ -8,8 +8,7 @@
 /*
  * 这个作为前台item.php 的操作合集了
  */
-class item extends MY_Controller
-{
+class item extends MY_Controller {
     // 存储用户的 userId
     var $userId;
 
@@ -23,6 +22,7 @@ class item extends MY_Controller
         $this->load->model('user');
         $this->load->model('store');
         $this->load->model('comitem');
+        $this->load->model('morder');
     }
 
     /**
@@ -72,40 +72,22 @@ class item extends MY_Controller
      * @param int   $itemId  商品对应的唯一标示id
      */
     public function index($itemId = -1) {
-        // 商品不存在
-        if ($itemId === -1) {
-            show_404();
-            return;
-        }
         $itemInfo = $this->mitem->getItemInfo($itemId);
-        $this->load->model('morder');
         $itemInfo['orderNum'] = $this->morder->getOrderNum($itemId);
         // 商品不存在
         if ($itemInfo === false) {
             show_404();
             return;
         }
-
-        // 进行attr的数据解码
-        /*
-        $attr = explode('|', $itemInfo['attr']);
-        $attr[0] = explode(',', $attr[0]);
-        $attr[0] = $this->_formAttr($attr[0]);
-        // 设置商品的属性
-        $itemInfo['attr'] = $attr;
-        */
         // 获取商品所属商店的信息
         $storeInfo = $this->store->getStoreInfo($itemInfo['belongsTo']);
-
         //$data = array_merge($itemInfo, $storeInfo);
         $data['itemId'] = $itemId;
-
         // 获取商品评论
         $comt = $this->comitem->selItem($itemId);
         $data['comment'] = Array();
         $cnt = 0;
-        //接下来的查询可以分为两种，有机会对比下性能之比,一种是sql不停的or还有下面for一下
-        //对查询的编码解码，应该也放model中
+        //对评论的编码解码，应该也放model中
         for ($i = count($comt)-1; $i >= 0; $i --) {
             $temp = $this->user->getPubById($comt[$i]['user_id']);
             if($temp) {
@@ -114,11 +96,11 @@ class item extends MY_Controller
                 $cnt ++;
             }
         }
-        $data["item"] = $itemInfo;
+        $data['item'] = $itemInfo;
         $data['store'] = $storeInfo;
-        var_dump($data);
+        $this->test($data);
         $this->mitem->addvisitor($itemId);
-        $this->load->view("item", $data);
+        $this->load->view('item', $data);
     }
 
 /**********************************************************************************************************************/
