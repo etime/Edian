@@ -506,6 +506,26 @@ class Mitem extends Ci_Model {
             return $res[0]['title'];
         }
     }
+
+    /**
+     *  根据bossId获取用户的商品列表
+     *  @param int $bossId  商品所属boss 的id
+     *  return array | boolean 成功是数据数组，失败是false
+     */
+    public function getBgList($bossId) {
+        $bossId = (int)$bossId;
+        if ($bossId == 0) {
+            return false;
+        }
+        $sql = "SELECT id, title, storeNum, price, state FROM item WHERE belongsTo = $bossId";
+        $res = $this->db->query($sql);
+        if ($res->num_rows === 0) {
+            return false;
+        } else {
+            $res = $res->result_array();
+            return $res;
+        }
+    }
 /**********************************************************************************************************************/
 /**********************************************************************************************************************/
 /**********************************************************************************************************************/
@@ -645,21 +665,7 @@ class Mitem extends Ci_Model {
         //只匹配在销售的商品
         return $res->result_array();
     }
-    /**
-     *  根据bossId获取用户的商品列表
-     *  @param int $bossId  商品所属boss 的id
-     *  return array | boolean 成功是数据数组，失败是false
-     */
-    public function getBgList($bossId)
-    {
-        $bossId = (int)$bossId;
-        $res = $this->db->query('select id,title,storeNum,price,state from item where belongsTo = ' . $bossId);
-        if($res->num_rows){
-            $res = $res->result_array();
-            return $res;
-        }
-        return false;
-    }
+
     public function getAllList()
     {
         //获得全部的列表，为为后台浏览,管理员 权限
