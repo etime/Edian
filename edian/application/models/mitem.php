@@ -658,7 +658,7 @@ class Mitem extends Ci_Model {
     public function getAllList()
     {
         //获得全部的列表，为为后台浏览,管理员 权限
-    $res = $this->db->query("select id,title,store_num,price,state from item");
+    $res = $this->db->query("select id,title,storeNum,price,state from item");
         if($res){
             $res = $res->result_array();
             return $res;

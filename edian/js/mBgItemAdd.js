@@ -8,16 +8,21 @@ function forbid() {
     //上面标示的是具体的符号
     //浮点数的输入控制
     $("#content").delegate(".float","keypress",function(event){
-        if( ( event.which<46 )||( event.which > 57 )|| ( event.which === 47 )){
-            return false;
-        }
+
         //之前有针对keypress unbind 其实不需要，因为只会针对price才会检测
     })
     $(document).delegate("input","keypress",function (event) {
         console.log(event.which);
-        for (var i = 0,len = forbiden.length; i < len; i ++) {
-            if(event.which === forbiden[i]){
+        var type = $(this).attr("class");
+        if(type === 'float'){
+             if( ( event.which<46 )||( event.which > 57 )|| ( event.which === 47 )){
                 return false;
+            }
+        }else{
+            for (var i = 0,len = forbiden.length; i < len; i ++) {
+                if(event.which === forbiden[i]){
+                    return false;
+                }
             }
         }
     })
@@ -30,6 +35,7 @@ $(document).ready(function  () {
     $("form").submit(function () {
         //检查全站分类
         var value = $("input[name = 'keyk']"),flag = 0;
+        formData();
         for (var i = 0, l = value.length; i < l; i ++) {
             console.log($(value[i]).attr("checked"));
             if($(value[i]).attr('checked')){
@@ -92,6 +98,7 @@ $(document).ready(function  () {
         if(!( formData() && formThumb())){
             return false;
         }
+        return false;
     })
     part(dir);
     property = new proAdd();
@@ -143,9 +150,10 @@ function formData() {
                     [红色,3kg]12,11;
                     [绿色,1kg]12,11
                     [绿色,3kg]12,11
-    绿色对应颜色的具体表示，1kg是重量的具体表示，12是存货量,11表示价格
+            绿色对应颜色的具体表示，1kg是重量的具体表示，12是存货量,11表示价格
     */
             console.log(pro2s);
+            debugger;
             item = getTabData(pro2s);//0是库存，1是价格
             var length = item[0].length;
             attr = length+","+prokey[0];
@@ -207,9 +215,10 @@ function formData() {
            var store = $(fnode).find("input[name = 'store']");
            var sprice = $(fnode).find("input[name = 'sprice']");
            var len = store.length;
+           cnt  = 0;
            for (var i = 0; i < len; i ++) {
-                res[0][i] = $(store[i]).val();
-                res[1][i] = $(sprice[i]).val();
+                res[0][cnt] = $(store[i]).val();
+                res[1][cnt] = $(sprice[i]).val();
             }
             return res;
        }
@@ -524,7 +533,7 @@ function store() {
             price = $.trim($("#price").val());
         }
         var res = "<table class = 'valTr'>";
-        var ps = "<td><input type = 'text' name = 'store'/></td><td><input type = 'text' name = 'sprice'  value = '"+price+"' /></td>";
+        var ps = "<td><input type = 'text' name = 'store' class = 'float'/></td><td><input type = 'text' name = 'sprice'  class = 'float' value = '"+price+"' /></td>";
         //如果之前输入了价格，则在这里输入价格
         for (var i = 0,len = index[0].length;i<len;i++) {
             if(index[1][i]){
