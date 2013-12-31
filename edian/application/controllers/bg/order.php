@@ -62,7 +62,7 @@ class Order extends Home {
         }
         $data['today'] = $ans;
         if ($data['today']) {
-            $temp = $this->pagesplit->split($data['today'], $pageId, $pageSize);
+            $temp = $this->pagesplit->split($data['today'], $pageId, $this->pageSize);
             $data['today'] = $temp['newData'];
             $commonUrl = site_url() . '/order/Today';
             $data['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount']);
