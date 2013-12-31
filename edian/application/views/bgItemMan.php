@@ -23,31 +23,46 @@ $siteUrl = site_url();
             <th>状态</th>
             <th class = "oper">操作</th>
         </tr>
-        <?php for($i = 0,$len  = count($item);$i < $len;$i++):?>
+<?php
+    if($item){
+        $len  = count($item);
+    }else {
+        $len = 0;
+    }
+?>
+        <?php for($i = 0;$i < $len;$i++):?>
 <?php
 $now = $item[$i];
 ?>
         <tr>
             <td>
        <a href = "<?php echo $siteUrl.'/item/index/'.$now['id'] ?>" target = "__blank"><?php echo $now["title"] ?></a></td>
-            <td><?php echo $now["store_num"] ?></td>
+            <td><?php echo $now['storeNum'] ?></td>
             <td>￥<?php echo $now["price"] ?></td>
             <td>
                 <?php
+                    /*
                     if($now["state"] == 0 )echo "<span class = 'onsale'>销售中..</span>";
                     else if($now["state"] == 1)echo "<span class = 'down'>下架中..</span>";
                     else if($now["state"] == 2)echo "<span class = 'prp'>预备中..</span>";
+                    */
+                    echo '<span>' . $stateMark[$now['state']]. ' </span>';
                 ?>
             </td>
             <td class = "oper">
-                <a class = "prp" href = "<?php echo $siteUrl.'/bg/item/set/2/'.$now['id'] ?>">预备</a>/
-                <a class = "del" href = "<?php echo $siteUrl.'/bg/item/set/2/'.$now['id'] ?>">删除</a>/
-                <a class = "onsale" href = " <?php echo $siteUrl.'/bg/item/set/0/'.$now['id'] ?>">销售</a>/
-                <a class = "down" href = " <?php echo $siteUrl.'/bg/item/set/1/'.$now['id'] ?>">下架</a>
+                <?php
+                foreach ($stateMark  as $key => $val) {
+                    echo "<a href = '$siteUrl/bg/item/set/$key' " . $now['id'] . ">$val</a>";
+                }
+                ?>
             </td>
         </tr>
         <?php endfor?>
     </table>
+<?php
+if(isset($pageNumFooter))
+    echo $pageNumFooter;
+?>
 <style type="text/css" media="all">
     table{
         border-spacing:0px;
@@ -57,8 +72,11 @@ $now = $item[$i];
         color:#000;
     }
     .oper{
-        width:170px;
+        width:190px;
     }
+    .oper a{
+    margin:0 5px;
+}
     td{
         text-align:center;
     }

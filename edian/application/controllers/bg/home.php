@@ -48,7 +48,25 @@ class Home extends MY_Controller {
         $this->session->set_userdata('bossId', $bossId);
         return $bossId;
     }
+    /**
+     * 获取boss对应的id
+     * @return int | boolean
+     * @author unasm
+     */
+    protected function getBossId()
+    {
+        $temp = $this->session->userdata('bossId');
 
+        $bossId = (int)$temp;
+        if($bossId){
+            return $bossId;
+        }else{
+            $this->load->model('mwrong');
+            $this->mwrong->insert('controller/bg/home/' . __LINE__ . '出现非数字的bossId = ' . $temp);
+            return false;
+        }
+
+    }
     /**
      * 后台的入口view函数
      */

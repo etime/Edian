@@ -1,4 +1,5 @@
 <?php
+require 'home.php';
 /*************************************************************************
     > File Name :     ../controllers/bg/item.php
     > Author :        unasm
@@ -8,7 +9,7 @@
 /*
  * 关于后台的一些item的操作集合
  */
-class item extends MY_Controller
+class item extends Home
 {
     var $user_id,$ADMIN;
     /**
@@ -18,36 +19,48 @@ class item extends MY_Controller
     {
         parent::__construct();
         $this->load->model("mitem");
-        $this->user_id = $this->user_id_get();
-        $this->load->model("user");
+        $this->user_id = $this->getUserId();
+//        $this->load->model("user");
         $this->load->library('pagesplit');
-        $this->ADMIN = 3;
-        $this->type = $this->user->getType($this->user_id);
+        //$this->ADMIN = 3;
     }
 
-    public function mange($pageId = 1, $pageSize = 2)
+    public function mange($pageId = 1)
     {
         if(!$this->user_id){
             $this->noLogin(site_url("bg/item/mange"));
             return;
         }
+        $storeId = $this->session->userdata('storeId');
+        $bossId = $this->session->userdata('bossId');
+        if(!( $storeId && $bossId )){
+            $this->choseStore($bossId);
+            return;
+        }
+        $credit = $this->user->getCredit($this->user_id);
+        //page have no need to exsts
         if (isset($_GET['pageId'])) {
         	$pageId = $_GET['pageId'];
         }
+        $this->load->config("edian");
+        $pageSize = $this->config->item('pageSize');
         $data = Array();
-        if($this->type == $this->ADMIN){
+        if($credit == $this->config->item('adminCredit')){
             $data["item"] = $this->mitem->getAllList();
+        }else if($credit == $this->config->item('bossCredit')){
+            $data["item"] = $this->mitem->getBgList($bossId);
         }else{
-            $data["item"] = $this->mitem->getBgList($this->user_id);
+            exit('权限不足');
         }
-        //$this->showArr($data);
+        $data['stateMark'] = $this->config->item('state');
+        $this->load->library('help');
         if ($data['item']) {
         	$temp = $this->pagesplit->split($data['item'], $pageId, $pageSize);
         	$data['item'] = $temp['newData'];
         	$commonUrl = site_url() . '/bg/item/mange';
         	$data['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount']);
         }
-        echo $data['pageNumFooter'];
+        //echo $data['pageNumFooter'];
         $this->load->view("bgItemMan",$data);
     }
     public function set($state = -1,$itemId = -1)
@@ -93,7 +106,7 @@ class item extends MY_Controller
         }else{
             $com = $this->comitem->getUserDate($this->user_id,100);
         }
-        
+
         //分页
         if ($com) {
         	$temp = $this->pagesplit->split($com, $pageId, $pageSize);
@@ -101,7 +114,7 @@ class item extends MY_Controller
         	$commonUrl = site_url() . '/bg/item/itemCom';
         	$data['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount']);
         }
-        
+
         if($com) $len = count($com);
         else $len = 0;
         for ($i = 0; $i < $len; $i++) {
@@ -142,6 +155,7 @@ class item extends MY_Controller
             redirect(site_url("bg/item/itemCom"));
         }
     }
+    /*
     private function showArr($array)
     {
         echo "<br/>";
@@ -153,5 +167,6 @@ class item extends MY_Controller
         }
         echo "<br/>";
     }
+     */
 }
 ?>
