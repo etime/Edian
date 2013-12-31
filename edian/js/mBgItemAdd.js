@@ -7,15 +7,11 @@ function forbid() {
     var forbiden = [33,34,35,36,37,38,39,42,47,58,59,60,61,62,63,64,91,93,94,95,96,123,124,125,126];
     //上面标示的是具体的符号
     //浮点数的输入控制
-    $("#content").delegate(".float","keypress",function(event){
-
-        //之前有针对keypress unbind 其实不需要，因为只会针对price才会检测
-    })
     $(document).delegate("input","keypress",function (event) {
         console.log(event.which);
         var type = $(this).attr("class");
         if(type === 'float'){
-             if( ( event.which<46 )||( event.which > 57 )|| ( event.which === 47 )){
+             if( ( event.which < 46 )||( event.which > 57 )|| ( event.which === 47 )){
                 return false;
             }
         }else{
@@ -35,7 +31,6 @@ $(document).ready(function  () {
     $("form").submit(function () {
         //检查全站分类
         var value = $("input[name = 'keyk']"),flag = 0;
-        formData();
         for (var i = 0, l = value.length; i < l; i ++) {
             console.log($(value[i]).attr("checked"));
             if($(value[i]).attr('checked')){
@@ -95,10 +90,9 @@ $(document).ready(function  () {
             return false;
         }
 
-        if(!( formData() && formThumb())){
+        if(!( formData() && formThumb() ) ){
             return false;
         }
-        return false;
     })
     part(dir);
     property = new proAdd();
@@ -138,95 +132,103 @@ function formThumb() {
 }
 /**
  * 构成库存和对应属性的价格
+ *  attr的格式为color
+ *       2,2,"颜色","重量",红色,绿色,1kg,3kg|//第一个属性，第二个属性，颜色的个数，重量的个数,方便数据处理
+ *           [红色,1kg]12,11;
+ *           [红色,3kg]12,11;
+ *           [绿色,1kg]12,11
+ *           [绿色,3kg]12,11
+ *  绿色对应颜色的具体表示，1kg是重量的具体表示，12是存货量,11表示价格
  */
 function formData() {
-        var reg = /\d+\.jpg/,attr;
-        var pro2s = $("#store").find(".valTr"),item = [];
-        if(prokey.length == 1){
-    /*
-           attr的格式为color
-                2,2,"颜色","重量",红色,绿色,1kg,3kg|//第一个属性，第二个属性，颜色的个数，重量的个数,方便数据处理
-                    [红色,1kg]12,11;
-                    [红色,3kg]12,11;
-                    [绿色,1kg]12,11
-                    [绿色,3kg]12,11
-            绿色对应颜色的具体表示，1kg是重量的具体表示，12是存货量,11表示价格
-    */
-            console.log(pro2s);
-            debugger;
-            item = getTabData(pro2s);//0是库存，1是价格
-            var length = item[0].length;
-            attr = length+","+prokey[0];
-            attrleft = "";
-            for(var i = 0;i<length;i++){
-                temp = reg.exec(proans[0][1][i]);//1是图片，0是文字
-                if(temp){
-                    temp = temp[0];//提取图片的名字
-                }
-                else {
-                    temp = ' ';
-                }
-                attr+=","+proans[0][0][i]+":"+temp;//item的0是库存，1是价格
-                attrleft+=item[0][i]+","+item[1][i]+";";
-                if((!item[0][i]) ||(!item[1][i])){
+    var $this = this;
+    $this._flag = 0;
+    var reg = /\d{1,10}_201[\d\-\_]{1,40}\.jpg$/,attr;
+    var pro2s = $("#store").find(".valTr"),item = [];
+    if(prokey.length == 1){
+        item = getTabData(pro2s);//0是库存，1是价格
+        if(!item)return false;
+        var length = item[0].length;
+        attr = length+","+prokey[0];
+        attrleft = "";
+        for(var i = 0;i<length;i++){
+            temp = reg.exec(proans[0][1][i]);//1是图片，0是文字
+            if(temp){
+                temp = temp[0];//提取图片的名字
+            }else {
+                temp = ' ';
+            }
+            attr+=","+proans[0][0][i]+":"+temp;//item的0是库存，1是价格
+            attrleft+=item[0][i]+","+item[1][i]+";";
+            if((!item[0][i]) ||(!item[1][i])){
+                $.alet("为方便游客购物,请补全填库存表");
+                return false;
+            }
+        }
+        if(attrleft === ''){
+            //有颜色等属性值，却没有库存，是因为没有填写库存表
+            attr="";
+        } else {
+            attr+="|"+attrleft;
+        }
+    }else if(prokey.length == 2){
+        attr = proans[1][0].length+","+proans[0][0].length+","+prokey[1]+","+prokey[0];
+        //先从2开始，然后读取长度和内容
+        var temp;
+        for(var i = 0,len = proans[1][0].length ; i < len ; i++){
+            temp = reg.exec(proans[1][1][i]);
+            temp = temp ? temp[0] : ' ';
+            attr+=","+proans[1][0][i]+":"+temp;
+        }
+        for(var j = 0,lenj = proans[0][0].length;j<lenj;j++){
+            temp = reg.exec(proans[0][1][j]);
+            temp = temp ? temp[0] : ' ';
+            attr += ","+proans[0][0][j]+":"+temp;
+        }
+        attr+="|";
+        for (i = 0, l = pro2s.length; i < l; i ++) {
+            temp = getTabData(pro2s[i]);
+            if(!temp)return false;
+            for (j = 0, l = temp[0].length; j < l; j ++) {
+                attr+=temp[0][j]+","+temp[1][j]+";";
+                if((!temp[0][j]) ||(!temp[1][j])){
                     $.alet("为方便游客购物,请补全填库存表");
                     return false;
                 }
             }
-            if(attrleft === ''){
-                //有颜色等属性值，却没有库存，是因为没有填写库存表
-                attr="";
-            } else {
-                attr+="|"+attrleft;
-            }
-       }else if(prokey.length == 2){
-            attr = proans[1][0].length+","+proans[0][0].length+","+prokey[1]+","+prokey[0];
-            //先从2开始，然后读取长度和内容
-            var temp;
-            for(var i = 0,len = proans[1][0].length ; i < len ; i++){
-                temp = reg.exec(proans[1][1][i]);
-                temp = temp ? temp[0] : ' ';
-                attr+=","+proans[1][0][i]+":"+temp;
-            }
-            for(var j = 0,lenj = proans[0][0].length;j<lenj;j++){
-                temp = reg.exec(proans[0][1][j]);
-                temp = temp ? temp[0] : ' ';
-                attr += ","+proans[0][0][j]+":"+temp;
-            }
-            attr+="|";
-            for (i = 0, l = pro2s.length; i < l; i ++) {
-                temp = getTabData(pro2s[i]);
-                for (j = 0, l = temp[0].length; j < l; j ++) {
-                    attr+=temp[0][j]+","+temp[1][j]+";";
-                    if((!temp[0][j]) ||(!temp[1][j])){
-                        $.alet("为方便游客购物,请补全填库存表");
-                        return false;
-                    }
-                }
-            }
-            //没有数据的话，清空
-            if(pro2s.length === 0){
-                attr = "";
-            }
-       }
-       function getTabData(fnode){
-           //res 第0层对应的是键值，1对应的是存货量，2对应的是价格
-           var res = [[],[]];
-           var store = $(fnode).find("input[name = 'store']");
-           var sprice = $(fnode).find("input[name = 'sprice']");
-           var len = store.length;
-           cnt  = 0;
-           for (var i = 0; i < len; i ++) {
+        }
+        //没有数据的话，清空
+        if(pro2s.length === 0){
+            attr = "";
+        }
+    }
+    function getTabData(fnode){
+       //res 第0层对应的是键值，1对应的是存货量，2对应的是价格
+       var res = [[],[]];
+       var store = $(fnode).find("input[name = 'store']");
+       var sprice = $(fnode).find("input[name = 'sprice']");
+       var len = store.length;
+       cnt  = 0;
+       for (var i = 0; i < len; i ++) {
+            var price    = $.trim($(store[i]).val());
+            var storeNum = $.trim($(sprice[i]).val());
+            if(price && storeNum ){
                 res[0][cnt] = $(store[i]).val();
                 res[1][cnt] = $(sprice[i]).val();
+                cnt++;
+            }else{
+                alert('请添加具体的库存和价格');
+                $(sprice[i]).focus();
+                return false;
             }
-            return res;
-       }
-       if(attr &&(attr[attr.length - 1] == ";")){
-           attr = attr.substring(0,attr.length - 1);
-       }
-       $("#attr").attr("value",attr);
-       return true;
+        }
+        return res;
+    }
+    if(attr &&(attr[attr.length - 1] == ";")){
+       attr = attr.substring(0,attr.length - 1);
+    }
+    $("#attr").attr("value",attr);
+    return true;
 }
 /**
  * 这里是控制分区，全站类别的显示
