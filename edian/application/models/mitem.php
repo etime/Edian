@@ -379,13 +379,8 @@ class Mitem extends Ci_Model {
         $this->load->model('boss');
         $loginName = $this->boss->getLoginNameByBossId($bossId);
 
-        echo 'belongsTo = ' . $res['belongsTo'] . '<br>';
-        echo 'loginName = ' . $loginName . '<br>';
-
         $this->load->model('user');
         $userId = $this->user->getUserIdByLoginName($loginName);
-
-        echo 'userId = ' . $userId . '<br>';
 
         $res['mainThumbnail'] = $this->fixImg($res['mainThumbnail'], $userId, 'main');
         $res['thumbnail'] = $this->formThumb($res['thumbnail'], $userId);
