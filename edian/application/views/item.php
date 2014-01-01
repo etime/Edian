@@ -9,17 +9,20 @@ $attr = json_encode($item['attr']['storePrc']);
 for ($i = 0,$len = strlen($attr); $i < $len ; $i++) {
     if($attr[$i] === '"')$attr[$i] = '\'';
 }
-var_dump($attr);
+echo $this->session->userdata('userId');
 ?>
     <meta http-equiv = "content-type" content = "text/html;charset = utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.8 ,maximum-scale= 1.2 user-scalable=yes" />
     <title>E点</title>
     <link rel="stylesheet" href=" <?php echo $baseUrl."css/item.css" ?>" type="text/css" media="all" />
     <link rel="stylesheet" href=" <?php echo $baseUrl."css/cart.css" ?>" type="text/css" media="all" />
-</head>
 <script type="text/javascript" charset="utf-8">
 var attr = "<?php echo $attr ?>";
+var user_id = "<?php  echo $this->session->userdata('userId')?>";
+var site_url = "<?php echo $siteUrl ?>";
+var itemId = "<?php  echo $itemId?>";
 </script>
+</head>
 <body>
 <?php
     $this->load->view("header");
@@ -246,7 +249,7 @@ var attr = "<?php echo $attr ?>";
         <div id="footer">
         </div>
     </div>
-    <form action="<?php echo $siteUrl.'/reg/dc' ?>" method="get" accept-charset="utf-8" id = "login" class = "login" style = "display:none">
+    <form action="<?php echo $siteUrl.'/login/loginCheck' ?>" method="get" accept-charset="utf-8" id = "login" class = "login" style = "display:none">
         <a href = "#" id = "cel"></a>
         <p>
             用户名/手机号码:
@@ -254,7 +257,7 @@ var attr = "<?php echo $attr ?>";
         </p>
         <p>
             密码:
-            <input type="password" name="passwd" id="passwd"  />
+            <input type="password" name="password" id="passwd"  />
         </p>
         <input type="submit" name="losub" id="losub" value="登录" />
     </form>

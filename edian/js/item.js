@@ -4,12 +4,11 @@
     > Mail :         douunasm@gmail.com
     > Last_Modified: 2013-09-18 20:34:27
  ************************************************************************/
-var user_id = false;
 $(document).ready(function(){
     pg();//集中了页面切换的操作
     det();//头部商品介绍
     //comment();//评论的处理,还有分类没有处理
-    //login();//登录
+    login();//登录
 })
 /**
  * 登录的管理和控制
@@ -17,6 +16,7 @@ $(document).ready(function(){
 function login(){
     var atten = $("#atten");
     var login = $("#login");
+    console.log(user_id);
     if(!user_id){
         var flag = 0;
         atten.text("登陆");
@@ -114,8 +114,11 @@ function attrControl() {
     var faAttr = $(".attr");
     var posx  = -1,valuex,posy = -1,valuey;
     faAttr.delegate(".attrValue" , 'click' , function (event) {
-        console.log($(this).attr("title"));
-        var pos = $(this.parentNode).attr("alt");
+        var parNode = this.parentNode;
+        //进行选择框的切换
+        $(parNode).find('.atvC').removeClass('atvC');
+        $(this).addClass("atvC");
+        var pos = $(parNode).attr("alt");
         if(parseInt(pos,10) === 0 ){
             posx = $(this).attr("alt");
             valuex = $(this).attr("title");
@@ -129,16 +132,18 @@ function attrControl() {
             setAttrData();
         }
     })
+    //将晚上属性的添加，将对应的价格和库存修改
     function setAttrData(){
         if(faAttr.length === 1){
             console.log(attr[posx]);
             var sp = attr[posx];
-            $("#getAttr").val(valuex);
+            $("#info").val(valuex);
         }else if(faAttr.length === 2){
-            $("#getAttr").val(valuex + '|' + valuey);
+            $("#info").val(valuex + '|' + valuey);
             var sp = attr[posx][posy];
         }
-        console.log(sp);
+        $("#price").text(sp.prc);
+        $("#tS").text(sp.store);
     }
 }
 function det() {
@@ -170,13 +175,12 @@ function det() {
     //对attr进行处理,数据的初始化和事件的绑定,对应的动作
 
     var inlimit = 0,flag;//时序控制
-    var ts  = $("#tS");
+    console.log("ab");
     // 对用户的下单进行操
     $("#fmIf").delegate(".bton","click",function(){
         var dir = $(this).attr("name");
-        var tsV = ts.text();
         $("#iprice").val($("#price").text());//将price保存到input中去,方便e点下单
-        if(dir  == "cart"){
+        if(dir  === 'cart'){
             //e点购买的情况下其实不用js操作，直接就是了
             /*
              * 0.5s之内，连续点击则添加数量，之后发送请求
@@ -190,7 +194,6 @@ function det() {
             if(inlimit == 0){
                 inlimit = 1;
                 flag = setInterval(function(){
-                    console.log("inner interval");
                     if(inlimit == 1){//为1 代表500ms内没有添加，2表示有，延迟500ms
                         clearInterval(flag);
                         sendOrd();
@@ -201,8 +204,8 @@ function det() {
                 },300);
             }else{
                 inlimit=2;
-                var val = parseInt($("#buyNum").val());
-                $("#buyNum").val(Math.min(tsV,val+1));
+                var val = parseInt($("#buyNum").val(), 10);
+                $("#buyNum").val(val+1);
             }
             event.preventDefault();
         }else if(dir == "inst"){
@@ -226,7 +229,6 @@ function deinfo(str) {
                 res+="|"+now[0];
             }
         }
-        console.log(res);
         return res;
     }
     return false;
@@ -237,16 +239,16 @@ function deinfo(str) {
  * @param {node} attr   将属性信息保存到dom 中？
  */
 function sendOrd(){
+    debugger;
     var info = $("#info").val();
     info  =  deinfo(info);
     var buyNum = $("#buyNum").val();
     //var reg = /http\:\/\/[\/\.\da-zA-Z]*\.jpg/;
     var  cartHref = site_url+"/order/add/"+itemId;
-    var price = $("#price").text();
     $.ajax({
         url: cartHref,
         type: 'POST',
-        data: {"info":info,"buyNum":buyNum,"price":price},
+        data: {"info":info,"buyNum":buyNum},
         dataType:'json',
         success: function (data, textStatus, jqXHR) {
             console.log(data);//目前就算了吧，不做删除的功能,返回的id是为删除准备的
