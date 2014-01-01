@@ -364,6 +364,10 @@ class Mitem extends Ci_Model {
     public function getItemInfo($itemId) {
         $sql = "SELECT title, detail, price, belongsTo, mainThumbnail, thumbnail, satisfyScore, attr, storeNum, " .
             "putawayTime FROM item WHERE id = $itemId";
+        $itemId = (int)$itemId;
+        if ($itemId === 0) {
+            return false;
+        }
         $res = $this->db->query($sql);
         // 如果没有筛选到相应的商品
         if ($res->num_rows === 0) {

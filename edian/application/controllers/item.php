@@ -73,12 +73,12 @@ class item extends MY_Controller {
      */
     public function index($itemId = -1) {
         $itemInfo = $this->mitem->getItemInfo($itemId);
-        $itemInfo['orderNum'] = $this->morder->getOrderNum($itemId);
         // 商品不存在
         if ($itemInfo === false) {
             show_404();
             return;
         }
+        $itemInfo['orderNum'] = $this->morder->getOrderNum($itemId);
         // 获取商品所属商店的信息
         $storeInfo = $this->store->getStoreInfo($itemInfo['belongsTo']);
         //$data = array_merge($itemInfo, $storeInfo);

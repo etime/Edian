@@ -171,7 +171,15 @@ class Order extends My_Controller{
     }
 
     /**
-     * 用户的下单页面
+     * 用户下单页面
+     * 通过 poset 得到的数据
+     *
+     * inst
+     * info
+     * buyNum
+     * price
+     *
+     * @param int $ajax
      */
     public function index($ajax = 0) {
         if ($this->userId == -1) {
