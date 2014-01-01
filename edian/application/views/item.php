@@ -4,67 +4,62 @@
 <?php
 $siteUrl = site_url();
 $baseUrl = base_url();
+echo "userId<br/>";
+echo $this->session->userdata("userId");
 ?>
     <meta http-equiv = "content-type" content = "text/html;charset = utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.8 ,maximum-scale= 1.2 user-scalable=yes" />
     <title>E点</title>
     <link rel="stylesheet" href=" <?php echo $baseUrl."css/item.css" ?>" type="text/css" media="all" />
     <link rel="stylesheet" href=" <?php echo $baseUrl."css/cart.css" ?>" type="text/css" media="all" />
-<?php
-if(count($attr)>1)
-    $jsattr = $attr[1];
-    else $jsattr = "";
-?>
 <script type="text/javascript" >
 var site_url = "<?php echo site_url()?>";
 var base_url = "<?php echo base_url()?>";
-var user_name="<?php echo trim($this->session->userdata('user_name'))?>";
-var user_id="<?php echo trim($this->session->userdata('user_id'))?>";
-var attr = "<?php echo $jsattr?>";
+//var user_name="<?php echo trim($this->session->userdata('user_name'))?>";
+var attr = "<?php echo json_encode($item['attr'])?>";
 var itemId = "<?php echo $itemId?>";
-var masterId = "<?php echo $author_id ?>";
-var masterName = "<?php echo $user_name ?>";
-var lestPrc = "<?php echo $lestPrc ?>";
+//var masterId = "<?php echo $author_id ?>";
+//var masterName = "<?php echo $user_name ?>";
+//var lestPrc = "<?php echo $lestPrc ?>";
 var lsp = Array();
 </script>
 </head>
 <body>
 <?php
     $this->load->view("header");
+    $comtLen = 0;
+    //  评价的条数
 ?>
     <div class = "nav body" >
         <a href = "<?php echo $baseUrl ?>">首页</a>
         >>
         <?php
+    /*
         if($user_type == 1 && ((strpos($work,"外卖") !== FALSE)||(strpos($work,"送货")))){
             echo "<a href = '".$siteUrl."/waimai/index' />送货上门</a> >>";
         }
             echo "<a href = '".$siteUrl."/space/index/".$author_id."'>".$user_name."</a>";
+     */
         ?>
     </div>
     <div id="body"  class = "clearfix body">
         <div class = "clearfix imgA">
     <!--集中了对图片的显示-->
             <ul id = "thumb" class = "thumb">
-                <?php for($i = 0,$l = count($img);$i< $l;$i++):?>
-                <?php
-                    if(!$img[$i])continue;
-                ?>
-                <li> <img src = " <?php echo $baseUrl."upload/".$img[$i] ?>" /></li>
-                <?php endfor?>
+                <li> <img src = " <?php echo $item['mainThumbnail'] ?>" /></li>
+                <?php foreach ($item['thumbnail'] as $value) :?>
+                <li> <img src = " <?php echo $value ?>" /></li>
+                <?php endforeach?>
             </ul>
-            <img id = "mImg" src = " <?php echo $baseUrl.'upload/'.$img[0]?>" />
+            <img id = "mImg" src = " <?php echo $item['mainThumbnail']?>" />
         </div>
         <div class = "det clearfix">
             <form action = "<?php echo $siteUrl.'/order/index/'.$itemId ?>" enctype = "multipart/form-data" method = "post" class = "info" accept-charset = "utf-8" id = "fmIf">
     <!--这里将来修改成为快速购买的action -->
                 <h3 id = "title">
-                <?php echo $title ?>
+                <?php echo $item['title'] ?>
                 </h3>
-<?php
-    $comtLen = count($comt);
-?>
-                <p><span class = "item">价格:</span>￥  <em class = "sp" id = "price"> <?php echo $price ?></em></p>
+                <p><span class = "item">价格:</span>￥  <em class = "sp" id = "price"> <?php echo $item['price'] ?></em></p>
                 <p><span class = "item">评分:</span>
                     <span class = "sep">
                     <?php
@@ -78,55 +73,58 @@ var lsp = Array();
                 </p>
                 <p>
                         <span class = "item">销量:</span>
-                        <span class = "sep"> <?php echo $order_num ?></span>
+                        <span class = "sep"> <?php echo $item['orderNum'] ?></span>
 
                         <span class = "item">评价:</span>
                         <span class = "sep">
                             <a id = "judge" href = "#tojudge" > <?php echo $comtLen ?></a>
                         </span>
-                        <span class = 'item'>浏览:</span>
-                        <span class = "sep"> <?php echo $visitor_num ?></span>
                 </p>
-                <p><span class = "item">营业起止时间:</span> <?php echo $operst ?>-- <?php echo $opered ?></p>
-                <?php
-                    if($attr){
-                        echo $attr[0];
-                    }
-                ?>
+                <p>
+    <?php
+    foreach ($item['attr']['idx'] as $key => $val) {
+        echo "<span class = 'item'>" . $key . "</span>" ;
+        foreach ($val as $itemValue) {
+            if($itemValue['img']){
+                echo '<img src = ' . $itemValue['img'] . ' />';
+            } else {
+
+            }
+        }
+    }
+    ?>
+                </p>
+                <p><span class = "item">营业起止时间:</span> <?php  echo $store['deliveryTime']?></p>
                 <input type="hidden" name="info"  id = "info" />
                 <input type="hidden" name="price"  id = "iprice" />
                 <p id = "num">
                     <span class = "item">购买数量:</span>
                     <input type="text" name="buyNum" id="buyNum" value="1" />
-                    <span id = "storeNum">库存: <span id = "tS"><?php echo $store_num ?></span></span>
+                    <span id = "storeNum">库存: <span id = "tS"><?php echo $item['storeNum'] ?></span></span>
                         <!--totol store-->
                     <span id = "numCon">
                         <button class="inc">+</button>
                         <button  class="dec">-</button>
                     </span>
                 </p>
-                <p> <span class="item">承诺:</span> <?php echo $promise ?></p>
                 <?php
                 //if($user_type == 1 && (strpos($work,"送货") !== FALSE))
                 //这里是为了增加数据，以后要去掉上面的注释
-                    echo "<p><input type = 'submit' name = 'inst' class = 'bton ba' value = 'e点购买' /><input type = 'submit' name = 'cart' class = 'bton bcl' href = 'userId/itemId' value = '加入购物车'></p>";
+                    echo "<p><input type = 'submit' name = 'inst' class = 'bton ba' value = 'e点购买' /><input type = 'submit' name = 'cart' class = 'bton bcl' href = 'userId/itemId' value = '加入购物车'></p>"
                 ?>
             </form>
         </div>
          <div id="user" class = "user">
             <div class = "urAten">店家信息</div>
-            <p><a href = "<?php echo $siteUrl."/space/index/".$author_id?>">店主: <?php echo $user_name ?></a></p>
-            <p><a href = "<?php echo $siteUrl."/message/index/".$author_id?>">发送站内信</a></p>
-            <p>联系方式:<?php echo $contract1 ?></p>
+            <p><a href = "<?php echo $siteUrl."/space/index/".$item['belongsTo']?>">店主: <?php echo $store['name']?></a></p>
+            <p>联系方式:<?php echo $store['servicePhone'] ?></p>
             <?php
                 //将来去掉这些赋值
-                if ($contract2) {
-                    echo "<p>QQ:<a href = 'http://wpa.qq.com/msgrd?v=3&uin=".$contract2."&site=qq&menu=yes' target = '_blank'>".$contract2."</a></p>";
-                }
-                if($addr){
-                    echo "<p>地址:".$addr."</p>";
+                if ($store['serviceQQ']) {
+                    echo "<p>QQ:<a href = 'http://wpa.qq.com/msgrd?v=3&uin=".$store['serviceQQ']."&site=qq&menu=yes' target = '_blank'>".$store['serviceQQ']."</a></p>";
                 }
             ?>
+            <p>地址: <?php  echo $store['address']?></p>;
             <div id="allmap">
             </div>
         </div>
@@ -139,11 +137,11 @@ var lsp = Array();
             </ul>
             <div class="des" id = "des" >
                 <!-- short for descript-->
-                <?php echo $content ?>
+                <?php echo $item['detail'] ?>
             </div>
             <div class = "dcom" id = "dcom"  style = "display:none">
                 <p id = "coms" class = "coms">
-                    <a name = "a">全部(<?php echo count($comt) ?>)</a><a name = "h">超赞(<span></span>)</a><a name = "m">还不错(<span></span>)</a><a name = "l">勉强(<span></span>)</a><a  name = "w">暴走(<span></span>)</a>
+                    <a name = "a">全部()</a><a name = "h">超赞(<span></span>)</a><a name = "m">还不错(<span></span>)</a><a name = "l">勉强(<span></span>)</a><a  name = "w">暴走(<span></span>)</a>
                 </p>
                 <ul class = "com" id = "com">
                 <!-- short for comment-->

@@ -98,7 +98,8 @@ class item extends MY_Controller {
         }
         $data['item'] = $itemInfo;
         $data['store'] = $storeInfo;
-        $this->test($data);
+        $this->load->library('help');
+        $this->help->showArr($data);
         $this->mitem->addvisitor($itemId);
         $this->load->view('item', $data);
     }

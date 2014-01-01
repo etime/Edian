@@ -4,22 +4,24 @@
     > Mail :         douunasm@gmail.com
     > Last_Modified: 2013-09-18 20:34:27
  ************************************************************************/
-
+var user_id = false;
 $(document).ready(function(){
     pg();//集中了页面切换的操作
     det();//头部商品介绍
     comment();//评论的处理,还有分类没有处理
     login();//登录
 })
+/**
+ * 登录的管理和控制
+ */
 function login(){
     var atten = $("#atten");
     var login = $("#login");
     if(!user_id){
         var flag = 0;
         atten.text("登陆");
+        //购物车的登录
         $(".lok").click(function(event){
-            //购物车的登录
-            console.log("testing");
             if(user_id){
                 return false;
             }
@@ -58,24 +60,9 @@ function login(){
                 });
             }
         })
-    }else{
+    } else {
         alogin();
     }
-    /*
-    function alogin(){
-        atten.text("购物车");
-        var cart = $("#cart");
-        atten.click(function(){
-            cart.slideToggle();
-        })
-        getCart();
-        $("#order").delegate(".del","click",function(event){
-            var href = $(this).attr("href");
-            ajOper(href,delCart,this);
-            event.preventDefault();
-        })
-    }
-    */
     $("#cel").click(function(event){
         //cancel login
         login.fadeOut();
@@ -83,8 +70,10 @@ function login(){
     })
 }
 
+/*
+ * pg切换有关的操作,tab 切换
+ */
 function pg() {
-    //pg切换有关的操作
     var temp,pg = $("#pg");//pg 页面切换的ul
     var des = $("#des"),dcom = $("#dcom");
     var last = des;//决定下面那个首先显示
@@ -118,6 +107,7 @@ function pg() {
     })
 }
 function det() {
+    return false;
     var total = $.trim($("#storeNum").text());
     var reg = /\d+$/;
     total = reg.exec(total);
@@ -146,6 +136,7 @@ function det() {
         //对attr进行处理,数据的初始化和事件的绑定,对应的动作
         nodeAttr = $(".attr");
         var temp,price = $("#price"),tStore = $("#tS"),len = Array();
+        console.log(attr);
         var info = attr.split(";");
         var ordinfo = Array();//保存属性值的，我想添加的时候方便吧
         function findIdx(node){

@@ -26,8 +26,8 @@ class CI_Help
              echo $tab;
              if(is_array($value)){
                  echo $key." => (<br/>" ;
-                 $this->showArr($value , " - - - " . $tab);
-                 echo ")<br/>";
+                 $this->showArr($value , '&nbsp&nbsp&nbsp&nbsp' . $tab);
+                 echo $tab . ")<br/>";
              }else{
                 echo $key . "=> " .$value ."<br/>";
              }
