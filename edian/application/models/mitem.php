@@ -458,15 +458,15 @@ class Mitem extends Ci_Model {
      * @return array
      * @author unasm
      */
-    public function getAddInfo($itemId)
-    {
+    public function getAddInfo($itemId) {
         $itemId = (int)$itemId;
-        $res = $this->db->query('SELECT belongsTo ,price FROM item WHERE id = ' . $itemId);
-        if($res->num_rows){
+        $res = $this->db->query('SELECT belongsTo, price FROM item WHERE id = ' . $itemId);
+        if ($res->num_rows === 0) {
+            return false;
+        } else {
             $res = $res->result_array();
             return $res[0];
         }
-        return false;
     }
     /**
      * 找到商品对应的 store

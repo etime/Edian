@@ -168,28 +168,7 @@ class Morder extends Ci_Model {
             return $res;
         }
     }
-/**********************************************************************************************************************/
-/**********************************************************************************************************************/
-/**********************************************************************************************************************/
-/**********************************************************************************************************************/
-/**********************************************************************************************************************/
-    /**
-     *  插入订单的信息
-     * 插入的四个东西最为关键，明细orderinnfo，买家ordor，卖家seller，商品货号item_id
-     * @param array $data 包含了itemId,ordor,seller,orerNum,info,price,more集中信息的数组，其中more应该是没有的
-     */
-    public function insert($data)
-    {
-        $orderInfo = $this->formInfo($data);
-        $sql = "insert into ord(info,seller,item_id,ordor) values('$orderInfo','$data[belongsTo]','$data[itemId]','$data[ordor]')";
-        $res = $this->db->query($sql);
-        if($res){
-            $res = $this->db->query("select last_insert_id()");
-            $res = $res->result_array();
-            return $res[0]["last_insert_id()"];
-        }
-        return false;
-    }
+
     /**
      * 拼接info字段信息，插入数据库
      * more是后来单独处理的，真正下单的时候添加的内容
@@ -198,18 +177,53 @@ class Morder extends Ci_Model {
      * @return 拼接成对应的格式，将明细插入数据库
      * <code>final     orderNum & info & price & more</code>
      */
-    private function formInfo($data)
-    {
+    private function _formInfo($data) {
         $res = $data['orderNum'];
-        if(array_key_exists('orderNum' , $data) && array_key_exists('info' , $data) && array_key_exists('price' , $data)){
+        if(array_key_exists('orderNum', $data) && array_key_exists('info', $data) && array_key_exists('price', $data)) {
             $res = $data['orderNum'] . '&' . $data['info'] . '&' . $data['price'];
-            if(array_key_exists('more' , $data)){
-                return $res . '&' .$data['more'];
+            if(array_key_exists('more', $data)){
+                return $res . '&' . $data['more'];
             }
             return $res;
         }
         return false;
     }
+
+    /**
+     * 添加订单
+     * <pre>
+     * data 中主要包含：
+     *      itemId
+     *      ordor
+     *      seller
+     *      orerNum
+     *      info
+     *      price
+     *      more
+     * </pre>
+     * @param array $data
+     * @return boolean | int 插入成功则返回最近插入的订单的编号
+     */
+    public function insert($data) {
+        $orderInfo = $this->_formInfo($data);
+        $sql = "INSERT INTO ord(info, seller, item_id, ordor) VALUES('$orderInfo', '$data[belongsTo]', '$data[itemId]', '$data[ordor]')";
+        $res = $this->db->query($sql);
+        if ($res) {
+            $sql = 'SELECT last_insert_id()';
+            $res = $this->db->query($sql);
+            $res = $res->result_array();
+            return $res[0]['last_insert_id()'];
+        } else {
+            return false;
+        }
+    }
+/**********************************************************************************************************************/
+/**********************************************************************************************************************/
+/**********************************************************************************************************************/
+/**********************************************************************************************************************/
+/**********************************************************************************************************************/
+
+
     /**
      * 取得所有的cart中的商品
      * state为0的商品为购物车的商品

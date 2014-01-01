@@ -39,6 +39,10 @@ class Order extends My_Controller{
         $this->load->view('login', $data);
     }
 
+    public function testAddOrder() {
+
+    }
+
     /**
      * 向购物车里面添加商品,
      *
@@ -66,7 +70,7 @@ class Order extends My_Controller{
         }
         if(! is_int($itemId + 1)){
             //非测试情况下通过sleep的形式减缓伤害攻击速度,争取时间吧
-            if(!TEST){
+            if (!TEST){
                 $this->mwrong->insert('order/add/' . __LINE__ . ' 行出现非数字的itemId :' . $itemId);
                 sleep(100);
             }
@@ -85,8 +89,8 @@ class Order extends My_Controller{
         $data['info']     = $this->input->post('info');
         $data['orderNum'] = $this->input->post('buyNum');
         //这里和controller/write/bgadd中的attr保持一致,放过了对()-的检查
-        if(preg_match("/[\[\]\\\"\/?@=#&<>%$\{\}\\\~`^*]/",$data["info"])){
-            if(!TEST){
+        if (preg_match("/[\[\]\\\"\/?@=#&<>%$\{\}\\\~`^*]/",$data["info"])) {
+            if (! TEST) {
                 $this->mwrong->insert('order/add/' . __LINE__ . ' 行出现不合法字符 :' . $data['info']);
                 sleep(100);
             }
@@ -95,8 +99,8 @@ class Order extends My_Controller{
             return false;
         }
         //检验orderNum
-        if(!is_int($data['orderNum'] + 1)){
-            if(!TEST){
+        if (! is_int($data['orderNum'] + 1)) {
+            if (! TEST) {
                 $this->mwrong->insert('order/add/' . __LINE__ . ' 行出现非数字的orderNum :' . $data['orderNum']);
                 sleep(100);
             }

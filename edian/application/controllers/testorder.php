@@ -9,17 +9,16 @@
 class Testorder extends MY_Controller
 {
 
-     function __construct()
-    {
+    function __construct() {
         parent::__construct();
     }
+
     /**
      * 测试order/add的函数
      *
      * @author unasm
      */
-    public function testAdd()
-    {
+    public function testAdd() {
         $this->load->library('help');
         //构造的否定的add get方式的数据,主要是info的问题
         $url = array(
