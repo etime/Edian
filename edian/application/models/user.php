@@ -217,15 +217,15 @@ class User extends CI_Model {
      */
     public function getPubById($userId) {
         $userId = (int)$userId;
-        if (! $this->isUserExistByUserId($userId)) {
+        if ($userId === 0) {
             return false;
         }
         $sql = "SELECT nickname, registerTime, photo FROM user WHERE id  = $userId";
         $res = $this->db->query($sql);
-        $res = $res->result_array();
-        if (count($res) == 0) {
+        if ($res->num_rows === 0) {
             return false;
         } else {
+            $res = $res->result_array();
             return $res[0];
         }
     }
@@ -304,6 +304,16 @@ class User extends CI_Model {
         }
     }
 
+    public function ordaddr($userId) {
+        $sql = 'SELECT phone, address FROM user WHERE id = ' . $userId;
+        $res = $this->db->query($sql);
+        if ($res->num_rows === 0) {
+            return false;
+        } else {
+            $res = $res->result_array();
+            return $res[0];
+        }
+    }
 //    public function getNum($userId) {
 //        $userId = (int)$userId;
 //        $sql = "SELECT mailNum, comNum FROM user WHERE id = '$userId'";
@@ -505,12 +515,7 @@ class User extends CI_Model {
         $sql = "update user set addr  = concat(addr,'".$addr."') where user_id = $userId";
         return $this->db->query($sql);
     }
-    public function ordaddr($userId)
-    {
-        $res = $this->db->query("select contract1,addr from user where user_id = $userId");
-        $res = $res->result_array();
-        if(count($res))return $res[0];
-    }
+
     public function allWaiMai()
     {
         //得到所有的外卖商店,评分就算了，查询太多，就添加营业时间吧

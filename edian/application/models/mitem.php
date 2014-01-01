@@ -467,19 +467,20 @@ class Mitem extends Ci_Model {
      * 找到商品对应的 store
      * @param   int     $itemId     商品的 itemId
      * @return  boolean | array     如果商品不存在，返回 false，否则返回商品所属商店的 id
-     * @todo    减少sql请求会加快效率
      */
     public function  getMaster($itemId) {
         $itemId = (int)$itemId;
-
+        if ($itemId === 0) {
+            return false;
+        }
         $sql = "SELECT belongsTo FROM item WHERE id = $itemId";
         $res = $this->db->query($sql);
-        if($res->num_rows){
+        if ($res->num_rows === 0) {
+            return false;
+        } else {
             $res = $res->result_array();
             return $res[0];
         }
-        return false;
-        //return $res->num_rows ? $res->result_array() : false;
     }
 
     /**
@@ -519,6 +520,22 @@ class Mitem extends Ci_Model {
         } else {
             $res = $res->result_array();
             return $res;
+        }
+    }
+
+    /**
+     * 为订单提供必要的信息
+     * @param $itemId
+     * @return bool
+     */
+    public function getOrder($itemId) {
+        $sql = 'SELECT title, belongsTo, storeNum, price, mainThumbnail FROM item WHERE id = ' . $itemId;
+        $res = $this->db->query($sql);
+        if ($res->num_rows === 0) {
+            return false;
+        } else {
+            $res = $res->result_array();
+            return $res[0];
         }
     }
 /**********************************************************************************************************************/
@@ -640,17 +657,7 @@ class Mitem extends Ci_Model {
         $this->db->query("update item set value = value+600 where art_id  = '$artId'");
         //大概是增加20分钟的样子，
     }
-    public function getOrder($itemId)
-    {
-        //为订单提供必要的信息
-        $res = $this->db->query("select title,author_id,store_num,price,img from item where id = $itemId");
-        //如果搜一个没有id的主键id，结果会是什么,$res还会是true吗？
-        if($res){
-            $res = $res->result_array();
-            return $res[0];//id是主键，有的话，结果必然只有一个
-        }
-        return false;
-    }
+
 
 
     public function getIdByKey($key)
