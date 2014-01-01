@@ -394,7 +394,9 @@ class Mitem extends Ci_Model {
         $this->load->model('user');
         $userId = $this->user->getUserIdByLoginName($loginName);
 
-        $this->fixAttrImg($res['attr']['idx'], $userId);
+        if (is_array($res['attr']) && array_key_exists('idx', $res['attr'])) {
+            $this->fixAttrImg($res['attr']['idx'], $userId);
+        }
 
         $res['mainThumbnail'] = $this->fixImg($res['mainThumbnail'], $userId, 'main');
         $res['thumbnail'] = $this->formThumb($res['thumbnail'], $userId);
@@ -407,13 +409,12 @@ class Mitem extends Ci_Model {
      *  @param  array   $attr   需要更新修补的数组
      *  @param  int     $bossId 对应的UserId,因为图片的存储和对应的userId相关
      */
-    protected function fixAttrImg(&$attr,$userId)
-    {
+    protected function fixAttrImg(&$attr, $userId) {
         foreach ($attr as $key => $value) {
-            for($i = count($value) -1 ; $i >= 0; $i --){
+            for ($i = count($value) -1 ; $i >= 0; $i --) {
                 $attr[$key][$i]['img'] = trim($value[$i]['img']);
-                if( $attr[$key][$i]['img'] ){
-                    $attr[$key][$i]['img'] = $this->fixImg($attr[$key][$i]['img'] , $userId , 'thumb');
+                if ($attr[$key][$i]['img']) {
+                    $attr[$key][$i]['img'] = $this->fixImg($attr[$key][$i]['img'], $userId, 'thumb');
                 }
             }
         }
