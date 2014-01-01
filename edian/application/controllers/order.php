@@ -39,6 +39,10 @@ class Order extends My_Controller{
         $this->load->view('login', $data);
     }
 
+    public function testAddOrder() {
+
+    }
+
     /**
      * 向购物车里面添加商品,
      *
@@ -66,7 +70,7 @@ class Order extends My_Controller{
         }
         if(! is_int($itemId + 1)){
             //非测试情况下通过sleep的形式减缓伤害攻击速度,争取时间吧
-            if(!TEST){
+            if (!TEST){
                 $this->mwrong->insert('order/add/' . __LINE__ . ' 行出现非数字的itemId :' . $itemId);
                 sleep(100);
             }
@@ -85,8 +89,8 @@ class Order extends My_Controller{
         $data['info']     = $this->input->post('info');
         $data['orderNum'] = $this->input->post('buyNum');
         //这里和controller/write/bgadd中的attr保持一致,放过了对()-的检查
-        if(preg_match("/[\[\]\\\"\/?@=#&<>%$\{\}\\\~`^*]/",$data["info"])){
-            if(!TEST){
+        if (preg_match("/[\[\]\\\"\/?@=#&<>%$\{\}\\\~`^*]/",$data["info"])) {
+            if (! TEST) {
                 $this->mwrong->insert('order/add/' . __LINE__ . ' 行出现不合法字符 :' . $data['info']);
                 sleep(100);
             }
@@ -95,8 +99,8 @@ class Order extends My_Controller{
             return false;
         }
         //检验orderNum
-        if(!is_int($data['orderNum'] + 1)){
-            if(!TEST){
+        if (! is_int($data['orderNum'] + 1)) {
+            if (! TEST) {
                 $this->mwrong->insert('order/add/' . __LINE__ . ' 行出现非数字的orderNum :' . $data['orderNum']);
                 sleep(100);
             }
@@ -145,11 +149,32 @@ class Order extends My_Controller{
     }
 
     /**
+     * 这个函数是将info的具体解析出来
+     * 供打印使用的，目前的格式为inf|inf 的格式，返回(inf)(inf)的格式
+     */
+    private function spInf($info) {
+        $res = '';
+        $info = explode('|', $info);
+        for ($i = 0, $len = count($info); $i < $len; $i ++) {
+            $res .= '('. $info[$i] . ')';
+        }
+        return $res;
+    }
+
+    /**
+     * 通过用户的id取得用户下单地址的函数
+     */
+    private function getUser($adIdx) {
+        $user = $this->user->ordaddr($this->userId);
+        $user = $this->addrDecode($user);
+        return $user[$adIdx];
+    }
+
+    /**
      * 用户的下单页面
      */
-    public function index($ajax) {
-//        $ajax = isset($_SERVER["HTTP_X_REQUESTED_WITH"]) && strtolower($_SERVER["HTTP_X_REQUESTED_WITH"]) == 'xmlhttprequest';
-        if ($this->userId != -1) {
+    public function index($ajax = 0) {
+        if ($this->userId == -1) {
             if ($ajax) {
                 echo json_encode(0);
             } else {
@@ -160,43 +185,78 @@ class Order extends My_Controller{
 
         // 具体的下单页面
         if ($ajax > 1) {
-            if ($_POST["inst"]) {
-                $info["info"] = $this->input->post("info");
-                $info["orderNum"]= $this->input->post("buyNum");
-                $info["more"] = "";
-                $info["price"] = $this->input->post("price");
-                $id = $this->add($ajax, $info["info"], $info["orderNum"], $info["price"]);//ajax代表商品号码
-                $info["info"] = $this->spInf($info["info"]);
-                $data[0]["item_id"] = $ajax;
-                $data[0]["info"] = $info;
+            if ($_POST['inst']) {
+                $info['info'] = $this->input->post('info');
+                $info['orderNum']= $this->input->post('buyNum');
+                $info['more'] = '';
+                $info['price'] = $this->input->post('price');
+                $id = $this->add($ajax, $info['info'], $info['orderNum'], $info['price']);//ajax代表商品号码
+                $info['info'] = $this->spInf($info['info']);
+                $data[0]['item_id'] = $ajax;
+                $data[0]['info'] = $info;
                 if ($id) {
-                    $data[0]["id"] = $id;
+                    $data[0]['id'] = $id;
                 }else{
-                    echo "添加失败，请联系管理员";
+                    echo '添加失败，请联系管理员';
                     return;
                 }
                 $user = $this->mitem->getMaster($ajax);
-                $data[0]["seller"] = $user["author_id"];
-                $data["cart"] = $this->delCart($data);
-                $data["lsp"] = $this->getLsp($data["cart"]);
+                $data[0]['seller'] = $user['author_id'];
+                $data['cart'] = $this->delCart($data);
+                $data['lsp'] = $this->getLsp($data['cart']);
             }
         }else{
             $cart = $this->delCart($this->morder->getCart($this->userId));//取得cart的信息
-            $data["lsp"] = $this->getLsp($cart);
-            $data["cart"]  = $cart;//这里，其实已经按照卖家进行了分组
+            $data['lsp'] = $this->getLsp($cart);
+            $data['cart']  = $cart;//这里，其实已经按照卖家进行了分组
         }
-        $data["buyer"] = $this->addrDecode($this->user->ordaddr($this->userId));
+        $data['buyer'] = $this->addrDecode($this->user->ordaddr($this->userId));
         if($ajax == 1){//等于1的时候是ajax申请数据
             echo json_encode($data);
         }else{
             //0或者是大于1都应该输出data
-            $this->load->view("order",$data);
+            $this->load->view('order',$data);
         }
     }
+
 
 /**********************************************************************************************************************/
 /**********************************************************************************************************************/
 /**********************************************************************************************************************/
+    /**
+     * 将地址信息进行解码
+     */
+    private function addrDecode($buyer) {
+        $res = Array();
+        //对地址的解码，对之前定义的规则的反解释
+        $tmp = explode('&', $buyer['address']);
+        $cntAddr = 0;
+        for ($i = 0, $length = count($tmp); $i < $length; $i ++) {
+            if ($tmp[$i] == '') continue;
+            $now = explode('|', $tmp[$i]);
+            $len = count($now);
+            if (($i == 0) && ($len == 1)) {
+                $res[0]['phone'] = $buyer['phone'];
+                $res[0]['address'] = $now[0];
+                $res[0]['name'] = $this->session->userdata('loginName');
+                $cntAddr ++;
+            }else if($len == 3){
+                $res[$cntAddr]['phone'] = $now[1];
+                $res[$cntAddr]['address'] = $now[2];
+                $res[$cntAddr]['name'] = $now[0];
+                $cntAddr++;
+            }
+        }
+        return $res;
+    }
+
+    private function formOrdor($addrNum, $userId) {
+        $res = Array();
+        //查找下订单的人的信息，地址，电话
+        $inf = $this->user->ordaddr($userId);
+        $temp = $this->addrDecode($inf);//用户保存的地址id中记录的就是addrdecode 生成的地址列表中的下标号码
+        return $temp[0];
+    }
 
     /**
      * 为我的订单页面，提供数据
@@ -298,34 +358,7 @@ class Order extends My_Controller{
     {
         //就算是为买家准备的，早晚也需要另一个页面,历史订单
     }
-    /**
-     * 将地址信息进行解码
-     */
-    private function addrDecode($buyer)
-    {
-        $res = Array();
-        //对地址的解码，对之前定义的规则的反解释
-        $tmp = explode("&",$buyer["addr"]);
-        $cntAddr = 0;
-        for($i = 0,$length = count($tmp);$i < $length; $i++){
-    //这里的规则很重要，因为将来解地址的时候，也是必须遵守同样的规则
-            if($tmp[$i] == "") continue;
-            $now = explode("|",$tmp[$i]);
-            $len = count($now);
-            if(($i == 0) && ($len == 1)){
-                $res["0"]["phone"] = $buyer["contract1"];
-                $res[0]["addr"] = $now[0];
-                $res[0]["name"] = $this->session->userdata("user_name");
-                $cntAddr++;
-            }else if($len == 3){
-                $res[$cntAddr]["phone"] = $now[1];
-                $res[$cntAddr]["addr"] = $now[2];
-                $res[$cntAddr]["name"] = $now[0];
-                $cntAddr++;
-            }
-        }
-        return $res;
-    }
+
 
     public function del($orderId  = -1){
         if($orderId == -1){
@@ -699,29 +732,8 @@ class Order extends My_Controller{
     {
         $this->morder->setState($addr,$arr["ordId"],$info,$state);
     }
-    /**
-     * 通过用户的id取得用户下单地址的函数
-     */
-    private function getUser($adIdx)
-    {
-        $user = $this->user->ordaddr($this->userId);
-        $user = $this->addrDecode($user);
-        return $user[$adIdx];
-        //获取用户的地址，名字和联系方式的函数
-    }
-    /**
-     * 这个函数是将info的具体解析出来
-     * 供打印使用的，目前的格式为inf|inf 的格式，返回(inf)(inf)的格式
-     */
-    private function spInf($info)
-    {
-        $res = "";
-        $info = explode("|",$info);
-        for($i = 0,$len = count($info);$i < $len; $i++){
-            $res.="(".$info[$i].")";
-        }
-        return $res;
-    }
+
+
 
 
 
@@ -766,14 +778,7 @@ class Order extends My_Controller{
         array_multisort($ordor,SORT_NUMERIC,$arr);//对买家进行排序
         return $arr;
     }
-    private function formOrdor($addrNum,$userId)
-    {
-        $res = Array();
-        //查找下订单的人的信息，地址，电话
-        $inf = $this->user->ordaddr($userId);
-        $temp = $this->addrDecode($inf);//用户保存的地址id中记录的就是addrdecode 生成的地址列表中的下标号码
-        return $temp[0];
-    }
+
     /**
      * 别人提供的函数
      */
