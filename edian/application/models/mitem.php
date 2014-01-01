@@ -214,6 +214,13 @@ class Mitem extends Ci_Model {
             for ($i = 2, $len = $attrIdx[0] + 2; $i < $len; $i ++) {
                 $tmp = explode(':', $attrIdx[$i]);
                 $tmpArr['font'] = $tmp[0];
+                /*
+                if(count($tmp)){
+                    $tmpArr['img'] =  $this->formT
+                } else {
+                    $tmpArr['img'] = '';
+                }
+                 */
                 $tmpArr['img'] = count($tmp)>1 ? $tmp[1] : '';
                 $idx[$attrIdx['1']][] = $tmpArr;
             }
@@ -376,17 +383,37 @@ class Mitem extends Ci_Model {
         // 获取相应老板的 userId
         $this->load->model('store');
         $bossId = $this->store->getOwnerIdByStoreId($res['belongsTo']);
+
         $this->load->model('boss');
         $loginName = $this->boss->getLoginNameByBossId($bossId);
 
         $this->load->model('user');
         $userId = $this->user->getUserIdByLoginName($loginName);
 
+        $this->fixAttrImg($res['attr']['idx'], $userId);
+
         $res['mainThumbnail'] = $this->fixImg($res['mainThumbnail'], $userId, 'main');
         $res['thumbnail'] = $this->formThumb($res['thumbnail'], $userId);
         return $res;
     }
 
+    /**
+     *  将attr中的img信息和路径补全
+     *  目前在getItemInfo中调用
+     *  @param  array   $attr   需要更新修补的数组
+     *  @param  int     $bossId 对应的UserId,因为图片的存储和对应的userId相关
+     */
+    protected function fixAttrImg(&$attr,$userId)
+    {
+        foreach ($attr as $key => $value) {
+            for($i = count($value) -1 ; $i >= 0; $i --){
+                $attr[$key][$i]['img'] = trim($value[$i]['img']);
+                if( $attr[$key][$i]['img'] ){
+                    $attr[$key][$i]['img'] = $this->fixImg($attr[$key][$i]['img'] , $userId , 'thumb');
+                }
+            }
+        }
+    }
     /**
      * 这里完成对img的补充修正
      *

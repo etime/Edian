@@ -4,26 +4,22 @@
 <?php
 $siteUrl = site_url();
 $baseUrl = base_url();
-echo "userId<br/>";
-echo $this->session->userdata("userId");
+$attr = json_encode($item['attr']['storePrc']);
+//var_dump($attr);
+for ($i = 0,$len = strlen($attr); $i < $len ; $i++) {
+    if($attr[$i] === '"')$attr[$i] = '\'';
+}
+var_dump($attr);
 ?>
     <meta http-equiv = "content-type" content = "text/html;charset = utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.8 ,maximum-scale= 1.2 user-scalable=yes" />
     <title>E点</title>
     <link rel="stylesheet" href=" <?php echo $baseUrl."css/item.css" ?>" type="text/css" media="all" />
     <link rel="stylesheet" href=" <?php echo $baseUrl."css/cart.css" ?>" type="text/css" media="all" />
-<script type="text/javascript" >
-var site_url = "<?php echo site_url()?>";
-var base_url = "<?php echo base_url()?>";
-//var user_name="<?php echo trim($this->session->userdata('user_name'))?>";
-var attr = "<?php echo json_encode($item['attr'])?>";
-var itemId = "<?php echo $itemId?>";
-//var masterId = "<?php echo $author_id ?>";
-//var masterName = "<?php echo $user_name ?>";
-//var lestPrc = "<?php echo $lestPrc ?>";
-var lsp = Array();
-</script>
 </head>
+<script type="text/javascript" charset="utf-8">
+var attr = "<?php echo $attr ?>";
+</script>
 <body>
 <?php
     $this->load->view("header");
@@ -81,18 +77,25 @@ var lsp = Array();
                         </span>
                 </p>
                 <p>
-    <?php
-    foreach ($item['attr']['idx'] as $key => $val) {
-        echo "<span class = 'item'>" . $key . "</span>" ;
-        foreach ($val as $itemValue) {
-            if($itemValue['img']){
-                echo '<img src = ' . $itemValue['img'] . ' />';
-            } else {
-
-            }
-        }
-    }
-    ?>
+                <input type="hidden" name="getAttr" id = "getAttr" />
+                <?php
+                $posX = 0;
+                foreach ($item['attr']['idx'] as $key => $val) {
+                    echo "<p class = 'attr' alt = '$posX'><span class = 'item' >" . $key . "</span>";
+                    $posY = 0;
+                    foreach ($val as $itemValue) {
+                        $itemValue['img'] = trim($itemValue['img']);
+                        if($itemValue['img']){
+                            echo "<img class = 'attrValue' alt = " . $posY . " src = '" . $itemValue['img'] . "' title = '" . $itemValue['font']. "' />";
+                        } else {
+                            echo "<span alt = '$posY' class = 'attrValue' title = '". $itemValue['font'] . "'>" .$itemValue['font'] . "</span>";
+                        }
+                        $posY++;
+                    }
+                    $posX++;
+                    echo "</p>";
+                }
+                ?>
                 </p>
                 <p><span class = "item">营业起止时间:</span> <?php  echo $store['deliveryTime']?></p>
                 <input type="hidden" name="info"  id = "info" />
