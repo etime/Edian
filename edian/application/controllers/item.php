@@ -24,7 +24,10 @@ class item extends MY_Controller {
         $this->load->model('comitem');
         $this->load->model('morder');
     }
-
+    public function item2()
+    {
+        $this->load->view('item2');
+    }
     /**
      * 对Attr进行解码和重组，
      *

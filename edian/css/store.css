@@ -1,0 +1,114 @@
+/**
+ * @name        ../../css/store.css
+ * @author      unasm < 1264310280@qq.com >
+ * @since       2014-01-02 19:11:30
+*/
+a{
+    text-decoration:none;
+}
+a:hover{
+    text-decoration:underline;
+}
+li{
+    list-style:none;
+}
+ul{
+    padding:0px;
+    margin:0;  
+}
+.clearfix:after{
+    visibility:hidden;
+    display:block;
+    content:"";
+    height:0px;
+    clear:both;
+}
+body{
+    padding:0px;
+    margin:0px auto;
+}
+#header{
+    background-color:red;
+    overflow:hidden;
+}
+#nav{
+    background-color:rgb(197,10,10);
+    height:35px;
+    margin-bottom:10px;
+}
+.width{
+    margin:0px auto;
+    width:1200px;
+}
+.cnav {
+    position:relative;
+}
+.cnav h4 {
+    float:left;
+    height:19px;
+    margin:0px;
+    padding:8px;
+}
+.cnav h4:hover{
+    background-color:blue;
+}
+.cnav h4, .list{
+    text-align:center;
+    width:140px;
+}
+.list{
+    top:35px;
+    position:absolute;
+}
+.list li{
+    padding:6px 0;
+    background-color:rgba(0,0,0,0.7);
+    _background:rgb(0,0,0);
+    color:rgb(221,221,221);
+}
+.list li:hover{
+    border-bottom:1px solid gray;
+    background-color:rgb(148, 146, 146);
+    color:black;
+}
+.search{
+    float:right;
+    padding:4px 0;
+}
+.search >*{
+    float:left;
+}
+.search div{
+    height:24px;
+}
+.search input[type = 'text']{
+    box-shadow:1px 1px 4px rgb(182, 182, 182) inset;
+    height:100%;
+    border:none;
+    border-radius:2px 0 0 2px;
+    padding-left:5px;
+}
+.search input[type = 'submit']{
+    border:none;
+    width:60px;
+    height:26px;
+    outline:none;
+    border-radius: 0 3px 3px 0;
+    margin-left:-2px;
+}
+.store{
+    width:200px;
+    background-color:green;
+    overflow:hidden;
+    float:left;
+    margin-right:5px;
+}
+.store h5{
+    margin:0.5em 2em;
+}
+.item{
+    float:left;
+    width:995px;
+    height:200px;
+    background-color:black;
+}
