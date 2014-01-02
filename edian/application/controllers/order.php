@@ -219,6 +219,8 @@ class Order extends My_Controller{
             $data['cart']  = $cart;//这里，其实已经按照卖家进行了分组
         }
         $data['buyer'] = $this->addrDecode($this->user->ordaddr($this->userId));
+        $this->load->library('help');
+        $this->help->showArr($data);
         if($ajax == 1){//等于1的时候是ajax申请数据
             echo json_encode($data);
         }else{

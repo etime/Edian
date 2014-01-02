@@ -48,7 +48,7 @@ $idx = -1;
         ?>
             <span class = "<?php echo $nows ?>">
             店家:
-            <a href = "<?php echo $siteUrl."/space/index/".$nows ?>"><?php echo $cart[$cnt]["selinf"]["user_name"] ?></a>
+            <a href = "<?php echo $siteUrl."/space/index/".$nows ?>"><?php echo $cart[$cnt]['selinf']['name'] ?></a>
             </span>
             <span class = "rt">
                 <?php
@@ -67,9 +67,7 @@ $idx = -1;
         <?php while(($cnt < $len) && ($nows == $cart[$cnt]["seller"])):?>
                 <?php
                 $info = $cart[$cnt]["info"];
-                $tmp = explode("|",$cart[$cnt]["item"]["img"]);
-                $img = $tmp[0];//直接以商品图片为图，以后再细化
-                $img = $baseUrl."upload/".$img;
+
                 $item = $cart[$cnt]["item"];
                 ?>
             <tr name = "<?php echo $cnt ?>">
@@ -77,7 +75,7 @@ $idx = -1;
                 <input type="checkbox" name="chose" class = "clk" checked = "null" id = "<?php echo $cart[$cnt]["id"] ?>"/>
                 </td>
                 <td class = "tmb">
-                    <img src = "<?php echo $img ?>" class = "thumb">
+                    <img src = "<?php echo $item['mainThumbnail']?>" class = "thumb">
                 </td>
                 <td class = "til">
                     <a href = " <?php echo $siteUrl.'/item/index/'.$cart[$cnt]["item_id"] ?>">
@@ -86,7 +84,7 @@ $idx = -1;
                     ?>
                     </a>
                 </td>
-                <td class = "num">库存<span class = "tS"><?php echo $item["store_num"]?></span></td>
+                <td class = "num">库存<span class = "tS"><?php echo $item["storeNum"]?></span></td>
                 <td class="num">
                     <input type = "button" name = 'dec' class = "clk" value = "-" />
                     <input type="text" name="buyNum" class = "buyNum"  value="<?php echo $info["orderNum"]?>" />
