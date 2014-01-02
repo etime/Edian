@@ -50,22 +50,35 @@ $(document).ready(function(){
 })
 /**
  * 禁止在备注中输入的字符
- * 希望因为使用了jquery不用在判断event的兼容性问题，event.which 在ie下也没有问题
+ * @todo 目前在我电脑，测试失效，在其他的电脑看一下吧
  */
 function forbid() {
-    $("body").delegate("textarea","keypress",function(event){
-        //|{}` & '" = <>=;:  *空格都是不允许输入的
-        if(event.which == 96)return false;
-        if(event.which == 32)return false;//空格
-        if(event.which == 42)return false;//*
-        if(event.which == 92)return false;// 反斜线\
-        if((event.which < 40)&&(event.which > 33))return false;
-        if(event.which < 63 && (event.which > 58))return false;
-        if(event.which < 126 && event.which > 122)return false;
+                //  !,//                , * ,/,                ?     [, ]       ^,_
+    var forbiden = [33,34,35,36,37,38,39,42,47,58,59,60,61,62,63,64,91,93,94,95,96,123,124,125,126];
+    //上面 应该只是允许输入（）-,
+    $(document).delegate("textarea","keypress",function(event){
+        var value = event.which;
+        for (var i = 0, l = forbiden.length; i < l; i++) {
+            if(value === forbiden[i]){
+                event.preventDefault();
+                break;
+            }
+        }
     })
+    /*
+    $("textarea").keypress(function (event) {
+        console.log(event.which);
+        return false;
+    })
+    */
 }
+/**
+ * 跟收件人地址和通讯方式有关的都在这里
+ * @param {node } adiv 地址选择的总dom区域
+ * @param {node}  addr 将选择的地址保存到dom中，应该是一个input，值是一个数字
+ * @param {node}  nad  new addrress 添加新的地址的时候，用到的
+ */
 function add(){
-//跟收件人地址和通讯方式有关的都在这里
     var adiv = $("#adiv"),addr = $("#addr");
     adiv.delegate(".addr","click",function () {
         adiv.find(".addCse").removeClass("addCse");
@@ -74,19 +87,18 @@ function add(){
         addr.val(val);
     })
     var nad = $("#nad");
-    $("#adsub").click(function(){
+    nad.find("input[type = 'button']").click(function (event) {
         var geter = nad.find("input[name = 'geter']").val();
-        var addr = nad.find(".naddr").val();
+        var addr = nad.find("textarea").val();
         var phone = nad.find("input[name = 'phone']").val();
+        debugger;
         if(geter && addr && phone){
-            nad.find("input[name = 'geter']").val("");
-            nad.find(".naddr").val("");
-            nad.find("input[name = 'phone']").val("");
-            var url = site_url+"/order/addr/";
+            nad.find("input[name = 'geter']").val('');
+            nad.find('textarea').val('');
+            nad.find("input[name = 'phone']").val('');
             $.ajax({
-                url: url,
-                type: 'POST',
-                dataType: 'json',
+                url:  site_url + '/order/addr/',
+                type: 'POST',dataType: 'json',
                 data: {"addr":addr,"geter":geter,"phone":phone},
                 success: function (data, textStatus, jqXHR) {
                     console.log(data);
@@ -102,14 +114,10 @@ function add(){
                     $.alet("添加地址失败,请联系客服");
                 }
             });
-        }else{
+        } else {
             $.alet("请补全地址信息");
-            return false;
         }
-        console.log(geter);
-        console.log(addr);
-        console.log(phone);
-    })
+    });
 }
 /*
 function init(){
@@ -122,20 +130,25 @@ function init(){
     calTot();
 }
 */
+/**
+ * 对table各种click进行操作，删除，加减，数目要加上change事件
+ */
 function click() {
-    //对table各种click进行操作，删除，加减，数目要加上change事件
     var dir,node;
     $("body").delegate(".clk","click",function(event){
         dir = $(this).attr("name");
         if(dir == "chose"){
+            //当选择某一个商品的时候
             calAll();
         }else if(dir == "inc"){
+            //增加购买数量
             node = this.parentNode;
             node = $(node).find(".buyNum");
             //var num =  parseInt($(node).val()) + 1;
             $(node).val( parseInt( $(node).val()) + 1);
             calAll();
         }else if(dir == "dec"){
+            //减少购买数量
             node = this.parentNode;
             node = $(node).find(".buyNum");
             var num =  Math.max(parseInt($(node).val()) - 1,1);
@@ -189,16 +202,21 @@ function click() {
         calAll();
     })
 }
+/**
+ * 寻找tr的父节点,貌似只有一处调用了呢
+ */
 function parFind(node) {
     node = node.parentNode;
-    //console.log($(node).attr("tagName"));
     while((node)&&$(node).attr("tagName") != "TR"){
         node = node.parentNode;
     }
     return node;
 }
+/**
+ * 下单的函数
+ * 对下单之后的事情进行处理
+ */
 function sub(){
-    //下单的函数
     $("form").submit(function(event){
         var chose = $("input[name = 'chose']"),tr,temp,buyNum,choseId,more;
         for (var i = 0, l = chose.length; i < l; i ++) {
@@ -221,6 +239,7 @@ function sub(){
         var addr  = $("#addr").val();
         var url = site_url+"/order/set";
         //进行信息的传输
+        //是不是取消，要看后台怎么实现的，
         /*
        $.ajax({
             url: url,
@@ -254,6 +273,9 @@ function sub(){
         //event.preventDefault();
     })
 }
+/**
+ *  calucate all 对所有的商品总和进行计算
+ */
 function calAll(){
     var lestPrc = $(".lestPrc");
     var slCal = $(".slCal");

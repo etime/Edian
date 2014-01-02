@@ -3,4 +3,9 @@
 
 
 上传的时候的debug
+
 store的去读和category的编码解码
+
+
+mainThumbNail没有补全路径
+sellerInfo ，没有完善

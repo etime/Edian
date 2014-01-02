@@ -4,8 +4,11 @@
 <?php
 $siteUrl = site_url();
 $baseUrl = base_url();
-$attr = json_encode($item['attr']['storePrc']);
-//var_dump($attr);
+if($item['attr']){
+    $attr = json_encode($item['attr']['storePrc']);
+}else {
+    $attr = '';
+}
 for ($i = 0,$len = strlen($attr); $i < $len ; $i++) {
     if($attr[$i] === '"')$attr[$i] = '\'';
 }
@@ -83,20 +86,22 @@ var itemId = "<?php  echo $itemId?>";
                 <input type="hidden" name="getAttr" id = "getAttr" />
                 <?php
                 $posX = 0;
-                foreach ($item['attr']['idx'] as $key => $val) {
-                    echo "<p class = 'attr' alt = '$posX'><span class = 'item' >" . $key . "</span>";
-                    $posY = 0;
-                    foreach ($val as $itemValue) {
-                        $itemValue['img'] = trim($itemValue['img']);
-                        if($itemValue['img']){
-                            echo "<img class = 'attrValue' alt = " . $posY . " src = '" . $itemValue['img'] . "' title = '" . $itemValue['font']. "' />";
-                        } else {
-                            echo "<span alt = '$posY' class = 'attrValue' title = '". $itemValue['font'] . "'>" .$itemValue['font'] . "</span>";
+                if($item['attr']){
+                    foreach ($item['attr']['idx'] as $key => $val) {
+                        echo "<p class = 'attr' alt = '$posX'><span class = 'item' >" . $key . "</span>";
+                        $posY = 0;
+                        foreach ($val as $itemValue) {
+                            $itemValue['img'] = trim($itemValue['img']);
+                            if($itemValue['img']){
+                                echo "<img class = 'attrValue' alt = " . $posY . " src = '" . $itemValue['img'] . "' title = '" . $itemValue['font']. "' />";
+                            } else {
+                                echo "<span alt = '$posY' class = 'attrValue' title = '". $itemValue['font'] . "'>" .$itemValue['font'] . "</span>";
+                            }
+                            $posY++;
                         }
-                        $posY++;
+                        $posX++;
+                        echo "</p>";
                     }
-                    $posX++;
-                    echo "</p>";
                 }
                 ?>
                 </p>
