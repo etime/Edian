@@ -199,21 +199,23 @@ class Store extends CI_Model {
     /**
      * 通过store信息，为bg/set服务
      */
-    public function getSetInfo($storeId)
-    {
+    public function getSetInfo($storeId) {
         $storeId = (int)$storeId;
-        if(!$storeId)return false;
-        $res = $this->db->query("select name,logo,serviceQQ,servicePhone,address,longitude,latitude,category,more,deliveryTime,deliveryArea from store where id = ".$storeId);
-        if($res->num_rows){
+        if ($storeId === 0) {
+            return false;
+        }
+        $sql = "SELECT name, logo, serviceQQ, servicePhone, address, longitude, latitude, category, more, deliveryTime, deliveryArea FROM store WHERE id = $storeId";
+        $res = $this->db->query($sql);
+        if ($res->num_rows === 0) {
+            $this->mwrong->insert("在model/store/getSetInfo/中num_rows 位0，有人对不应该存在的storeId进行了索引,storeId = ".$storeId);
+            return false;
+        } else {
             $res = $res->result_array();
             $ansArr = $res[0];
             $ansArr['category'] = $this->decodeCategory($ansArr['category']);
             $ansArr['more'] = $this->decodeMore($ansArr['more']);
             return $ansArr;
-        }else{
-            $this->mwrong->insert("在model/store/getSetInfo/中num_rows 位0，有人对不应该存在的storeId进行了索引,storeId = ".$storeId);
         }
-        return false;
     }
 
     /**
@@ -321,13 +323,14 @@ class Store extends CI_Model {
      * @return array
      * @author unasm
      */
-    public function getStoreList()
-    {
-        $res = $this->db->query("select name,id from store ");
-        if($res->num_rows){
+    public function getStoreList() {
+        $sql = "SELECT name, id FROM store";
+        $res = $this->db->query($sql);
+        if ($res->num_rows === 0) {
+            return false;
+        } else {
             return $res->result_array();
         }
-        return false;
     }
 
     /**
@@ -344,6 +347,26 @@ class Store extends CI_Model {
         } else {
             $res = $res->result_array();
             return $res[0]['ownerId'];
+        }
+    }
+
+    /**
+     * 获取商店的起送价格
+     * @param int $storeId
+     * @return boolean | float
+     */
+    public function getSendPriceByStoreId($storeId) {
+        $storeId = (int)$storeId;
+        if ($storeId === 0) {
+            return false;
+        }
+        $sql = "SELECT sendPrice FROM store WHERE id = $storeId";
+        $res = $this->db->query($sql);
+        if ($res->num_rows === 0) {
+            return false;
+        } else {
+            $res = $res->result_array();
+            return $res[0]['sendPrice'];
         }
     }
 }
