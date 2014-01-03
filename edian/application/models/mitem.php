@@ -583,6 +583,24 @@ class Mitem extends Ci_Model {
             return $res;
         }
     }
+
+    public function getItemByStoreId($storeId) {
+        $storeId = (int)$storeId;
+        if ($storeId === 0) {
+            return false;
+        }
+        $sql = "SELECT title, price, satisfyScore, sellNum, mainThumbnail FROM item WHERE belongsTo = $storeId ORDER BY rating";
+        $res = $this->db->query($sql);
+        if ($res->num_rows === 0) {
+            return false;
+        } else {
+            $res = $res->result_array();
+            for ($i = 0, $len = count($res); $i < $len; $i ++) {
+                $res[$i]['mainThumbnail'] = $this->_fixMainThumbnailPath($storeId, $res[$i]['mainThumbnail']);
+            }
+            return $res;
+        }
+    }
 /**********************************************************************************************************************/
 /**********************************************************************************************************************/
 /**********************************************************************************************************************/
