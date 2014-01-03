@@ -7,49 +7,88 @@
  * @since     2013-12-02 22:00:45
  * @package   controllers
  */
-class Wrong extends CI_Controller
-{
-    var $myMail;
-    function __construct()
-    {
-        parent::__construct();
-        $this->myMail = "1264310280@qq.com";
-        $this->load->model("mwrong");
-    }
+class Wrong extends MY_Controller {
+    // 管理员邮箱
+    var $adminMail;
+
     /**
-     * 发送邮件的测试
+     * 构造函数
      */
-    public function test()
-    {
-        //error_log("测试邮件报错" , 1, $this->myMail ,"From: edian/wrong");
-        /*
-        $flag = mail($this->myMail ,"标题：测试邮件发送",  "邮件报错的正文" , "From: edian/wrong");
-        echo $flag;
-        echo "send message";
-        */
-        //$to = "douunasm@gmail.com";
-        $to = $this->myMail;
+    function __construct() {
+        parent::__construct();
+        $this->load->model('mwrong');
+        $this->config->load('edian');
+        $this->load->model('user');
+        $this->load->library('help');
+        $this->adminMail = $this->config->item('adminMail');
+    }
+
+    /**
+     * 如果没有登录，调出登录窗口
+     */
+    public function noLogin($url = false) {
+        if ($url === false) {
+            $url = site_url();
+        }
+        $data['url'] = $url;
+        $this->load->view('login', $data);
+    }
+
+    private function _checkAuthority() {
+        $userId = $this->getUserId();
+        // 未登录
+        if ($userId === -1) {
+            $this->noLogin(site_url('wrong/showError'));
+            return;
+        }
+        $credit = $this->user->getCredit($userId);
+        // 不是管理员权限
+        if ($credit != $this->config->item('adminCredit')) {
+            show_404();
+            return;
+        }
+    }
+
+    /**
+     * 测试邮件发送功能
+     */
+    public function test() {
+        $this->_checkAuthority();
+        $to = $this->adminMail;
         $subject = "Test mail";
         $message = "Hello! This is a simple email message.";
-        //$from = "someonelse@example.com";
-        //$from = $this->myMail;
-        $from = "douunasm@gmail.com";
+        $from = "chengfeng1992@hotmail.com";
         $headers = "From: $from";
-        mail($to,$subject,$message,$headers);
+        mail($to, $subject, $message, $headers);
         echo "Mail Sent.";
     }
+
     /*
      * 对应的，一定是ajax请求
      * 只能包含中文，不能出现任何的空格和特殊符号,不然一定不能插入
      */
-    public function index()
-    {
-        $temp["text"] = $this->input->post("text");
-        if ( ! preg_match("/[ ~!@#$%^&*()_+`\\=\\|\\{\\}:\\\">\\?<\\[\\];',\/\\.\\-\\\\]/", $temp["text"])) {
+    public function index() {
+        $this->_checkAuthority();
+        $temp['text'] = $this->input->post('text');
+        if (! preg_match("/[ ~!@#$%^&*()_+`\\=\\|\\{\\}:\\\">\\?<\\[\\];',\/\\.\\-\\\\]/", $temp["text"])) {
             $this->mwrong->insert($temp);
-        }else{
-            error_log($temp["text"] ,$this->myMail,"from:edian/wrong");
+        } else {
+            error_log($temp['text'], $this->adminMail, "from:edian/wrong");
         }
+    }
+
+    public function showError() {
+        $this->_checkAuthority();
+        $data = $this->mwrong->getAll();
+        header("Content-type: text/html; charset=utf-8");
+        $this->help->showArr($data);
+    }
+
+    public function deleteLog($logId) {
+        $this->_checkAuthority();
+        $logId = (int)$logId;
+        $this->mwrong->deleteLog($logId);
+        $this->showError();
     }
 }
 ?>
