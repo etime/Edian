@@ -72,7 +72,7 @@ body{
 .search div{
     height:24px;
 }
-.search input[type = 'text']{
+.search input[name = 'sea']{
     box-shadow:1px 1px 4px rgb(182, 182, 182) inset;
     height:100%;
     border:none;

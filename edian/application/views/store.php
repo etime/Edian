@@ -9,12 +9,17 @@
     <link rel="stylesheet" href="<?php echo $baseUrl.'/css/store.css' ?>" type="text/css" media="all" />
 </head>
 <body>
+<!--
     <div id="header">
         <div class="dtop width">
             <h1>eDian</h1>
             <input type="text" name="sea" id="sea" placeholder = "搜索" />
         </div>
     </div>
+-->
+<?php
+    $this->load->view('head');
+?>
     <div id = "nav">
         <div class="cnav width clearfix">
             <h4>商品类别</h4>
@@ -88,7 +93,7 @@
             <ul class = "goodlist clearfix">
                 <li>
                     <div class = "img">
-                        <img src = "http://news.xinhuanet.com/photo/2013-03/18/124473038_321n.jpg" />
+                        <img class = "main" src = "http://news.xinhuanet.com/photo/2013-03/18/124473038_321n.jpg" />
                     </div>
                     <div class = "info">
                         <p>
@@ -121,7 +126,7 @@
                 </li>
                 <li>
                     <div class = "img">
-                        <img src="http://gd1.alicdn.com/bao/uploaded/i1/10348039655176187/T1lXmGFc8bXXXXXXXX_!!0-item_pic.jpg_460x460.jpg_.webp" alt="蛋糕" />
+                        <img class = "main" src="http://gd1.alicdn.com/bao/uploaded/i1/10348039655176187/T1lXmGFc8bXXXXXXXX_!!0-item_pic.jpg_460x460.jpg_.webp" alt="蛋糕" />
                     </div>
                     <div class = "info">
                         <p>
@@ -136,7 +141,7 @@
                 </li>
                 <li>
                     <div class = "img">
-                        <img src="http://gd3.alicdn.com/bao/uploaded/i3/T1.mvOXjFqXXXSjdfX_114544.jpg_460x460.jpg_.webp" alt="蛋糕" />
+                        <img class = "main" src="http://gd3.alicdn.com/bao/uploaded/i3/T1.mvOXjFqXXXSjdfX_114544.jpg_460x460.jpg_.webp" alt="蛋糕" />
                     </div>
                     <div class = "info">
                         <p>
@@ -151,7 +156,7 @@
                 </li>
                 <li>
                     <div class = "img">
-                        <img src="http://gd3.alicdn.com/bao/uploaded/i3/T1.mvOXjFqXXXSjdfX_114544.jpg_460x460.jpg_.webp" alt="蛋糕" />
+                        <img class = "main" src="http://gd3.alicdn.com/bao/uploaded/i3/T1.mvOXjFqXXXSjdfX_114544.jpg_460x460.jpg_.webp" alt="蛋糕" />
                     </div>
                     <div class = "info">
                         <p>
