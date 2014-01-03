@@ -3,6 +3,9 @@
  * @author      unasm < 1264310280@qq.com >
  * @since       2014-01-02 19:11:30
 */
+img{
+    border:none;
+}
 a{
     text-decoration:none;
 }
@@ -34,15 +37,11 @@ body{
 #nav{
     background-color:#990002;
     height:35px;
-    margin-bottom:10px;
     color:white;
 }
 .width{
     margin:0px auto;
     width:1200px;
-}
-.cnav {
-    position:relative;
 }
 .cnav h4 {
     float:left;
@@ -53,20 +52,11 @@ body{
 .cnav h4:hover{
     background-color:blue;
 }
-.cnav h4, .list{
+.cnav h4{
     text-align:center;
     width:140px;
 }
-.list{
-    top:35px;
-    position:absolute;
-}
-.list li{
-    padding:6px 0;
-    background-color:rgba(0,0,0,0.7);
-    _background:rgb(0,0,0);
-    color:rgb(221,221,221);
-}
+
 .list li:hover{
     border-bottom:1px solid gray;
     background-color:rgb(148, 146, 146);
@@ -97,13 +87,24 @@ body{
     border-radius: 0 3px 3px 0;
     margin-left:-2px;
 }
-.store{
-    width:198px;
-    overflow:hidden;
+#side{
     float:left;
-    margin-right:5px;
-    border:1px solid gray;
+    width:160px;
+    margin-right:6px;
+}
+.list{
+    background-color:rgb(231, 231, 231);
+    text-align:center;
+    margin-bottom:10px;
+}
+.list li{
+    padding:6px 0;
+}
+.store{
+    width:100%;
+    overflow:hidden;
     border-radius:4px;
+    background-color:rgb(231, 231, 231);
 }
 .store h5{
     margin:0.5em 1em;
@@ -127,8 +128,11 @@ body{
 }
 .good{
     float:left;
-    width:993px;
-    border:1px solid gray;
+    width:1020px;
+    background-color:rgb(231, 231, 231);
+    border-radius:5px;
+    padding:7px;
+    margin-top:10px;
 }
 .good h5{
     padding:4px;
@@ -144,6 +148,7 @@ body{
 }
 .snav{
     color:gray;
+    margin:5px 0;
 }
 .snav input[type = 'text']{
     width:30px;
@@ -152,17 +157,30 @@ body{
     float:right;
 }
 .goodlist li{
-    width:250px;
+    float:left;
+    margin:5px;
 }
-.goodlist .img{
-    height:250px;
-    width:100%;
+.img{
+    height:245px;
+    width:245px;
     overflow:hidden;
-    background-color:green;
+    position:relative;
 }
-.goodlist img{
-    border:none;
+.img span{
+    width:30px;
+    position:absolute;
+    height:30px;
+    background-color:red;
 }
+.cart{
+    right:0;
+    bottom:0px;
+}
+.main{
+    width:100%;
+    height:100%;
+}
+
 .info span{
     color:gray;
     font-size:0.8em;
