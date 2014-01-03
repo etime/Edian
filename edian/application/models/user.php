@@ -250,21 +250,40 @@ class User extends CI_Model {
         }
     }
 
-    public function getExtro($userId) {
-        $userId = (int)$userId;
-        if (! $this->isUserExistByUserId($userId)) {
-            return false;
-        }
-        $sql = "SELECT extro FROM user WHERE id = $userId";
-        $res = $this->db->query($sql);
-        if ($res) {
-            $res = $res->result_array();
-            if (count($res) != 0) {
-                return $this->deExtro($res[0]["extro"]);
-            }
-        }
-        return false;
-    }
+//    /**
+//     * 分解extro，得到包含的数据
+//     *
+//     * 传入一个string，将string分解成数组返回，得到其中包含的数据
+//     *@$str string 传入的信息
+//     *
+//     */
+//    private function deExtro($extro) {
+//        $res = Array();
+//        if ($extro) {
+//            $temp = explode(',', $extro);
+//            for ($i = 0, $len = count($temp); $i <  $len; $i ++) {
+//                $now = explode(':', $temp[$i]);
+//                $res[$now[0]] = $now[1];
+//            }
+//        }
+//        return $res;
+//    }
+//
+//    public function getExtro($userId) {
+//        $userId = (int)$userId;
+//        if ($userId === 0) {
+//            return false;
+//        }
+//        $sql = "SELECT extro FROM user WHERE id = $userId";
+//        $res = $this->db->query($sql);
+//        if ($res->num_rows === 0) {
+//            return false;
+//        } else {
+//            $res = $res->result_array();
+//            return $this->deExtro($res[0]['extro']);
+//        }
+//        return false;
+//    }
 
     /**
      * 获取用户的 昵称，头像，手机号码，地址，邮箱，经纬度
@@ -547,27 +566,7 @@ class User extends CI_Model {
         return $this->db->query("update user set extro = '$str' where user_id = $userId");
     }
 
-    /**
-     * 分解extro，得到包含的数据
-     *
-     * 传入一个string，将string分解成数组返回，得到其中包含的数据
-     *@$str string 传入的信息
-     *
-     */
-    private function deExtro($str)
-    {
-        $str = stripslashes($str);
-        //传入string，制作成为数组返回
-        $res = Array();
-        if($str){
-            $temp = explode(",",$str);
-            for($i = 0,$len = count($temp);$i <  $len; $i++){
-                $now = explode(":",$temp[$i]);
-                $res[$now[0]] = $now[1];
-            }
-        }
-        return $res;
-    }
+
     private function enExtro($arr)
     {
         //extro中保存了很多的数组，现在必须构成字符串，格式使用json，不过只有一维数组

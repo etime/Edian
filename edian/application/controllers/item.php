@@ -75,6 +75,7 @@ class item extends MY_Controller {
      * @param int   $itemId  商品对应的唯一标示id
      */
     public function index($itemId = -1) {
+
         $itemInfo = $this->mitem->getItemInfo($itemId);
         // 商品不存在
         if ($itemInfo === false) {

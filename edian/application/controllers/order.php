@@ -61,8 +61,8 @@ class Order extends My_Controller{
      */
     public function add($itemId = 0) {
         // 用户未登录
-        $res['flag'] = 0;
-        $this->userId = 52;
+//        $res['flag'] = 0;
+//        $this->userId = 52;
         if ($this->userId === -1) {
             $res['atten'] = '请首先登录再下单';
             echo json_encode($res);
@@ -121,31 +121,31 @@ class Order extends My_Controller{
     }
 
     /**
-     * 将index中的cart信息处理
-     *
-     * 根据传入的id数组，处理cart中的信息，丰富并返回购物车的信息
-     * @param array $tcart 包含购物车id的数组
-     * @return array 返回包含所有购物车信息的函数
+     * 处理用户的购物车中的商品信息
+     * 需要注意的情况：购物车中无商品，此时 $order === false
+     * @param array $order 购物车中的商品
+     * @return array  整理后的购物车
      */
-    private function delCart($tcart) {
-        $seller = array();
-        if ($tcart) {
-            for ($i = 0, $len = count($tcart); $i < $len; $i++) {
-                /**************分解info，得到其中的各种信息****************/
-                $cart = $tcart[$i];//保存起来，方便更快的查找
-                $seller[$i] = $cart["seller"];//这个操作是为下面的排序进行准备
-                $temp = $cart["info"];//对info的的风格
-                //$data["cart"][$i]["info"] = $cart["info"];//感觉对此一句
-                /************取得卖家的名字**************************/
-                $tcart[$i]["selinf"] = $this->user->getPubById($cart["seller"]);
-                /****搜索现在商品的价格 图片和库存,用于显示，而非之前保存的,一旦下单完成，这些信息就固定了**************/
-                $tcart[$i]["item"] = $this->mitem->getOrder($cart["item_id"]);
-                /******************/
-            }
-            array_multisort($seller,SORT_NUMERIC,$tcart);//对店家进行排序,方便分组
-            //$len = count($data["cart"]);
+    private function dealCart($order) {
+        // 订单中无信息
+        if ($order === false) {
+            return;
         }
-        return $tcart;
+        $seller = array();
+        for ($i = 0, $len = count($order); $i < $len; $i++) {
+            $cart = $order[$i];
+            $seller[$i] = $cart['seller'];
+            $this->load->model('store');
+            $ownerId = $this->store->getOwnerIdByStoreId($cart['seller']);
+            $this->load->model('boss');
+            $loginName = $this->boss->getLoginNameByBossId($ownerId);
+            $bossUserId = $this->user->getUserIdByLoginName($loginName);
+            $order[$i]['selinf'] = $this->user->getPubById($bossUserId);
+            $order[$i]['item'] = $this->mitem->getOrder($cart['item_id']);
+        }
+        //对店家进行排序,方便分组
+        array_multisort($seller, SORT_NUMERIC, $order);
+        return $order;
     }
 
     /**
@@ -171,74 +171,44 @@ class Order extends My_Controller{
     }
 
     /**
-     * 用户下单页面
-     * 通过 poset 得到的数据
-     *
-     * inst
-     * info
-     * buyNum
-     * price
-     *
-     * @param int $ajax
+     * 获取商店的起送价
+     * @param array $cart
+     * @return array | boolean
      */
-    public function index($ajax = 0) {
-        if ($this->userId == -1) {
-            if ($ajax) {
-                echo json_encode(0);
-            } else {
-                $this->nologin(site_url('order/index'));
+    protected function getSendPrice($cart) {
+        if ($cart === false) {
+            return false;
+        }
+        $cal = 0;
+        $lsp = Array();
+        for ($i = 0, $len = count($cart); $i < $len; ) {
+            $last = $cart[$i]['seller'];
+            $slIdx = $i;
+            while (($i < $len) && ($last == $cart[$i]['seller'])) {
+                $i++;
             }
-            return;
-        }
-
-        // 具体的下单页面
-        if ($ajax > 1) {
-            if ($_POST['inst']) {
-                $info['info'] = $this->input->post('info');
-                $info['orderNum']= $this->input->post('buyNum');
-                $info['more'] = '';
-                $info['price'] = $this->input->post('price');
-                $id = $this->add($ajax, $info['info'], $info['orderNum'], $info['price']);//ajax代表商品号码
-                $info['info'] = $this->spInf($info['info']);
-                $data[0]['item_id'] = $ajax;
-                $data[0]['info'] = $info;
-                if ($id) {
-                    $data[0]['id'] = $id;
-                }else{
-                    echo '添加失败，请联系管理员';
-                    return;
-                }
-                $user = $this->mitem->getMaster($ajax);
-                $data[0]['seller'] = $user['author_id'];
-                $data['cart'] = $this->delCart($data);
-                $data['lsp'] = $this->getLsp($data['cart']);
+            if ($cart[$slIdx]['seller'] == 0) {
+                continue;
             }
-        }else{
-            $cart = $this->delCart($this->morder->getCart($this->userId));//取得cart的信息
-            $data['lsp'] = $this->getLsp($cart);
-            $data['cart']  = $cart;//这里，其实已经按照卖家进行了分组
+            $sendPrice = $this->store->getSendPriceByStoreId($cart[$slIdx]['seller']);
+            if ($sendPrice === false) {
+                $sendPrice = 0;
+            }
+            $lsp[$cal]['lestPrc'] = $sendPrice;
+            $lsp[$cal]['user_name'] = $cart[$slIdx]['selinf']['nickname'];
+            $lsp[$cal]["userId"]  = $last;
+            $cal ++;
         }
-        $data['buyer'] = $this->addrDecode($this->user->ordaddr($this->userId));
-        $this->load->library('help');
-        $this->help->showArr($data);
-        if($ajax == 1){//等于1的时候是ajax申请数据
-            echo json_encode($data);
-        }else{
-            //0或者是大于1都应该输出data
-            $this->load->view('order',$data);
-        }
+        return $lsp;
     }
 
-
-/**********************************************************************************************************************/
-/**********************************************************************************************************************/
-/**********************************************************************************************************************/
     /**
-     * 将地址信息进行解码
+     * 解码用户的地址
+     * @param array $buyer
+     * @return array
      */
     private function addrDecode($buyer) {
         $res = Array();
-        //对地址的解码，对之前定义的规则的反解释
         $tmp = explode('&', $buyer['address']);
         $cntAddr = 0;
         for ($i = 0, $length = count($tmp); $i < $length; $i ++) {
@@ -250,15 +220,61 @@ class Order extends My_Controller{
                 $res[0]['address'] = $now[0];
                 $res[0]['name'] = $this->session->userdata('loginName');
                 $cntAddr ++;
-            }else if($len == 3){
+            } else if ($len == 3) {
                 $res[$cntAddr]['phone'] = $now[1];
                 $res[$cntAddr]['address'] = $now[2];
                 $res[$cntAddr]['name'] = $now[0];
-                $cntAddr++;
+                $cntAddr ++;
             }
         }
         return $res;
     }
+
+    /**
+     * 用户下单页面
+     * 通过 post 得到的数据：
+     *      inst   立即下单
+     *      info   商品属性
+     *      buyNum 购买数量
+     *      price  商品单价
+     * @param int $type
+     * 三种情况：
+     *      type = 0 正常情况
+     *      type = 1 ajax 请求，需要返回 $data 数据
+     *      type > 1 立即下单，屏蔽其他商品，当前的 ajax 代表着需要结账的 item 的编号
+     */
+    public function index($type = 0) {
+        header("Content-type: text/html; charset=utf-8");
+        $this->load->library('help');
+
+        if ($this->userId == -1) {
+            if ($type > 0) {
+                echo json_encode(0);
+            } else {
+                $this->nologin(site_url('order/index'));
+            }
+            return;
+        }
+        $order = $this->morder->getOrder($this->userId);
+        $cart = $this->dealCart($order);
+        $data['lsp'] = $this->getSendPrice($cart);
+        $data['cart']  = $cart;
+        $temp = $this->user->ordaddr($this->userId);
+        $data['buyer'] = $this->addrDecode($temp);
+
+        $this->help->showArr($data);
+
+        if ($type == 1) {
+            echo json_encode($data);
+        } else {
+            $this->load->view('order',$data);
+        }
+    }
+
+/**********************************************************************************************************************/
+/**********************************************************************************************************************/
+/**********************************************************************************************************************/
+
 
     private function formOrdor($addrNum, $userId) {
         $res = Array();
@@ -325,44 +341,7 @@ class Order extends My_Controller{
         redirect(site_url("order/ontime"));
     }
 
-    /**
-     * 得到最低起送价，
-     *
-     * 提供一个数组,根据数组中的卖家信息，在数组中添加最低起送价的信息
-     *
-     * @param array $cart 数组，至少包含买家的id
-     * @return array 在原来的基础上，添加最低起送价
-     */
-    protected function getLsp($cart)
-    {
-        //在这里得到index的lsp，返回数组
-        $cal = 0;
-        $lsp = Array();
-        $len = $cart?count($cart):0;
-        for($i = 0;$i < $len;){
-            //逻辑出问题了，i的加应该在while中进行，不然会跳过一个i的
-            $last = $cart[$i]["seller"];
-            $slIdx = $i;
-            while(($i < $len) && ($last == $cart[$i]["seller"])){
-                $i++;
-            }
-            if($cart[$slIdx]["seller"]){
-                $extro = $this->user->getExtro($cart[$slIdx]["seller"]);
-                if($extro && array_key_exists("lestPrc",$extro)){
-                    $lsp[$cal]["lestPrc"] = $extro["lestPrc"];
-                }else{
-                    $lsp[$cal]["lestPrc"] = 0;//lsp在没有的时候表示为0，表示不存在
-                }
-                $lsp[$cal]["user_name"] = $cart[$slIdx]["selinf"]["user_name"];
-                $lsp[$cal]["$userId"]  = $last;
-                $cal++;
-            }else{
-                //var_dump($cart[$slIdx]);//这里应该向数据库添加错误信息，向管理员报错
-            }
-            // short for lest price
-        }
-        return $lsp;
-    }
+
 
     private function formCart($data)
     {

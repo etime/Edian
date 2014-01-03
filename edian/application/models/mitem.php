@@ -555,6 +555,17 @@ class Mitem extends Ci_Model {
         }
     }
 
+    private function _fixMainThumbnailPath($belongsTo, $name) {
+        $storeId = $belongsTo;
+        $this->load->model('store');
+        $bossId = $this->store->getOwnerIdByStoreId($storeId);
+        $this->load->model('boss');
+        $loginName = $this->boss->getLoginNameByBossId($bossId);
+        $this->load->model('user');
+        $userId = $this->user->getUserIdByLoginName($loginName);
+        return base_url('image/' . $userId . '/main/' . $name);
+    }
+
     /**
      * 为订单提供必要的信息
      * @param $itemId
@@ -567,7 +578,9 @@ class Mitem extends Ci_Model {
             return false;
         } else {
             $res = $res->result_array();
-            return $res[0];
+            $res = $res[0];
+            $res['mainThumbnail'] = $this->_fixMainThumbnailPath($res['belongsTo'], $res['mainThumbnail']);
+            return $res;
         }
     }
 /**********************************************************************************************************************/
