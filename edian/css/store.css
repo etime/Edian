@@ -28,13 +28,14 @@ body{
     margin:0px auto;
 }
 #header{
-    background-color:red;
+    background-color:#cc0001;
     overflow:hidden;
 }
 #nav{
-    background-color:rgb(197,10,10);
+    background-color:#990002;
     height:35px;
     margin-bottom:10px;
+    color:white;
 }
 .width{
     margin:0px auto;
@@ -97,18 +98,82 @@ body{
     margin-left:-2px;
 }
 .store{
-    width:200px;
-    background-color:green;
+    width:198px;
     overflow:hidden;
     float:left;
     margin-right:5px;
+    border:1px solid gray;
+    border-radius:4px;
 }
 .store h5{
-    margin:0.5em 2em;
+    margin:0.5em 1em;
 }
-.item{
+/**
+ * big collor
+ */
+.store .bc{
+    font-size:2em;
+    color:rgb(199, 4, 4);
+    line-height:0em;
+}
+.store p{
+    margin:0.7em 0;
+}
+.item {
+    width:70px;
+    margin:0 9px;
+    text-align:right;
     float:left;
-    width:995px;
-    height:200px;
-    background-color:black;
+}
+.good{
+    float:left;
+    width:993px;
+    border:1px solid gray;
+}
+.good h5{
+    padding:4px;
+    border-bottom:1px solid rgb(209, 209, 209);
+    margin:0;
+}
+.good h5 span{
+    float:right;
+    margin-right:1em;
+}
+.bustime ul{
+    float:left;
+}
+.snav{
+    color:gray;
+}
+.snav input[type = 'text']{
+    width:30px;
+}
+.psplit{
+    float:right;
+}
+.goodlist li{
+    width:250px;
+}
+.goodlist .img{
+    height:250px;
+    width:100%;
+    overflow:hidden;
+    background-color:green;
+}
+.goodlist img{
+    border:none;
+}
+.info span{
+    color:gray;
+    font-size:0.8em;
+}
+.info strong{
+    color:red;
+    font-size:1.6em;
+}
+.info p{
+    line-height:0.5em;
+}
+.info .right{
+    float:right;
 }
