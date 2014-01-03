@@ -1,7 +1,7 @@
 <?php
 /**
  * 对store进行操作的文件
- * 不同字段的内容作用介绍<br/>
+ * 不同字段的内容作用介绍
  * <pre>
  *      name:         商店的名字
  *      id:           商店在后台对应的唯一id，primary ，主键
@@ -139,9 +139,7 @@ class Store extends CI_Model {
         // 对要匹配的字符进行转义
         $storeId = mysql_real_escape_string($storeId);
         $ownerId = mysql_real_escape_string($ownerId);
-
         $sql = "SELECT count(*) FROM store WHERE id = $storeId && ownerId = $ownerId";
-
         $res = $this->db->query($sql)->result_array();
         return $res[0]['count(*)'] == 1 ? true : false;
     }
@@ -153,14 +151,10 @@ class Store extends CI_Model {
      * @return array
      */
     public function getCategoryByStoreId($storeId) {
-        // 对要匹配的字符串进行转义
         $storeId = mysql_real_escape_string($storeId);
-
-        // 通过 sql 语句获取想要的结果
         $sql = "SELECT category FROM store WHERE id = $storeId";
         $res = $this->db->query($sql);
         $res = $res->result_array();
-
         // 将所有的 category 解码
         $res = explode('|', $res[0]['category']);
         return $res;
@@ -172,16 +166,18 @@ class Store extends CI_Model {
      * @return array
      */
     public function getIdNameByOwnerId($ownerId) {
-        // 确保 $ownerId 是一个整数
         $ownerId = (int)$ownerId;
-
-        // sql 语句
+        if ($ownerId === 0) {
+            return false;
+        }
         $sql = "SELECT id, name FROM store WHERE ownerId = $ownerId";
-
-        // 进行查询并返回结果
         $res = $this->db->query($sql);
-        $res = $res->result_array();
-        return $res;
+        if ($res->num_rows === 0) {
+            return false;
+        } else {
+            $res = $res->result_array();
+            return $res;
+        }
     }
 
     /**
@@ -207,7 +203,8 @@ class Store extends CI_Model {
         $sql = "SELECT name, logo, serviceQQ, servicePhone, address, longitude, latitude, category, more, deliveryTime, deliveryArea FROM store WHERE id = $storeId";
         $res = $this->db->query($sql);
         if ($res->num_rows === 0) {
-            $this->mwrong->insert("在model/store/getSetInfo/中num_rows 位0，有人对不应该存在的storeId进行了索引,storeId = ".$storeId);
+            $sql = "在model/store/getSetInfo/中num_rows 位0，有人对不应该存在的storeId进行了索引,storeId = ".$storeId;
+            $this->mwrong->insert($sql);
             return false;
         } else {
             $res = $res->result_array();
@@ -224,9 +221,11 @@ class Store extends CI_Model {
      *  @return array   对category进行解码形成的数组
      */
     protected function decodeCategory($category) {
-        if($category)
-            return explode("|",$category);
-        return Array();
+        if ($category) {
+            return explode('|', $category);
+        } else {
+            return Array();
+        }
     }
 
     /**
@@ -235,10 +234,12 @@ class Store extends CI_Model {
      * @return string
      */
     protected function encodeCategory($cateArr) {
-        $res = "";
-        for($i = 0,$len = count($cateArr); $i < $len ;$i++){
-            if(!$cateArr[$i])continue;
-            $res .= ($i === 0) ? $cateArr[$i] : ("|" . $cateArr[$i]);
+        $res = '';
+        for ($i = 0, $len = count($cateArr); $i < $len; $i ++) {
+            if (! $cateArr[$i]) {
+                continue;
+            }
+            $res .= ($i === 0) ? $cateArr[$i] : ('|' . $cateArr[$i]);
         }
         return $res;
     }
@@ -248,43 +249,55 @@ class Store extends CI_Model {
      * @param   string $toAdd     将要添加的商品分类
      * @return  boolen
      */
-    public function changeCategory($toAdd , $storeId) {
+    public function changeCategory($toAdd, $storeId) {
         $storeId = (int)$storeId;
-        if(!$storeId)return false;
+        if ($storeId === 0) {
+            return false;
+        }
         $toAdd = mysql_real_escape_string($toAdd);
-        $res = $this->db->query("select category from store where id = " . $storeId);
-        if($res->num_rows ){
+        $sql = "SELECT category FROM store WHERE id = $storeId";
+        $res = $this->db->query($sql);
+        if ($res->num_rows != 0) {
             $res = $res->result_array();
             $res = $this->decodeCategory($res[0]['category']);
-            //检验重复性
+            // 检验重复性
             foreach ($res as $value) {
-                if($value == $toAdd)return true;
+                if ($value == $toAdd) {
+                    return true;
+                }
             }
-            array_push($res,$toAdd);
-            $str = $this->encodeCategory( $res );
-            return $this->db->query("update store set category = '$str' where id = ".$storeId );
-        }else{
-            $this->mwrong->insert(__LINE__."行model/store/changeCategory/查询了一个不存在的storeId,storeId = " . $storeId);
+            array_push($res, $toAdd);
+            $str = $this->encodeCategory($res);
+            $sql = "UPDATE store SET category = '$str' WHERE id = $storeId";
+            return $this->db->query($sql);
+        } else {
+            $sql = __LINE__."行model/store/changeCategory/查询了一个不存在的storeId,storeId = " . $storeId;
+            $this->mwrong->insert($sql);
         }
     }
 
     /**
-     *  对用户的
+     * 插入一个商店的拥有者，相当于为老板新增一个商店
+     * @param int $ownerId
+     * @return boolean | int
      */
     public function insertStore($ownerId) {
         $ownerId = (int)$ownerId;
-        if(!$ownerId){
-            $this->mwrong->insert('model/store/' . __LINE__ . '行出现了不应该出现的bug，ownerId在强制转换之后成为了0');
+        if ($ownerId === 0) {
+            $sql = 'model/store/' . __LINE__ . '行出现了不应该出现的bug，ownerId在强制转换之后成为了0';
+            $this->mwrong->insert($sql);
             return false;
         }
-
-        $res = $this->db->query("insert into store(ownerId) values('$ownerId')");
-        if($res){
-            $res = $this->db->query('select last_insert_id()');
+        $sql = "INSERT INTO store(ownerId) values('$ownerId')";
+        $res = $this->db->query($sql);
+        if ($res) {
+            $sql = 'SELECT last_insert_id()';
+            $res = $this->db->query($sql);
             $res = $res->result_array();
             return $res[0]['last_insert_id()'];
+        } else {
+            return false;
         }
-        return false;
     }
 
     /**
@@ -367,6 +380,75 @@ class Store extends CI_Model {
         } else {
             $res = $res->result_array();
             return $res[0]['sendPrice'];
+        }
+    }
+
+    /**
+     * 获取商店的地图有关信息，主要包括：
+     *      longitude       商店经度
+     *      latitude        商店维度
+     *      deliveryArea    商店送货半径
+     *      name            商店名字
+     * @param int $storeId  商店编号
+     * @return boolean | array 商店相关信息
+     */
+    public function getStoreMap($storeId) {
+        $storeId = (int)$storeId;
+        if ($storeId === 0) {
+            return false;
+        }
+        $sql = "SELECT longitude, latitude, deliveryArea, name FROM store WHERE id = $storeId";
+        $res = $this->db->query($sql);
+        if ($res->num_rows === 0) {
+            return false;
+        } else {
+            $res = $res->result_array();
+            return $res[0];
+        }
+    }
+
+    /**
+     * 在商店首页获取的商店信息，主要包轮一下几点：
+     * <pre>
+     *      deliveryTime    送货时间
+     *      deliveryArea    送货区间
+     *      credit          商店评分
+     *      duration        送货速度
+     *      servicePhone    服务电话
+     *      serviceQQ       服务QQ
+     *      logo            商店 logo
+     *      category        本店分类
+     * </pre>
+     * @param int $storeId 商店编号
+     * @return boolean | array 商店信息
+     */
+    public function getShopInfo($storeId) {
+        $storeId = (int)$storeId;
+        if ($storeId === 0) {
+            return false;
+        }
+        $sql = "SELECT deliveryTime, deliveryArea, credit, duration, servicePhone, serviceQQ, logo, category FROM store WHERE id = $storeId";
+        $res = $this->db->query($sql);
+        if ($res->num_rows === 0) {
+            return false;
+        } else {
+            $res = $res->result_array();
+            $res = $res[0];
+            $res['category'] = $this->decodeCategory($res['category']);
+
+            $sql = "SELECT ownerId FROM store WHERE id = $storeId";
+            $bossId = $this->db->query($sql);
+            $bossId = $bossId->result_array();
+            $bossId = $bossId[0]['ownerId'];
+
+            $this->load->model('boss');
+            $loginName = $this->boss->getLoginNameByBossId($bossId);
+
+            $this->load->model('user');
+            $userId = $this->user->getUserIdByLoginName($loginName);
+
+            $res['logo'] = base_url('image/' . $userId . '/mix/' . $res['logo']);
+            return $res;
         }
     }
 }

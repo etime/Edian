@@ -7,49 +7,107 @@
  * @since     2013-12-02 22:00:45
  * @package   controllers
  */
-class Wrong extends CI_Controller
-{
-    var $myMail;
-    function __construct()
-    {
-        parent::__construct();
-        $this->myMail = "1264310280@qq.com";
-        $this->load->model("mwrong");
-    }
+class Wrong extends MY_Controller {
+    // 管理员邮箱
+    var $adminMail;
+
     /**
-     * 发送邮件的测试
+     * 构造函数
      */
-    public function test()
-    {
-        //error_log("测试邮件报错" , 1, $this->myMail ,"From: edian/wrong");
-        /*
-        $flag = mail($this->myMail ,"标题：测试邮件发送",  "邮件报错的正文" , "From: edian/wrong");
-        echo $flag;
-        echo "send message";
-        */
-        //$to = "douunasm@gmail.com";
-        $to = $this->myMail;
+    function __construct() {
+        parent::__construct();
+        $this->load->model('mwrong');
+        $this->config->load('edian');
+        $this->load->model('user');
+        $this->load->library('help');
+        $this->adminMail = $this->config->item('adminMail');
+    }
+
+    /**
+     * 如果没有登录，调出登录窗口
+     */
+    public function noLogin($url = false) {
+        if ($url === false) {
+            $url = site_url();
+        }
+        $data['url'] = $url;
+        $this->load->view('login', $data);
+    }
+
+    /**
+     * 检查用户是否登陆以及权限是否为管理员
+     * 如果用户未登录，跳转到登陆页面，如果权限不够，跳转到 404 页面
+     * @param string $url 如果用户未登录，登陆之后需要跳转的页面
+     * @return boolean 如果用户登陆了并且权限足够，返回 true，否则返回 false
+     * @author farmerjian<chengfeng1992@hotmail.com>
+     */
+    protected function _checkAuthority($url = false) {
+        if ($url === false) {
+            $url = site_url();
+        }
+        $userId = $this->getUserId();
+        // 未登录
+        if ($userId === -1) {
+            $this->noLogin($url);
+            return false;
+        }
+        $credit = $this->user->getCredit($userId);
+        // 不是管理员权限
+        if ($credit != $this->config->item('adminCredit')) {
+            show_404();
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * 测试邮件发送功能
+     */
+    public function test() {
+        if ($this->_checkAuthority(site_url('wrong/test')) === false) {
+            return;
+        }
+        $to = $this->adminMail;
         $subject = "Test mail";
         $message = "Hello! This is a simple email message.";
-        //$from = "someonelse@example.com";
-        //$from = $this->myMail;
-        $from = "douunasm@gmail.com";
+        $from = "chengfeng1992@hotmail.com";
         $headers = "From: $from";
-        mail($to,$subject,$message,$headers);
+        mail($to, $subject, $message, $headers);
         echo "Mail Sent.";
     }
+
     /*
      * 对应的，一定是ajax请求
      * 只能包含中文，不能出现任何的空格和特殊符号,不然一定不能插入
      */
-    public function index()
-    {
-        $temp["text"] = $this->input->post("text");
-        if ( ! preg_match("/[ ~!@#$%^&*()_+`\\=\\|\\{\\}:\\\">\\?<\\[\\];',\/\\.\\-\\\\]/", $temp["text"])) {
-            $this->mwrong->insert($temp);
-        }else{
-            error_log($temp["text"] ,$this->myMail,"from:edian/wrong");
+    public function index() {
+        if ($this->_checkAuthority(site_url('wrong/index')) === false) {
+            return;
         }
+        $temp['text'] = $this->input->post('text');
+        if (! preg_match("/[ ~!@#$%^&*()_+`\\=\\|\\{\\}:\\\">\\?<\\[\\];',\/\\.\\-\\\\]/", $temp["text"])) {
+            $this->mwrong->insert($temp);
+        } else {
+            error_log($temp['text'], $this->adminMail, "from:edian/wrong");
+        }
+    }
+
+    public function showError() {
+        if ($this->_checkAuthority(site_url('wrong/showError')) === false) {
+            return;
+        }
+        $data = $this->mwrong->getAll();
+        header("Content-type: text/html; charset=utf-8");
+        $this->help->showArr($data);
+    }
+
+    public function deleteLog($logId) {
+        if ($this->_checkAuthority(site_url('wrong/deleteLog/') . $logId) === false) {
+            return;
+        }
+        $logId = (int)$logId;
+        $this->mwrong->deleteLog($logId);
+        $this->showError();
     }
 }
 ?>

@@ -10,71 +10,66 @@
  *  @since :    2013-08-14 20:36:25
  *  @package    model
  */
-class Mwrong extends Ci_Model
-{
-     function __construct()
-    {
+class Mwrong extends Ci_Model {
+    /**
+     * 构造函数
+     */
+    function __construct() {
         parent::__construct();
     }
-     /**
-      * 向数据库报错，检查各种意外情况，监控系统运行
-      *
-      * @param  string   $text   想要插入的内容，最初设计为数组，现在慢慢想变成插入string,其他的内容，如id,时间，都是自动
-      * @todo   废弃掉数组插入的形式
-      */
-     public function insert($text)
-     {
-        $wrong  = "";
-        if(is_array($text)){
-            //$text["text"] .= ", 现在时间是".date("m-d h:i:s");//添加上时间，更好辨别,分析
-            //对数组进行编码
-            foreach($text as $key => $value){
-                $wrong .= $key."&[".$value."&]";//通过转义的分号，应该是没有重复的可能性吧
-            }
-        }else {
-            $wrong = mysql_real_escape_string($text);
-        }
-        $this->db->query("insert into wrong(content) values('$wrong')");
-     }
-     /**
-      * 对wrong进行解码
-      * @param string $text 编码之后的字符串
-      * @return array 解码之后的数组
-      */
-     protected function deWrong($text)
-     {
-         static $res ;
-         $tmp = explode("&]",$text);
-         //之所以 -1 是因为在
-         for ($i = 0,$len = count($tmp) - 1; $i < $len; $i++) {
-            $keyVal = explode("&[",$tmp[$i]);
+
+    /**
+     * 向数据库报错，检查各种意外情况，监控系统运行
+     * @param string $text 想要插入的内容，最初设计为数组，现在慢慢想变成插入string,其他的内容，如id,时间，都是自动
+     */
+    public function insert($text) {
+        $wrong = mysql_real_escape_string($text);
+        $sql = "INSERT INTO wrong(content) VALUES('$wrong')";
+        $this->db->query($sql);
+    }
+
+    /**
+    * 对wrong进行解码
+    * @param string $text 编码之后的字符串
+    * @return array 解码之后的数组
+    */
+    protected function decodeContent($text) {
+        static $res ;
+        $tmp = explode('&]', $text);
+        for ($i = 0, $len = count($tmp) - 1; $i < $len; $i ++) {
+            $keyVal = explode('&[', $tmp[$i]);
             $res[$keyVal[0]] = $keyVal[1];
-            //$tmpArr[$keyVal[0]] = $keyVal[1];
-            //array_push($res,$tmpArr);
-         }
-         return $res;
-     }
-     public function getAll(){
-         //对之前的进，
-         $res = $this->db->query("select id,content from wrong where id > 52");
-         if($res->num_rows){
-             $len = $res->num_rows;
-             $res = $res->result_array();
-             for($i = 0 ; $i < $len;$i++){
-                $res[$i]["content"] = $this->deWrong($res[$i]["content"]);
-             }
-             return $res;
-         }
-         return false;
-     }
-     /**
-      * 错误日志的id，处理看完之后，删除
-      * @param int $wrongId 错误情况处理的id
-      * @return bool
-      */
-     public function del($wrongId)
-     {
-         return $this->db->query("delete from wrong where id = $wrongId");
-     }
+        }
+        return $res;
+    }
+
+    /**
+     * 获取所有错误日志
+     * @return boolean | array
+     */
+    public function getAll() {
+        $sql = "SELECT id, content, time FROM wrong";
+        $res = $this->db->query($sql);
+        if ($res->num_rows) {
+            $res = $res->result_array();
+            return $res;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * 根据日志的编号删除错误日志
+     * @param int $logId
+     * @return boolean
+     */
+    public function deleteLog($logId) {
+        $logId = (int)$logId;
+        if ($logId === 0) {
+            return false;
+        }
+        $sql = "DELETE FROM wrong WHERE id = $logId";
+        return $this->db->query($sql);
+    }
 }
 ?>

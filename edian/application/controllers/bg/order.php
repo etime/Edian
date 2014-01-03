@@ -13,11 +13,14 @@ class Order extends Home {
     // 存储商店编号
     var $storeId;
     var $pageSize;
+
     // 构造函数
     function __construct() {
         parent::__construct();
         $this->load->model('morder');
-            $this->load->config('edian');
+        $this->load->config('edian');
+        $this->load->model('mitem');
+        $this->load->library('help');
         $this->storeId = $this->session->userdata('storeId');
         $this->pageSize = $this->config->item('pageSize');
     }
@@ -27,9 +30,7 @@ class Order extends Home {
      * @param int $pageId    当前的页号
      */
     public function today($pageId = 1) {
-        // 处理用户未登录
-        if ($this->userId == -1) {
-            $this->nologin(site_url('bg/order/today'));
+        if ($this->_checkAuthority(site_url('bg/order/today')) === false) {
             return;
         }
 
@@ -40,25 +41,26 @@ class Order extends Home {
 
         // 通过 storeId 获取今日订单
         $ans = $this->morder->getToday($this->storeId);
-
-        // 对今日订单进行解码
-        for ($i = 0, $len = count($ans); $i < $len; $i ++) {
-            // 获取商品的标题
-            $temp = $this->mitem->getTitle($ans[$i]['item_id']);
-            // 商品不存在
-            if ($temp === false) {
-                $temp = '******';
+        if ($ans != false) {
+            // 对今日订单进行解码
+            for ($i = 0, $len = count($ans); $i < $len; $i ++) {
+                // 获取商品的标题
+                $temp = $this->mitem->getTitle($ans[$i]['item_id']);
+                // 商品不存在
+                if ($temp === false) {
+                    $temp = '******';
+                }
+                // 设置商品的标题
+                $ans[$i]['title'] = $temp;
+                // 获取购买者的昵称
+                $temp = $this->user->getNameById($ans[$i]['ordor']);
+                // 购买者不存在
+                if ($temp === false) {
+                    $temp = '******';
+                }
+                // 设置购买者的昵称
+                $ans[$i]['user_name'] = $temp['user_name'];
             }
-            // 设置商品的标题
-            $ans[$i]['title'] = $temp;
-            // 获取购买者的昵称
-            $temp = $this->user->getNameById($ans[$i]['ordor']);
-            // 购买者不存在
-            if ($temp === false) {
-                $temp = '******';
-            }
-            // 设置购买者的昵称
-            $ans[$i]['user_name'] = $temp['user_name'];
         }
         $data['today'] = $ans;
         if ($data['today']) {
@@ -77,9 +79,7 @@ class Order extends Home {
      * 通过登录者的id进行在后台查找用户的历史订单信息
      */
     public function history($pageId = 1) {
-        // 用户未登录
-        if ($this->userId == -1) {
-            $this->nologin(site_url('bg/order')."/order/ontime");
+        if ($this->_checkAuthority(site_url('bg/order/history')) === false) {
             return;
         }
         // 通过 get 的方式得到页号
@@ -104,9 +104,10 @@ class Order extends Home {
      * 显示后台当前正要处理的订单信息
      * 为后台实时刷新的页面提供数据,显示正要处理的订单信息
      */
-    public function ontime($pageId = 1)
-    {
-        $this->load->library('help');
+    public function ontime($pageId = 1) {
+        if ($this->_checkAuthority(site_url('bg/order/ontime')) == false) {
+            return;
+        }
         //搞毛呦，这个怎么解释
         if (isset($_GET['pageId'])) {
             $pageId = $_GET['pageId'];

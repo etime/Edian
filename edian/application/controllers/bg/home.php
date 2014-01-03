@@ -25,10 +25,10 @@ class Home extends MY_Controller {
      */
     function __construct() {
         parent::__construct();
-        $this->load->model("user");
+        $this->load->model('user');
         $this->load->model('boss');
         $this->userId = $this->getUserId();
-        $this->load->config("edian");
+        $this->load->config('edian');
     }
 
     /**
@@ -40,6 +40,37 @@ class Home extends MY_Controller {
         }
         $data['url'] = $url;
         $this->load->view('login', $data);
+    }
+
+    /**
+     * 检查用户是否登陆以及权限是否为管理员或者老板
+     * 如果用户未登录，跳转到登陆页面，如果权限不够，跳转到 404 页面
+     * @param string $url 如果用户未登录，登陆之后需要跳转的页面
+     * @return boolean 如果用户登陆了并且权限足够，返回 true，否则返回 false
+     * @author farmerjian<chengfeng1992@hotmail.com>
+     */
+    protected function _checkAuthority($url = false) {
+        if ($url === false) {
+            $url = site_url();
+        }
+        // 用户未登录
+        if ($this->userId === -1) {
+            $this->noLogin($url);
+            return false;
+        }
+        $credit = $this->user->getCredit($this->userId);
+        // 不是管理员或者老板权限
+        $flag = false;
+        if ($credit == $this->config->item('bossCredit')) {
+            $flag = true;
+        }
+        if ($credit != $this->config->item('adminCredit')) {
+            $flag = true;
+        }
+        if ($flag == false) {
+            show_404();
+        }
+        return $flag;
     }
 
     /**
@@ -73,9 +104,7 @@ class Home extends MY_Controller {
      * 进入后台页面后，立马将 bossId storeId 存储在 session 中
      */
     function index() {
-        // 如果用户未登录
-        if ($this->userId == -1) {
-            $this->noLogin();
+        if ($this->_checkAuthority(site_url('bg/home/index')) === false) {
             return;
         }
         // 设置用户的 streId
@@ -102,8 +131,7 @@ class Home extends MY_Controller {
      * @deprecated 因为没有办法处理 管理员选择店家的操作，因此废弃
      */
     public function set(){
-        if($this->userId == -1) {
-            $this->noLogin();
+        if ($this->_checkAuthority(site_url('bg/home/set')) === false) {
             return;
         }
         //$data = $this->user->getExtro($this->userId);//获取之前的类型
@@ -145,9 +173,8 @@ class Home extends MY_Controller {
      *  @todo 需要将店家之前的信息显示提供出来，为管理员提供接口，可以选择店家的信息，然后设置
      */
     public function item() {
-        if ($this->userId == -1) {
-             $this->noLogin();
-             return;
+        if ($this->_checkAuthority(site_url('bg/home/item')) === false) {
+            return;
         }
         $data['title']="添加商品";
         $data["dir"] = $this->part;
@@ -168,10 +195,9 @@ class Home extends MY_Controller {
      * 显示一个商家所有的图片
      * @todo 添加分类和搜索
      */
-    public function  imglist(){
-        if(!$this->userId){
-            echo "请登录";
-            return;
+    public function imglist(){
+        if ($this->_checkAuthority('bg/home/imglist') === false) {
+            return false;
         }
         $this->load->model("img");
         //要不要添加浏览全部图片的设定呢？
@@ -185,6 +211,9 @@ class Home extends MY_Controller {
      * @param int $ownerId  店铺的拥有者boss的id
      */
     public function choseStore($ownerId  = -1 ) {
+        if ($this->_checkAuthority(site_url('bg/home/choseStore/') . $ownerId) === false) {
+            return;
+        }
         //$ownerId = $this->session->userdata('bossId');
         $this->load->model("store");
         $data["store"] = $this->store->getIdNameByOwnerId($ownerId);
@@ -209,6 +238,9 @@ class Home extends MY_Controller {
      * @param int $storeId  表示选择的storId
      */
     public function receiveStoreId($storeId = -1 ) {
+        if ($this->_checkAuthority(site_url('bg/home/receiveStoreId/') . $storeId) === false) {
+            return;
+        }
         $storeId = (int)$storeId;
         echo $storeId . '<br>';
         $bossId = $this->session->userdata("bossId");
