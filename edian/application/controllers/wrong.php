@@ -34,26 +34,39 @@ class Wrong extends MY_Controller {
         $this->load->view('login', $data);
     }
 
-    private function _checkAuthority() {
+    /**
+     * 检查用户是否登陆以及权限是否为管理员
+     * 如果用户未登录，跳转到登陆页面，如果权限不够，跳转到 404 页面
+     * @param string $url 如果用户未登录，登陆之后需要跳转的页面
+     * @return boolean 如果用户登陆了并且权限足够，返回 true，否则返回 false
+     * @author farmerjian<chengfeng1992@hotmail.com>
+     */
+    protected function _checkAuthority($url = false) {
+        if ($url === false) {
+            $url = site_url();
+        }
         $userId = $this->getUserId();
         // 未登录
         if ($userId === -1) {
-            $this->noLogin(site_url('wrong/showError'));
-            return;
+            $this->noLogin($url);
+            return false;
         }
         $credit = $this->user->getCredit($userId);
         // 不是管理员权限
         if ($credit != $this->config->item('adminCredit')) {
             show_404();
-            return;
+            return false;
         }
+        return true;
     }
 
     /**
      * 测试邮件发送功能
      */
     public function test() {
-        $this->_checkAuthority();
+        if ($this->_checkAuthority(site_url('wrong/test')) === false) {
+            return;
+        }
         $to = $this->adminMail;
         $subject = "Test mail";
         $message = "Hello! This is a simple email message.";
@@ -68,7 +81,9 @@ class Wrong extends MY_Controller {
      * 只能包含中文，不能出现任何的空格和特殊符号,不然一定不能插入
      */
     public function index() {
-        $this->_checkAuthority();
+        if ($this->_checkAuthority(site_url('wrong/index')) === false) {
+            return;
+        }
         $temp['text'] = $this->input->post('text');
         if (! preg_match("/[ ~!@#$%^&*()_+`\\=\\|\\{\\}:\\\">\\?<\\[\\];',\/\\.\\-\\\\]/", $temp["text"])) {
             $this->mwrong->insert($temp);
@@ -78,14 +93,18 @@ class Wrong extends MY_Controller {
     }
 
     public function showError() {
-        $this->_checkAuthority();
+        if ($this->_checkAuthority(site_url('wrong/showError')) === false) {
+            return;
+        }
         $data = $this->mwrong->getAll();
         header("Content-type: text/html; charset=utf-8");
         $this->help->showArr($data);
     }
 
     public function deleteLog($logId) {
-        $this->_checkAuthority();
+        if ($this->_checkAuthority(site_url('wrong/deleteLog/') . $logId) === false) {
+            return;
+        }
         $logId = (int)$logId;
         $this->mwrong->deleteLog($logId);
         $this->showError();

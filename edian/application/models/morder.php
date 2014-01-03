@@ -115,7 +115,7 @@ class Morder extends Ci_Model {
      */
     public function getToday($storeId) {
         $storeId = (int)$storeId;
-        if (! $storeId) {
+        if ($storeId === 0) {
             return false;
         }
         $sql = "SELECT time, item_id, state, ordor, info FROM ord WHERE seller = $storeId AND unix_timestamp(time) > unix_timestamp(now()) - 86400 OR state = $this->printed OR state = $this->Ordered";
