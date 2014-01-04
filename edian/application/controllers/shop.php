@@ -25,16 +25,16 @@ class Shop extends MY_Controller {
             show_404();
             return false;
         }
+        header("Content-type: text/html; charset=utf-8");
         $data1 = $this->store->getShopInfo($store);
         $data2 = $this->mitem->getItemByStoreId($store);
         if ($data1 === false || $data2 === false) {
             show_404();
             return false;
         }
-        $data = array_merge($data1, $data2);
-        header("Content-type: text/html; charset=utf-8");
-        $this->help->showArr($data);
-        $this->load->view('store.php', $data);
+        $data1['itemlist'] = $data2;
+        $this->help->showArr($data1);
+        $this->load->view('store.php', $data1);
     }
 
     /**

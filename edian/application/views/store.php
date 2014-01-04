@@ -23,7 +23,6 @@
     <div id = "nav">
         <div class="cnav width clearfix">
             <h4>商品类别</h4>
-
             <h4>首页</h4>
             <h4>二手</h4>
             <h4>活动</h4>
@@ -38,13 +37,9 @@
     <div id = 'body' class = "width clearfix">
         <div id = "side">
             <ul id = "list" class = 'list'>
-                <li>蛋糕</li>
-                <li>曲奇</li>
-                <li>甜甜饼</li>
-                <li>甜甜饼</li>
-                <li>甜甜饼</li>
-                <li>甜甜饼</li>
-                <li>甜甜饼</li>
+        <?php foreach ($category as $value):?>
+            <li><?php echo $value ?></li>
+        <?php endforeach?>
             </ul>
             <div class = "store">
                 <h5>店铺信息</h5>
@@ -91,21 +86,24 @@
                 </div>
             </div>
             <ul class = "goodlist clearfix">
+            <?php foreach($itemlist as $item): ?>
                 <li>
                     <div class = "img">
-                        <img class = "main" src = "http://news.xinhuanet.com/photo/2013-03/18/124473038_321n.jpg" />
+                        <img class = "main" src = "<?php echo $item['mainThumbnail']?>" />
+                        <span class = "cart" alt = "123"> Cart </span>
                     </div>
                     <div class = "info">
                         <p>
-                            <span class = "right">评分<strong>4.7</strong></span>
-                            <a>巧克力牧师蛋糕</a>
+                            <span class = "right">评分<strong><?php echo $item['satisfyScore'] ?></strong></span>
+                            <a><?php echo $item['title'] ?></a>
                         </p>
                         <p>
-                            <span class = "right">已售<strong>123</strong></span>
-                            <strong>￥99.00</strong>
+                            <span class = "right">已售<strong><?php echo $item['sellNum'] ?></strong></span>
+                            <strong>￥<?php echo $item['price'] ?></strong>
                         </p>
                     </div>
                 </li>
+            <?php endforeach?>
                 <li>
                     <div class = "img">
                         <span class = "flag">新</span>
