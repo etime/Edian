@@ -48,7 +48,7 @@ $idx = -1;
         ?>
             <span class = "<?php echo $nows ?>">
             店家:
-            <a href = "<?php echo $siteUrl."/space/index/".$nows ?>"><?php echo $cart[$cnt]['selinf']['name'] ?></a>
+            <a href = "<?php echo $siteUrl."/space/index/".$nows ?>"><?php echo $cart[$cnt]['selinf']['nickname'] ?></a>
             </span>
             <span class = "rt">
                 <?php

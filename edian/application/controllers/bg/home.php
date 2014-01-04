@@ -72,10 +72,11 @@ class Home extends MY_Controller {
             $this->isAdmin = true;
             $flag = true;
         }
-        if ($flag == false) {
+        if ($flag === false) {
             show_404();
+            return false;
         }
-        return $flag;
+        return $credit;
     }
 
     /**
@@ -173,7 +174,7 @@ class Home extends MY_Controller {
         if ($this->_checkAuthority(site_url('bg/home/index')) === false) {
             return;
         }
-        // 设置用户的 streId
+        // 设置用户的 storeId,但是如果不是商店老板呢，是管理员呢
         if (! $this->session->userdata('storeId')) {
             $bossId = $this->_setBossId();
             $this->choseStore($bossId);
