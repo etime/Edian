@@ -64,7 +64,7 @@ class Home extends MY_Controller {
         if ($credit == $this->config->item('bossCredit')) {
             $flag = true;
         }
-        if ($credit = $this->config->item('adminCredit')) {
+        if ($credit == $this->config->item('adminCredit')) {
             $flag = true;
         }
         if ($flag === false) {
