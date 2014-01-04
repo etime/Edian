@@ -1,45 +1,47 @@
 /**
+ * 这里是作为店铺的js处理的函数进行的
  * @name        ../js/shop.js
  * @author      unasm < 1264310280@qq.com >
  * @since       2014-01-04 16:30:23
 */
-//设置list的宽度和高度
-function funList() {
-    var sideWidth = $("#side").width();
-    $("#list").width(sideWidth);
-}
 /**
  * 确定topbar的位置和列表的位置
  */
 function fixpos() {
-    funList();
-    var win = window;
-    console.log("abc");
-    console.log(win);
-    var headHeight = $("#header").height();
-    console.log(headHeight);
-    var nav = $("#nav"),list = $("#list");
+    var win = window ,headHeight = $("#header").height() , nav = $("#nav");
     $(win).scroll(function () {
         var top = $(win).scrollTop();
-        console.log(top);
         if(top < headHeight){
-            var cls = nav.attr("class");
-            console.log(cls);
-            if(cls.indexOf('navfix') !== -1){
+            if(nav.attr("class").indexOf("navfix") !== -1 ){
                 nav.removeClass("navfix");
-                list.removeClass('listfix')
-                console.log("remove fix");
             }
         }else if(top > headHeight){
-            var cls = $("#nav").attr("class");
-            if(cls.indexOf('fix') === -1){
+            if(nav.attr("class").indexOf("navfix") === -1 ){
                 nav.addClass('navfix');
-                list.addClass('listfix')
-                console.log("add fix");
             }
         }
     })
 }
+function showMap() {
+    var flag = 1;
+    var href = 'http://127.0.0.1/Edian/edian/index.php/shop/index/2';
+    //利用逗号表达式吗?,看起来更优雅
+    //获取storeId
+    var reg = /\d+$/ , storeId = reg.exec(href) , storeId = storeId[0];
+    console.log(storeId);
+    $("#mapImg").dblclick(function () {
+        if(flag){
+            flag = 0;
+            $("body").append("<div id = 'map' style = 'display:none'><a class = 'close' href = 'javascript:;'></a><iframe src = '" + site_url +'/shop/storeMap/' + storeId + "'></iframe></div>");
+        }
+        $("#map").fadeIn();
+    })
+    //貌似可以成为所有的close的使用函数
+    $(".close").click(function () {
+        $(this.parentNode).fadeOut();
+    })
+}
 $(document).ready(function () {
     fixpos();
+    showMap();
 })

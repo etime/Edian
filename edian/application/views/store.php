@@ -25,6 +25,7 @@
         <div class="cnav width clearfix">
             <h4>商品类别</h4>
             <ul class = "list">
+                <li class = "ccd">全部</li>
                 <?php foreach ($category  as $value): ?>
                 <li> <?php echo $value ?></li>
                 <?php endforeach?>
@@ -39,15 +40,17 @@
     </div>
     <div id = 'body' class = "width clearfix">
         <div id = "side">
+            <div class = "stCom block">
+                <h3>何氏专辑店</h3>
+                <blockquote>
+                    银鳞胸甲，蓝色品质，五金一件，先到先得
+                </blockquote>
+                <img src="<?php echo $logo?>" alt="商店logo" />
+            </div>
+            <div class = "store block">
 <!--
-            <ul id = "list" class = 'list'>
-        <?php foreach ($category as $value):?>
-            <li><?php echo $value ?></li>
-        <?php endforeach?>
-            </ul>
--->
-            <div class = "store">
                 <h5>店铺信息</h5>
+-->
                 <div class = "bustime clearfix">
                     <span class = "item">营业时间</span>
                     <ul alt = "<?php echo $deliveryTime ?>">
@@ -65,13 +68,13 @@
                     <span class = "item">送货速度</span>
                     <strong><?php echo $duration ?></strong>分钟
                 </p>
-                <p><span class = "item">距离    </span>    <strong>4.5</strong>km</p>
+                <p><span class = "item">商店距离您</span>    <strong class = "bc">4.5</strong>km</p>
                 <p><span class = "item">电话</span><?php  echo $servicePhone?></p>
                 <p><span class = "item">客服QQ  </span><?php  echo $serviceQQ?></p>
-                <img src = "<?php echo $baseUrl.'image/52/mix/map.png' ?>" alt = "地图图片">
+                <img id = "mapImg" src = "<?php echo $baseUrl.'image/52/mix/map.png' ?>" alt = "地图图片">
             </div>
         </div>
-        <div class = "good">
+        <div class = "good block">
             <h5>
                 e点 >> 指尖蛋糕店 >> 曲奇
                 <span>共35件商品</span>
@@ -190,6 +193,9 @@
         </div>
     </div>
 </body>
+<script type="text/javascript" charset="utf-8">
+    var site_url = "<?php echo $siteUrl?>";
+</script>
 <script type="text/javascript" charset="utf-8" src = "<?php echo $baseUrl . 'js/jquery.min.js' ?>"></script>
 <script type="text/javascript" charset="utf-8" src = "<?php echo $baseUrl . 'js/shop.js' ?>"></script>
 </html>
