@@ -333,6 +333,22 @@ class User extends CI_Model {
             return $res[0];
         }
     }
+
+    /**
+     * 为用户新增一个地址
+     * @param string $addr
+     * @param int $userId
+     * @return mixed
+     */
+    public function appaddr($addr, $userId) {
+        $userId = (int)$userId;
+        if ($userId === 0) {
+            return false;
+        }
+        $addr = mysql_real_escape_string($addr);
+        $sql = "UPDATE user SET address = concat(address,'".$addr."') WHERE id = $userId";
+        return $this->db->query($sql);
+    }
 //    public function getNum($userId) {
 //        $userId = (int)$userId;
 //        $sql = "SELECT mailNum, comNum FROM user WHERE id = '$userId'";
@@ -529,11 +545,7 @@ class User extends CI_Model {
         return $this->getArray($res);
     }
 
-    public function appaddr($addr,$userId)
-    {
-        $sql = "update user set addr  = concat(addr,'".$addr."') where user_id = $userId";
-        return $this->db->query($sql);
-    }
+
 
     public function allWaiMai()
     {

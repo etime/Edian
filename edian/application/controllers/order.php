@@ -60,9 +60,6 @@ class Order extends My_Controller{
      * @todo    这里的设计有问题，在ci中是不能包含中文的url的，而info中很可能导致这种情况;
      */
     public function add($itemId = 0) {
-        // 用户未登录
-//        $res['flag'] = 0;
-//        $this->userId = 52;
         if ($this->userId === -1) {
             $res['atten'] = '请首先登录再下单';
             echo json_encode($res);
@@ -273,6 +270,24 @@ class Order extends My_Controller{
         }
     }
 
+    public function addr() {
+        //处理上传的地址信息,通过ajax提交
+        $res['flag'] = 0;
+        if ($this->userId == -1) {
+            $res['atten'] = '请首先登录';
+            echo json_encode($res);
+            return;
+        }
+        $phone = $this->input->post('phone');
+        $addr = $this->input->post('addr');
+        $geter = $this->input->post('geter');
+        $ans = '&' . $geter . '|' . $phone . '|' . $addr;
+        if ($this->user->appaddr($ans, $this->userId)) {
+            $res['flag'] = 1;
+            $res['atten'] = $ans;
+        }
+        echo json_encode($res);
+    }
 /**********************************************************************************************************************/
 /**********************************************************************************************************************/
 /**********************************************************************************************************************/
@@ -365,26 +380,7 @@ class Order extends My_Controller{
         if($flag) echo json_encode(1);
         else echo json_encode(0);
     }
-    public function addr()
-    {
-        //处理上传的地址信息,通过ajax提交
-        $res["flag"] = 0;
-        if(!$this->userId){
-            //其实没有什么意义了，因为是ajax提交的
-            $res["atten"] = "请首先登录";
-            echo json_encode($res);
-            return;
-        }
-        $phone = $this->input->post("phone");
-        $addr = $this->input->post("addr");
-        $geter = $this->input->post("geter");
-        $ans = "&".$geter."|".$phone."|".$addr;
-        if($this->user->appaddr($ans,$this->userId)){
-            $res["flag"] = 1;
-            $res["atten"] = $ans;
-        }
-        echo json_encode($res);
-    }
+
 
     /**
      * 这里应该是因为set/setprint的读取数据相同，所以都是从这个函数得到内容

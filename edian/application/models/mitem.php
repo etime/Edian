@@ -589,7 +589,7 @@ class Mitem extends Ci_Model {
         if ($storeId === 0) {
             return false;
         }
-        $sql = "SELECT title, price, satisfyScore, sellNum, mainThumbnail FROM item WHERE belongsTo = $storeId ORDER BY rating";
+        $sql = "SELECT id, title, price, satisfyScore, sellNum, mainThumbnail FROM item WHERE belongsTo = $storeId ORDER BY rating";
         $res = $this->db->query($sql);
         if ($res->num_rows === 0) {
             return false;
