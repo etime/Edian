@@ -85,6 +85,10 @@ class Test extends MY_Controller{
         }
         $this->load->view("complete" , $data);
     }
+    public function store()
+    {
+        $this->load->view("store2");
+    }
     public function hack()
     {
         $this->load->library('help');

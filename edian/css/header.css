@@ -1,88 +1,62 @@
-/*************************************************************************
-    > File Name :  ../../css/header.css
-    > Author  :      unasm
-    > Mail :         douunasm@gmail.com
-    > Last_Modified: 2013-08-26 00:49:26
- ************************************************************************/
-.header{
+/**
+ * 这里是头部
+ * 应该已经被废弃了，呵呵，刚刚诞生呢
+ * @author unasm
+ */
+#header{
+    background:#cc0001;
+}
+#header > div{
+    margin:0 auto;
+    width:1200px;
+    width:1200px;
+}
+#header .logo{
+    height:120px;
+    overflow:hidden;
+    width:200px;
+    text-align:center;
+    float:left;
+}
+#header .logo h1{
+    font-size:2.5em;
+}
+#header .logo h1 span{
+    background-color:white;
+    color:#cc0001;
+    padding:2px;
+}
+/** 这里是搜索的开始  */
+#header .search{
+    float:left;
+    margin:15px 0 0 387px;
+    width:500px;
+}
+#header .search div{
+    height:27px;
+    float:left;
+    width:425px;
+}
+#header input[name = 'key']{
+    box-shadow:1px 1px 4px rgb(182, 182, 182) inset;
     width:100%;
-    position:relative;
-}
-.logo{
-    height:50px;
-}
-.dl span{
-    font-size:2.4em;
-    color:#22C8F1;
-}
-.dl{
-    float:left;
-}
-.nav{
-    font-size:1.2em;
-    margin-bottom:-15px;
-}
-.top{
-    line-height:25px;
-    background:#007BEC;
-}
-
-.top a{
-    color:black;
-    margin:0 5px;
-    font-size:0.8em;
-}
-.rit{
-    float:right;
-}
-.sea{
-    position:absolute;
-    bottom:10px;
-    right:100px;
-    white-space:nowrap;
-}
-.hinf{
-    top:0px;
-    right:10px;
-    position:absolute;
-    margin:0px;
-}
-#inpt{
-    box-shadow:0 1px 0 rgba(255, 255, 255, .08), 0 1px 4px rgba(0, 0, 0, .3) inset;
-    line-height:30px;
-    height:30px;
-    border-radius:3px 0 0 3px;
-    width:400px;
-    background:#fff;
-    float:left;
-}
-#inpt input{
-    width:98%;
-    border:none;
-    margin:1%;
+    padding:2px 6px;
+    height:100%;
+    border-radius:4px 0px 0px 4px;
+    border-right:0;
     outline:none;
 }
-#sub{
-    border-radius:0 3px 3px 0;
+#header input[name = 'key']:focus{
+    box-shadow:1px 1px 6px rgb(150,150,150) inset;
+}
+#header input[name = 'sub']{
+    height:35px;
+    margin-left:-6px;
     border:none;
-    background:#1B7E72;
-    line-height:30px;
-    height:30px;
+    border-radius:0 3px 3px 0;
     width:80px;
+    outline:none;
 }
-#sub:active{
-    background:#173F3A;
-}
-.htl{
-    background:#000;
-    content:"";
-    height:4px;
-    border-radius:2px;
-    box-shadow:3px 3px 3px #B9B9B9;
-}
-.body{
-    max-width:1200px;
-    min-width:1000px;
-    margin:0px auto;
-    position:relative;
+#header input[name = 'sub']:active{
+    background:rgb(120,120,120);
 }

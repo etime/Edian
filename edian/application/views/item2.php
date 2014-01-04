@@ -9,26 +9,11 @@ $baseUrl = base_url();
     <title>大明宫词</title>
 </head>
 <body>
-    <!-- 这个什么class header 是伪造的header-->
+    <!-- 这个什么class header 是伪造的header,可以不存在的。。-->
     <div class="header">
-        <div id = "header" class="clearfix" >
-            <div>
-                <div class = "logo">
-                    <h1>e<span>點</span></h1>
-                </div>
-                <p style="float:right">
-                    <a>登录</a>  |
-                    <a>注册</a>  |
-                    <a>帮助</a>
-                </p>
-                <div class = "search">
-                    <div>
-                        <input type="text" name="key" id="sea" placeholder = "搜索" />
-                    </div>
-                    <input type="submit" name="sub" value="搜索" />
-                </div>
-            </div>
-        </div>
+    <?php
+        $this->load->view("head");
+    ?>
         <div class="tab">
             <ul class="clearfix">
                 <li>首页</li>

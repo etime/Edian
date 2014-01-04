@@ -6,20 +6,12 @@
 <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <title>何时专辑店</title>
-    <link rel="stylesheet" href="<?php echo $baseUrl.'/css/store.css' ?>" type="text/css" media="all" />
+    <link rel="stylesheet" href="<?php echo $baseUrl.'/css/store2.css' ?>" type="text/css" media="all" />
 </head>
 <body>
-<!--
-    <div id="header">
-        <div class="dtop width">
-            <h1>eDian</h1>
-            <input type="text" name="sea" id="sea" placeholder = "搜索" />
-        </div>
-    </div>
--->
-<?php
-    $this->load->view('head');
-?>
+    <?php
+        $this->load->view('head');
+    ?>
     <div id = "nav">
         <div class="cnav width clearfix">
             <h4>商品类别</h4>
@@ -37,15 +29,7 @@
     </div>
     <div id = 'body' class = "width clearfix">
         <div id = "side">
-            <ul id = "list" class = 'list'>
-                <li>蛋糕</li>
-                <li>曲奇</li>
-                <li>甜甜饼</li>
-                <li>甜甜饼</li>
-                <li>甜甜饼</li>
-                <li>甜甜饼</li>
-                <li>甜甜饼</li>
-            </ul>
+
             <div class = "store">
                 <h5>店铺信息</h5>
                 <div class = "bustime clearfix">
@@ -68,8 +52,18 @@
                 <p><span class = "item">距离    </span>    <strong>4.5</strong>km</p>
                 <p><span class = "item">客服电话</span>12321232211</p>
                 <p><span class = "item">客服QQ  </span>123212123</p>
-                <img src = "<?php echo $baseUrl.'image/52/mix/map.png' ?>" alt = "地图图片">
+                <img src = "<?php echo $baseUrl.'image/52/mix/map.png' ?>" alt = "地图图片" style = "display:none">
             </div>
+            <h5>店铺类别</h5>
+           <ul id = "list" class = 'list'>
+                <li>蛋糕</li>
+                <li>曲奇</li>
+                <li>甜甜饼</li>
+                <li>甜甜饼</li>
+                <li>甜甜饼</li>
+                <li>甜甜饼</li>
+                <li>甜甜饼</li>
+            </ul>
         </div>
         <div class = "good">
             <h5>
@@ -157,6 +151,24 @@
                 <li>
                     <div class = "img">
                         <img class = "main" src="http://gd3.alicdn.com/bao/uploaded/i3/T1.mvOXjFqXXXSjdfX_114544.jpg_460x460.jpg_.webp" alt="蛋糕" />
+                    </div>
+                    <div class = "info">
+                        <p>
+                            <span class = "right">评分<strong>4.7</strong></span>
+                            <a>巧克力牧师蛋糕</a>
+                        </p>
+                        <p>
+                            <span class = "right">已售<strong>123</strong></span>
+                            <strong>￥99.00</strong>
+                        </p>
+                    </div>
+                </li>
+                <li>
+                    <div class = "img">
+                        <span class = "flag">新</span>
+                        <img class = "main" src="http://gd3.alicdn.com/bao/uploaded/i3/T1.mvOXjFqXXXSjdfX_114544.jpg_460x460.jpg_.webp" alt="蛋糕"/>
+                        <!-- cart中的数值是id -->
+                        <span class = "cart" alt = "123"> Cart </span>
                     </div>
                     <div class = "info">
                         <p>
