@@ -16,17 +16,92 @@
  */
 class ComItem extends Ci_Model{
     var $lenDay;
+
+    /**
+     * 构造函数
+     */
     function __construct() {
         parent::__construct();
         $this->lenDay = 86400;
     }
 
     public function selItem($itemId) {
+        $itemId = (int)$itemId;
+        if ($itemId === 0) {
+            return false;
+        }
         $sql = "SELECT id, score, context, time, user_id FROM comItem WHERE item_id = '$itemId'";
         $res = $this->db->query($sql);
         return $res->result_array();
     }
 
+    //对arr中的context格式整理，整理成数组
+    protected function conForm($arr) {
+        if ($arr == false) {
+            return false;
+        }
+        $this->load->model('user');
+        for ($i = 0, $len = count($arr); $i < $len; $i ++) {
+            $temp = explode('&', $arr[$i]['context']);
+            $arr[$i]['context'] = Array();
+            $userName = $this->user->getNameById($arr[$i]['user_id']);
+            $arr[$i]['context'][0]['user_name'] = $userName;
+            $arr[$i]['context'][0]['time'] = $arr[$i]['time'];
+            $arr[$i]['context'][0]['context'] = $temp[0];
+            for ($j = 1, $lenj = count($temp); $j < $lenj; $j ++) {
+                $tempj = explode('|', $temp[$j]);
+                $now = Array();
+                $now['user_name'] = $tempj[2];
+                $now['time'] = $tempj[1];
+                $now['context'] = $tempj[0];
+                $arr[$i]['context'][$j]= $now;
+            }
+        }
+        return $arr;
+    }
+
+    /**
+     * 管理员权限获取用户评论
+     * @param int $date
+     * @return boolean | array
+     */
+    public function getSomeDate($date) {
+        $date = (int)$date;
+        $date = $this->lenDay * $date;
+        $sql = "SELECT user_id, id, score, context, time, item_id FROM comItem WHERE unix_timestamp(time) > (unix_timestamp(now()) - $date)";
+        $res = $this->db->query($sql);
+        if ($res->num_rows === 0) {
+            $res = $res->result_array();
+            $res = $this->conForm($res);
+            return $res;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * 老板权限获取用户评论
+     * @param int $userId
+     * @param int $date
+     * @return boolean | array
+     */
+    public function getUserDate($userId, $date) {
+        $userId = (int)$userId;
+        if ($userId == 0) {
+            return false;
+        }
+        $date = (int)$date;
+        $date = $this->lenDay * $date;
+        $sql = "SELECT user_id, id, score, context, time, item_id FROM comItem WHERE seller = $userId && unix_timestamp(time) > (unix_timestamp(now()) - $date)";
+        $res = $this->db->query($sql);
+        if ($res) {
+            $res = $res->result_array();
+            $res = $this->conForm($res);
+            return $res;
+        } else {
+            return false;
+        }
+    }
 /**********************************************************************************************************************/
 /**********************************************************************************************************************/
 /**********************************************************************************************************************/
@@ -75,50 +150,9 @@ class ComItem extends Ci_Model{
         return false;
     }
 
-    public function getSomeDate($date)
-    {
-        $date = $this->lenDay*$date;
-        $res = $this->db->query("select user_id,id,score,context,time,item_id from comItem where unix_timestamp(time) > (unix_timestamp(now()) - $date)");
-        if($res){
-            return $this->conForm($res->result_array());
-        }
-        return false;
-    }
-    public function getUserDate($userId,$date)
-    {
-        $date = $this->lenDay*$date;
-        $res = $this->db->query("select user_id,id,score,context,time,item_id from comItem where seller = $userId && unix_timestamp(time) > (unix_timestamp(now()) - $date)");
-        if($res){
-            return $this->conForm($res->result_array());
-        }
-        return false;
-    }
-    protected function conForm($arr)
-    {
-        //对arr中的context格式整理，整理成数组
-        if(!$arr){
-            return false;
-        }
-        $len = count($arr);
-        $this->load->model("user");
-        for ($i = 0; $i < $len; $i++) {
-            $temp = explode("&",$arr[$i]["context"]);
-            $arr[$i]["context"] = Array();//清空之前的数据
-            $userName = $this->user->getNameById($arr[$i]["user_id"]);
-            $arr[$i]["context"][0]["user_name"] = $userName["user_name"];
-            $arr[$i]["context"][0]["time"] = $arr[$i]["time"];
-            $arr[$i]["context"][0]["context"] = $temp[0];
-            for($j = 1,$lenj = count($temp);$j < $lenj;$j++){
-                $tempj = explode("|",$temp[$j]);
-                $now = Array();
-                $now["user_name"] = $tempj[2];
-                $now["time"] = $tempj[1];
-                $now["context"] = $tempj[0];
-                $arr[$i]["context"][$j]= $now;
-            }
-        }
-        return $arr;
-    }
+
+
+
     public function getUser($id)
     {
         //取得user——id

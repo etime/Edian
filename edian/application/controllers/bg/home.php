@@ -20,6 +20,7 @@
 class Home extends MY_Controller {
     var $userId;
     var $isAdmin;
+    var $isBoss;
 
     /**
      * 构造函数，需要使用的 model 文件有：bghome, user
@@ -29,8 +30,11 @@ class Home extends MY_Controller {
         $this->load->model('user');
         $this->load->model('boss');
         $this->load->model('store');
-        $this->userId = $this->getUserId();
         $this->load->config('edian');
+
+        $this->userId = $this->getUserId();
+        $this->isAdmin = false;
+        $this->isBoss = false;
     }
 
     /**
@@ -55,10 +59,13 @@ class Home extends MY_Controller {
         if ($url === false) {
             $url = site_url();
         }
+        $this->isBoss = false;
+        $this->isAdmin = false;
         // 用户未登录
         if ($this->userId === -1) {
             $this->noLogin($url);
             $this->isAdmin = false;
+            $this->isBoss = false;
             return false;
         }
         $credit = $this->user->getCredit($this->userId);
@@ -66,11 +73,13 @@ class Home extends MY_Controller {
         $flag = false;
         if ($credit == $this->config->item('bossCredit')) {
             $flag = true;
+            $this->isBoss = true;
             $this->isAdmin = false;
         }
         if ($credit == $this->config->item('adminCredit')) {
-            $this->isAdmin = true;
             $flag = true;
+            $this->isBoss = false;
+            $this->isAdmin = true;
         }
         if ($flag === false) {
             show_404();
