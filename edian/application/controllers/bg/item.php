@@ -10,7 +10,6 @@ require 'home.php';
  * 关于后台的一些item的操作集合
  */
 class item extends Home {
-    var $userId;
     var $storeId;
     var $bossId;
     var $ADMIN;
@@ -23,8 +22,9 @@ class item extends Home {
         parent::__construct();
         $this->load->model('mitem');
         $this->load->library('pagesplit');
-        $this->load->config("edian");
+        $this->load->config('edian');
         $this->load->library('help');
+        $this->load->model('comitem');
 
         $this->userId = $this->getUserId();
         $this->storeId = $this->session->userdata('storeId');
@@ -59,6 +59,46 @@ class item extends Home {
         }
         $this->load->view('bgItemMan', $data);
     }
+
+    //管理员看到一天内所有的评论，其他人看到3天内所有的评论
+    public function itemCom($pageId = 1) {
+        if ($this->_checkAuthority(site_url('bg/item/itemcom')) === false) {
+            return;
+        }
+        if (isset($_GET['pageId'])) {
+            $pageId = $_GET['pageId'];
+        }
+        if ($this->isAdmin) {
+            $com = $this->comitem->getSomeDate(100);
+        } else if ($this->isBoss) {
+            $com = $this->comitem->getUserDate($this->userId, 100);
+        }
+
+        //分页
+        if ($com) {
+            $temp = $this->pagesplit->split($com, $pageId, $pageSize);
+            $com = $temp['newData'];
+            $commonUrl = site_url() . '/bg/item/itemCom';
+            $data['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount']);
+        }
+
+        if($com) $len = count($com);
+        else $len = 0;
+        for ($i = 0; $i < $len; $i++) {
+            $temp = $this->mitem->getTitle($com[$i]["item_id"]);
+            $com[$i]['title'] = $temp;
+        }
+        $data['com'] = $com;
+        if ($this->isBoss) {
+            $data['type'] = 2;
+        } else if ($this->isAdmin) {
+            $data['type'] = 3;
+        } else {
+            $daa['type'] = 1;
+        }
+        $data['ADMIN'] = $this->ADMIN;
+        $this->load->view('bgcom', $data);
+    }
 /**********************************************************************************************************************/
 /**********************************************************************************************************************/
 /**********************************************************************************************************************/
@@ -91,45 +131,7 @@ class item extends Home {
         if(($this->type == $this->ADMIN) || ($this->user_id == $master["author_id"]))return true;
         return false;
     }
-    public function itemCom($pageId = 1, $pageSize = 2)
-    {
-        //管理员看到一天内所有的评论，其他人看到3天内所有的评论
-        if(!$this->user_id){
-            $this->noLogin(site_url("bg/item/itemCom"));
-            return;
-        }
-        if (isset($_GET['pageId'])) {
-        	$pageId = $_GET['pageId'];
-        }
-        $type = $this->user->getType($this->user_id);
-        $this->load->model("comitem");
-        $com = Array();
-        if($type == $this->ADMIN){
-            //为管理员的时候
-            $com = $this->comitem->getSomeDate(100);
-        }else{
-            $com = $this->comitem->getUserDate($this->user_id,100);
-        }
 
-        //分页
-        if ($com) {
-        	$temp = $this->pagesplit->split($com, $pageId, $pageSize);
-        	$com = $temp['newData'];
-        	$commonUrl = site_url() . '/bg/item/itemCom';
-        	$data['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount']);
-        }
-
-        if($com) $len = count($com);
-        else $len = 0;
-        for ($i = 0; $i < $len; $i++) {
-            $temp = $this->mitem->getTitle($com[$i]["item_id"]);
-            $com[$i]["title"] = $temp["title"];
-        }
-        $data["com"] = $com;
-        $data["type"] = $type;
-        $data["ADMIN"] = $this->ADMIN;
-        $this->load->view("bgcom",$data);
-    }
     public function checom($comId = -1,$idx = -1)
     {
         $ajax = 0;

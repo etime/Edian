@@ -181,6 +181,21 @@ class Store extends CI_Model {
     }
 
     /**
+     * 获取所有商店的编号和名字，仅在 admin 模式下使用
+     * @return boolean | array
+     */
+    public function getIdNameAll() {
+        $sql = "SELECT id, name FROM store";
+        $res = $this->db->query($sql);
+        if ($res->num_rows === 0) {
+            return false;
+        } else {
+            $res = $res->result_array();
+            return $res;
+        }
+    }
+
+    /**
      * 更新商店的本店分类
      * @param string $newCategory
      * @param int $storeId
