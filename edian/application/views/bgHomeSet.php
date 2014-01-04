@@ -101,7 +101,7 @@
                 <?php endforeach?>
             </ul>
             <p>
-                <input type="text" name="listName" />
+                <input type="text" name="listName" maxlength = "4"/>
                 <span class="button" id = "listBut">添加类别</span>
             </p>
         </li>

@@ -24,9 +24,11 @@
     <div id = "nav" class = "nav">
         <div class="cnav width clearfix">
             <h4>商品类别</h4>
-            <h4>首页</h4>
-            <h4>二手</h4>
-            <h4>活动</h4>
+            <ul class = "list">
+                <?php foreach ($category  as $value): ?>
+                <li> <?php echo $value ?></li>
+                <?php endforeach?>
+            </ul>
             <div class = 'search'>
                 <div>
                     <input type="text" name="sea" id="sea"  placeholder = "搜索" autofocus = 'on'/>
@@ -37,11 +39,13 @@
     </div>
     <div id = 'body' class = "width clearfix">
         <div id = "side">
+<!--
             <ul id = "list" class = 'list'>
         <?php foreach ($category as $value):?>
             <li><?php echo $value ?></li>
         <?php endforeach?>
             </ul>
+-->
             <div class = "store">
                 <h5>店铺信息</h5>
                 <div class = "bustime clearfix">
