@@ -33,7 +33,7 @@ class Shop extends MY_Controller {
             return false;
         }
         $data1['itemlist'] = $data2;
-        $this->help->showArr($data1);
+        //$this->help->showArr($data1);
         $this->load->view('store.php', $data1);
     }
 

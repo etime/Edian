@@ -1,5 +1,6 @@
 <?php
     $baseUrl = base_url();
+    $siteUrl = site_url();
 ?>
 <!DOCTYPE html>
 <html lang = "zh">
@@ -20,7 +21,7 @@
 <?php
     $this->load->view('head');
 ?>
-    <div id = "nav">
+    <div id = "nav" class = "nav">
         <div class="cnav width clearfix">
             <h4>商品类别</h4>
             <h4>首页</h4>
@@ -45,7 +46,7 @@
                 <h5>店铺信息</h5>
                 <div class = "bustime clearfix">
                     <span class = "item">营业时间</span>
-                    <ul>
+                    <ul alt = "<?php echo $deliveryTime ?>">
                         <li>9:00-12:00</li>
                         <li>9:00-12:00</li>
                         <li>9:00-12:00</li>
@@ -53,16 +54,16 @@
                 </div>
                 <p>
                     <span class = "item">店铺评分</span>
-                    <strong class = "bc">9.3</strong>
+                    <strong class = "bc"><?php echo $credit ?></strong>
                 </p>
-                <p><span class = "item">送货范围</span><strong>900</strong>米</p>
+                <p><span class = "item">送货范围</span><strong><?php echo $deliveryArea ?></strong>米</p>
                 <p>
                     <span class = "item">送货速度</span>
-                    <strong>30</strong>分钟
+                    <strong><?php echo $duration ?></strong>分钟
                 </p>
                 <p><span class = "item">距离    </span>    <strong>4.5</strong>km</p>
-                <p><span class = "item">客服电话</span>12321232211</p>
-                <p><span class = "item">客服QQ  </span>123212123</p>
+                <p><span class = "item">电话</span><?php  echo $servicePhone?></p>
+                <p><span class = "item">客服QQ  </span><?php  echo $serviceQQ?></p>
                 <img src = "<?php echo $baseUrl.'image/52/mix/map.png' ?>" alt = "地图图片">
             </div>
         </div>
@@ -95,7 +96,7 @@
                     <div class = "info">
                         <p>
                             <span class = "right">评分<strong><?php echo $item['satisfyScore'] ?></strong></span>
-                            <a><?php echo $item['title'] ?></a>
+                            <a href = "<?php echo $siteUrl.'/item/index/' . $item['id'] ?>"><?php echo $item['title'] ?></a>
                         </p>
                         <p>
                             <span class = "right">已售<strong><?php echo $item['sellNum'] ?></strong></span>
@@ -185,4 +186,6 @@
         </div>
     </div>
 </body>
+<script type="text/javascript" charset="utf-8" src = "<?php echo $baseUrl . 'js/jquery.min.js' ?>"></script>
+<script type="text/javascript" charset="utf-8" src = "<?php echo $baseUrl . 'js/shop.js' ?>"></script>
 </html>
