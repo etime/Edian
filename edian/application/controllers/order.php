@@ -242,6 +242,8 @@ class Order extends My_Controller{
      *      type = 0 正常情况
      *      type = 1 ajax 请求，需要返回 $data 数据
      *      type > 1 立即下单，屏蔽其他商品，当前的 ajax 代表着需要结账的 item 的编号
+     * @todo selinf中包含很多不需要的信息，应该被重新组合和获取
+     * @todo 卖家的信息，地址，电话，主要是对addr的编码解码，还有地址的添加
      */
     public function index($type = 0) {
         header("Content-type: text/html; charset=utf-8");
