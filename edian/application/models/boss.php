@@ -19,10 +19,15 @@ class Boss extends CI_Model {
      * @return int
      */
     public function getBossIdByLoginName($loginName) {
+        $loginName = mysql_real_escape_string($loginName);
         $sql = "SELECT id FROM boss WHERE loginName='$loginName'";
         $res = $this->db->query($sql);
-        $res = $res->result_array();
-        return $res[0]['id'];
+        if ($res->num_rows === 0) {
+            return false;
+        } else  {
+            $res = $res->result_array();
+            return $res[0]['id'];
+        }
     }
 
     /**

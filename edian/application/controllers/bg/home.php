@@ -19,6 +19,7 @@
  */
 class Home extends MY_Controller {
     var $userId;
+    var $isAdmin;
 
     /**
      * 构造函数，需要使用的 model 文件有：bghome, user
@@ -27,6 +28,7 @@ class Home extends MY_Controller {
         parent::__construct();
         $this->load->model('user');
         $this->load->model('boss');
+        $this->load->model('store');
         $this->userId = $this->getUserId();
         $this->load->config('edian');
     }
@@ -56,6 +58,7 @@ class Home extends MY_Controller {
         // 用户未登录
         if ($this->userId === -1) {
             $this->noLogin($url);
+            $this->isAdmin = false;
             return false;
         }
         $credit = $this->user->getCredit($this->userId);
@@ -63,8 +66,10 @@ class Home extends MY_Controller {
         $flag = false;
         if ($credit == $this->config->item('bossCredit')) {
             $flag = true;
+            $this->isAdmin = false;
         }
         if ($credit == $this->config->item('adminCredit')) {
+            $this->isAdmin = true;
             $flag = true;
         }
         if ($flag == false) {
@@ -79,7 +84,12 @@ class Home extends MY_Controller {
     private function _setBossId() {
         $loginName = $this->session->userdata('loginName');
         $bossId = $this->boss->getBossIdByLoginName($loginName);
-        $this->session->set_userdata('bossId', $bossId);
+        if ($bossId != false && $this->isAdmin === false) {
+            $this->session->set_userdata('bossId', $bossId);
+        }
+        if ($this->isAdmin === true) {
+            $bossId = false;
+        }
         return $bossId;
     }
     /**
@@ -99,11 +109,67 @@ class Home extends MY_Controller {
         }
 
     }
+
+    /**
+     * 初始化storeId,表示店家在选择了店铺的操作
+     * 对应了直接页面提交和其他函数提交的两种情况
+     *
+     * @param int $storeId  表示选择的storId
+     */
+    public function receiveStoreId($storeId = -1) {
+        if ($this->_checkAuthority(site_url('bg/home/receiveStoreId/') . $storeId) === false) {
+            return;
+        }
+        $storeId = (int)$storeId;
+        echo $storeId . '<br>';
+        $bossId = $this->session->userdata("bossId");
+        // 判断该老板是否拥有该商店
+        if (! $this->store->isMatch($storeId, $bossId) && $this->isAdmin === false) {
+            echo "请选择您名下的商店";
+            $this->mwrong->insert('controller/bg/home/receiveStoreId/'. __LINE__ .'bossId为'. $bossId . '的用户选择索引了一个不属于自己的名下的storeid'. $storeId);
+            return false;
+        }
+        // 将 storeId 存入 session 中
+        $this->session->set_userdata('storeId', $storeId);
+        //对storeId初始化之后，开始选择进入后台，进行操作
+        $this->index();
+    }
+
+    /**
+     * 选择店铺：
+     *      在没有设置店铺的情况下，进入店铺设置
+     *      如果有一个，就直接跳转到店铺
+     *      如果有多个，就给出选择页面
+     * 通过 session 获取老板的所有商店的 id 和 name
+     * @param int $ownerId  店铺的拥有者boss的id
+     */
+    public function choseStore($ownerId) {
+        if ($this->_checkAuthority(site_url('bg/home/choseStore/') . $ownerId) === false) {
+            return;
+        }
+        if ($ownerId != false) {
+            $data['store'] = $this->store->getIdNameByOwnerId($ownerId);
+        } else {
+            $data['store'] = $this->store->getIdNameAll();
+        }
+        $data['len'] = count($data['store']);
+
+        if($data['len'] == 0){
+            $storeId = $this->store->insertStore($ownerId);
+            $this->receiveStoreId($storeId);
+        } else if($data['len'] == 1){
+            $this->receiveStoreId($data['store'][0]['id']);
+        } else {
+            $this->load->view('choseStore', $data);
+        }
+    }
+
     /**
      * 后台的入口view函数
      * 进入后台页面后，立马将 bossId storeId 存储在 session 中
      */
     function index() {
+        header("Content-type: text/html; charset=utf-8");
         if ($this->_checkAuthority(site_url('bg/home/index')) === false) {
             return;
         }
@@ -203,57 +269,6 @@ class Home extends MY_Controller {
         //要不要添加浏览全部图片的设定呢？
         $data['imgall']=$this->img->userImgAll($this->userId);
         $this->load->view("m-bg-imglist",$data);
-    }
-
-    /**
-     *  选择店铺，
-     * 通过session获取老板的所有商店的 id 和 name
-     * @param int $ownerId  店铺的拥有者boss的id
-     */
-    public function choseStore($ownerId  = -1 ) {
-        if ($this->_checkAuthority(site_url('bg/home/choseStore/') . $ownerId) === false) {
-            return;
-        }
-        //$ownerId = $this->session->userdata('bossId');
-        $this->load->model("store");
-        $data["store"] = $this->store->getIdNameByOwnerId($ownerId);
-        $data["len"] = count($data["store"]);
-        //在没有设置店铺的情况下，进入店铺设置，
-        //如果有一个，就直接跳转到店铺，
-        //如果有多个，就给出选择页面
-        if($data['len'] == 0){
-            $storeId = $this->store->insertStore($ownerId);
-            $this->receiveStoreId($storeId);
-        }else if($data['len'] == 1){
-            $this->receiveStoreId($data["store"][0]["id"]);
-        }else{
-            $this->load->view("choseStore" , $data);
-        }
-    }
-
-    /**
-     * 初始化storeId,表示店家在选择了店铺的操作
-     * 对应了直接页面提交和其他函数提交的两种情况
-     *
-     * @param int $storeId  表示选择的storId
-     */
-    public function receiveStoreId($storeId = -1 ) {
-        if ($this->_checkAuthority(site_url('bg/home/receiveStoreId/') . $storeId) === false) {
-            return;
-        }
-        $storeId = (int)$storeId;
-        echo $storeId . '<br>';
-        $bossId = $this->session->userdata("bossId");
-        // 判断该老板是否拥有该商店
-        if (! $this->store->isMatch($storeId, $bossId)) {
-            echo "请选择您名下的商店";
-            $this->mwrong->insert('controller/bg/home/receiveStoreId/'. __LINE__ .'bossId为'. $bossId . '的用户选择索引了一个不属于自己的名下的storeid'. $storeId);
-            return false;
-        }
-        // 将 storeId 存入 session 中
-        $this->session->set_userdata('storeId', $storeId);
-        //对storeId初始化之后，开始选择进入后台，进行操作
-        $this->index();
     }
 }
 ?>
