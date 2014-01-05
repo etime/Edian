@@ -52,8 +52,9 @@ class Home extends MY_Controller {
      * 检查用户是否登陆以及权限是否为管理员或者老板
      * 如果用户未登录，跳转到登陆页面，如果权限不够，跳转到 404 页面
      * @param string $url 如果用户未登录，登陆之后需要跳转的页面
-     * @return boolean 如果用户登陆了并且权限足够，返回 true，否则返回 false
+     * @return boolean 如果用户登陆了并且权限足够，返回 1,boss;2,admin，否则返回 false
      * @author farmerjian<chengfeng1992@hotmail.com>
+     * @author unas 2014-01-05 18:42:28
      */
     protected function _checkAuthority($url = false) {
         if ($url === false) {
@@ -85,7 +86,7 @@ class Home extends MY_Controller {
             show_404();
             return false;
         }
-        return $credit;
+        return $flag;
     }
 
     /**
@@ -166,7 +167,6 @@ class Home extends MY_Controller {
             $data['store'] = $this->store->getIdNameAll();
         }
         $this->help->showArr($data);
-        die;
         $data['len'] = count($data['store']);
         if ($data['len'] == 0 && $this->isAdmin === false) {
             $storeId = $this->store->insertStore($ownerId);
@@ -183,28 +183,32 @@ class Home extends MY_Controller {
      * 进入后台页面后，立马将 bossId storeId 存储在 session 中
      * @param int $storeId 选择的店铺id
      */
-    function index($storeId  = -1) {
+    function index() {
         header("Content-type: text/html; charset=utf-8");
-        echo "absd";
         $credit = $this->_checkAuthority(site_url('bg/home/index'));
         if ($credit === false) {
             return;
         }
+        //不想再判断了，直接进行转换吧
+        $storeId = (int)$this->input->post('storeId');
         $bossId = $this->_setBossId();
-        if($storeId === -1){
+        if($storeId === 0){
             $storeId = (int)$this->session->userdata('storeId');
             if(! $storeId){
                 $this->choseStore($bossId);
                 return;
             }
+        }else{
+            $this->session->set_userdata('storeId' , $storeId);
         }
-        echo $credit."<br/>";
+        $data['type'] = $credit;
+        $data['storeId'] = $storeId;
         if($credit === 1){
             $data['storeList'] = $this->store->getStoreList($bossId);
         } else if($credit === 2){
             $data['storeList'] = $this->store->getStoreList();
         }
-        $this->help->showArr($data);
+        //$this->help->showArr($data);
         $this->load->view('bghome', $data);
         /*
         // 设置用户的 storeId,但是如果不是商店老板呢，是管理员呢

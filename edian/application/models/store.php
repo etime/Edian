@@ -357,15 +357,13 @@ class Store extends CI_Model {
      */
     public function getStoreList( $bossId = -1 ) {
         $bossId = (int)$bossId;
-        echo $bossId."<br>";
-        die;
         if(!$bossId)return false;
         if($bossId === -1){
             $sql = 'SELECT name, id FROM store';
         } else {
-            $sql = 'SELECT name ,id FROM store WHERE owerId = ' . $bossId;
+            $sql = 'SELECT name ,id FROM store WHERE ownerId = ' . $bossId;
         }
-        $sql = "SELECT name, id FROM store";
+        //$sql = "SELECT name, id FROM store";
         $res = $this->db->query($sql);
         if ($res->num_rows === 0) {
             return false;

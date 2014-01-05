@@ -17,7 +17,7 @@ $siteUrl = site_url();
 <div class="side" id = "side">
 <!--这里是art的开始------>
 <?php
-if($type == $ADMIN){
+if($type === 2){
     echo "<ul id = 'wrong' class = 'wrong'>".
         "<a href = ".$siteUrl.('/bg/wrong/index/')." target = 'content'><li>错误意外处理</li></a>".
         "<a href = ".$siteUrl.('/bg/userlist')." target='content'><li >用户列表</li></a>".
@@ -48,20 +48,36 @@ if($type == $ADMIN){
     </ul>
 <!--这里是art的结束------>
 <!--这里是img的开始------>
+<!--
     <ul id = "img" class = "img">
         <a href = "<?php echo site_url('bg/home/imglist')?>" target="content"><li>图片管理</li></a>
         <a href = "<?php echo site_url('upload/index')?>" target="content"><li>上传图片</li></a>;
     </ul>
-    <!--这里是user的开始------>
+-->
+    <!--这里是user的开始店家的管理------>
     <ul id = "sec" class = "sec">
     </ul>
+    <form action="<?php echo $siteUrl . '/bg/home/index/' ?>" method="post" accept-charset="utf-8">
+        <select name = 'storeId'>
+        <?php foreach ($storeList  as $value){
+                if($value['id'] == $storeId){
+                    echo "<option value=" . $value['id'] . " selected = 'selected'>".$value['name'] ."</option>";
+                } else {
+                    echo "<option value=" . $value['id'] . ">".$value['name'] ."</option>";
+                }
+        }
+        ?>
+        </select>
+        <input type="submit" name="sub" value="选择店铺" />
+    </form>
     <!--这里是user的结束------>
 </div>
 <div id = "frameCon">
 <?php
-$src = $siteUrl.('/bg/wrong/index');
-if($type == $SELLER){
-    $src = $siteUrl.('/order/ontime');
+if($type === 1){
+    $src = $siteUrl.('/bg/order/ontime');
+}else {
+    $src = $siteUrl.('/bg/wrong/index');
 }
 ?>
     <iframe id = "main" frameborder="0" name="content" src="<?php echo $src?>"></iframe>
