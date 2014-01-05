@@ -12,7 +12,9 @@ class Shop extends MY_Controller {
         parent::__construct();
         $this->load->model('store');
         $this->load->model('mitem');
+        $this->load->config('edian');
         $this->load->library('help');
+        $this->load->library('pagesplit');
     }
 
     /**
@@ -20,7 +22,7 @@ class Shop extends MY_Controller {
      * @param int $store 商店编号
      * @return boolean
      */
-    public function index($store = -1) {
+    public function index($store, $pageId = 1) {
         if ($store === -1) {
             show_404();
             return false;
@@ -33,7 +35,17 @@ class Shop extends MY_Controller {
             return false;
         }
         $data1['itemlist'] = $data2;
-        //$this->help->showArr($data1);
+        // 通过 get 的方式获取 pageId
+        if (isset($_GET['pageId'])) {
+            $pageId = $_GET['pageId'];
+        }
+        if ($data1['itemlist']) {
+            $temp = $this->pagesplit->split($data1['itemlist'], $pageId, $this->config->item('pageSize'));
+            $data1['itemlist'] = $temp['newData'];
+            $commonUrl = site_url('shop/index/' . $store);
+            $data1['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount']);
+        }
+        $this->help->showArr($data1);
         $this->load->view('store.php', $data1);
     }
 
