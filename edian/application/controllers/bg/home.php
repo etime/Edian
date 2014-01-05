@@ -131,17 +131,15 @@ class Home extends MY_Controller {
             return;
         }
         $storeId = (int)$storeId;
-        echo $storeId . '<br>';
         $bossId = $this->session->userdata("bossId");
         // 判断该老板是否拥有该商店
         if (! $this->store->isMatch($storeId, $bossId) && $this->isAdmin === false) {
-            echo "请选择您名下的商店";
             $this->mwrong->insert('controller/bg/home/receiveStoreId/'. __LINE__ .'bossId为'. $bossId . '的用户选择索引了一个不属于自己的名下的storeid'. $storeId);
             return false;
         }
         // 将 storeId 存入 session 中
         $this->session->set_userdata('storeId', $storeId);
-        //对storeId初始化之后，开始选择进入后台，进行操作
+        // 对storeId初始化之后，开始选择进入后台，进行操作
         $this->index();
     }
 
@@ -164,10 +162,10 @@ class Home extends MY_Controller {
         }
         $data['len'] = count($data['store']);
 
-        if($data['len'] == 0){
+        if ($data['len'] == 0 && $this->isAdmin === false) {
             $storeId = $this->store->insertStore($ownerId);
             $this->receiveStoreId($storeId);
-        } else if($data['len'] == 1){
+        } else if($data['len'] == 1) {
             $this->receiveStoreId($data['store'][0]['id']);
         } else {
             $this->load->view('choseStore', $data);

@@ -42,7 +42,7 @@ class item extends Home {
             return;
         }
         if (! ($this->storeId && $this->bossId)) {
-            $this->choseStore($bossId);
+            $this->choseStore($this->bossId);
             return;
         }
         if (isset($_GET['pageId'])) {

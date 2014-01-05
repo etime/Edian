@@ -104,15 +104,14 @@ class Order extends Home {
      * 显示后台当前正要处理的订单信息
      * 为后台实时刷新的页面提供数据,显示正要处理的订单信息
      */
-    public function ontime($pageId = 1) {
+    public function ontime() {
         if ($this->_checkAuthority(site_url('bg/order/ontime')) == false) {
             return;
         }
-        //搞毛呦，这个怎么解释
-        if (isset($_GET['pageId'])) {
-            $pageId = $_GET['pageId'];
-        }
-        $pageSize = $this->config->item('pageSize');
+//        if (isset($_GET['pageId'])) {
+//            $pageId = $_GET['pageId'];
+//        }
+//        $pageSize = $this->config->item('pageSize');
         //只是检验storeId,因为storeId才是决定一个商店最重要的角色
         if(!$this->userId){
             $this->nologin(site_url()."/order/ontime");

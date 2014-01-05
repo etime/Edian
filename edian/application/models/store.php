@@ -137,8 +137,11 @@ class Store extends CI_Model {
      */
     public function isMatch($storeId, $ownerId) {
         // 对要匹配的字符进行转义
-        $storeId = mysql_real_escape_string($storeId);
-        $ownerId = mysql_real_escape_string($ownerId);
+        $storeId = (int)$storeId;
+        $ownerId = (int)$ownerId;
+        if ($storeId === 0 || $ownerId === 0) {
+            return false;
+        }
         $sql = "SELECT count(*) FROM store WHERE id = $storeId && ownerId = $ownerId";
         $res = $this->db->query($sql)->result_array();
         return $res[0]['count(*)'] == 1 ? true : false;
@@ -442,7 +445,7 @@ class Store extends CI_Model {
         if ($storeId === 0) {
             return false;
         }
-        $sql = "SELECT deliveryTime, deliveryArea, credit, duration, servicePhone, serviceQQ, logo, category FROM store WHERE id = $storeId";
+        $sql = "SELECT name, briefInfo, deliveryTime, deliveryArea, credit, duration, servicePhone, serviceQQ, logo, category FROM store WHERE id = $storeId";
         $res = $this->db->query($sql);
         if ($res->num_rows === 0) {
             return false;
