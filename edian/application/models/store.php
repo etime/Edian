@@ -348,10 +348,20 @@ class Store extends CI_Model {
 
     /**
      * 获取商店的名字和id的列表
+     * @param int $bossId 获取某个boss名下的商店列表，-1的时候，对应管理员
      * @return array
      * @author unasm
      */
-    public function getStoreList() {
+    public function getStoreList( $bossId = -1 ) {
+        $bossId = (int)$bossId;
+        echo $bossId."<br>";
+        die;
+        if(!$bossId)return false;
+        if($bossId === -1){
+            $sql = 'SELECT name, id FROM store';
+        } else {
+            $sql = 'SELECT name ,id FROM store WHERE owerId = ' . $bossId;
+        }
         $sql = "SELECT name, id FROM store";
         $res = $this->db->query($sql);
         if ($res->num_rows === 0) {

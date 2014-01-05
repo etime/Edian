@@ -31,7 +31,7 @@ class Home extends MY_Controller {
         $this->load->model('boss');
         $this->load->model('store');
         $this->load->config('edian');
-
+        $this->load->library('help');
         $this->userId = $this->getUserId();
         $this->isAdmin = false;
         $this->isBoss = false;
@@ -72,12 +72,12 @@ class Home extends MY_Controller {
         // 不是管理员或者老板权限
         $flag = false;
         if ($credit == $this->config->item('bossCredit')) {
-            $flag = true;
+            $flag = 1;
             $this->isBoss = true;
             $this->isAdmin = false;
         }
         if ($credit == $this->config->item('adminCredit')) {
-            $flag = true;
+            $flag = 2;
             $this->isBoss = false;
             $this->isAdmin = true;
         }
@@ -126,10 +126,12 @@ class Home extends MY_Controller {
      *
      * @param int $storeId  表示选择的storId
      */
-    public function receiveStoreId($storeId = -1) {
+    protected function receiveStoreId($storeId = -1) {
+        /*
         if ($this->_checkAuthority(site_url('bg/home/receiveStoreId/') . $storeId) === false) {
             return;
         }
+         */
         $storeId = (int)$storeId;
         echo $storeId . '<br>';
         $bossId = $this->session->userdata("bossId");
@@ -153,18 +155,23 @@ class Home extends MY_Controller {
      * 通过 session 获取老板的所有商店的 id 和 name
      * @param int $ownerId  店铺的拥有者boss的id
      */
-    public function choseStore($ownerId) {
+    protected function choseStore($ownerId) {
+        //没有检查的必要，因为调用之前检查了
+        /*
         if ($this->_checkAuthority(site_url('bg/home/choseStore/') . $ownerId) === false) {
             return;
         }
+         */
         if ($ownerId != false) {
             $data['store'] = $this->store->getIdNameByOwnerId($ownerId);
         } else {
             $data['store'] = $this->store->getIdNameAll();
         }
+        $this->help->showArr($data);
+        die;
         $data['len'] = count($data['store']);
-
         if($data['len'] == 0){
+            //没有店铺的时候，就插入一个
             $storeId = $this->store->insertStore($ownerId);
             $this->receiveStoreId($storeId);
         } else if($data['len'] == 1){
@@ -177,12 +184,32 @@ class Home extends MY_Controller {
     /**
      * 后台的入口view函数
      * 进入后台页面后，立马将 bossId storeId 存储在 session 中
+     * @param int $storeId 选择的店铺id
      */
-    function index() {
+    function index($storeId  = -1) {
         header("Content-type: text/html; charset=utf-8");
-        if ($this->_checkAuthority(site_url('bg/home/index')) === false) {
+        echo "absd";
+        $credit = $this->_checkAuthority(site_url('bg/home/index'));
+        if ($credit === false) {
             return;
         }
+        $bossId = $this->_setBossId();
+        if($storeId === -1){
+            $storeId = (int)$this->session->userdata('storeId');
+            if(! $storeId){
+                $this->choseStore($bossId);
+                return;
+            }
+        }
+        echo $credit."<br/>";
+        if($credit === 1){
+            $data['storeList'] = $this->store->getStoreList($bossId);
+        } else if($credit === 2){
+            $data['storeList'] = $this->store->getStoreList();
+        }
+        $this->help->showArr($data);
+        $this->load->view('bghome', $data);
+        /*
         // 设置用户的 storeId,但是如果不是商店老板呢，是管理员呢
         if (! $this->session->userdata('storeId')) {
             $bossId = $this->_setBossId();
@@ -190,10 +217,13 @@ class Home extends MY_Controller {
         } else {
             $data['type'] = $this->user->getCredit($this->userId);
             // 读取admin和seller对应的配置
-            $data['ADMIN'] = $this->config->item('ADMIN');
-            $data['SELLER'] = $this->config->item('SELLER');
+            //$data['ADMIN'] = $this->config->item('ADMIN');
+            //$data['SELLER'] = $this->config->item('SELLER');
+            $this->load->library('help');
+            $this->help->showArr($data);
             $this->load->view('bghome', $data);
         }
+         */
     }
 
     /**
