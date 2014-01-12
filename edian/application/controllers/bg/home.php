@@ -276,7 +276,7 @@ class Home extends MY_Controller {
      *     上架时间：putawayTime
      *     简要描述：briefInfo
      *  @todo 对图片的使用，需要再次商量
-     *  @todo 对管理员和店家进行两种不同的操作
+     *  @todo 对管理员和店家进行两种不同的操作,店家需要检验权限，是不是已经通过检验，允许运营的商店
      *  @todo 需要将店家之前的信息显示提供出来，为管理员提供接口，可以选择店家的信息，然后设置
      */
     public function item() {

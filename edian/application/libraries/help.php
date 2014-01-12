@@ -22,15 +22,19 @@ class CI_Help
      public function showArr($arr , $tab = "")
      {
          $cnt = 0;
-         foreach ($arr as $key => $value) {
-             echo $tab;
-             if(is_array($value)){
-                 echo $key." => (<br/>" ;
-                 $this->showArr($value , '&nbsp&nbsp&nbsp&nbsp' . $tab);
-                 echo $tab . ")<br/>";
-             }else{
-                echo $key . "=> " .$value ."<br/>";
+         if(is_array($arr)){
+             foreach ($arr as $key => $value) {
+                 echo $tab;
+                 if(is_array($value)){
+                     echo $key." => (<br/>" ;
+                     $this->showArr($value , '&nbsp&nbsp&nbsp&nbsp' . $tab);
+                     echo $tab . ")<br/>";
+                 }else{
+                    echo $key . "=> " .$value ."<br/>";
+                 }
              }
+         } else {
+             var_dump($arr);
          }
      }
      /**

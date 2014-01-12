@@ -6,7 +6,9 @@ $baseUrl = base_url();
 <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <link rel="stylesheet" href="<?php echo $baseUrl .'css/item2.css' ?>" type="text/css" media="all" />
-    <title>大明宫词</title>
+    <title>
+    <?php echo $item['title'] ?>
+</title>
 </head>
 <body>
     <!-- 这个什么class header 是伪造的header,可以不存在的。。-->
@@ -35,39 +37,60 @@ $baseUrl = base_url();
         <div class = "clearfix">
             <div class="showImg ">
                 <div id = "mainImg" class = "mainImg">
-                    <img src="../../image/cup.jpg" alt="这里是图片" />
+                    <img src="<?php echo $item['mainThumbnail'] ?>" alt="这里是图片" />
                 </div>
                 <div class = "thumb">
-                    <img src="../../image/cup.jpg" alt="这里是图片" />
-                    <img src="../../image/cup.jpg" alt="这里是图片" />
-                    <img src="../../image/cup.jpg" alt="这里是图片" />
-                    <img src="../../image/cup.jpg" alt="这里是图片" />
-                    <img src="../../image/cup.jpg" alt="这里是图片" />
-                    <img src="../../image/cup.jpg" alt="这里是图片" />
-                    <img src="../../image/cup.jpg" alt="这里是图片" />
+                    <img src="<?php echo $item['mainThumbnail'] ?>" alt="这里是图片" />
+                <?php
+                    if($item['thumbnail']){
+                        foreach ($item['thumbnail'] as $value) {
+                            echo "<img src = '" . $value . "' alt = '图片' />";
+                        }
+                    }
+                ?>
                 </div>
             </div>
             <div class="details">
                 <ul>
-                    <h2>林夕《大明宫词》，套餐一</h2>
-                    <p class = 'suply'>林夕十年，《大明宫词》特区CD26首细腻经典配乐，让你再次回到诡谲浓艳的古典世界，赠海报</p>
+                <h2><?php echo $item['title'] ?></h2>
+        <!--
+                    <p class = 'suply'>
+                        <?php echo $item['briefInfo'] ?>
+                    </p>
+        -->
                     <li class="priStore">
                         <span class="item">价格</span>
-                        <span class="ps"><strong id = "price">79.00</strong>元</span>
+                        <span class="ps"><strong id = "price"><?php echo $item['price'] ?></strong>元</span>
                         <span class="item">评分</span>
                         <span class="ps">
-                            <strong id = "score">7.8</strong>/10<a class = "cnt"> 共4774条</a>
+                        <strong id = "score"><?php echo $item['satisfyScore'] ?></strong>/10<a class = "cnt"> 共4774条</a>
                         </span>
                     </li>
                     <li>
                         <span class="item">月销量</span>
-                        <strong id = "num">1232</strong>
+                        <strong id = "num">
+                           <?php echo $item['orderNum'] ?>
+                        </strong>
                     </li>
                     <li>
                         <span class = "item">库存</span>
-                        <span><strong id = "store">134</strong>件</span>
+                        <span><strong id = "store"><?php echo $item['storeNum'] ?></strong>件</span>
                     </li>
                     <li >
+<?php
+if(is_array($item['attr'])){
+    foreach ($item['attr']['idx'] as $key => $value) {
+        $list = "<span class = 'item' style = 'float:left'>" . $key . "</span>";
+        $list.= "<ul class = 'attr'>";
+            foreach ($value as $attr) {
+                $list .= "<li><span>" . $attr['font']. "</span></li>";
+            }
+        $list.="</ul>";
+        echo $list;
+    }
+}
+?>
+<!--
                         <span class="item" style="float:left">颜色</span>
                         <ul class="attr">
                             <li><span>红色</span></li>
@@ -75,9 +98,10 @@ $baseUrl = base_url();
                             <li><span>红色</span></li>
                         </ul>
                     </li>
+-->
                 </ul>
                 <div id = "tobuy">
-                    <button name = 'instant'>立即购买</button>
+                    <button name = 'instant' style = "display:none">立即购买</button>
                     <button name = "toCart">加入购物车</button>
                 </div>
             </div>
@@ -89,16 +113,20 @@ $baseUrl = base_url();
                 <h3>店铺信息</h3>
                 <div class = 'storelogo'>
                     <img src = "../../image/store.jpg" alt = "图片" />
-                    <a class="button">进入店铺</a>
+                    <a class="button"> <?php echo $store['name'] ?></a>
                 </div>
                 <p>
                     <span class="list">电话:</span>
-                    <span id = "phone">13648043322</span>
+                    <span id = "phone"><?php echo $store['servicePhone'] ?></span>
+                </p>
+                <p>
+                    <span class = "list">QQ</span>
+                    <span> <?php  echo $store['serviceQQ'] ?></span>
                 </p>
                 <p>
                     <span class="list">地址:</span>
                     <span class="storeAddr">
-                        电子科大清水河小区
+                        <?php echo $store['address']?>
                     </span>
                 </p>
             </div>
@@ -112,7 +140,9 @@ $baseUrl = base_url();
                         <span><em>7.8</em>/10</span>
                     </div>
                     <div class = "speed">
+<!--
                         <h5>本店共1345人评价</h5>
+-->
                         <p>送货速度:<em>4.3</em></p>
                         <p>店月销量:<em>10132</em></p>
                     </div>

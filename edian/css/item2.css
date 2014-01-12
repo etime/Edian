@@ -42,6 +42,7 @@ body{
     background:#990002;
     color:white;
 }
+/*
 .tab:after{
     width:50%;
     background-color:#990002;
@@ -50,6 +51,7 @@ body{
     position:absolute;
     right:0;
 }
+*/
 .tab li{
     float:left;
     width:24%;
@@ -80,16 +82,16 @@ body{
     border-right:60px solid #990002;
     left:-60px;
 }
-/*
 .path:before{
-    background-color:gray;
+    position:absolute;
+    top:0px;
     border-bottom:35px solid transparent;
     display:block;
     content:' ';
     z-index:1;
-    border-right:50% solid #990002;
+    border-left:60px solid #990002;
+    right:-60px;
 }
-*/
 .path div{
     width:580px;
     margin:0px auto;

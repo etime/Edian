@@ -23,6 +23,7 @@ class item extends MY_Controller {
         $this->load->model('store');
         $this->load->model('comitem');
         $this->load->model('morder');
+        $this->load->library('help');
     }
     public function item2()
     {
@@ -73,6 +74,7 @@ class item extends MY_Controller {
     /**
      * 显示商品的view函数
      * @param int   $itemId  商品对应的唯一标示id
+     * @todo 显示评论的总数,这个数据没有
      */
     public function index($itemId = -1) {
 
@@ -102,10 +104,10 @@ class item extends MY_Controller {
         }
         $data['item'] = $itemInfo;
         $data['store'] = $storeInfo;
-        $this->load->library('help');
-        $this->help->showArr($data);
+        //$this->help->showArr($data);
         $this->mitem->addvisitor($itemId);
-        $this->load->view('item', $data);
+        //$this->load->view('item', $data);
+        $this->load->view('item2', $data);
     }
 
 /**********************************************************************************************************************/

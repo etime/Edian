@@ -22,7 +22,7 @@ class Shop extends MY_Controller {
      * @param int $store 商店编号
      * @return boolean
      */
-    public function index($store, $pageId = 1) {
+    public function index($store = -1, $pageId = 1) {
         if ($store === -1) {
             show_404();
             return false;
@@ -44,8 +44,10 @@ class Shop extends MY_Controller {
             $data1['itemlist'] = $temp['newData'];
             $commonUrl = site_url('shop/index/' . $store);
             $data1['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount']);
+            //var_dump($data1['pageNumFooter']);
+            //$this->help->showArr($data1['pageNumFooter']);
         }
-        $this->help->showArr($data1);
+        //$this->help->showArr($data1);
         $this->load->view('store.php', $data1);
     }
 
