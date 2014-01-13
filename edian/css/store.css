@@ -34,10 +34,7 @@ body{
     padding:0px;
     margin:0px auto;
 }
-#header{
-    background-color:#cc0001;
-    overflow:hidden;
-}
+
 .nav{
     background-color:#990002;
     height:35px;

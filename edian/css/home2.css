@@ -1,0 +1,81 @@
+/**
+ * @name        ../../css/home2.css
+ * @author      unasm < 1264310280@qq.com >
+ * @since       2014-01-13 11:56:11
+*/
+body{
+    margin:0;
+}
+ul{
+    padding:0;
+    list-style:none;
+    margin:0;
+}
+li{
+    float:left;
+}
+.nowrap{
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    overflow:hidden;
+    word-break:no-break;
+}
+
+.clearfix:after{
+    visibility:hidden;
+    display:block;
+    content:"";
+    height:0px;
+    clear:both;
+}
+.width{
+    width:1200px;
+    margin:0px auto;
+}
+.bar{
+    border-bottom:1px solid rgb(216, 216, 216);
+    height:20px;
+}
+.bar ul{
+    float:right;
+}
+.bar h2{
+    line-height:0.4em;
+}
+.bar li{
+    margin:0 5px;
+}
+.bar strong{
+    color:red;
+}
+.item li{
+    width:230px;
+}
+.item img{
+    width:100%;
+    height:230px;
+    background:green;
+}
+.item li{
+    margin:5px;
+}
+.item p{
+    margin:0 0 5px 0;
+}
+.item strong{
+    color:red;
+}
+.item p span:last-child{
+    float:right;
+}
+.saleImg{
+    position:relative;
+}
+.saleImg span{
+    position:absolute;
+    top:0;
+    right:0;
+    background:rgb(206, 0, 0);
+    padding:2px 5px;
+    color:rgb(199, 199, 199);
+}

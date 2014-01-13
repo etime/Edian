@@ -74,4 +74,8 @@
 #header input[name = 'sub']:active{
     background:rgb(120,120,120);
 }
+#header{
+    background-color:#cc0001;
+    overflow:hidden;
+}
 </style>

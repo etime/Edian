@@ -14,8 +14,9 @@ $baseUrl = base_url();
     <!-- 这个什么class header 是伪造的header,可以不存在的。。-->
     <div class="header">
     <?php
-        $this->load->view("head");
+        $this->load->view("homeHeader");
     ?>
+    <!--
         <div class="tab">
             <ul class="clearfix">
                 <li>首页</li>
@@ -24,6 +25,7 @@ $baseUrl = base_url();
                 <li>活动</li>
             </ul>
         </div>
+    -->
         <div class="path">
             <div>
                 <a href="">e点</a>>>

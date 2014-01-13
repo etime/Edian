@@ -25,20 +25,13 @@ img{
     border:none;
 }
 body{
-    /*
-    width:1200px;
-    */
-    margin:0px auto;
     padding:0;
 }
 
 /***********tab的开始 搜索的结束**********/
-.tab ul{
-    margin-left:200px;
-    width:50%;
-}
 
-.tab,.path a{
+
+.path a{
     background:#990002;
     color:white;
 }
@@ -52,18 +45,7 @@ body{
     right:0;
 }
 */
-.tab li{
-    float:left;
-    width:24%;
-    text-align:center;
-    padding:4px 0;
-    height:100%;
-    font-size:1.2em;
-}
 
-.tab li:hover{
-    background:rgb(125,3,3);
-}
 .path{
     width:960px;
     height:21px;
