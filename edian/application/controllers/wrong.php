@@ -91,22 +91,31 @@ class Wrong extends MY_Controller {
             error_log($temp['text'], $this->adminMail, "from:edian/wrong");
         }
     }
-
+    /**
+     *  这里是显示网站运行错误的函数
+     *  需要管理员权限才可以进行浏览的地方
+     */
     public function showError() {
+/*
         if ($this->_checkAuthority(site_url('wrong/showError')) === false) {
             return;
         }
-        $data = $this->mwrong->getAll();
-        header("Content-type: text/html; charset=utf-8");
-        $this->help->showArr($data);
+ */
+        $data['wrong'] = $this->mwrong->getAll();
+        //header("Content-type: text/html; charset=utf-8");
+        //$this->help->showArr($data);
+        $this->load->view("bgWrong" , $data);
     }
-
-    public function deleteLog($logId) {
+    /**
+     *  将来添加ajax操作吧。算是对性能的一个优化了
+     */
+    public function deleteLog($logId = 0) {
         if ($this->_checkAuthority(site_url('wrong/deleteLog/') . $logId) === false) {
             return;
         }
         $logId = (int)$logId;
         $this->mwrong->deleteLog($logId);
+        //这个，呵呵，倒是不用跳转了，暂时这么处理
         $this->showError();
     }
 }

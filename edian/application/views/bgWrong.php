@@ -1,12 +1,3 @@
-<?php
-/*************************************************************************
-    > File Name :     ../views/bgWrong.php
-    > Author :        unasm
-    > Mail :          douunasm@gmail.com
-    > Last_Modified : 2013-08-18 10:49:23
- ************************************************************************/
-//这里处理的是后台的错误
-?>
 <!DOCTYPE html>
 <html lang = "en">
     <head>
@@ -17,35 +8,24 @@
         <table border="1">
             <tr>
                 <th>错误详情</th>
+                <th>时间</th>
                 <th>操作</th>
             </tr>
 <?php
-$baseUrl = base_url();
-$siteUrl = site_url();
+    $baseUrl = base_url();
+    $siteUrl = site_url();
 ?>
-            <?php for($i = 0,$len = count($wrong);$i < $len;$i++): ?>
+<?php foreach ($wrong as $value) :?>
             <tr>
-<?php
-    $temp = $wrong[$i];
-    if($flag === 1){
-        $str = "打印出错：".$temp["content"]->pntState."<br/>";
-        $str .="商家:".$temp["content"]["seller"]["user_name"]." 联系方式".$temp["content"]->seller["contract1"]."<br/>";
-        $str .="买家:".$temp["content"]["buyer"]["user_name"]." 联系方式".$temp["content"]->buyer["contract1"];
-        echo "<td>".$str."</td>";
-    }else {
-        echo "<td>".$temp["content"]["text"]."</td>";
-    }
-?>
+            <td><?php echo $value['content'] ?></td>
+            <td><?php echo $value['time'] ?></td>
                 <td>
-<?php
-    if($flag === 1){
-        echo "打印";
-    }
-?>
-                    <a href = "<?php echo $siteUrl."/bg/wrong/delete/".$temp["id"] ?>"><?php echo $temp["id"] ?>删除</a>
+                    <a href = "<?php echo $siteUrl."/wrong/deleteLog/".$value["id"] ?>">
+                        删除
+                    </a>
                 </td>
             </tr>
-            <?php endfor ?>
+            <?php endforeach ?>
         </table>
     </body>
 <style type="text/css" media="all">

@@ -19,8 +19,8 @@ $siteUrl = site_url();
 <?php
 if($type === 2){
     echo "<ul id = 'wrong' class = 'wrong'>".
-        "<a href = ".$siteUrl.('/bg/wrong/index/')." target = 'content'><li>错误意外处理</li></a>".
-        "<a href = ".$siteUrl.('/bg/userlist')." target='content'><li >用户列表</li></a>".
+        "<a href = ".$siteUrl.('/wrong/showError')." target = 'content'><li>错误意外处理</li></a>".
+        "<a href = ".$siteUrl.('/bg/userlist')." target='content'><li >商店管理</li></a>".
         "<a href = ".$siteUrl.('/bg/info/add')." target = 'content'><li>添加公告</li></a>".
         "<a href = ".$siteUrl.('/bg/bgart/index')." target = 'content'>二手管理</a>".
         "</ul>";
