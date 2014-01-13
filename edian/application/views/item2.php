@@ -1,5 +1,6 @@
 <?php
 $baseUrl = base_url();
+$siteUrl = site_url();
 ?>
 <!DOCTYPE html>
 <html lang = "zh">
@@ -114,15 +115,17 @@ if(is_array($item['attr'])){
             <div class = "">
                 <h3>店铺信息</h3>
                 <div class = 'storelogo'>
-                    <img src = "../../image/store.jpg" alt = "图片" />
-                    <a class="button"> <?php echo $store['name'] ?></a>
+                    <img src = "<?php echo $store['logo'] ?>" alt = "图片" id = "logo"/>
+                    <p>
+                        <a class="button" href = "<?php echo $siteUrl . '/shop/index/' . $store['storeId'] ?>"> <?php echo $store['name'] ?></a>
+                    </p>
                 </div>
                 <p>
                     <span class="list">电话:</span>
                     <span id = "phone"><?php echo $store['servicePhone'] ?></span>
                 </p>
                 <p>
-                    <span class = "list">QQ</span>
+                    <span class = "list">QQ:</span>
                     <span> <?php  echo $store['serviceQQ'] ?></span>
                 </p>
                 <p>

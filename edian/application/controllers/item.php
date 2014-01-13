@@ -87,6 +87,7 @@ class item extends MY_Controller {
         $itemInfo['orderNum'] = $this->morder->getOrderNum($itemId);
         // 获取商品所属商店的信息
         $storeInfo = $this->store->getStoreInfo($itemInfo['belongsTo']);
+        $storeInfo['storeId'] = $itemInfo['belongsTo'];
         //$data = array_merge($itemInfo, $storeInfo);
         $data['itemId'] = $itemId;
         // 获取商品评论

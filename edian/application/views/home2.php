@@ -1,5 +1,6 @@
 <?php
     $baseUrl = base_url();
+    $siteUrl = site_url();
 ?>
 <!DOCTYPE html>
 <html lang = "zh">
@@ -31,7 +32,11 @@
             <ul class = "item clearfix">
                 <li>
                     <img src = "">
-                    <p class = "nowrap">茶菇老鸦汤，鲜美营养，上好调料，来自黑龙江的黑木耳</p>
+                    <p class = "nowrap">
+                        <a href = "<?php echo $siteUrl . '/item/index/' . 56 ?>">
+                            茶菇老鸦汤，鲜美营养，上好调料，来自黑龙江的黑木耳
+                        </a>
+                    </p>
                     <p>
                         <strong>￥4.00</strong>
                         <span>已售1200</span>

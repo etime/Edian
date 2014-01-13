@@ -333,22 +333,41 @@ class Store extends CI_Model {
      *     deliveryTime
      *     deliveryArea
      *     sendPrice
+     *     logo             unasm add at 2014-01-13 15:12:56   我觉得商品的页面显示下logo比较合适,先加上了
      * </pre>
      * @param int $ownerId 商店的标示id
      * @return boolean | array
+     * @todo  经纬度,briefInfo的是否使用，还待商榷
      */
     public function getStoreInfo($ownerId) {
         $sql = 'SELECT name, serviceQQ, servicePhone, address, longitude, latitude, briefInfo, deliveryTime, ' .
-            'deliveryArea, sendPrice FROM store WHERE id = ' . $ownerId;
+            'deliveryArea, sendPrice, logo FROM store WHERE id = ' . $ownerId;
         $res = $this->db->query($sql);
         if ($res->num_rows) {
             $res = $res->result_array();
+            $res[0]['logo'] = $this->fixLogoPath($ownerId , $res[0]['logo']);
             return $res[0];
         } else {
             return false;
         }
     }
-
+    /**
+     *  将店铺的logo图片进行路径修复
+     *  通过storeId获得bossId，通过bossId，获取userId,然后
+     *  修复，以后要做一个优化，这样不行
+     *  @param  int     $storeId    将店铺的id传入，
+     *  @param  string  $imgName    图片的名字
+     *  @author unasm
+     */
+    protected function fixLogoPath($storeId,$imgName)
+    {
+        $bossId = $this->getOwnerIdByStoreId($storeId);
+        $this->load->model('boss');
+        $loginName = $this->boss->getLoginNameByBossId($bossId);
+        $this->load->model('user');
+        $userId = $this->user->getUserIdByLoginName($loginName);
+        return base_url('image/' . $userId . '/mix/' . $imgName);
+    }
     /**
      * 获取商店的名字和id的列表
      * @param int $bossId 获取某个boss名下的商店列表，-1的时候，对应管理员
