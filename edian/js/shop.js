@@ -24,20 +24,19 @@ function fixpos() {
 }
 function showMap() {
     var flag = 1;
-    var href = 'http://127.0.0.1/Edian/edian/index.php/shop/index/2';
     //利用逗号表达式吗?,看起来更优雅
     //获取storeId
-    var reg = /\d+$/ , storeId = reg.exec(href) , storeId = storeId[0];
-    console.log(storeId);
+    var reg = /\d+$/ , storeId = reg.exec(window.location.href) , storeId = storeId[0];
     $("#mapImg").dblclick(function () {
         if(flag){
             flag = 0;
             $("body").append("<div id = 'map' style = 'display:none'><a class = 'close' href = 'javascript:;'></a><iframe src = '" + site_url +'/shop/storeMap/' + storeId + "'></iframe></div>");
         }
         $("#map").fadeIn();
-    })
-    //貌似可以成为所有的close的使用函数
-    $(".close").click(function () {
+    });
+
+    //对所有的close进行监听，必须使用懒加载的方式，
+    $("body").delegate(".close","click",function () {
         $(this.parentNode).fadeOut();
     })
 }

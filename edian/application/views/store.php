@@ -71,7 +71,7 @@
                 <p><span class = "item">商店距离您</span>    <strong class = "bc">4.5</strong>km</p>
                 <p><span class = "item">电话</span><?php  echo $servicePhone?></p>
                 <p><span class = "item">客服QQ  </span><?php  echo $serviceQQ?></p>
-                <img id = "mapImg" src = "<?php echo $baseUrl.'image/52/mix/map.png' ?>" alt = "地图图片">
+                <img id = "mapImg" src = "<?php echo $baseUrl.'image/52/mix/map.png' ?>" alt = "地图图片" title = "双击打开地图" />
             </div>
         </div>
         <div class = "good block">

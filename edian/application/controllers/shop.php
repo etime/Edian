@@ -52,18 +52,20 @@ class Shop extends MY_Controller {
     }
 
     /**
-     * 呈现商店的百度地图
+     * 呈现商店的百度地图地址和基本信息
      * @param int $storeId 商店的编号
+     * @todo 以后加强地图，增加定位，路径等等
      */
-    public function storeMap($storeId) {
+    public function storeMap($storeId = 0) {
         $storeId = (int)$storeId;
         $res = $this->store->getStoreMap($storeId);
         if ($res === false) {
             show_404();
             return;
         } else {
-            header("Content-type: text/html; charset=utf-8");
-            $this->help->showArr($res);
+            //header("Content-type: text/html; charset=utf-8");
+            //var_dump($res);
+            //$this->help->showArr($res);
             $this->load->view('storeMap', $res);
         }
     }
