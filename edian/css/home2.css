@@ -41,19 +41,29 @@ a:hover{
 }
 .bar{
     border-bottom:1px solid rgb(216, 216, 216);
-    height:20px;
+    height:32px;
+    position:relative;
 }
 .bar ul{
-    float:right;
+    position:absolute;
+    right:0;
+    bottom:0;
 }
-.bar h2{
-    line-height:0.4em;
+.bar h2 span{
+    position:absolute;
+    bottom:0;
 }
 .bar li{
     margin:0 5px;
 }
 .bar strong{
-    color:red;
+    color:white;
+    display:inline-block;
+    background:url("../bgimage/water.png") no-repeat;
+    font-size:0.9em;
+    text-align:center;
+    width:30px;
+    height:34px;
 }
 .item li{
     width:230px;
@@ -65,6 +75,11 @@ a:hover{
 }
 .item li{
     margin:5px;
+    border-radius:3px;
+}
+.item li:hover{
+    border:3px solid #cc0001;
+    margin:2px;
 }
 .item p{
     margin:0 0 5px 0;

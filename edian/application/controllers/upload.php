@@ -6,6 +6,7 @@
  *
  * @author zmdyiwei<zmdyiwei@gmail.com>
  * @since  2013-11-20 18:23
+ * @todo 对logo的处理，有待商榷，现在这个黑色的，好难看
  */
 class Upload extends MY_Controller {
 
