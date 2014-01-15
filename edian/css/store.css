@@ -76,27 +76,26 @@ body{
     text-align:center;
     width:120px;
 }
-.search{
+.shopsea{
     float:right;
-    padding:4px 0;
+    margin-top:6px;
 }
-.search >*{
+.shopsea >*{
     float:left;
-}
-.search div{
     height:24px;
 }
-.search input[name = 'sea']{
+.shopsea input[name = 'key']{
     box-shadow:1px 1px 4px rgb(182, 182, 182) inset;
     height:100%;
     border:none;
     border-radius:2px 0 0 2px;
     padding-left:5px;
+    outline:none;
+    padding:0 2px;
 }
-.search input[type = 'submit']{
+.shopsea input[type = 'submit']{
     border:none;
     width:60px;
-    height:26px;
     outline:none;
     border-radius: 0 3px 3px 0;
     margin-left:-2px;

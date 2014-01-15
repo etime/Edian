@@ -30,12 +30,12 @@
                 <li> <?php echo $value ?></li>
                 <?php endforeach?>
             </ul>
-            <div class = 'search'>
+            <form class = "shopsea" action="<?php echo $siteUrl . '/shop/search/' .$storeId ?>" method="post" accept-charset="utf-8">
                 <div>
-                    <input type="text" name="sea" id="sea"  placeholder = "搜索" autofocus = 'on'/>
+                    <input type="text" name="key" id="sea"  placeholder = "搜索" autofocus = 'off'/>
                 </div>
                 <input type="submit" name="but"  value="店内搜" />
-            </div>
+            </form>
         </div>
     </div>
     <div id = 'body' class = "width clearfix">
@@ -48,9 +48,6 @@
                 <img src="<?php echo $logo?>" alt="商店logo" />
             </div>
             <div class = "store block">
-<!--
-                <h5>店铺信息</h5>
--->
                 <div class = "bustime clearfix">
                     <span class = "item">营业时间</span>
                     <ul alt = "<?php echo $deliveryTime ?>">

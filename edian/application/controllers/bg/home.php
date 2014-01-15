@@ -183,7 +183,7 @@ class Home extends MY_Controller {
      * @param int $storeId 选择的店铺id
      */
     function index($storeId = 0) {
-        header("Content-type: text/html; charset=utf-8");
+        //header("Content-type: text/html; charset=utf-8");
         $credit = $this->_checkAuthority(site_url('bg/home/index'));
         if ($credit === false) {
             return;
@@ -208,21 +208,6 @@ class Home extends MY_Controller {
         }
         //$this->help->showArr($data);
         $this->load->view('bghome', $data);
-        /*
-        // 设置用户的 storeId,但是如果不是商店老板呢，是管理员呢
-        if (! $this->session->userdata('storeId')) {
-            $bossId = $this->_setBossId();
-            $this->choseStore($bossId);
-        } else {
-            $data['type'] = $this->user->getCredit($this->userId);
-            // 读取admin和seller对应的配置
-            //$data['ADMIN'] = $this->config->item('ADMIN');
-            //$data['SELLER'] = $this->config->item('SELLER');
-            $this->load->library('help');
-            $this->help->showArr($data);
-            $this->load->view('bghome', $data);
-        }
-         */
     }
 
     /**

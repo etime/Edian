@@ -4,6 +4,9 @@
   > Mail :         douunasm@gmail.com
   > Last_Modified: 2013-09-18 20:53:02
  ************************************************************************/
+/**
+ * 尽量减少和外界的瓜葛,这里的耦合太多了
+ */
 var totalPrc = 0;
 function alogin(){
     var cart = $("#cart");
@@ -33,8 +36,8 @@ function delCart(node){
     }
     calTot();
 }
+//对于通过ajax的get操作，而没有什么特殊的返回值的操作通用
 function ajOper(href,callback,node){
-    //对于通过ajax的get操作，而没有什么特殊的返回值的操作通用
     $.ajax({
         url: href,
         dataType: 'json',
@@ -51,24 +54,24 @@ function ajOper(href,callback,node){
         }
     });
 }
+/**
+ * 通过ajax传递过来的购物车内容
+ * info 是数组，第一个是订货量，第二个选择的属性，有0-2个,格式为X：1232.jpg，前面是汉字，后面是图片名称
+ * item 是商品本身的一些东西，包括买家，图片，库存，标题
+ * item_id 商品编号，
+ * id 订单号码
+ * seller 但是目前不太想用
+ */
 function getCart(){
     //获取购物车的内容,只有在登录的情况下可以哦
-    var href = site_url+"/order/index/1";
-    console.log(href);
+    var href = ;
     $.ajax({
-        url: href,
-        type: 'POST',
-        dataType: 'json',
+        url: site_url+"/order/index/1" ,
+        type: 'POST', dataType: 'json',
         success: function (data, textStatus, jqXHR) {
             var cart = data["cart"];
             console.log(data);
             var reg = /\d+\.jpg/;
-            //info 是数组，第一个是订货量，第二个选择的属性，有0-2个,格式为X：1232.jpg，前面是汉字，后面是图片名称
-            //item 是商品本身的一些东西，包括买家，图片，库存，标题
-            //item_id 商品编号，
-            //id 订单号码
-            //seller 但是目前不太想用
-            /*************添加购物车的东西*******************/
             var buyer = data["buyer"],info,buyNum,item,now,strtal = "";
             var cap = "";
             var cal  = 0;
@@ -95,7 +98,6 @@ function getCart(){
                     str += "<li ><a href = '"+site_url+"/item/index/"+now["item_id"]+"' class = 'igar'><img src = '"+img+"' / ></a><div class = 'botOpr'><span name = '"+price+"' class = 'btp'>￥"+price+"</span>x<input type = 'text' name = 'ordNum' value = "+buyNum+" class = '"+now["id"]+"' /><p><a class = 'del' href = '"+site_url+"/order/del/"+now["id"]+"' >删</a></p></div><div class = 'botAtr'>"+info["info"]+"</div></li>";
                     i++;
                 }
-                /*********每个店家的信息进行处理****************/
                 lsp[cal]["lestPrc"] = parseInt(lsp[cal]["lestPrc"]);
                 if(lsp[cal]["lestPrc"] && (captmp < lsp[cal]["lestPrc"])){
                     totalPrc += (2+captmp);//totalprc 必须是数字;
@@ -115,7 +117,6 @@ function getCart(){
                 }
                 strtal += "<div class = 'sel clearfix' name = '"+lsp[cal]["user_id"]+"'><p><a href = "+site_url+"/space/index/"+lsp[cal]["user_id"]+">店家:"+lsp[cal]["user_name"]+"</a>"+spanPrc+"</p>"+str+"</div>";
                 cal++;
-                /**************店家信息处理******************/
             }
             $("#cap").text(cap).attr("name",totalPrc);
             //在cap中保存总价格表信息，和显示的格式信息,totalprc表示总价，cap表示显示出来的格式

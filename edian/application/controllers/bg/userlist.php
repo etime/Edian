@@ -62,7 +62,7 @@ class Userlist extends Home{
             $this->load->model('user');
             $data['userList'] = $this->user->getCilnrsList($pageId);
             $data['state'] = $this->config->item('userState');
-            $this->help->showArr($data['userList']);
+            //$this->help->showArr($data['userList']);
             $this->load->view('bgUserList' , $data);
         } else {
             exit('权限不足');
