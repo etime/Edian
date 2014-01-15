@@ -201,9 +201,9 @@ class set extends MY_Controller
      *      文字位置 ：字符串的形式
      *      送货范围 ：在地图上标记出来,如果记录送货的左上和右下角的位置,是不是更好
      * </pre>
-     * @todo 被遗忘的最低起送价格，没有添加
+     * @param int   $storeId    选择的商店的id,添加这个接口，是为了方便其他的链接查看,目前在bg/userlist/index 使用
      */
-    public function setAct(){
+    public function setAct($storeId = -1){
         $this->load->library("help");
 
         //对用户权限进行检验
@@ -222,7 +222,7 @@ class set extends MY_Controller
             $data["type"] = 2;
 
 
-        //在没有不同的store之前，先代替
+        //如果有管理员权限
         if($data["type"] == 2){
             if(TEST){
                 $data["store"] = array(
@@ -234,7 +234,11 @@ class set extends MY_Controller
                 $data["store"] = $this->store->getStoreList();
             }
             //优先选择店，在没有的情况下选择一个默认的店 ,1号
-            $data["storeId"] = $this->input->post("storeId");
+            if($storeId === -1){
+                $data["storeId"] = $this->input->post("storeId");
+            } else {
+                $data['storeId'] = (int)$storeId;
+            }
             if(!$data["storeId"]) $data["storeId"] = 1;
         }else{
             //强制转换，如果发现为0，报错

@@ -18,15 +18,16 @@
  *      deliveryArea: 送货范围
  *      credit:       商店的评分
  *      more:         保存了不值得单独存储一个字段，但是或许有些店有，有些店没有的东西
- *      state:        标志商店现在的状态，歇业,整顿，修改中
+ *      state:        标志商店现在的状态，歇业,整顿，修改中,关闭,具体在配置的storeState中定义
  *          0, 修改审核中
  *          1, 正常营业中
- *          2, 歇业中
+ *          2, 歇业
+ *          3,关闭
  * </pre>
  * @since 2013-11-24 09:52:12
  * @author farmerjian <chengfeng1992@hotmail.com>
- * @todo 完成所有对 store 表中数据的相关操作
  * @todo store表的credit is wrong ,the biggest num is 0.99,it can't be done
+ * @todo 也许我们应该添加一个时间，表示对店铺的注册时间
  *
  */
 class Store extends CI_Model {
@@ -495,6 +496,33 @@ class Store extends CI_Model {
             $res['logo'] = base_url('image/' . $userId . '/mix/' . $res['logo']);
             return $res;
         }
+    }
+    /**
+     * 获取店铺的状态，为管理员操作服务
+     * 管理员权限，所以不需要输入，或者说，目前不需要输入
+     */
+    public function getStateList()
+    {
+        $res = $this->db->query('SELECT name, id ,state , ownerId  FROM store');
+        if($res->num_rows){
+            return $res->result_array();
+        } else {
+            $this->load->model('mwrong');
+            $this->mwrong->insert('model/store/getStateList/' . __LINE__ . '行索引结果为' .$res->num_rows .'， 请检查');
+            return false;
+        }
+    }
+    /**
+     * 修改店铺的state状态
+     * @param int   $storeId    店铺的id
+     * @param int   $state      想要修改的店铺的状态
+     * @return boolean  update的返回值是一个布尔类型
+     */
+    public function updateStoreState($storeId,$state)
+    {
+        $storeId = (int)$storeId;
+        $state = (int)$state;
+        return $this->db->query('update store set state =' . $state . ' where id = ' . $storeId);
     }
 }
 ?>

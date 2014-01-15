@@ -58,8 +58,8 @@ $config['storeLogoW'] = 120;
 // 分页，每页显示的条数
 $config['pageSize'] = 2;
 // 商品的映射状态，
-$config['state'] = array(0 =>'销售中', 1 => '预备', 2 => '删除', 3 => '下架');
-
+$config['state'] = array(0 =>'销售中', 1 => '预备', 2 => '删除', 3 => '下架' , 4 => '缺货') ;
+$config['storeState'] = array(0 => '审查中' , 1 => '营业' , 2 => '歇业' , 3 => '关闭' );
 // 设置管理员邮箱
 $config['adminMail'] = '1264310280@qq.com';
 ?>

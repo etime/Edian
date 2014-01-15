@@ -3,7 +3,7 @@ class Boss extends CI_Model {
 	function  __construct() {
 		parent::__construct();
 	}
-	
+
 	/**
      * 向 boss 表中新增加一个用户
      * @param array $data
@@ -44,6 +44,23 @@ class Boss extends CI_Model {
         } else {
             $res = $res->result_array();
             return $res[0]['loginName'];
+        }
+    }
+    /**
+     * 获取能联系上boss的信息,地址，电话，名字
+     * @param int   $bossId     获取boss的索引，id
+     * @author unasm
+     * @return array  一维数组
+     */
+    public function getContractInfo( $bossId )
+    {
+        $bossId = (int) $bossId;
+        $res = $this->db->query('SELECT nickname, phone, address , registerTime FROM boss WHERE id = ' . $bossId);
+        if($res->num_rows){
+            $res = $res->result_array();
+            return $res[0];
+        } else {
+            return false;
         }
     }
 }

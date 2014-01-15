@@ -361,23 +361,20 @@ class User extends CI_Model {
 /**********************************************************************************************************************/
 /**********************************************************************************************************************/
 /**********************************************************************************************************************/
-    private function author_check($permit_level)
-    {//用户级别查询吗？
-        //check the author of the user
-        $level=$_SESSION["user_level"];//这里需要将来修改
-        if($level<$permit_level)
-            return false;
-        return true;
-    }
 
+    /**
+     * 获得这一定范围内所有的商店的信息
+     * 目前被废弃的节奏
+     */
     public function getSeller($pos)
     {
-        //获得这一定范围内所有的商店的信息
         $sql = "select user_id from user  where user_type = 1 && lng < '".$pos["st"]["lng"]."' && lat < '".$pos["st"]["lat"]."' && lng > '".$pos["en"]["lng"]."' && lat > '".$pos["en"]["lat"]."'";
         $res = $this->db->query($sql);
         return $res->result_array();
     }
-    function checkname($name){//这样get user_name会增加io读写的，当初真实笨蛋呢
+    //这些都是被废弃的，过些日子，如果发现没有用了，就删除
+    /*
+    function checkname($name){
         $sql="select user_id,user_passwd from user where user_name = '$name'";
         $res=$this->db->query($sql);
         return $this->getArray($res->result_array());
@@ -411,6 +408,7 @@ class User extends CI_Model {
         $res=$this->db->query("delete from user where user_id = '$id'");
         return $res;
     }
+
     public function userBlockById($id)
     {
         //通过用户的id冻结用户帐号的函数
@@ -429,12 +427,6 @@ class User extends CI_Model {
     }
     public function updateUser()
     {//这个函数的作用是更新用户的文章的函数，还没有通过验证
-        /*
-        $this->title = $_POST['title'];
-        $this->content=$_POST['content'];
-        $this->date=time();
-        $this->db->update('user',array('id'=>$_POST['id']));
-         */
         var_dump("抱歉，这个函数的位置不太对，请移动到art中");
         die;
     }
@@ -557,7 +549,6 @@ class User extends CI_Model {
             $sql2 = "select id from ord where seller = '$res[$i][user_id]'";
             $res2 = $this->db->query($sql2);
             $res[$i]["order"] = count($res2->result_array());
-            /*********去掉秒，这个毫无意义*********/
             preg_match("/^[\d]{1,2}\:[\d]{1,2}/",$res[$i]["operst"],$res[$i]["operst"]);
             $res[$i]["operst"] = $res[$i]["operst"][0];
             preg_match("/^[\d]{1,2}\:[\d]{1,2}/",$res[$i]["opered"],$res[$i]["opered"]);
@@ -570,6 +561,7 @@ class User extends CI_Model {
         $res = $this->db->query("select addr,user_name from user where user_id = $userId");
         return $this->getArray($res->result_array());
     }
+    */
     public function insertExtro($data,$userId)
     {
         $str = $this->enExtro($data);

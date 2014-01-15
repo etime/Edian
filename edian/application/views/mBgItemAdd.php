@@ -41,6 +41,11 @@
                 </div>
                 <input type="text" name="listName" /><span class = "button" id = "listBut">添加分类</span>
             </li>
+            <li class = "clearfix label col">
+                <span class = "item">商品名称<span>*</span></span>
+                <input type="text" name="title" id = "title" class = "title"  placeholder = "请用简短的描述商品,尽量包含名称和特点，尽量50字以内哦"/>
+                <!----------------title太差劲了。,学习以下taobao了-------->
+            </li>
             <li class = "col">
                 <span class = "item">商品价格
                     <span>*</span>:
@@ -111,11 +116,7 @@
                         </div>
                 </div>
             </div>
-            <li class = "clearfix label col">
-                <span class = "item">标题<span>*</span></span>
-                <input type="text" name="title" id = "title" class = "title"  placeholder = "请用简短的描述商品,尽量包含名称和特点，尽量50字以内哦"/>
-                <!----------------title太差劲了。,学习以下taobao了-------->
-            </li>
+
             <li class = "col"><span class = "item">商品描述<span>*</span>:</span></li>
             <tr id = "tcont">
                 <td><textarea name="detail" id = "cont" style = "width:100%"> <?php echo "测试信息" ?></textarea></td>

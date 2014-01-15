@@ -19,13 +19,18 @@
     <?php
         //type为2是管理员，为1添加是店家，为0，代表添加新增店铺
         if($type == 2){
+            echo $storeId;
             $check = '<form action=\'' . $siteUrl . '/bg/set/setAct\'  method=\'post\' id = \'switch\' accept-charset=\'utf-8\' enctype = \'multipart/form-data\'>';
             $check .= '<select name = \'storeId\'>';
             for ($i = 0,$len = count($store) ; $i < $len ;$i++){
-                $check .= '<option value = ' .$store[$i]["id"] . '>' . $store[$i]['name'] . '</option>';
+                if($storeId == $store[$i]['id']){
+                    $check .= '<option value = ' . $store[$i]["id"] . ' selected = selected>' . $store[$i]['name'] . '</option>';
+                } else{
+                    $check .= '<option value = ' . $store[$i]["id"] . '>' . $store[$i]['name'] . '</option>';
+                }
             }
             $check .= '</select>';
-            $check .= '<input type=submit name=sub  value=switch /></form>';
+            $check .= '<input type=submit name=sub  value=切换店铺 /></form>';
             echo $check;
         }
     ?>

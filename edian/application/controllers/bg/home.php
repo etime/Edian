@@ -54,7 +54,6 @@ class Home extends MY_Controller {
      * @param string $url 如果用户未登录，登陆之后需要跳转的页面
      * @return boolean 如果用户登陆了并且权限足够，返回 1,boss;2,admin，否则返回 false
      * @author farmerjian<chengfeng1992@hotmail.com>
-     * @author unas 2014-01-05 18:42:28
      */
     protected function _checkAuthority($url = false) {
         if ($url === false) {
@@ -183,14 +182,13 @@ class Home extends MY_Controller {
      * 进入后台页面后，立马将 bossId storeId 存储在 session 中
      * @param int $storeId 选择的店铺id
      */
-    function index() {
+    function index($storeId = 0) {
         header("Content-type: text/html; charset=utf-8");
         $credit = $this->_checkAuthority(site_url('bg/home/index'));
         if ($credit === false) {
             return;
         }
-        //不想再判断了，直接进行转换吧
-        $storeId = (int)$this->input->post('storeId');
+        $storeId = (int)$storeId;
         $bossId = $this->_setBossId();
         if($storeId === 0){
             $storeId = (int)$this->session->userdata('storeId');

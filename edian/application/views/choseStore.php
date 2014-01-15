@@ -15,19 +15,17 @@
     li:hover{
         text-decoration:underline;
     }
+<?php
+ $siteUrl = site_url();
+?>
 </style>
     <body>
+        <h2>请选择店铺</h2>
         <ul>
-<?php
-if(!isset($store)){
-    echo "die";
-    die;
-}
-?>
         <?php foreach ($store as $value):?>
             <li>
                 <input type="radio" name="storeId" id="<?php echo $value['id']?>" value="<?php echo $value['id']?>" />
-                <label for = "<?php echo $value['id']?>">第一分店</label>
+                <a href = "<?php echo $siteUrl . '/bg/home/index/' . $value['id']?>"><?php echo $value['name'] ?></label>
             </li>
         <?php endforeach?>
         </ul>
