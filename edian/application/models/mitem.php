@@ -584,6 +584,33 @@ class Mitem extends Ci_Model {
         }
     }
 
+    /**
+     * 通过商品编号获取商品的详细信息，通过商品 rating 排序
+     * @param int $itemId
+     * @return boolean | array
+     */
+    public function getItemByItemId($itemId) {
+        $itemId = (int)$itemId;
+        if ($itemId === 0) {
+            return false;
+        }
+        $sql = "SELECT title, price, satisfyScore, sellNum, mainThumbnail FROM item WHERE id = $itemId ORDER BY rating";
+        $res = $this->db->query($sql);
+        if ($res->num_rows === 0) {
+            return false;
+        } else {
+            $res = $res->result_array();
+            $res = $res[0];
+            $res['id'] = $itemId;
+            return $res;
+        }
+    }
+
+    /**
+     * 通过商店编号获取所有商品详细信息，通过商品 rating 排序
+     * @param int $storeId
+     * @return boolean | array
+     */
     public function getItemByStoreId($storeId) {
         $storeId = (int)$storeId;
         if ($storeId === 0) {
@@ -619,7 +646,38 @@ class Mitem extends Ci_Model {
         if ($res->num_rows === 0) {
             return false;
         } else {
+            $len = (int)$res->num_rows;
             $res = $res->result_array();
+            for ($i = 0; $i < $len; $i ++) {
+                $res[$i] = $res[$i]['id'];
+            }
+            return $res;
+        }
+    }
+
+    /**
+     * 通过提供的本店分类搜索商品，需要提供对应的商店编号和待搜索的本店分类
+     * @param string $categoryName 分店分类
+     * @param int $storeId 商店编号
+     * @return boolean | array
+     */
+    public function selectInStore($categoryName, $storeId) {
+        $categoryName = mysql_real_escape_string($categoryName);
+        $storeId = (int)$storeId;
+        if ($storeId === 0) {
+            return false;
+        }
+        $sql = "SELECT id FROM item WHERE category LIKE '%;" . $categoryName .  "|' AND belongsTo = $storeId";
+        echo $sql . '<br>';
+        $res = $this->db->query($sql);
+        if ($res->num_rows === 0) {
+            return false;
+        } else {
+            $len = $res->num_rows;
+            $res = $res->result_array();
+            for ($i = 0; $i < $len; $i ++) {
+                $res[$i] = $res[$i]['id'];
+            }
             return $res;
         }
     }
