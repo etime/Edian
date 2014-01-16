@@ -39,8 +39,8 @@ class Shop extends MY_Controller {
         $ans['item'] = $temp['newData'];
         $commonUrl = site_url('shop/index/' . $storeId);
         $ans['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount']);
-        $this->help->showArr($ans);
-        $this->showView($ans, $storeId, $pageId);
+        //$this->help->showArr($ans);
+        $this->showView($ans, $storeId);
     }
 
     /**
@@ -214,8 +214,8 @@ class Shop extends MY_Controller {
         $ans['item'] = $temp['newData'];
         $commonUrl = site_url('shop/search/' . $storeId);
         $ans['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount'], $getString);
-        $this->help->showArr($ans);
-        $this->showView($ans, $storeId, $pageId);
+        //$this->help->showArr($ans);
+        $this->showView($ans, $storeId);
     }
 
     /**
@@ -253,8 +253,8 @@ class Shop extends MY_Controller {
         $ans['item'] = $temp['newData'];
         $commonUrl = site_url('shop/select/' . $storeId);
         $ans['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount'], $getString);
-        $this->help->showArr($ans);
-        $this->showView($ans, $storeId, $pageId);
+        //$this->help->showArr($ans);
+        $this->showView($ans, $storeId);
     }
     /**
      *  显示上面view,select,index三个的页面显示
@@ -263,12 +263,14 @@ class Shop extends MY_Controller {
      *  @param  int     $store  商店的id
      *  @param  string  $page   商店的分页内容
      */
-    protected function showView($good , $store , $page)
+    protected function showView($good , $store)
     {
         $data1 = $this->store->getShopInfo($store);
-        $data1['itemlist'] = $good;
-        $data1['pageNumFooter'] = $page;
+        //$data1['itemlist'] = $good;
+        //$data1['pageNumFooter'] = $page;
         $data1['storeId'] = $store;
+        $data1 = array_merge($good , $data1);
+        $this->help->showArr($data1);
         $this->load->view('store' , $data1);
     }
 }

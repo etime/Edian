@@ -30,7 +30,7 @@
                 <a href = "<?php echo $siteUrl . '/shop/select/' . $storeId . '/' . '?name='.$value?>"><li> <?php echo $value ?></li></a>
                 <?php endforeach?>
             </ul>
-            <form class = "shopsea" action="<?php echo $siteUrl . '/shop/search/' .$storeId ?>" method="post" accept-charset="utf-8">
+            <form class = "shopsea" action="<?php echo $siteUrl . '/shop/search/' .$storeId ?>" method="get" accept-charset="utf-8">
                 <div>
                     <input type="text" name="key" id="sea"  placeholder = "搜索" autofocus = 'off'/>
                 </div>
@@ -91,24 +91,27 @@
                 </div>
             </div>
             <ul class = "goodlist clearfix">
-            <?php foreach($itemlist as $item): ?>
+            <?php for($i = 0,$len = ($item ? count($item) : 0); $i < $len; $i++): ?>
+                <?php
+                    $val = $item[$i];
+                ?>
                 <li>
                     <div class = "img">
-                        <img class = "main" src = "<?php echo $item['mainThumbnail']?>" />
+                        <img class = "main" src = "<?php echo $val['mainThumbnail']?>" />
                         <span class = "cart" alt = "123"> Cart </span>
                     </div>
                     <div class = "info">
                         <p>
-                            <span class = "right">评分<strong><?php echo $item['satisfyScore'] ?></strong></span>
-                            <a href = "<?php echo $siteUrl.'/item/index/' . $item['id'] ?>"><?php echo $item['title'] ?></a>
+                            <span class = "right">评分<strong><?php echo $val['satisfyScore'] ?></strong></span>
+                            <a href = "<?php echo $siteUrl.'/item/index/' . $val['id'] ?>"><?php echo $val['title'] ?></a>
                         </p>
                         <p>
-                            <span class = "right">已售<strong><?php echo $item['sellNum'] ?></strong></span>
-                            <strong>￥<?php echo $item['price'] ?></strong>
+                            <span class = "right">已售<strong><?php echo $val['sellNum'] ?></strong></span>
+                            <strong>￥<?php echo $val['price'] ?></strong>
                         </p>
                     </div>
                 </li>
-            <?php endforeach?>
+            <?php endfor?>
                 <li>
                     <div class = "img">
                         <span class = "flag">新</span>

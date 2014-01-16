@@ -22,8 +22,9 @@ class Home extends MY_Controller
     /**
      * 首页的入口函数
      * @author FarmerJian <chengfeng1992@hotmail.com>
+     * @deprecated    新的设计出来了，旧版本就放弃了
      */
-    public function index() {
+    public function home2() {
         $userId = $this->getUserId();
         $data = array();
         if ($userId != -1) {
@@ -44,7 +45,7 @@ class Home extends MY_Controller
 /**********************************************************************************************************************/
 /**********************************************************************************************************************/
 /**********************************************************************************************************************/
-    public function home2()
+    public function index()
     {
         $this->load->view("home2");
     }
