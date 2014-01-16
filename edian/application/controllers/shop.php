@@ -37,6 +37,7 @@ class Shop extends MY_Controller {
         $temp = $this->pagesplit->split($ans, $pageId, $this->config->item('pageSize'));
         $ans = array();
         $ans['item'] = $temp['newData'];
+        $ans['key'] = false;
         $commonUrl = site_url('shop/index/' . $storeId);
         $ans['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount']);
         //$this->help->showArr($ans);
@@ -162,6 +163,7 @@ class Shop extends MY_Controller {
             $key = '';
             $getString = '';
         }
+        $savekey = $key;
         // 设置敏感字符
         $str = "` -=[]\\;',./~_+)(*&^%$#@!{}|:\"<>?`-=·「、；，。/《》？：“|}{+——）（×&……%￥#@！～";
         // 将所有的敏感字符替换为空格
@@ -212,6 +214,7 @@ class Shop extends MY_Controller {
         $temp = $this->pagesplit->split($ans, $pageId, $this->config->item('pageSize'));
         $ans = array();
         $ans['item'] = $temp['newData'];
+        $ans['key'] = $savekey;
         $commonUrl = site_url('shop/search/' . $storeId);
         $ans['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount'], $getString);
         //$this->help->showArr($ans);
@@ -251,6 +254,7 @@ class Shop extends MY_Controller {
         $temp = $this->pagesplit->split($ans, $pageId, $this->config->item('pageSize'));
         $ans = array();
         $ans['item'] = $temp['newData'];
+        $ans['key'] = $categoryName;
         $commonUrl = site_url('shop/select/' . $storeId);
         $ans['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount'], $getString);
         //$this->help->showArr($ans);
@@ -270,7 +274,7 @@ class Shop extends MY_Controller {
         //$data1['pageNumFooter'] = $page;
         $data1['storeId'] = $store;
         $data1 = array_merge($good , $data1);
-        $this->help->showArr($data1);
+        //$this->help->showArr($data1);
         $this->load->view('store' , $data1);
     }
 }

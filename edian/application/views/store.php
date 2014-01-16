@@ -25,9 +25,9 @@
         <div class="cnav width clearfix">
             <h4>商品类别</h4>
             <ul class = "list">
-            <a href = "<?php echo $siteUrl.'/shop/index/' .$storeId ?>"><li class = "ccd">全部</li></a>
+            <a href = "<?php echo $siteUrl.'/shop/index/' .$storeId ?>"><li <?php  if(!$key) echo "class = 'ccd'"?> >全部</li></a>
                 <?php foreach ($category  as $value): ?>
-                <a href = "<?php echo $siteUrl . '/shop/select/' . $storeId . '/' . '?name='.$value?>"><li> <?php echo $value ?></li></a>
+                    <a href = "<?php echo $siteUrl . '/shop/select/' . $storeId . '/' . '?name='.$value?>"><li <?php if($key === $value) echo "class = 'ccd'"?>> <?php echo $value ?></li></a>
                 <?php endforeach?>
             </ul>
             <form class = "shopsea" action="<?php echo $siteUrl . '/shop/search/' .$storeId ?>" method="get" accept-charset="utf-8">
@@ -73,7 +73,13 @@
         </div>
         <div class = "good block">
             <h5>
-                e点 >> 指尖蛋糕店 >> 曲奇
+                <a href = "<?php echo $siteUrl ?>">
+                    e点
+                </a>
+                    >>
+                <a href = "<?php echo $siteUrl .'/shop/index/' .$storeId ?>">指尖蛋糕店</a>
+                >>
+                <?php if($key) echo $key ;else echo "全部"?>
                 <span>共35件商品</span>
             </h5>
             <div class="snav">
@@ -117,6 +123,7 @@
                     </div>
                 </li>
             <?php endfor?>
+            <p><?php if($len === 0) echo '没有商品哦'?></p>
                 <li>
                     <div class = "img">
                         <span class = "flag">新</span>
@@ -205,6 +212,7 @@
 </body>
 <script type="text/javascript" charset="utf-8">
     var site_url = "<?php echo $siteUrl?>";
+    var storeId = "<?php echo $storeId ?>";
 </script>
 <script type="text/javascript" charset="utf-8" src = "<?php echo $baseUrl . 'js/jquery.min.js' ?>"></script>
 <script type="text/javascript" charset="utf-8" src = "<?php echo $baseUrl . 'js/shop.js' ?>"></script>
