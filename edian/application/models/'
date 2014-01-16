@@ -209,30 +209,9 @@ class User extends CI_Model {
             return $res[0]['loginName'];
         }
     }
-
-    /**
-     * 获取 state credit ,id ,nickname ,loginname , registertime 字段的列表
-     * 目前是这样，后来可以添加修改一些.
-     * @param int   $pageId     为分页准备的接口
-     */
-    public function getCilnrsList($pageId )
+    public function getList()
     {
-        $res = $this->db->query('select state , credit , id , nickname ,loginName , registerTime   from  user ');
-        if($res->num_rows){
-            return $res->result_array();
-        }
-        return false;
-    }
-    /**
-     *  修改用户的状态
-     * @param int   $userId     用户的id
-     * @param int   $state      对应的状态
-     */
-    public function updateUserState($userId,$state)
-    {
-        $userId = (int)$userId;
-        $state  = (int) $state;
-        return $this->db->query('update user set state = ' . $state . ' where id = ' . $userId);
+        $this->db->query('select state , credit , id , nickname ,loginName , registerTime   from  user ');
     }
     /**
      * 获取用户的 昵称，注册时间，头像

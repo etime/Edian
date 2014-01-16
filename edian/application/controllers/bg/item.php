@@ -52,10 +52,10 @@ class item extends Home {
         $data['item'] = $this->mitem->getBgList($this->storeId);
         $data['stateMark'] = $this->config->item('state');
         if ($data['item']) {
-        	$temp = $this->pagesplit->split($data['item'], $pageId, $this->pageSize);
-        	$data['item'] = $temp['newData'];
-        	$commonUrl = site_url() . '/bg/item/mange';
-        	$data['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount']);
+            $temp = $this->pagesplit->split($data['item'], $pageId, $this->pageSize);
+            $data['item'] = $temp['newData'];
+            $commonUrl = site_url() . '/bg/item/mange';
+            $data['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount']);
         }
         $this->load->view('bgItemMan', $data);
     }

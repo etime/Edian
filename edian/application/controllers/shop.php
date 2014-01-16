@@ -47,6 +47,7 @@ class Shop extends MY_Controller {
             //var_dump($data1['pageNumFooter']);
             //$this->help->showArr($data1['pageNumFooter']);
         }
+        $data1['storeId'] = $store;
         //$this->help->showArr($data1);
         $this->load->view('store.php', $data1);
     }
