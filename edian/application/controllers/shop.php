@@ -150,13 +150,15 @@ class Shop extends MY_Controller {
         return $ans;
     }
 
-    public function search() {
+    public function search($storeId = -1) {
         // 通过 GET 的方式获得商店编号
+        /*
         if (isset($_GET['storeId'])) {
             $storeId = (int)$_GET['storeId'];
         } else {
             $storeId = 1;
         }
+         */
         // 通过 POST 的方式获得用户输入的关键字
         $key = trim($this->input->post('key'));
         // 设置敏感字符
