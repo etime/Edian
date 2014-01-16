@@ -69,5 +69,138 @@ class Shop extends MY_Controller {
             $this->load->view('storeMap', $res);
         }
     }
+
+    function input() {
+       echo "<form action= " .site_url('shop/search') ."  method = 'post' >";
+       echo "<input type ='text' name = 'key' />";
+       echo "</form>";
+    }
+
+    protected function isInArray($temp, $val) {
+        $len = (int)$temp;
+        $L = 0;
+        $R = $len - 1;
+        while ($L < $R) {
+            $mid = ($L + $R) >> 1;
+            if ($temp[$mid] < $val) {
+                $L = $mid + 1;
+            } else if ($temp[$mid] > $val) {
+                $R = $mid;
+            } else {
+                return true;
+            }
+        }
+
+        if ($temp[$L] == $val) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * 合并二维数组，数组类型必须是 int，且每一维都已经从小到大排好序
+     * @param array $srcArray
+     * @return array | boolean
+     */
+    protected function mergeArray($srcArray) {
+        if (! is_array($srcArray)) {
+            $srcArray = array();
+        }
+        if (array_key_exists(0, $srcArray)) {
+            $ans = $srcArray[0];
+        } else {
+            return false;
+        }
+        if ($ans == false) {
+            $ans = array();
+        }
+        for ($i = 1, $len = (int)count($srcArray); $i < $len; $i ++) {
+            if ($srcArray[$i] == false) {
+                continue;
+            }
+            $temp = array();
+            for ($j = 0, $tot = (int)count($srcArray[$i]); $j < $tot; $j ++) {
+                if (! $this->isInArray($ans, $srcArray[$i][$j])) {
+                    array_push($temp, $srcArray[$i][$j]);
+                }
+            }
+            $res = array();
+            $len1 = (int)count($ans);
+            $len2 = (int)count($temp);
+            $p1 = 0;
+            $p2 = 0;
+            while(! ($p1 == $len1 && $p2 == $len2)) {
+                if ($p1 == $len1) {
+                    array_push($res, $temp[$p2 ++]);
+                } else if ($p2 == $len2) {
+                    array_push($res, $ans[$p1 ++]);
+                } else if ($ans[$p1] < $temp[$p2]) {
+                    array_push($res, $ans[$p1 ++]);
+                } else if ($ans[$p1] > $temp[$p2]) {
+                    array_push($res, $temp[$p2 ++]);
+                }
+            }
+            $ans = $res;
+        }
+        return $ans;
+    }
+
+    public function search() {
+//        $storeId = (int)$_GET['storeId'];
+        $key = trim($this->input->post('key'));
+        $storeId = 1;
+        $str = "` -=[]\\;',./~_+)(*&^%$#@!{}|:\"<>?`-=·「、；，。/《》？：“|}{+——）（×&……%￥#@！～";
+        for ($i = 0, $len1 = (int)strlen($key); $i < $len1; $i ++) {
+            $flag = false;
+            for ($j = 0, $len2 = (int)strlen($str); $j < $len2; $j ++) {
+                if ($key[$i] == $str[$j]) $flag = true;
+                if ($flag == true) {
+                    $key[$i] = ' ';
+                    break;
+                }
+            }
+        }
+        $ans = '';
+        for ($i = 0, $len = (int)strlen($key); $i < $len1; ) {
+            if ($key[$i] != ' ') {
+                $ans .= $key[$i ++];
+            } else {
+                while ($i < $len && $key[$i] == ' ') {
+                    $i ++;
+                }
+                if ($i != $len) {
+                    $ans .= ' ';
+                }
+            }
+        }
+        $key = explode(' ', $ans);
+        $data1 = array();
+        $data2 = array();
+        for ($i = 0, $len = (int)count($key); $i < $len; $i ++) {
+            $temp = $this->mitem->searchInTitle($key[$i], $storeId);
+            if ($temp != false) {
+                array_push($data1, $temp);
+            }
+            $temp = $this->mitem->searchInCategory($key[$i], $storeId);
+            if ($temp != false) {
+                array_push($data2, $temp);
+            }
+        }
+        $this->load->library('help');
+
+        $this->help->showArr($key);
+        $this->help->showArr($data1);
+        $this->help->showArr($data2);
+
+        $data1 = $this->mergeArray($data1);
+        $data2 = $this->mergeArray($data2);
+        if (! is_array($data1)) $data1 = array();
+        if (! is_array($data2)) $data2 = array();
+        $ans = array_merge($data1, $data2);
+        $ans = $this->mergeArray($ans);
+
+        $this->help->showArr($ans);
+    }
 }
 ?>
