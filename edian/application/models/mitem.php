@@ -602,6 +602,7 @@ class Mitem extends Ci_Model {
             $res = $res->result_array();
             $res = $res[0];
             $res['id'] = $itemId;
+            $res['mainThumbnail'] = $this->_fixMainThumbnailPath($res['mainThmbnail']);
             return $res;
         }
     }
@@ -651,9 +652,6 @@ class Mitem extends Ci_Model {
             for ($i = 0; $i < $len; $i ++) {
                 $res[$i] = $res[$i]['id'];
             }
-            for ($i = 0, $len = count($res); $i < $len; $i ++) {
-                $res[$i]['mainThumbnail'] = $this->_fixMainThumbnailPath($storeId, $res[$i]['mainThumbnail']);
-            }
             return $res;
         }
     }
@@ -679,9 +677,6 @@ class Mitem extends Ci_Model {
             $res = $res->result_array();
             for ($i = 0; $i < $len; $i ++) {
                 $res[$i] = $res[$i]['id'];
-            }
-            for ($i = 0, $len = count($res); $i < $len; $i ++) {
-                $res[$i]['mainThumbnail'] = $this->_fixMainThumbnailPath($storeId, $res[$i]['mainThumbnail']);
             }
             return $res;
         }
