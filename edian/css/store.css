@@ -171,8 +171,14 @@ body{
 }
 .snav input[type = 'text']{
     width:30px;
+    border-radius:4px;
+    padding:1px 4px;
 }
-.psplit{
+.snav a{
+    color:black;
+    margin:0 3px;
+}
+.snav form{
     float:right;
 }
 .goodlist li{

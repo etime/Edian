@@ -81,6 +81,7 @@
                 <input type="text" name="dprc"  value="12" />--
                 <input type="text" name="tprc"  value="12" />
                 <input type="submit" name="sub"  value="确定" />
+<!--
                 <div class="psplit">
                     <span>1/3页</span>
                     <span>第一页</span>
@@ -89,6 +90,10 @@
                     <span>跳转到 <input type="text" name="pgNum" /></span>
                     <span>尾页</span>
                 </div>
+-->
+            <?php
+                echo $pageNumFooter;
+            ?>
             </div>
             <ul class = "goodlist clearfix">
             <?php for($i = 0,$len = ($item ? count($item) : 0); $i < $len; $i++): ?>
@@ -181,14 +186,19 @@
                 <input type="text" name="dprc"  value="12" />--
                 <input type="text" name="tprc"  value="12" />
                 <input type="submit" name="sub"  value="确定" />
-                <div class="psplit">
-                    <span>1/3页</span>
-                    <span>第一页</span>
-                    <span>上一页</span>
-                    <span>下一页</span>
-                    <span>跳转到 <input type="text" name="pgNum" /></span>
-                    <span>尾页</span>
-                </div>
+                <!--
+                                <div class="psplit">
+                                    <span>1/3页</span>
+                                    <span>第一页</span>
+                                    <span>上一页</span>
+                                    <span>下一页</span>
+                                    <span>跳转到 <input type="text" name="pgNum" /></span>
+                                    <span>尾页</span>
+                                </div>
+                -->
+                <?php
+                    echo $pageNumFooter;
+                ?>
             </div>
         </div>
     </div>

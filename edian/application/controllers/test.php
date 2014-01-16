@@ -29,8 +29,9 @@ class Test extends MY_Controller{
     }
     public function map()
     {
+        echo ($_SERVER['PHP_SELF']);
         //phpinfo();
-        $this->load->view("test");
+        //$this->load->view("test");
     }
     public function abc()
     {
