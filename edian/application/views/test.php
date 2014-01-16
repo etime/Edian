@@ -1,27 +1,19 @@
 <!DOCTYPE html>
-<?php
-    $baseUrl = base_url();
-    $siteUrl = site_url();
-?>
-<html lang = "en">
-<head>
-    <meta http-equiv = "content-type" content = "text/html;charset = utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.8 ,maximum-scale= 1.2 user-scalable=yes" />
-    <title>祝你开心</title>
-<style type="text/css" media="all">
-body, html,#allmap {width: 500px;height: 300px;overflow: hidden;margin:0;}
-</style>
-<body>
-    <p>
-        送货半径:<input type="text" name="distance" id="distance" value="1000" />米
-<input type="button" name="but" id="but" value="set" />
-    </p>
-    <div id = "allmap"></div>
-</body>
-<script  type="text/javascript" charset="utf-8">
-    var siteUrl = "<?php echo site_url()?>";
-    var baseUrl = "<?php echo base_url()?>";
-</script>
-<script type="text/javascript" charset="utf-8" src = " <?php echo base_url('js/jquery.js')?>"></script>
-<script type="text/javascript" charset="utf-8" src = " <?php echo base_url('js/test.js')?>"></script>
+<html>
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <title>test</title>
+    </head>
+    <body>
+        <form action="" method="get" accept-charset="utf-8">
+            <a href = "">当前1/3</a>
+            <a href = "">第一页</a>
+            <a href = "">上一页</a>
+            <a href = "">下一页</a>
+            <span>
+                <input type="text" name="pageId"   />
+            </span>
+            <a href = "">尾页</a>
+        </form>
+    </body>
 </html>

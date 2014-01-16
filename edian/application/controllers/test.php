@@ -10,15 +10,8 @@ class Test extends MY_Controller{
     }
     public function mem()
     {
-        /*
-        $this->load->library("cache");
-        $this->cache->store("test","testValue");
-        $value = $this->cache->get("test");
-        echo $value;
-        */
-        $this->time = time();
-        echo $this->time;
-        //phpinfo();
+        $this->load->library("pagesplit");
+        $this->pagesplit->html();
     }
     public function sec()
     {
