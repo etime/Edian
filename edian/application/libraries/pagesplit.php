@@ -34,24 +34,16 @@ class PageSplit {
         $ans['pageAmount'] = $pageAmount;
         return $ans;
     }
-    public function html()
-    {
+    
+    public function html() {
         $this->load->view("test");
     }
+
     /**
      * 显示页面按钮，包括跳转页面功能的实现，其主要 html 代码如下：
      *
      * <code>
-     * <ul class = "pagesplit" id = pagesplit>
-     *     <li><a href = "">1</a></li>
-     *     <li><a href = "">2</a></li>
-     *     <span class="toalPage">共有 x 页</span>
-     *     <form action="" method="get" accept-charset="utf-8">
-     *         跳到<input type="text" name="pageId" id="pageId"/>页
-     *         <input type="submit" value="确定"/>
-     *     </form>
-     * </ul>
-     *<form action="" method="get" accept-charset="utf-8">
+     * <form action="" method="get" accept-charset="utf-8">
      *       <span>当前1/3</span>
      *       <a href = "">第一页</a>
      *       <a href = "">上一页</a>
@@ -60,7 +52,7 @@ class PageSplit {
      *           <input type="text" name="pageId"   />
      *       </span>
      *       <a href = "">尾页</a>
-     *   </form>
+     * </form>
      *   href后面的是接收这个响应的url，action后面的也是接收对应的url
      * </code>
      *
@@ -71,23 +63,28 @@ class PageSplit {
      * @return string
      */
     public function setPageUrl($commonUrl, $pageId, $pageAmount) {
-        if ($pageId > $pageAmount) $pageId = $pageAmount;
-        if ($pageId < 1) $pageId = 1;
-        $ans = "<ul class=\"pagesplit\" id=\"pagesplit\">";
-        for ($i = max(1, $pageId - 2); $i < $pageId; $i ++) {
-            $curPageUrl = $commonUrl . '/' . $i;
-            $ans .= "<li><a href=\"" . $curPageUrl . "\">" . $i . '</a></li>';
+        $ans = "<form action='$commonUrl' method='get' accept-charset='utf-8'>";
+        $ans .= "<span>当前$pageId/$pageAmount</span>";
+        $pageUrl = $commonUrl . '/1';
+        $ans .= "<a href = '$pageUrl'>第一页</a>";
+        if ($pageId - 1 > 0 && $pageId - 1 <= $pageAmount) {
+            $pageUrl = $commonUrl . '/' . $pageId - 1;
+        } else {
+            $pageUrl = $commonUrl . '#';
         }
-        $ans .= '<li>' . $pageId . '</li>';
-        for ($i = $pageId + 1; $i <= min($pageAmount, $pageId + 2); $i ++) {
-            $curPageUrl = $commonUrl . '/' . $i;
-            $ans .= "<li><a href=\"" . $curPageUrl . "\">" . $i . '</a></li>';
+        $ans .= "<a href = '$pageUrl'>上一页</a>";
+        if ($pageId + 1 <= $pageAmount && $pageId + 1 > 0) {
+            $pageUrl = $commonUrl . '/' . $pageId + 1;
+        } else {
+            $pageUrl = $commonUrl . '#';
         }
-        $ans .= "<span class=\"toalPage\">共有 $pageAmount 页</span>";
-        $ans .= "<form action=\"$commonUrl\" method=\"get\" accept-charset=\"utf-8\">";
-        $ans .= "跳到<input type=\"text\" name=\"pageId\" id=\"pageId\"/>页";
-        $ans .= "<input type=\"submit\" value=\"确定\"/>";
-        $ans .= '</form></ul>';
+        $ans .= "<a href = '$pageUrl'>下一页</a>";
+        $ans .= "<span>";
+        $ans .= "<input type='text' name='pageId'/>";
+        $ans .= "</span>";
+        $pageUrl = $commonUrl . '/' . $pageAmount;
+        $ans .= "<a href = '$pageUrl'>尾页</a>";
+        $ans .= "</form>";
         return $ans;
     }
 }
