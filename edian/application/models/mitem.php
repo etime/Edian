@@ -654,6 +654,33 @@ class Mitem extends Ci_Model {
             return $res;
         }
     }
+
+    /**
+     * 通过提供的本店分类搜索商品，需要提供对应的商店编号和待搜索的本店分类
+     * @param string $categoryName 分店分类
+     * @param int $storeId 商店编号
+     * @return boolean | array
+     */
+    public function selectInStore($categoryName, $storeId) {
+        $categoryName = mysql_real_escape_string($categoryName);
+        $storeId = (int)$storeId;
+        if ($storeId === 0) {
+            return false;
+        }
+        $sql = "SELECT id FROM item WHERE category LIKE '%;" . $categoryName .  "|' AND belongsTo = $storeId";
+        echo $sql . '<br>';
+        $res = $this->db->query($sql);
+        if ($res->num_rows === 0) {
+            return false;
+        } else {
+            $len = $res->num_rows;
+            $res = $res->result_array();
+            for ($i = 0; $i < $len; $i ++) {
+                $res[$i] = $res[$i]['id'];
+            }
+            return $res;
+        }
+    }
 /**********************************************************************************************************************/
 /**********************************************************************************************************************/
 /**********************************************************************************************************************/
