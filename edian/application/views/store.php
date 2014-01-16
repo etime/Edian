@@ -18,16 +18,16 @@
         </div>
     </div>
 -->
-<?php
-    $this->load->view('head');
-?>
+    <?php
+        $this->load->view('head');
+    ?>
     <div id = "nav" class = "nav">
         <div class="cnav width clearfix">
             <h4>商品类别</h4>
             <ul class = "list">
-                <li class = "ccd">全部</li>
+            <a href = "<?php echo $siteUrl.'/shop/index/' .$storeId ?>"><li class = "ccd">全部</li></a>
                 <?php foreach ($category  as $value): ?>
-                <li> <?php echo $value ?></li>
+                <a href = "<?php echo $siteUrl . '/shop/select/' . $storeId . '/' . '?name='.$value?>"><li> <?php echo $value ?></li></a>
                 <?php endforeach?>
             </ul>
             <form class = "shopsea" action="<?php echo $siteUrl . '/shop/search/' .$storeId ?>" method="post" accept-charset="utf-8">

@@ -27,29 +27,18 @@ class Shop extends MY_Controller {
             show_404();
             return false;
         }
-        header("Content-type: text/html; charset=utf-8");
-        $data1 = $this->store->getShopInfo($store);
         $data2 = $this->mitem->getItemByStoreId($store);
-        if ($data1 === false || $data2 === false) {
+        if ($data2 === false) {
             show_404();
             return false;
         }
-        $data1['itemlist'] = $data2;
-        // 通过 get 的方式获取 pageId
-        if (isset($_GET['pageId'])) {
-            $pageId = $_GET['pageId'];
-        }
-        if ($data1['itemlist']) {
-            $temp = $this->pagesplit->split($data1['itemlist'], $pageId, $this->config->item('pageSize'));
-            $data1['itemlist'] = $temp['newData'];
-            $commonUrl = site_url('shop/index/' . $store);
-            $data1['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount']);
-            //var_dump($data1['pageNumFooter']);
-            //$this->help->showArr($data1['pageNumFooter']);
-        }
-        $data1['storeId'] = $store;
-        //$this->help->showArr($data1);
+        $page = "";
+        $this->showView($data2,$store , $page);
+        /*
+
+        $this->help->showArr($data1);
         $this->load->view('store.php', $data1);
+         */
     }
 
     /**
@@ -222,21 +211,24 @@ class Shop extends MY_Controller {
     /**
      * 本店筛选，筛选的是本店的分类，也就是商品标签中的第四个标签
      * 需要用户提供待筛选的分部名字和所处商店的编号
+     *
      */
-    public function select() {
+    public function select($storeId = -1) {
 //        header("Content-type: text/html; charset=utf-8");
         // 通过 POST 的方式获得商店编号
-        if (isset($_POST['categoryName'])) {
-            $categoryName = (int)$_POST['categoryName'];
+        if (isset($_GET['name'])) {
+            $categoryName = $_GET['name'];
         } else {
             $categoryName = '美女';
         }
         // 通过 GET 的方式获得商店编号
+        /*
         if (isset($_GET['storeId'])) {
             $storeId = (int)$_GET['storeId'];
         } else {
             $storeId = 0;
         }
+         */
         // 获取筛选得到的所有商品的编号
         $ans = $this->mitem->selectInStore($categoryName, $storeId);
         if ($ans == false) {
@@ -248,7 +240,33 @@ class Shop extends MY_Controller {
             }
             $this->help->showArr($ans);
         }
-
+        //$this->showView($ans , $storeId , $page);
+    }
+    /**
+     *  显示上面view,select,index三个的页面显示
+     *  将三个页面都应该有的数据进行索引，添加，同时传入原来三个页面的不同的数据
+     *  @param  array   $good   商品的列表，来源有三个不同的函数
+     *  @param  int     $store  商店的id
+     *  @param  string  $page   商店的分页内容
+     */
+    protected function showView($good , $store , $page)
+    {
+        $data1 = $this->store->getShopInfo($store);
+        $data1['itemlist'] = $good;
+        $data1['pageNumFooter'] = $page;
+        // 通过 get 的方式获取 pageId
+        /*
+        if ($data1['itemlist']) {
+            $temp = $this->pagesplit->split($data1['itemlist'], $pageId, $this->config->item('pageSize'));
+            $data1['itemlist'] = $temp['newData'];
+            $commonUrl = site_url('shop/index/' . $store);
+            $data1['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount']);
+            //var_dump($data1['pageNumFooter']);
+            //$this->help->showArr($data1['pageNumFooter']);
+        }
+         */
+        $data1['storeId'] = $store;
+        $this->load->view('store' , $data1);
     }
 }
 ?>
