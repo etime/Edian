@@ -22,23 +22,25 @@ class Shop extends MY_Controller {
      * @param int $store 商店编号
      * @return boolean
      */
-    public function index($store = -1, $pageId = 1) {
-        if ($store === -1) {
+    public function index($storeId, $pageId = 1) {
+        header("Content-type: text/html; charset=utf-8");
+        $storeId = (int)$storeId;
+        if ($storeId === 0) {
             show_404();
             return false;
         }
-        $data2 = $this->mitem->getItemByStoreId($store);
-        if ($data2 === false) {
+        $ans = $this->mitem->getItemByStoreId($storeId);
+        if ($ans === false) {
             show_404();
             return false;
         }
-        $page = "";
-        $this->showView($data2,$store , $page);
-        /*
-
-        $this->help->showArr($data1);
-        $this->load->view('store.php', $data1);
-         */
+        $temp = $this->pagesplit->split($ans, $pageId, $this->config->item('pageSize'));
+        $ans = array();
+        $ans['item'] = $temp['newData'];
+        $commonUrl = site_url('shop/index/' . $storeId);
+        $ans['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount']);
+        $this->help->showArr($ans);
+        $this->showView($ans, $storeId, $pageId);
     }
 
     /**
@@ -53,9 +55,6 @@ class Shop extends MY_Controller {
             show_404();
             return;
         } else {
-            //header("Content-type: text/html; charset=utf-8");
-            //var_dump($res);
-            //$this->help->showArr($res);
             $this->load->view('storeMap', $res);
         }
     }
@@ -148,15 +147,21 @@ class Shop extends MY_Controller {
     /**
      * 本店搜索，需要用户输入关键字并且提供商店编号
      */
-    public function search($storeId = 0) {
-//        // 通过 GET 的方式获得商店编号
-//        if (isset($_GET['storeId'])) {
-//            $storeId = (int)$_GET['storeId'];
-//        } else {
-//            $storeId = 0;
-//        }
+    public function search($storeId, $pageId = 1) {
+        header("Content-type: text/html; charset=utf-8");
+        $storeId = (int)$storeId;
+        if ($storeId === 0) {
+            show_404();
+            return;
+        }
         // 通过 POST 的方式获得用户输入的关键字
-        $key = trim($this->input->post('key'));
+        if (isset($_GET['key'])) {
+            $key = trim($_GET['key']);
+            $getString = '?key=' . $key;
+        } else {
+            $key = '';
+            $getString = '';
+        }
         // 设置敏感字符
         $str = "` -=[]\\;',./~_+)(*&^%$#@!{}|:\"<>?`-=·「、；，。/《》？：“|}{+——）（×&……%￥#@！～";
         // 将所有的敏感字符替换为空格
@@ -197,15 +202,20 @@ class Shop extends MY_Controller {
         // 将所有的搜索结果去重
         $ans = $this->mergeArray($data);
         if ($ans == false) {
-            $this->help->showArr($ans);
+            $ans = array();
         } else {
             // 根据商品编号获取所有商品的详细信息
             for ($i = 0, $len = (int)count($ans); $i < $len; $i ++) {
                 $ans[$i] = $this->mitem->getItemByItemId($ans[$i]);
             }
-            // 展示获得的商品
-            $this->help->showArr($ans);
         }
+        $temp = $this->pagesplit->split($ans, $pageId, $this->config->item('pageSize'));
+        $ans = array();
+        $ans['item'] = $temp['newData'];
+        $commonUrl = site_url('shop/search/' . $storeId);
+        $ans['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount'], $getString);
+        $this->help->showArr($ans);
+        $this->showView($ans, $storeId, $pageId);
     }
 
     /**
@@ -213,34 +223,38 @@ class Shop extends MY_Controller {
      * 需要用户提供待筛选的分部名字和所处商店的编号
      *
      */
-    public function select($storeId = -1) {
-//        header("Content-type: text/html; charset=utf-8");
+    public function select($storeId, $pageId = 1) {
+        header("Content-type: text/html; charset=utf-8");
+        $storeId = (int)$storeId;
+        if ($storeId === 0) {
+            show_404();
+            return;
+        }
         // 通过 POST 的方式获得商店编号
         if (isset($_GET['name'])) {
-            $categoryName = $_GET['name'];
+            $categoryName = trim($_GET['name']);
+            $getString = '?key=' . $categoryName;
         } else {
             $categoryName = '美女';
+            $getString = '';
         }
-        // 通过 GET 的方式获得商店编号
-        /*
-        if (isset($_GET['storeId'])) {
-            $storeId = (int)$_GET['storeId'];
-        } else {
-            $storeId = 0;
-        }
-         */
         // 获取筛选得到的所有商品的编号
         $ans = $this->mitem->selectInStore($categoryName, $storeId);
         if ($ans == false) {
-            $this->help->showArr($ans);
+            $ans = array();
         } else {
             // 通过商品编号获取所有商品的详细信息
             for ($i = 0, $len = (int)count($ans); $i < $len; $i ++) {
                 $ans[$i] = $this->mitem->getItemByItemId($ans[$i]);
             }
-            $this->help->showArr($ans);
         }
-        //$this->showView($ans , $storeId , $page);
+        $temp = $this->pagesplit->split($ans, $pageId, $this->config->item('pageSize'));
+        $ans = array();
+        $ans['item'] = $temp['newData'];
+        $commonUrl = site_url('shop/select/' . $storeId);
+        $ans['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount'], $getString);
+        $this->help->showArr($ans);
+        $this->showView($ans, $storeId, $pageId);
     }
     /**
      *  显示上面view,select,index三个的页面显示
@@ -254,17 +268,6 @@ class Shop extends MY_Controller {
         $data1 = $this->store->getShopInfo($store);
         $data1['itemlist'] = $good;
         $data1['pageNumFooter'] = $page;
-        // 通过 get 的方式获取 pageId
-        /*
-        if ($data1['itemlist']) {
-            $temp = $this->pagesplit->split($data1['itemlist'], $pageId, $this->config->item('pageSize'));
-            $data1['itemlist'] = $temp['newData'];
-            $commonUrl = site_url('shop/index/' . $store);
-            $data1['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount']);
-            //var_dump($data1['pageNumFooter']);
-            //$this->help->showArr($data1['pageNumFooter']);
-        }
-         */
         $data1['storeId'] = $store;
         $this->load->view('store' , $data1);
     }

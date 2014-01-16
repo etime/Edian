@@ -26,7 +26,7 @@ class PageSplit {
         if ($pageId < 1) $pageId = 1;
         if ($pageId > $pageAmount) $pageId = $pageAmount;
         $newData = array();
-        for ($i = ($pageId - 1) * $pageSize; $i < min($pageId * $pageSize, $itemAmount); $i ++) {
+        for ($i = max(($pageId - 1) * $pageSize, 0); $i < min($pageId * $pageSize, $itemAmount); $i ++) {
             array_push($newData, $data[$i]);
         }
         $ans = array();
@@ -60,9 +60,10 @@ class PageSplit {
      * @param string $commonUrl  所有调用 controller 的公共接口
      * @param int $pageId  当前的页号
      * @param int $pageAmount  总共的页数
+     * @param string $getString 通过 GET 参数获取的关键字符串
      * @return string
      */
-    public function setPageUrl($commonUrl, $pageId, $pageAmount) {
+    public function setPageUrl($commonUrl, $pageId, $pageAmount, $getString = '') {
         if ($pageId < 1) {
             $pageId = 1;
         } else if ($pageId > $pageAmount) {
@@ -70,26 +71,26 @@ class PageSplit {
         }
         $ans = "<form action='$commonUrl' method='get' accept-charset='utf-8'>";
         $ans .= "<span>当前$pageId/$pageAmount</span>";
-        $pageUrl = $commonUrl . '/1';
+        $pageUrl = $commonUrl . '/1' . $getString;
         $ans .= "<a href = '$pageUrl'>第一页</a>";
         if ($pageId - 1 > 0 && $pageId - 1 <= $pageAmount) {
             $curPageId = $pageId - 1;
-            $pageUrl = $commonUrl . '/' . $curPageId;
+            $pageUrl = $commonUrl . '/' . $curPageId . $getString;
         } else {
-            $pageUrl = $commonUrl . '/' . $pageId . '#';
+            $pageUrl = $commonUrl . '/' . $pageId . $getString . '#';
         }
         $ans .= "<a href = '$pageUrl'>上一页</a>";
         if ($pageId + 1 <= $pageAmount && $pageId + 1 > 0) {
             $curPageId = $pageId + 1;
-            $pageUrl = $commonUrl . '/' . $curPageId;
+            $pageUrl = $commonUrl . '/' . $curPageId . $getString;
         } else {
-            $pageUrl = $commonUrl . '/' . $pageId . '#';
+            $pageUrl = $commonUrl . '/' . $pageId . $getString . '#';
         }
         $ans .= "<a href = '$pageUrl'>下一页</a>";
         $ans .= "<span>";
         $ans .= "<input type='text' name='pageId'/>";
         $ans .= "</span>";
-        $pageUrl = $commonUrl . '/' . $pageAmount;
+        $pageUrl = $commonUrl . '/' . $pageAmount . $getString;
         $ans .= "<a href = '$pageUrl'>尾页</a>";
         $ans .= "</form>";
         return $ans;

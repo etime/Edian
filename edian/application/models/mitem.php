@@ -668,7 +668,6 @@ class Mitem extends Ci_Model {
             return false;
         }
         $sql = "SELECT id FROM item WHERE category LIKE '%;" . $categoryName .  "|' AND belongsTo = $storeId";
-        echo $sql . '<br>';
         $res = $this->db->query($sql);
         if ($res->num_rows === 0) {
             return false;
