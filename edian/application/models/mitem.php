@@ -584,6 +584,33 @@ class Mitem extends Ci_Model {
         }
     }
 
+    /**
+     * 通过商品编号获取商品的详细信息，通过商品 rating 排序
+     * @param int $itemId
+     * @return boolean | array
+     */
+    public function getItemByItemId($itemId) {
+        $itemId = (int)$itemId;
+        if ($itemId === 0) {
+            return false;
+        }
+        $sql = "SELECT title, price, satisfyScore, sellNum, mainThumbnail FROM item WHERE id = $itemId ORDER BY rating";
+        $res = $this->db->query($sql);
+        if ($res->num_rows === 0) {
+            return false;
+        } else {
+            $res = $res->result_array();
+            $res = $res[0];
+            $res['id'] = $itemId;
+            return $res;
+        }
+    }
+
+    /**
+     * 通过商店编号获取所有商品详细信息，通过商品 rating 排序
+     * @param int $storeId
+     * @return boolean | array
+     */
     public function getItemByStoreId($storeId) {
         $storeId = (int)$storeId;
         if ($storeId === 0) {
@@ -619,7 +646,11 @@ class Mitem extends Ci_Model {
         if ($res->num_rows === 0) {
             return false;
         } else {
+            $len = (int)$res->num_rows;
             $res = $res->result_array();
+            for ($i = 0; $i < $len; $i ++) {
+                $res[$i] = $res[$i]['id'];
+            }
             return $res;
         }
     }

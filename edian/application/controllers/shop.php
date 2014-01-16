@@ -77,6 +77,12 @@ class Shop extends MY_Controller {
        echo "</form>";
     }
 
+    /**
+     * 判断一个数是否在一个排好序的数组中
+     * @param array $temp 目标数组
+     * @param int $val 带查找的数
+     * @return boolean 如果存在的话，返回 true，否则返回 false
+     */
     protected function isInArray($temp, $val) {
         $len = (int)$temp;
         $L = 0;
@@ -150,13 +156,16 @@ class Shop extends MY_Controller {
         return $ans;
     }
 
-    public function search() {
-        // 通过 GET 的方式获得商店编号
-        if (isset($_GET['storeId'])) {
-            $storeId = (int)$_GET['storeId'];
-        } else {
-            $storeId = 1;
-        }
+    /**
+     * 本店搜索，需要用户输入关键字并且提供商店编号
+     */
+    public function search($storeId = 0) {
+//        // 通过 GET 的方式获得商店编号
+//        if (isset($_GET['storeId'])) {
+//            $storeId = (int)$_GET['storeId'];
+//        } else {
+//            $storeId = 1;
+//        }
         // 通过 POST 的方式获得用户输入的关键字
         $key = trim($this->input->post('key'));
         // 设置敏感字符
@@ -199,8 +208,16 @@ class Shop extends MY_Controller {
         $this->load->library('help');
         // 将所有的搜索结果去重
         $ans = $this->mergeArray($data);
-        // 展示
-        $this->help->showArr($ans);
+        if ($ans == false) {
+            $this->help->showArr($ans);
+        } else {
+            // 根据商品编号获取所有商品的详细信息
+            for ($i = 0, $len = (int)count($ans); $i < $len; $i ++) {
+                $ans[$i] = $this->mitem->getItemByItemId($ans[$i]);
+            }
+            // 展示获得的商品
+            $this->help->showArr($ans);
+        }
     }
 }
 ?>
