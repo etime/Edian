@@ -21,6 +21,7 @@ class Order extends Home {
         $this->load->config('edian');
         $this->load->model('mitem');
         $this->load->library('help');
+        $this->load->library('pagesplit');
         $this->storeId = $this->session->userdata('storeId');
         $this->pageSize = $this->config->item('pageSize');
     }
@@ -59,14 +60,14 @@ class Order extends Home {
                     $temp = '******';
                 }
                 // 设置购买者的昵称
-                $ans[$i]['user_name'] = $temp['user_name'];
+                $ans[$i]['user_name'] = $temp;
             }
         }
         $data['today'] = $ans;
         if ($data['today']) {
             $temp = $this->pagesplit->split($data['today'], $pageId, $this->pageSize);
             $data['today'] = $temp['newData'];
-            $commonUrl = site_url() . '/order/Today';
+            $commonUrl = site_url('bg/order/today');
             $data['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount']);
             echo $data['pageNumFooter'];
         }
