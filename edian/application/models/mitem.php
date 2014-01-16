@@ -608,30 +608,13 @@ class Mitem extends Ci_Model {
      * @param int $storeId 对应的商店的编号
      * @return boolean | array
      */
-    public function searchInTitle($key, $storeId) {
+    public function searchInStore($key, $storeId) {
         $key = mysql_real_escape_string($key);
         $storeId = (int)$storeId;
         if ($storeId === 0) {
             return false;
         }
-        $sql = "SELECT id FROM item WHERE belongsTo = $storeId AND title LIKE '%" . $key . "%' ORDER BY id";
-        $res = $this->db->query($sql);
-        if ($res->num_rows === 0) {
-            return false;
-        } else {
-            $res = $res->result_array();
-            return $res;
-        }
-    }
-
-    public function searchInCategory($key, $storeId) {
-        $key = '%' . $key . '%';
-        $key = mysql_real_escape_string($key);
-        $storeId = (int)$storeId;
-        if ($storeId === 0) {
-            return false;
-        }
-        $sql = "SELECT id FROM item WHERE belongsTo = $storeId && category LIKE '$key' ORDER BY id";
+        $sql = "SELECT id FROM item WHERE belongsTo = $storeId AND (title LIKE '%" . $key . "%' OR category LIKE '%" . $key . "%') ORDER BY id";
         $res = $this->db->query($sql);
         if ($res->num_rows === 0) {
             return false;

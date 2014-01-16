@@ -116,16 +116,19 @@ class Shop extends MY_Controller {
         if ($ans == false) {
             $ans = array();
         }
+        // 合并所有数组
         for ($i = 1, $len = (int)count($srcArray); $i < $len; $i ++) {
             if ($srcArray[$i] == false) {
                 continue;
             }
+            // 提取当前数组和目标数组不重复的元素
             $temp = array();
             for ($j = 0, $tot = (int)count($srcArray[$i]); $j < $tot; $j ++) {
                 if (! $this->isInArray($ans, $srcArray[$i][$j])) {
                     array_push($temp, $srcArray[$i][$j]);
                 }
             }
+            // 使用归并排序的思想，合并两个排好序的数组
             $res = array();
             $len1 = (int)count($ans);
             $len2 = (int)count($temp);
@@ -148,10 +151,17 @@ class Shop extends MY_Controller {
     }
 
     public function search() {
-//        $storeId = (int)$_GET['storeId'];
+        // 通过 GET 的方式获得商店编号
+        if (isset($_GET['storeId'])) {
+            $storeId = (int)$_GET['storeId'];
+        } else {
+            $storeId = 1;
+        }
+        // 通过 POST 的方式获得用户输入的关键字
         $key = trim($this->input->post('key'));
-        $storeId = 1;
+        // 设置敏感字符
         $str = "` -=[]\\;',./~_+)(*&^%$#@!{}|:\"<>?`-=·「、；，。/《》？：“|}{+——）（×&……%￥#@！～";
+        // 将所有的敏感字符替换为空格
         for ($i = 0, $len1 = (int)strlen($key); $i < $len1; $i ++) {
             $flag = false;
             for ($j = 0, $len2 = (int)strlen($str); $j < $len2; $j ++) {
@@ -162,6 +172,7 @@ class Shop extends MY_Controller {
                 }
             }
         }
+        // 将替换了空格之后的字符串中连续的空格替换为一个空格
         $ans = '';
         for ($i = 0, $len = (int)strlen($key); $i < $len1; ) {
             if ($key[$i] != ' ') {
@@ -175,32 +186,20 @@ class Shop extends MY_Controller {
                 }
             }
         }
+        // 将所有的关键字字符串拆分成关键字数组
         $key = explode(' ', $ans);
-        $data1 = array();
-        $data2 = array();
+        $data = array();
+        // 对关键字数组中的所有关键字进行搜索，搜索的范围是：指定商店编号，在商品的 title 和 category 中搜索
         for ($i = 0, $len = (int)count($key); $i < $len; $i ++) {
-            $temp = $this->mitem->searchInTitle($key[$i], $storeId);
+            $temp = $this->mitem->searchInStore($key[$i], $storeId);
             if ($temp != false) {
-                array_push($data1, $temp);
-            }
-            $temp = $this->mitem->searchInCategory($key[$i], $storeId);
-            if ($temp != false) {
-                array_push($data2, $temp);
+                array_push($data, $temp);
             }
         }
         $this->load->library('help');
-
-        $this->help->showArr($key);
-        $this->help->showArr($data1);
-        $this->help->showArr($data2);
-
-        $data1 = $this->mergeArray($data1);
-        $data2 = $this->mergeArray($data2);
-        if (! is_array($data1)) $data1 = array();
-        if (! is_array($data2)) $data2 = array();
-        $ans = array_merge($data1, $data2);
-        $ans = $this->mergeArray($ans);
-
+        // 将所有的搜索结果去重
+        $ans = $this->mergeArray($data);
+        // 展示
         $this->help->showArr($ans);
     }
 }
