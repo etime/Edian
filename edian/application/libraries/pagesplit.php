@@ -34,7 +34,7 @@ class PageSplit {
         $ans['pageAmount'] = $pageAmount;
         return $ans;
     }
-    
+
     public function html() {
         $this->load->view("test");
     }
@@ -63,20 +63,27 @@ class PageSplit {
      * @return string
      */
     public function setPageUrl($commonUrl, $pageId, $pageAmount) {
+        if ($pageId < 1) {
+            $pageId = 1;
+        } else if ($pageId > $pageAmount) {
+            $pageId = $pageAmount;
+        }
         $ans = "<form action='$commonUrl' method='get' accept-charset='utf-8'>";
         $ans .= "<span>当前$pageId/$pageAmount</span>";
         $pageUrl = $commonUrl . '/1';
         $ans .= "<a href = '$pageUrl'>第一页</a>";
         if ($pageId - 1 > 0 && $pageId - 1 <= $pageAmount) {
-            $pageUrl = $commonUrl . '/' . $pageId - 1;
+            $curPageId = $pageId - 1;
+            $pageUrl = $commonUrl . '/' . $curPageId;
         } else {
-            $pageUrl = $commonUrl . '#';
+            $pageUrl = $commonUrl . '/' . $pageId . '#';
         }
         $ans .= "<a href = '$pageUrl'>上一页</a>";
         if ($pageId + 1 <= $pageAmount && $pageId + 1 > 0) {
-            $pageUrl = $commonUrl . '/' . $pageId + 1;
+            $curPageId = $pageId + 1;
+            $pageUrl = $commonUrl . '/' . $curPageId;
         } else {
-            $pageUrl = $commonUrl . '#';
+            $pageUrl = $commonUrl . '/' . $pageId . '#';
         }
         $ans .= "<a href = '$pageUrl'>下一页</a>";
         $ans .= "<span>";
