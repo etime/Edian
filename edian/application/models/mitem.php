@@ -603,7 +603,7 @@ class Mitem extends Ci_Model {
         if ($itemId === 0) {
             return false;
         }
-        $sql = "SELECT title, price, satisfyScore, sellNum, mainThumbnail FROM item WHERE id = $itemId ORDER BY rating";
+        $sql = "SELECT title, price, satisfyScore, sellNum, mainThumbnail, belongsTo FROM item WHERE id = $itemId ORDER BY rating";
         $res = $this->db->query($sql);
         if ($res->num_rows === 0) {
             return false;
@@ -611,7 +611,7 @@ class Mitem extends Ci_Model {
             $res = $res->result_array();
             $res = $res[0];
             $res['id'] = $itemId;
-            $res['mainThumbnail'] = $this->_fixMainThumbnailPath($res['mainThmbnail']);
+            $res['mainThumbnail'] = $this->_fixMainThumbnailPath($res['belongsTo'], $res['mainThumbnail']);
             return $res;
         }
     }

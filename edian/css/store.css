@@ -12,6 +12,7 @@ img{
 }
 a{
     text-decoration:none;
+    color:black;
 }
 a:hover{
     text-decoration:underline;
@@ -38,11 +39,14 @@ body{
 .nav{
     background-color:#990002;
     height:35px;
-    color:white;
     width:100%;
     overflow:hidden;
     margin-bottom:10px;
 }
+.nav , .nav a{
+    color:white;
+}
+
 .listfix , .navfix{
     position:fixed;
     z-index:10;
@@ -171,9 +175,16 @@ body{
 }
 .snav input[type = 'text']{
     width:30px;
+    border-radius:4px;
+    padding:1px 4px;
 }
-.psplit{
+.snav a{
+    color:black;
+    margin:0 3px;
+}
+.snav form{
     float:right;
+    margin:0;
 }
 .goodlist li{
     float:left;

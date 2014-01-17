@@ -29,10 +29,12 @@ $siteUrl = site_url();
     -->
         <div class="path">
             <div>
-                <a href="">e点</a>>>
-                <a href="">商城</a>>>
-                <a href="">e何氏专辑</a>>>
-                <a href="">林夕《大明宫词》</a>
+                <a href="<?php echo $siteUrl ?>">e点</a> >>
+<!--
+                <a href="<?php echo $siteUrl .'/shop/index/' . $store['storeId'] ?>">商城</a>>>
+-->
+                <a href="<?php echo $siteUrl .'/shop/index/' . $store['storeId'] ?>"><?php echo $store['name'] ?></a> >>
+                <a><?php echo $item['title'] ?></a>
             </div>
         </div>
     </div>

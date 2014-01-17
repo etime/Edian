@@ -22,11 +22,23 @@ function fixpos() {
         }
     })
 }
+/**
+ * 根据约定，以#结尾的链接不可以点击
+ */
+function pageDisable() {
+    $('.snav').delegate('a' , 'click', function (event) {
+        var href = $.trim ($(this).attr("href") );
+        if(href[href.length -1] == '#'){
+            event.preventDefault();
+        }
+    })
+}
+/**
+ * 显示地图，
+ * @param {int} storeid  在.php页面，通过php传入的数值
+ */
 function showMap() {
     var flag = 1;
-    //利用逗号表达式吗?,看起来更优雅
-    //获取storeId
-    var reg = /\d+$/ , storeId = reg.exec(window.location.href) , storeId = storeId[0];
     $("#mapImg").dblclick(function () {
         if(flag){
             flag = 0;
@@ -43,4 +55,5 @@ function showMap() {
 $(document).ready(function () {
     fixpos();
     showMap();
+    pageDisable();
 })
