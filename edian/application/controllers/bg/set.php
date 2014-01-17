@@ -138,8 +138,9 @@ class set extends MY_Controller
         $data['longitude']    = trim( $this->input->post('longitude'));
         $data['latitude']     = trim( $this->input->post('latitude'));
         $data['address']      = trim( $this->input->post('address'));
-        $data['sendPrice']      = trim( $this->input->post('lestPrc'));
+        $data['sendPrice']    = trim( $this->input->post('lestPrc'));
         $data['logo']         = trim( $this->input->post("logo"));
+        $data['briefInfo']    = trim( $this->input->post('briefInfo'));
         //不能存在除-()之外一切特殊字符
         if( preg_match("/[~!@#$%^&*_+`\\=\\|\\{\\}:\\\">\\?<\\[\\];',\/\\.\\\\]/", $data['name']) ) {
             $data['name'] = false;
@@ -178,6 +179,9 @@ class set extends MY_Controller
         }
         if(!preg_match('/^[\d-_]+\.(jpg|png|gif)$/' , $data['logo'])){
             $data['logo'] = false;
+        }
+        if( preg_match("/[~!@#$%^&*_+`\\=\\|\\{\\}:\\\">\\?<\\[\\];',\/\\.\\\\]/", $data['briefInfo']) ) {
+            $data['briefInfo'] = false;
         }
         return $data;
     }

@@ -117,7 +117,6 @@ class Store extends CI_Model {
         foreach ($arr as $key => $val) {
             if($val){
                 $val = mysql_real_escape_string($val);
-                //做所以会出现val为false的情况，我想是因为val不合法，被更改成为false了
                 if($cnt){
                     $cnt .= ', ' .$key . '=' . '\''. $val . '\'';
                 }else{
