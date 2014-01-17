@@ -6,9 +6,10 @@
  ************************************************************************/
 $(document).ready(function(){
     pg();//集中了页面切换的操作
-    det();//头部商品介绍
+    //det();//头部商品介绍
     //comment();//评论的处理,还有分类没有处理
-    login();//登录
+    //login();//登录
+    //setOrder();
 })
 /**
  * 登录的管理和控制
@@ -16,7 +17,7 @@ $(document).ready(function(){
 function login(){
     var atten = $("#atten");
     var login = $("#login");
-    console.log(user_id);
+    user_id = 1;
     if(!user_id){
         var flag = 0;
         atten.text("登陆");
@@ -106,170 +107,11 @@ function pg() {
         })
     })
 }
-/**
- * 对attr中的库存价格，显示控制
- */
-function attrControl() {
-    attr = eval(attr);//对全局变量进行解析
-    var faAttr = $(".attr");
-    var posx  = -1,valuex,posy = -1,valuey;
-    faAttr.delegate(".attrValue" , 'click' , function (event) {
-        var parNode = this.parentNode;
-        //进行选择框的切换
-        $(parNode).find('.atvC').removeClass('atvC');
-        $(this).addClass("atvC");
-        var pos = $(parNode).attr("alt");
-        if(parseInt(pos,10) === 0 ){
-            posx = $(this).attr("alt");
-            valuex = $(this).attr("title");
-        } else {
-            posy = $(this).attr("alt");
-            valuey = $(this).attr('title');
-        }
-        if ( ( posx !== -1 ) && ( posy !== -1 ) && faAttr.length === 2){
-            setAttrData();
-        } else if( (faAttr.length === 1 ) && ( posx !== -1 ) ){
-            setAttrData();
-        }
-    })
-    //将晚上属性的添加，将对应的价格和库存修改
-    function setAttrData(){
-        if(faAttr.length === 1){
-            console.log(attr[posx]);
-            var sp = attr[posx];
-            $("#info").val(valuex);
-        }else if(faAttr.length === 2){
-            $("#info").val(valuex + '|' + valuey);
-            var sp = attr[posx][posy];
-        }
-        $("#price").text(sp.prc);
-        $("#tS").text(sp.store);
-    }
-}
-function det() {
-    attrControl();
-    //var attr = $("#attr").val();
-    var total = $.trim($("#storeNum").text());
-    var reg = /\d+$/;
-    total = reg.exec(total);
-    total = total[0];
-    var buyNum = $("#buyNum"),num;
-    //加减购买数量
-    $("#numCon").delegate("button","click",function (event) {
-        var dir = $(this).attr("class");
-        num = parseInt(buyNum.val());
-        if(dir == "inc"){
-            num = Math.min(num+1,total);
-            buyNum.val(num);
-        }else if(dir == "dec"){
-            num = Math.max(num-1,1);
-            buyNum.val(num);
-        }
-        event.preventDefault();
-    })
-    var mImg = $("#mImg");
-    //进入thumb则切换主图片
-    $("#thumb").delegate("img","mouseenter",function () {
-        $("#mImg").attr("src",$(this).attr("src"));
-    })
-    //对attr进行处理,数据的初始化和事件的绑定,对应的动作
 
-    var inlimit = 0,flag;//时序控制
-    console.log("ab");
-    // 对用户的下单进行操
-    $("#fmIf").delegate(".bton","click",function(){
-        var dir = $(this).attr("name");
-        $("#iprice").val($("#price").text());//将price保存到input中去,方便e点下单
-        if(dir  === 'cart'){
-            //e点购买的情况下其实不用js操作，直接就是了
-            /*
-             * 0.5s之内，连续点击则添加数量，之后发送请求
-             */
-            if(!user_id){
-                $.alet("请首先登录，若已经登录，请刷新页面");
-                $("#login").fadeIn();
-                event.preventDefault();
-                return false;
-            }
-            if(inlimit == 0){
-                inlimit = 1;
-                flag = setInterval(function(){
-                    if(inlimit == 1){//为1 代表500ms内没有添加，2表示有，延迟500ms
-                        clearInterval(flag);
-                        sendOrd();
-                        inlimit = 0;
-                    }else{
-                        inlimit=1;
-                    }
-                },300);
-            }else{
-                inlimit=2;
-                var val = parseInt($("#buyNum").val(), 10);
-                $("#buyNum").val(val+1);
-            }
-            event.preventDefault();
-        }else if(dir == "inst"){
-            if(!user_id){
-                $.alet("请登录后点击购买");
-                $("#login").fadeIn();
-                event.preventDefault();
-            }
-        }
-    })
-}
-function deinfo(str) {
-    if(str){
-        var temp = str.split("|");
-        var res = "",now;
-        for (var i = 0, l = temp.length; i < l; i ++) {
-            now = temp[i].split(":");
-            if(i == 0){
-                res+=now[0];
-            }else{
-                res+="|"+now[0];
-            }
-        }
-        return res;
-    }
-    return false;
-}
 /**
- * 发送订单,加入购物车,det中 fmIf调用
- * @param {node} buyNum 向dom中读取购买数量
- * @param {node} attr   将属性信息保存到dom 中？
+ * 集中了和评论有关的操作，包括隐藏，添加，上传等等
  */
-function sendOrd(){
-    debugger;
-    var info = $("#info").val();
-    info  =  deinfo(info);
-    var buyNum = $("#buyNum").val();
-    //var reg = /http\:\/\/[\/\.\da-zA-Z]*\.jpg/;
-    var  cartHref = site_url+"/order/add/"+itemId;
-    $.ajax({
-        url: cartHref,
-        type: 'POST',
-        data: {"info":info,"buyNum":buyNum},
-        dataType:'json',
-        success: function (data, textStatus, jqXHR) {
-            console.log(data);//目前就算了吧，不做删除的功能,返回的id是为删除准备的
-            if(data["flag"]){
-                $.alet("成功加入购物车");
-                //单纯的添加，计算的人物交给CalTot做
-                //flag 表示有没有在原来的购物车中找到店家
-                appNewItem(data,$("#mImg").attr("src"),info,price,itemId,buyNum);
-                calTot();
-            }else{
-                $.alet(data["atten"]);
-            }
-        },
-        error: function (jqXHR, textStatus, errorThrown) {
-            $.alet("加入购物车失败");
-        }
-    });
-}
-
 function comment(){
-    //集中了和评论有关的操作，包括隐藏，添加，上传等等
     $("#com").delegate(".reCom","click",function(event){
         console.log(event.srcElement);
         if(!user_id){
@@ -429,4 +271,81 @@ function upCom(href,con,callback,score) {
             // error callback
         }
     });
+}
+
+/**
+ * det detail的操作和处理，就是进行下单的处理
+ */
+function det() {
+    attrControl();
+    //var attr = $("#attr").val();
+    var total = $.trim($("#storeNum").text());
+    var reg = /\d+$/;
+    total = reg.exec(total);
+    total = total[0];
+    var buyNum = $("#buyNum"),num;
+    //加减购买数量,目前不做，因为没有足够的空间
+    /*
+    $("#numCon").delegate("button","click",function (event) {
+        var dir = $(this).attr("class");
+        num = parseInt(buyNum.val());
+        if(dir == "inc"){
+            num = Math.min(num+1,total);
+            buyNum.val(num);
+        }else if(dir == "dec"){
+            num = Math.max(num-1,1);
+            buyNum.val(num);
+        }
+        event.preventDefault();
+    })
+    */
+    var mImg = $("#mImg");
+    //进入thumb则切换主图片
+    $("#thumb").delegate("img","mouseenter",function () {
+        $("#mImg").attr("src",$(this).attr("src"));
+    })
+    //对attr进行处理,数据的初始化和事件的绑定,对应的动作
+
+    var inlimit = 0,flag;//时序控制
+    console.log("ab");
+    // 对用户的下单进行操
+    $("#fmIf").delegate(".bton","click",function(){
+        var dir = $(this).attr("name");
+        $("#iprice").val($("#price").text());//将price保存到input中去,方便e点下单
+        if(dir  === 'cart'){
+            //e点购买的情况下其实不用js操作，直接就是了
+            /*
+             * 0.5s之内，连续点击则添加数量，之后发送请求
+             */
+            if(!user_id){
+                $.alet("请首先登录，若已经登录，请刷新页面");
+                $("#login").fadeIn();
+                event.preventDefault();
+                return false;
+            }
+            if(inlimit == 0){
+                inlimit = 1;
+                flag = setInterval(function(){
+                    if(inlimit == 1){//为1 代表500ms内没有添加，2表示有，延迟500ms
+                        clearInterval(flag);
+                        sendOrd();
+                        inlimit = 0;
+                    }else{
+                        inlimit=1;
+                    }
+                },300);
+            }else{
+                inlimit=2;
+                var val = parseInt($("#buyNum").val(), 10);
+                $("#buyNum").val(val+1);
+            }
+            event.preventDefault();
+        }else if(dir == "inst"){
+            if(!user_id){
+                $.alet("请登录后点击购买");
+                $("#login").fadeIn();
+                event.preventDefault();
+            }
+        }
+    })
 }

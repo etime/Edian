@@ -105,7 +105,7 @@ class item extends MY_Controller {
         }
         $data['item'] = $itemInfo;
         $data['store'] = $storeInfo;
-        //$this->help->showArr($data);
+        $this->help->showArr($data);
         $this->mitem->addvisitor($itemId);
         //$this->load->view('item', $data);
         $this->load->view('item2', $data);

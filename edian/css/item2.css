@@ -133,6 +133,7 @@ body{
 }
 .details>ul{
     min-height:250px;
+    margin-left:15px;
 }
 .item{
     width:48px;
@@ -165,11 +166,26 @@ h2{
 .attr span{
     padding:2px 5px;
 }
-.attr span:hover{
+.attr img{
+    height:50px;
+    width:50px;
     border-radius:2px;
-    padding:0px 3px;
+    margin:5px;
+}
+.attr img:hover{
+    border-radius:2px;
+    padding:0;
     border:2px solid rgb(15, 179, 67);
-    pointer:pointer;
+    cursor:pointer;
+}
+/*  选择属性值后的显示*/
+.attrChose , .attr span:hover{
+    border-radius:2px;
+    /*
+    padding:2px 3px;
+    */
+    border:2px solid rgb(15, 179, 67);
+    cursor:pointer;
 }
 #tobuy, .storelogo{
     text-align:center;
@@ -185,7 +201,7 @@ h2{
 #logo{
     margin-bottom:-45px;
 }
-#tobuy button{
+form button{
     margin:5px;
     width:30%;
     border:none;

@@ -55,7 +55,10 @@ $siteUrl = site_url();
                 ?>
                 </div>
             </div>
+            <!--
             <div class="details">
+            -->
+            <form action="<?php echo $siteUrl .'/order/' . $itemId  ?>" method="post" accept-charset="utf-8" class = "details">
                 <ul>
                 <h2><?php echo $item['title'] ?></h2>
         <!--
@@ -65,7 +68,7 @@ $siteUrl = site_url();
         -->
                     <li class="priStore">
                         <span class="item">价格</span>
-                        <span class="ps"><strong id = "price"><?php echo $item['price'] ?></strong>元</span>
+                        <span class="ps"><strong id = "price" class = "price"><?php echo $item['price'] ?></strong>元</span>
                         <span class="item">评分</span>
                         <span class="ps">
                         <strong id = "score"><?php echo $item['satisfyScore'] ?></strong>/10<a class = "cnt"> 共4774条</a>
@@ -81,35 +84,32 @@ $siteUrl = site_url();
                         <span class = "item">库存</span>
                         <span><strong id = "store"><?php echo $item['storeNum'] ?></strong>件</span>
                     </li>
-                    <li >
-<?php
-if(is_array($item['attr'])){
-    foreach ($item['attr']['idx'] as $key => $value) {
-        $list = "<span class = 'item' style = 'float:left'>" . $key . "</span>";
-        $list.= "<ul class = 'attr'>";
-            foreach ($value as $attr) {
-                $list .= "<li><span>" . $attr['font']. "</span></li>";
-            }
-        $list.="</ul>";
-        echo $list;
-    }
-}
-?>
-<!--
-                        <span class="item" style="float:left">颜色</span>
-                        <ul class="attr">
-                            <li><span>红色</span></li>
-                            <li><span>红色</span></li>
-                            <li><span>红色</span></li>
-                        </ul>
+                    <li class = "clearfix">
+                    <?php
+                    if(is_array($item['attr'])){
+                        foreach ($item['attr']['idx'] as $key => $value) {
+                            $list = "<span class = 'item' style = 'float:left'>" . $key . "</span>";
+                            $list.= "<ul class = 'attr'>";
+                                foreach ($value as $attr) {
+                                    if($attr['img']){
+                                        $list .= "<li><img  class = 'attrValue test' src = '" . $attr['img'] . "' alt = '" . $attr['font']. "'><span class = 'attrValue' style = 'display:none'>" . $attr['font']. "</span></li>";
+                                    } else {
+                                        $list .= "<li><span class = 'attrValue' alt = '" . $attr['font'] . "'>" . $attr['font']. "</span></li>";
+                                    }
+                                }
+                            $list.="</ul>";
+                            echo $list;
+                        }
+                    }
+                    ?>
                     </li>
--->
+                    <li>
+                        <span class = "item">购买量</span>
+                        <input type="text" name="buyNum" value = "2" />
+                    </li>
                 </ul>
-                <div id = "tobuy">
-                    <button name = 'instant' style = "display:none">立即购买</button>
-                    <button name = "toCart">加入购物车</button>
-                </div>
-            </div>
+                <button name = "toCart">加入购物车</button>
+             </form>
         </div>
     </div>
     <div id = "detail">
@@ -166,4 +166,11 @@ if(is_array($item['attr'])){
     <div id = "footer">
     </div>
 </body>
+<script type="text/javascript" charset="utf-8">
+    var site_url = "<?php echo $siteUrl ?>";
+    var itemId = "<?php echo $itemId ?>";
+</script>
+<script type="text/javascript" charset="utf-8" src = "<?php echo $baseUrl. 'js/jquery.min.js'?>"></script>
+<script type="text/javascript" charset="utf-8" src = "<?php echo $baseUrl. 'js/cart2.js'?>"></script>
+<script type="text/javascript" charset="utf-8" src = "<?php echo $baseUrl. 'js/item.js'?>"></script>
 </html>
