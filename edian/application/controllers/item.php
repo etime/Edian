@@ -29,6 +29,7 @@ class item extends MY_Controller {
     {
         $this->load->view('item2');
     }
+
     /**
      * 对Attr进行解码和重组，
      *
@@ -58,26 +59,12 @@ class item extends MY_Controller {
         return $ans;
     }
 
-    public function test($data) {
-        header("Content-type: text/html; charset=utf-8");
-        foreach ($data as $key => $val) {
-            if (is_array($val)) {
-                echo '--------------<br>';
-                echo 'there is an array: <br>';
-                $this->test($val);
-                echo '--------------<br>';
-            } else {
-                echo $key . '=>' . $val . '<br>';
-            }
-        }
-    }
     /**
      * 显示商品的view函数
      * @param int   $itemId  商品对应的唯一标示id
      * @todo 显示评论的总数,这个数据没有
      */
     public function index($itemId = -1) {
-
         $itemInfo = $this->mitem->getItemInfo($itemId);
         // 商品不存在
         if ($itemInfo === false) {
@@ -91,26 +78,12 @@ class item extends MY_Controller {
         //$data = array_merge($itemInfo, $storeInfo);
         $data['itemId'] = $itemId;
         // 获取商品评论
-        $comt = $this->comitem->selItem($itemId);
-        $data['comment'] = Array();
-        $cnt = 0;
-        //对评论的编码解码，应该也放model中
-        for ($i = count($comt)-1; $i >= 0; $i --) {
-            $temp = $this->user->getPubById($comt[$i]['user_id']);
-            if($temp) {
-                $data['comment'][$cnt] = array_merge($temp, $comt[$i]);
-                $data['comment'][$cnt]['context'] = explode('&', $comt[$i]['context']);
-                $cnt ++;
-            }
-        }
+        $data['comment'] = $this->comitem->getItemComment($itemId);
         $data['item'] = $itemInfo;
         $data['store'] = $storeInfo;
         $this->mitem->addvisitor($itemId);
+        $this->help->showArr($data);
         $this->load->view('item2', $data);
-    }
-
-    public function testTackComment() {
-        $this->load->view('farmerjian');
     }
 
     /**

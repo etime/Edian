@@ -62,14 +62,27 @@ class ComItem extends CI_Model {
         return $context;
     }
 
-    public function selItem($itemId) {
+    /**
+     * 获取指定编号的商品的评论信息
+     * @param int $itemId 商品编号
+     * @return boolean | array
+     */
+    public function getItemComment($itemId) {
         $itemId = (int)$itemId;
         if ($itemId === 0) {
             return false;
         }
-        $sql = "SELECT id, score, context, time, user_id FROM comItem WHERE item_id = '$itemId'";
+        $sql = "SELECT id, score, context, time, user_id FROM comItem WHERE item_id = $itemId";
         $res = $this->db->query($sql);
-        return $res->result_array();
+        if ($res->num_rows == 0) {
+            return false;
+        } else {
+            $res = $res->result_array();
+            for ($i = 0, $len = (int)count($res); $i < $len; $i ++) {
+                $res[$i]['context'] = $this->_decodeContext($res[$i]['context']);
+            }
+            return $res;
+        }
     }
 
     /**
