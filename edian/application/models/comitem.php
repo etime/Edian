@@ -14,116 +14,212 @@
     user_id 评论者的id，方便添加其他的信息
     item_id 回复的那个商品的id,大概这个才是最关键的吧
  */
-class ComItem extends Ci_Model{
+class ComItem extends CI_Model {
+
+    // 一天的秒数
     var $lenDay;
 
-    /**
-     * 构造函数
-     */
     function __construct() {
         parent::__construct();
-        $this->lenDay = 86400;
+        $this->lenDay = 60 * 60 * 24;
     }
 
-    public function selItem($itemId) {
+    /**
+     * 对评论进行编码
+     * <pre>
+     * context 数组的格式定义：
+     *      第一维数组：
+     *          context[0]   用户对商品的评论
+     *          context[1~n] 用户 A 对用户 B 的评论
+     *      第二维数组：
+     *          context[i][0]  用户 A 的用户编号
+     *          context[i][1]  用户 B 的用户编号，如果 i = 0，context[i][1] 是商品编号
+     *          context[i][2]  用户 A 评论的时间
+     *          context[i][3]  用户 A 对用户 B 评论内容
+     *      编码方法：
+     *          1. context[i][0~3] 之间用 '`' 分开拼接成字符串
+     *          2. context[0~n] 之间用 '~' 分开拼接成字符串
+     * </pre>
+     * @param array $context 待编码评论数组
+     * @return string 编码之后的字符串
+     */
+    protected function _encodeContext($context) {
+        for ($i = 0, $len = (int)count($context); $i < $len; $i ++) {
+            $context[$i] = implode('`', $context[$i]);
+        }
+        $context = implode('~', $context);
+        return $context;
+    }
+
+    /**
+     * 对评论进行解码，解码方法与编码方法相反，详细请看 $this->_encodeContext 的注释
+     * @param string $context 待解码字符串
+     * @return array 解码之后的数组
+     */
+    protected function _decodeContext($context) {
+        $context = explode('~', $context);
+        for ($i = 0, $len = (int)count($context); $i < $len; $i ++) {
+            $context[$i] = explode('`', $context[$i]);
+        }
+        return $context;
+    }
+
+    /**
+     * 获取指定编号的商品的评论信息
+     * @param int $itemId 商品编号
+     * @return boolean | array
+     */
+    public function getItemComment($itemId) {
         $itemId = (int)$itemId;
         if ($itemId === 0) {
             return false;
         }
-        $sql = "SELECT id, score, context, time, user_id FROM comItem WHERE item_id = '$itemId'";
+        $sql = "SELECT id, score, context, time, user_id FROM comItem WHERE item_id = $itemId";
         $res = $this->db->query($sql);
-        return $res->result_array();
-    }
-
-    //对arr中的context格式整理，整理成数组
-    protected function conForm($arr) {
-        if ($arr == false) {
+        if ($res->num_rows == 0) {
             return false;
-        }
-        $this->load->model('user');
-        for ($i = 0, $len = count($arr); $i < $len; $i ++) {
-            $temp = explode('&', $arr[$i]['context']);
-            $arr[$i]['context'] = Array();
-            $userName = $this->user->getNameById($arr[$i]['user_id']);
-            $arr[$i]['context'][0]['user_name'] = $userName;
-            $arr[$i]['context'][0]['time'] = $arr[$i]['time'];
-            $arr[$i]['context'][0]['context'] = $temp[0];
-            for ($j = 1, $lenj = count($temp); $j < $lenj; $j ++) {
-                $tempj = explode('|', $temp[$j]);
-                $now = Array();
-                $now['user_name'] = $tempj[2];
-                $now['time'] = $tempj[1];
-                $now['context'] = $tempj[0];
-                $arr[$i]['context'][$j]= $now;
+        } else {
+            $res = $res->result_array();
+            for ($i = 0, $len = (int)count($res); $i < $len; $i ++) {
+                $res[$i]['context'] = $this->_decodeContext($res[$i]['context']);
             }
+            return $res;
         }
-        return $arr;
     }
 
     /**
-     * 管理员权限获取用户评论
-     * @param int $date
+     * 获取指定商店编号的最近用户评论
+     * @param int $storeId 商店编号
+     * @param int $day 指定的天数
      * @return boolean | array
      */
-    public function getSomeDate($date) {
-        $date = (int)$date;
-        $date = $this->lenDay * $date;
-        $sql = "SELECT user_id, id, score, context, time, item_id FROM comItem WHERE unix_timestamp(time) > (unix_timestamp(now()) - $date)";
+    public function getRecentComment($storeId, $day) {
+        $day = (int)$day;
+        $storeId = (int)$storeId;
+        if ($storeId == 0) {
+            return false;
+        }
+        $second = $this->lenDay * $day;
+        $sql = "SELECT user_id, id, score, context, time, item_id FROM comItem WHERE unix_timestamp(time) > (unix_timestamp(now()) - $second) AND seller = $storeId";
         $res = $this->db->query($sql);
         if ($res->num_rows === 0) {
+            return false;
+        } else {
+            $len = $res->num_rows;
             $res = $res->result_array();
-            $res = $this->conForm($res);
+            for ($i = 0; $i < $len; $i ++) {
+                $res[$i]['context'] = $this->_decodeContext($res[$i]['context']);
+            }
             return $res;
+        }
+    }
+
+    /**
+     * 添加一个商品评价，并更新商品的 rating
+     * <pre>
+     * 需要添加的东西有
+     *      score      对商品满意度评分，由 $data 数组提供
+     *      context    对商品详细评论内容，由 $data 数组提供
+     *      time       评论时间，系统自动添加
+     *      user_id    评论者编号，由 $data 数组提供
+     *      item_id    被评论商品编号，由 $data 数组提供
+     *      seller     被评论商品所属商店编号，由 $item_id 从 item 数据表中获取
+     * </pre>
+     * @param array $data
+     * @return boolean | int 如果成功添加，返回最后一次添加评论编号，否则返回 false
+     */
+    public function insert($data) {
+        $this->load->model('mitem');
+        $seller = $this->mitem->getMaster($data['item_id']);
+        if ($seller === false) {
+            return false;
+        } else {
+            $seller = (int)$seller;
+        }
+        // 对评论内容进行编码
+        $temp[0] = $data['text'];
+        $data['text'] = $this->_encodeContext($temp);
+        $data['text'] = mysql_real_escape_string($data['text']);
+
+        $sql = "INSERT INTO comItem(score, context, time, user_id, item_id, seller) VALUES('$data[score]', '$data[text]', date_format(now(),'%Y-%m-%d'), '$data[user_id]', '$data[item_id]', $seller)";
+        $res = $this->db->query($sql);
+        if ($res) {
+            $res = $this->db->query("select last_insert_id()");
+            $res = $res->result_array();
+            $sql = "UPDATE item SET satisfyScore = satisfyScore + $data[score] where id = $data[item_id]";
+            $this->db->query($sql);
+
+            // 更新 rating 信息
+            $addon = $this->config->item('satisfyScoreAffect') * ($data['score'] - 5);
+            $itemId = $data['item_id'];
+            $sql = "UPDATE item SET rating = rating + $addon WHERE id = $itemId";
+            $this->db->query($sql);
+
+            return $res["0"]["last_insert_id()"];
         } else {
             return false;
         }
     }
 
     /**
-     * 老板权限获取用户评论
-     * @param int $userId
-     * @param int $date
-     * @return boolean | array
+     * 获取指定评论编号的详细评论内容
+     * @param int $cmtId 评论编号
+     * @return array | boolean
      */
-    public function getUserDate($userId, $date) {
-        $userId = (int)$userId;
-        if ($userId == 0) {
+    public function getComment($cmtId) {
+        $cmtId = (int)$cmtId;
+        if ($cmtId == 0) {
             return false;
         }
-        $date = (int)$date;
-        $date = $this->lenDay * $date;
-        $sql = "SELECT user_id, id, score, context, time, item_id FROM comItem WHERE seller = $userId && unix_timestamp(time) > (unix_timestamp(now()) - $date)";
-        $res = $this->db->query($sql);
-        if ($res) {
-            $res = $res->result_array();
-            $res = $this->conForm($res);
-            return $res;
+        $sql = "SELECT context FROM comItem WHERE id = $cmtId";
+        $cmt = $this->db->query($sql);
+        if ($cmt->num_rows == 0) {
+            return false;
         } else {
-            return false;
+            $cmt = $cmt->result_array();
+            $cmt = $cmt[0]['context'];
+            $cmt = $this->_decodeContext($cmt);
+            return $cmt;
         }
     }
-/**********************************************************************************************************************/
-/**********************************************************************************************************************/
-/**********************************************************************************************************************/
-/**********************************************************************************************************************/
-/**********************************************************************************************************************/
-/**********************************************************************************************************************/
 
-    public function insert($data)
-    {
-        $data["text"] = addslashes($data["text"]);
-        $this->load->model("mitem");
-        $seller = $this->mitem->getMaster($data["item_id"]);//将商品主人的id查找出来，以便将来方便搜索
-        $sql = "insert into comItem(score,context,time,user_id,item_id,seller) values('$data[score]','$data[text]',date_format(now(),'%Y-%m-%d'),'$data[user_id]','$data[item_id]','$seller[author_id]')";
-        $res = $this->db->query($sql);
-        if($res){
-            $res = $this->db->query("select last_insert_id()");
-            $res = $res->result_array();
-            $this->db->query("update item set judgescore = judgescore + $data[score] where id = $data[item_id]");
-            return $res["0"]["last_insert_id()"];
+    /**
+     * 获取指定评论编号的所有评论者的编号
+     * @param int $cmtId 评论编号
+     * @return array | boolean
+     */
+    public function getCmterId($cmtId) {
+        $cmt = $this->getComment($cmtId);
+        if ($cmt == false) {
+            return false;
+        } else {
+            for ($i = 0, $len = (int)count($cmt); $i < $len; $i ++) {
+                $cmt[$i] = $cmt[$i][0];
+            }
+            return $cmt;
         }
-        return false;
     }
+
+    /**
+     * 给指定评论编号的评论追加一个评论
+     * @param $data 参数数组，$data['cmtId'] 存放评论编号，$data['comment'] 存放评论数组
+     * @return boolean 更新成功返回 true，否则返回 false
+     */
+    public function updateComment($data) {
+        $cmtId = $data['cmtId'];
+        $oldComment = $this->getComment($cmtId);
+        $len = (int)count($oldComment);
+        $oldComment[$len] = $data['comment'];
+        $newComment = $this->_encodeContext($oldComment);
+        $sql = "UPDATE comItem SET context = '$newComment' WHERE id = $cmtId";
+        return $this->db->query($sql);
+    }
+/**********************************************************************************************************************/
+/**********************************************************************************************************************/
+/**********************************************************************************************************************/
+/**********************************************************************************************************************/
+/**********************************************************************************************************************/
+/**********************************************************************************************************************/
     public function append($data,$comId)
     {
         //添加回复
@@ -137,21 +233,6 @@ class ComItem extends Ci_Model{
         $sql = "update comItem set context = '".$cont."' where id = $comId";
         return $this->db->query($sql);
     }
-    private function formStr($arr)
-    {
-        $len = count($arr);
-        if($arr && $len){
-            $res = $arr[0]["context"];
-            for($i = 1;$i < $len;$i++){
-                $res.="&".$arr[$i]["context"]."|".$arr[$i]["time"]."|".$arr[$i]["user_name"];
-            }
-            return $res;
-        }
-        return false;
-    }
-
-
-
 
     public function getUser($id)
     {
