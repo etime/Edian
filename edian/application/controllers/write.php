@@ -117,21 +117,6 @@ class Write extends MY_Controller
 //        $this->load->view("write", $data);
 //    }
 
-
-    /**
-     * 该函数有问题  !!!!!!!
-     */
-    public function index() {
-        $data['title'] = '新品上架';
-        if ($this->isNoLogin()) {
-            return;
-        }
-        $data['dir'] = $this->part;
-        $this->load->model('user');
-        $data['userType'] = $this->user->getType($this->userId);   //!!!!!!!!!这里有问题 user 中不存在 getType 函数
-        $this->load->view("Cwrite",$data);
-    }
-
     /**
      * 重新编辑修改的页面
      * 对帖子进行修改重新编辑的函数，除了id，value之外，什么都修改吧

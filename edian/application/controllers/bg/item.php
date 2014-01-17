@@ -12,7 +12,6 @@ require 'home.php';
 class item extends Home {
     var $storeId;
     var $bossId;
-    var $ADMIN;
     var $pageSize;
 
     /**
@@ -60,7 +59,9 @@ class item extends Home {
         $this->load->view('bgItemMan', $data);
     }
 
-    //管理员看到一天内所有的评论，其他人看到3天内所有的评论
+    /**
+     * @param int $pageId 分页号
+     */
     public function itemCom($pageId = 1) {
         if ($this->_checkAuthority(site_url('bg/item/itemcom')) === false) {
             return;
@@ -68,35 +69,40 @@ class item extends Home {
         if (isset($_GET['pageId'])) {
             $pageId = $_GET['pageId'];
         }
+
+        // 设置查看时间段
         if ($this->isAdmin) {
-            $com = $this->comitem->getSomeDate(100);
+            $day = 1;
         } else if ($this->isBoss) {
-            $com = $this->comitem->getUserDate($this->userId, 100);
+            $day = 3;
+        } else {
+            show_404();
+            return;
         }
+
+        $storeId = $this->session->userdata('storeId');
+        $comment = $this->comitem->getRecentComment($storeId, $day);
 
         //分页
-        if ($com) {
-            $temp = $this->pagesplit->split($com, $pageId, $pageSize);
-            $com = $temp['newData'];
-            $commonUrl = site_url() . '/bg/item/itemCom';
+        if ($comment != false) {
+            $pageSize = $this->config->item('pageSize');
+            $temp = $this->pagesplit->split($comment, $pageId, $pageSize);
+            $comment = $temp['newData'];
+            $commonUrl = site_url('/bg/item/itemCom');
             $data['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount']);
+            $len = (int)count($comment);
+        } else {
+            $len = 0;
         }
 
-        if($com) $len = count($com);
-        else $len = 0;
         for ($i = 0; $i < $len; $i++) {
-            $temp = $this->mitem->getTitle($com[$i]["item_id"]);
-            $com[$i]['title'] = $temp;
+            $temp = $this->mitem->getTitle($comment[$i]["item_id"]);
+            $comment[$i]['title'] = $temp;
         }
-        $data['com'] = $com;
-        if ($this->isBoss) {
-            $data['type'] = 2;
-        } else if ($this->isAdmin) {
-            $data['type'] = 3;
-        } else {
-            $daa['type'] = 1;
-        }
-        $data['ADMIN'] = $this->ADMIN;
+        $data['com'] = $comment;
+        $data['isAdmin'] = $this->isAdmin ? 1 : 0;
+        $data['title'] = $storeId . '号店的最近' . $day . '内的所有评论';
+//        $this->help->showArr($data);
         $this->load->view('bgcom', $data);
     }
 /**********************************************************************************************************************/

@@ -15,11 +15,13 @@
     item_id 回复的那个商品的id,大概这个才是最关键的吧
  */
 class ComItem extends CI_Model {
+
+    // 一天的秒数
     var $lenDay;
 
     function __construct() {
         parent::__construct();
-        $this->lenDay = 86400;
+        $this->lenDay = 60 * 60 * 24;
     }
 
     /**
@@ -86,41 +88,19 @@ class ComItem extends CI_Model {
     }
 
     /**
-     * 管理员权限获取用户评论
-     * @param int $date
+     * 获取指定商店编号的最近用户评论
+     * @param int $storeId 商店编号
+     * @param int $day 指定的天数
      * @return boolean | array
      */
-    public function getSomeDate($date) {
-        $date = (int)$date;
-        $date = $this->lenDay * $date;
-        $sql = "SELECT user_id, id, score, context, time, item_id FROM comItem WHERE unix_timestamp(time) > (unix_timestamp(now()) - $date)";
-        $res = $this->db->query($sql);
-        if ($res->num_rows === 0) {
-            return false;
-        } else {
-            $len = $res->num_rows;
-            $res = $res->result_array();
-            for ($i = 0; $i < $len; $i ++) {
-                $res[$i]['context'] = $this->_decodeContext($res[$i]['context']);
-            }
-            return $res;
-        }
-    }
-
-    /**
-     * 老板权限获取用户评论
-     * @param int $userId
-     * @param int $date
-     * @return boolean | array
-     */
-    public function getUserDate($userId, $date) {
-        $userId = (int)$userId;
-        if ($userId == 0) {
+    public function getRecentComment($storeId, $day) {
+        $day = (int)$day;
+        $storeId = (int)$storeId;
+        if ($storeId == 0) {
             return false;
         }
-        $date = (int)$date;
-        $date = $this->lenDay * $date;
-        $sql = "SELECT user_id, id, score, context, time, item_id FROM comItem WHERE seller = $userId && unix_timestamp(time) > (unix_timestamp(now()) - $date)";
+        $second = $this->lenDay * $day;
+        $sql = "SELECT user_id, id, score, context, time, item_id FROM comItem WHERE unix_timestamp(time) > (unix_timestamp(now()) - $second) AND seller = $storeId";
         $res = $this->db->query($sql);
         if ($res->num_rows === 0) {
             return false;

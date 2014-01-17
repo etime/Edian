@@ -525,13 +525,13 @@ class Mitem extends Ci_Model {
     }
 
     /**
-     * 获取商品的title
-     * @param int $itemId 商品序列的id
-     * @return array/false $res 要不是false，要不是string
+     * 获取指定商品编号的标题
+     * @param int $itemId 商品编号
+     * @return string | false
      */
     public function getTitle($itemId) {
         $itemId = (int)$itemId;
-        if (! $itemId) {
+        if ($itemId == 0) {
             return false;
         }
         $sql = "SELECT title FROM item WHERE id = $itemId";
