@@ -10,3 +10,4 @@ tags
 .buildpath
 *.orig
 #忽略Document 和upload整个文件夹
+farmerjian.php

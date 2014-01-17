@@ -500,7 +500,7 @@ class Mitem extends Ci_Model {
      * @param   int     $itemId     商品的 itemId
      * @return  boolean | array     如果商品不存在，返回 false，否则返回商品所属商店的 id
      */
-    public function  getMaster($itemId) {
+    public function getMaster($itemId) {
         $itemId = (int)$itemId;
         if ($itemId === 0) {
             return false;
@@ -511,7 +511,7 @@ class Mitem extends Ci_Model {
             return false;
         } else {
             $res = $res->result_array();
-            return $res[0];
+            return $res[0]['belongsTo'];
         }
     }
 

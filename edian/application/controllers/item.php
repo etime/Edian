@@ -105,12 +105,121 @@ class item extends MY_Controller {
         }
         $data['item'] = $itemInfo;
         $data['store'] = $storeInfo;
-        //$this->help->showArr($data);
         $this->mitem->addvisitor($itemId);
-        //$this->load->view('item', $data);
         $this->load->view('item2', $data);
     }
 
+    public function testTackComment() {
+        $this->load->view('farmerjian');
+    }
+
+    /**
+     * 添加一个商品评论
+     * <pre>
+     * 需要添加的内容有：
+     *      context    评论的详细内容，通过 POST 的方式获取，POST 中的变量名为 context
+     *      score      评论的分数，通过 POST 的方式获取，POST 中的变量为 score
+     *      user_id    评论者编号，通过 session 获取
+     *      item_id    被评论商品编号，通过 url 参数传递获取
+     * </pre>
+     * @param int $itemId 商品编号
+     */
+    public function addComment($itemId = -1) {
+        $itemId = (int)$itemId;
+        if ($this->userId == -1) {
+            echo 'false';
+            return;
+        }
+        if ($itemId === -1) {
+            show_404();
+            return;
+        }
+
+        // 设置评论数组
+        $temp[0] = $this->userId;
+        $temp[1] = (int)$itemId;
+        $temp[2] = date('Y-m-d H:i:s');
+        $temp[3] = trim($this->input->post('context'));
+
+        // 设置参数数组
+        $data['score'] = (int)trim($this->input->post('score'));
+        $data['item_id'] = (int)$itemId;
+        $data['user_id'] = (int)$this->userId;
+        $data['text'] = $temp;
+        $ans = $this->comitem->insert($data);
+        if ($ans) {
+            echo '1';
+        } else {
+            echo '评论失败';
+        }
+    }
+
+    /**
+     * 添加一个追加评论：用户 A 向用户 B 评论
+     * <pre>
+     *      如果用户 A 未登陆， echo 'false'，不再执行该函数
+     *      如果 url 中 itemId 为 -1，返回 404 页面，不再执行该函数
+     *      如果用户评论内容为空，echo '评论内容不能为空'，不再执行该函数
+     *      如果用户 B 没有出现过，向网站报错， echo '不能对该用户进行回复'，不再执行该函数
+     * </pre>
+     * 需要添加的内容有：
+     *      $userId1    用户 1 的编号，通过 session 获取
+     *      $userId2    用户 2 的编号，通过 POST 获取，POST 中的变量名为： userId
+     *      $cmtId      被追加的评论编号，通过 POST 获取，POST 中的变量名为：cmtId
+     *      $cmtContent 评论的具体内容，通过 POST 获取，POST 中的变量名位： cmtContent
+     *      $cmtdate    评论时间，通过系统生成
+     * </pre>
+     * @param $itemId
+     */
+    public function tackComment() {
+        if ($this->userId == -1) {
+            echo 'false';
+            return;
+        }
+        // 设置评论数组，需要送给 comItem 编码
+        $temp[0] = (int)$this->userId;
+        $temp[1] = (int)(trim($this->input->post('userId')));
+        $temp[2] = date('Y-m-d H:i:s');
+        $temp[3] = trim($this->input->post('cmtContent'));
+        // 设置需要传递给 comItem 的参数
+        $data['comment'] = $temp;
+        $data['cmtId'] = $this->input->post('cmtId');
+
+        // 获取所有参与了该评论的评论者编号
+        $cmter = $this->comitem->getCmterId($data['cmtId']);
+        // 如果评论者集合为空
+        if ($cmter == false) {
+            $str = $_SERVER['PHP_SELF'] . 'userId 为' . $this->userId . '的用户向一个没有任何评论用户的评论添加回复';
+            $this->load->model('mwrong');
+            $this->mwrong->insert($str);
+            echo '不能对该用户进行回复';
+            return;
+        }
+        // 检查被评论者是否在已评论者集合中
+        $flag = false;
+        for ($i = 0, $len = (int)count($cmter); $i < $len; $i ++) {
+            if ($cmter[$i] == $data['comment'][1]) {
+                $flag = true;
+                break;
+            }
+        }
+        // 如果被评论者不在已评论者集合中
+        if ($flag == false) {
+            $str = $_SERVER['PHP_SELF'] . 'userId 为' . $this->userId . '的用户不存在的用户发起回复请求';
+            $this->load->model('mwrong');
+            $this->mwrong->insert($str);
+            echo '不能对该用户进行回复';
+            return;
+        }
+
+        // 经历重重检验，终于可以提交评论了，这傻逼后台！
+        $flag = $this->comitem->updateComment($data);
+        if ($flag) {
+            echo '1';
+        } else {
+            echo '评论失败';
+        }
+    }
 /**********************************************************************************************************************/
 /**********************************************************************************************************************/
 /**********************************************************************************************************************/
@@ -142,31 +251,7 @@ class item extends MY_Controller {
         }
         return $re;
     }
-    /**
-     * 新的评论内容页面
-     * 接下来怕是要吧评论单独分出去了，成为独立的模块
-     * @param int   $itemId     针对的评论商品id
-     * @param post  context     post提交的内容
-     * @param post  score       对商品的评分
-     */
-    public function newcom($itemId = -1){
-        //以后要返回插入的com id,对具体的item的评论进行的操作
-        $res["flag"] = -1;
-        if(!$this->userId){
-            $res["atten"] = "没有登录";
-        }
-        $data["text"] = $this->input->post("context");
-        $data["score"] = $this->input->post("score");
-        $data["item_id"] = $itemId;
-        $data["user_id"] = $this->userId;
-    //    $this->showArray($data);
-        $this->load->model("comitem");
-        $ans = $this->comitem->insert($data);
-        if($ans){
-            $res["flag"] = $ans;
-        }
-        echo json_encode($res);
-    }
+
     public function appcom($comId)
     {
         $res["flag"] = -1;
