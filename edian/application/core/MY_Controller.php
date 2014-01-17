@@ -96,6 +96,15 @@ class MY_Controller extends  CI_Controller {
     }
 
     /**
+     * 用户未登录，跳转到登陆页面，登陆之后跳转到 $url 指定的地址
+     * @param string $url 登陆之后跳转到的地址
+     */
+    protected function noLogin($url) {
+        $data['url'] = $url;
+        $this->load->view("login", $data);
+    }
+
+    /**
      * 通过 session 中存储的 userId 判断用户是否登录，如果登录，返回其 userId，否则返回 -1
      * @since   2013-12-2 13:46:14
      * @return  int
@@ -237,12 +246,7 @@ class MY_Controller extends  CI_Controller {
             var_dump("请联系管理员:".$this->adminMail);
         }
     }
-    protected  function noLogin($url)
-    {
-        //没有登录时候的操作
-        $data["url"] = $url;
-        $this->load->view("login",$data);
-    }
+
     /*
     public function userInfoGet()
     {

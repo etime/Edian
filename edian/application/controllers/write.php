@@ -17,6 +17,9 @@ class Write extends MY_Controller
      * @var int
      */
     var $userId;
+    var $isBoss;
+    var $isAdmin;
+
     /**
      * 默认的头像图片
      * 当初没有想到，其实$defaultImg 使用常量就最好了,或者是没有，在浏览查找的时候，修改成为默认图片，方便管理
@@ -25,8 +28,7 @@ class Write extends MY_Controller
      */
     var $defaultImg;
 
-    function __construct()
-    {
+    function __construct() {
         parent::__construct();
         define('imgDir',"upload/");
         define('THUMB',"upload/");
@@ -34,25 +36,67 @@ class Write extends MY_Controller
         $this->userId = $this->getUserId();
         $this->load->model("art");
         $this->load->model("mwrong");
-        $this->load->model("mitem");//调出model
+        $this->load->model("mitem");
         $this->load->model('store');
+
+        $this->isAdmin = false;
+        $this->isBoss = false;
     }
 
     /**
      * 判断用户是否登录，如果没有登录，跳转到登录页面并返回 true，否则返回 false
      * @return boolean
      */
-    protected function isNoLogin()
-    {
-        if($this->userId == -1) {
-            $atten["uri"] = site_url("mainpage/index");
-            $atten["uriName"] = "登陆";
-            $atten["title"] = "请首先登陆";
-            $atten["atten"] = "请登陆后继续";
-            $this->load->view("jump", $atten);
+    protected function isNoLogin() {
+        if ($this->userId == -1) {
+            $atten['uri'] = site_url('mainpage/index');
+            $atten['uriName'] = '登陆';
+            $atten['title'] = '请首先登陆';
+            $atten['atten'] = '请登陆后继续';
+            $this->load->view('jump', $atten);
             return true;
         }
         return false;
+    }
+
+    /**
+     * 检查用户是否登陆以及权限是否为管理员或者老板
+     * 如果用户未登录，跳转到登陆页面，如果权限不够，跳转到 404 页面
+     * @param string $url 如果用户未登录，登陆之后需要跳转的页面
+     * @return boolean 如果用户登陆了并且权限足够，返回 1,boss;2,admin，否则返回 false
+     * @author farmerjian<chengfeng1992@hotmail.com>
+     */
+    protected function _checkAuthority($url = false) {
+        if ($url === false) {
+            $url = site_url();
+        }
+        $this->isBoss = false;
+        $this->isAdmin = false;
+        // 用户未登录
+        if ($this->userId === -1) {
+            $this->noLogin($url);
+            $this->isAdmin = false;
+            $this->isBoss = false;
+            return false;
+        }
+        $credit = $this->user->getCredit($this->userId);
+        // 不是管理员或者老板权限
+        $flag = false;
+        if ($credit == $this->config->item('bossCredit')) {
+            $flag = 1;
+            $this->isBoss = true;
+            $this->isAdmin = false;
+        }
+        if ($credit == $this->config->item('adminCredit')) {
+            $flag = 2;
+            $this->isBoss = false;
+            $this->isAdmin = true;
+        }
+        if ($flag === false) {
+            show_404();
+            return false;
+        }
+        return $flag;
     }
 
 //    /**
@@ -73,17 +117,18 @@ class Write extends MY_Controller
 //        $this->load->view("write", $data);
 //    }
 
+
     /**
-     * 商家添加新品的函数
-     * view 中cwrite c代表商业，就是商家的添加，也是默认的添加，有分区，价格的东西，对应的是目前的表
+     * 该函数有问题  !!!!!!!
      */
-    public function index()
-    {
-        $data["title"] = "新品上架";
-        if($this->isNoLogin()) return;
-        $data["dir"] = $this->part;
-        $this->load->model("user");
-        $data["userType"] = $this->user->getType($this->userId);
+    public function index() {
+        $data['title'] = '新品上架';
+        if ($this->isNoLogin()) {
+            return;
+        }
+        $data['dir'] = $this->part;
+        $this->load->model('user');
+        $data['userType'] = $this->user->getType($this->userId);   //!!!!!!!!!这里有问题 user 中不存在 getType 函数
         $this->load->view("Cwrite",$data);
     }
 
@@ -93,9 +138,10 @@ class Write extends MY_Controller
      * 这里是显示view
      * @param int $artId 目标文档的id
      */
-    public function change($artId)
-    {
-        if($this->isNoLogin())return;
+    public function change($artId) {
+        if ($this->isNoLogin()) {
+            return;
+        }
         $data = $this->art->getUserInsert($artId);
         $data["keyword"] = preg_split("/;/",$data["keyword"]);
         $temp = "";
@@ -435,13 +481,10 @@ class Write extends MY_Controller
      * @todo 判断商品属性是否合法
      */
     public function bgAdd() {
-        // 判断用户登录否
-        if ($this->userId == -1) {
-            die("请首先登录");
+        // 检查用户是否登陆以及权限是否足够
+        if (! $this->_checkAuthority()) {
+            return;
         }
-
-        // 判断用户权限够否
-        ;
 
         // 从 view 回收所有数据
         $data['keyi']          = trim($this->input->post('keyi'));

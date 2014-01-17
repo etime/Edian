@@ -118,7 +118,7 @@ class Mitem extends Ci_Model {
     }
 
     /**
-     * 商店添加商品的函数，必须包含以下信息:
+     * 商店添加商品的函数，并更新商品的 rating 必须包含以下信息:
      * <br>    keyi           :     string      商品第一级关键字
      * <br>    keyj           :     string      商品第二级关键字
      * <br>    keyk           :     string      商品第三级关键字
@@ -167,8 +167,18 @@ class Mitem extends Ci_Model {
         $sql = "SELECT last_insert_id()";
         $res = $this->db->query($sql);
         $res = $res->result_array();
+        $itemId = $res[0]['last_insert_id()'];
 
-        return $res[0]['last_insert_id()'];
+        // 更新 rating
+        $date = time();
+        $sql = "UPDATE item SET rating = $date WHERE id = $itemId";
+        $this->db->query($sql);
+
+        // 更新商品上架时间
+        $date = date('Y-m-d H:i:s', $date);
+        $sql = "UPDATE item SET putawayTime = $date WHERE id = $itemId";
+        $this->db->query($sql);
+        return $itemId;
     }
 
     /**
@@ -463,21 +473,20 @@ class Mitem extends Ci_Model {
     }
 
     /**
-     * 给商品添加一个访问量
+     * 给商品添加一个访问量，并更新 item 的 rating 值
      * @param int $itemId 商品的 itemId
      * @return boolean 如果添加商品的访问量成功，返回 true，否则返回 false
      */
     public function addvisitor($itemId) {
         $itemId = (int)$itemId;
-        //没有检验的必要
-        /*
-        if (! $this->isItemExistByItemId($itemId)) {
+        if ($itemId === 0) {
             return false;
         }
-         */
         $sql = "UPDATE item SET visitorNum = visitorNum + 1 WHERE id = $itemId";
-        //update 返回的是true或者是false
         return $this->db->query($sql);
+        $adddon = $this->config->item('visitorNumAffect');
+        $sql = "UPDATE item SET rating = rating + $addon WHERE id = $itemId";
+        $this->db->query($sql);
     }
     /**
      * 获取想要添加到订单中的，但是不能从用户端获取的信息

@@ -135,7 +135,7 @@ class ComItem extends CI_Model {
     }
 
     /**
-     * 添加一个商品评价
+     * 添加一个商品评价，并更新商品的 rating
      * <pre>
      * 需要添加的东西有
      *      score      对商品满意度评分，由 $data 数组提供
@@ -168,6 +168,13 @@ class ComItem extends CI_Model {
             $res = $res->result_array();
             $sql = "UPDATE item SET satisfyScore = satisfyScore + $data[score] where id = $data[item_id]";
             $this->db->query($sql);
+
+            // 更新 rating 信息
+            $addon = $this->config->item('satisfyScoreAffect') * ($data['score'] - 5);
+            $itemId = $data['item_id'];
+            $sql = "UPDATE item SET rating = rating + $addon WHERE id = $itemId";
+            $this->db->query($sql);
+
             return $res["0"]["last_insert_id()"];
         } else {
             return false;

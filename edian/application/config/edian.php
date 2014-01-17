@@ -63,4 +63,9 @@ $config['storeState'] = array(0 => '审查中' , 1 => '营业' , 2 => '歇业' ,
 $config['userState'] = array(0 => '新注册' , 1 => '普通' , 2 => '加黑' , 3=> '删除' );
 // 设置管理员邮箱
 $config['adminMail'] = '1264310280@qq.com';
+
+// 设置sellNum + 1 rating 线性变化的幅度
+$config['sellNumAffect'] = 1400;
+$config['visitorNumAffect'] = 100;
+$config['satisfyScoreAffect'] = 300;
 ?>
