@@ -38,7 +38,7 @@ $siteUrl = site_url();
             </div>
         </div>
     </div>
-    <div id = "top" >
+    <div id = "top"  >
         <div class = "clearfix">
             <div class="showImg ">
                 <div id = "mainImg" class = "mainImg">
@@ -112,7 +112,7 @@ $siteUrl = site_url();
              </form>
         </div>
     </div>
-    <div id = "detail">
+    <div id = "detail" class = "clearfix">
         <div class = "store">
             <div class = "">
                 <h3>店铺信息</h3>
@@ -157,10 +157,55 @@ $siteUrl = site_url();
             </div>
         </div>
         <div id = "item">
-            <ul class="ittab">
+            <ul class="ittab clearfix">
                 <li><h3>商品详情</h3></li>
                 <li><h3 style="border-right:none">评价</h3></li>
             </ul>
+            <div>
+                <div>
+                <!-- 这里放什么呢-->
+                </div>
+                <ul id = "ucom" class = "ucom">
+                <?php foreach ($comment  as $com):?>
+                <?php
+                    $context = $com['context'];
+                    $head = $context[0];
+                ?>
+                    <li class = "clearfix">
+                        <div class = "cuser">
+                            <img src = "http://img1.bdstatic.com/img/image/694f9dcd100baa1cd110f5b0146bb12c8fcc2ce2de2.jpg" />
+                            <p><?php echo $head['0']['nickname'] ?></p>
+                        </div>
+                        <div class = "comt">
+                            <p>
+                                <span><?php echo $head[2] ?></span>
+                                <span>质量评分:<strong> <?php echo $com['score']?></strong>/10</span>
+                            </p>
+                            <blockquote>
+                                <?php echo $head[3] ?>
+                            </blockquote>
+                            <ul>
+                            <?php for($i = 1 , $len = count($context) ; $i < $len ; $i++): ?>
+                                <li class = "reply">
+                                    <div>
+                                        <a href = "www.baidu.com">王二</a>
+                                        <span>回复</span>
+                                        <a href = "王二的冬季">王二的东西几</a>
+                                        <span>呵呵，人间不柴dfas asdfas df asd fa sdf as sd f asdf asd fa sdf asd fas df asdf ads f asdf asd f 地方商店商店 商店还是地方商店 商店 是
+                                        </span>
+                                    </div>
+                                    <p style = "text-align:right">
+                                        <a href = "<?php echo $com['id'] ?>">回复</a>
+                                        <span> 2012-12-21</span>
+                                    </p>
+                                </li>
+                            <?php endfor ?>
+                            </ul>
+                        </div>
+                    </li>
+                <?php endforeach ?>
+                </ul>
+            </div>
         </div>
     </div>
     <div id = "footer">

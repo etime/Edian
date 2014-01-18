@@ -10,8 +10,10 @@ class Test extends MY_Controller{
     }
     public function mem()
     {
-        $this->load->library("pagesplit");
-        $this->pagesplit->html();
+        $ab = "斯蒂芬";
+        echo $ab;
+        echo $ab[0];
+        echo "<br/>sdf";
     }
     public function sec()
     {
