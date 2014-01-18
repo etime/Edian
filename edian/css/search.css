@@ -1,0 +1,70 @@
+/**
+ * @name        ../../css/search.css
+ * @author      unasm < 1264310280@qq.com >
+ * @since       2014-01-18 18:27:03
+*/
+html{
+    background:#F1F1F1;
+}
+ul, body{
+    margin:0px;
+    padding:0px;
+}
+li{
+    list-style:none;
+}
+.clearfix:after{
+    visibility:hidden;
+    display:block;
+    content:"";
+    height:0px;
+    clear:both;
+}
+.width{
+    width:1200px;
+    overflow:hidden;
+    margin:0px auto;
+}
+.snav{
+    padding:8px;
+    margin-left:10px;
+}
+.snav > *{
+    margin:5px;
+}
+.context{
+    background:white;
+    border-radius:2px;
+    margin-top:10px;
+    padding:0 5px;
+}
+.details{
+    width:245px;
+    float:left;
+    margin:5px;
+}
+.mainImg{
+    width:100%;
+}
+.img{
+    height:245px;
+    width:100%;
+    overflow:hidden;
+}
+.deinfo p{
+    white-space:nowrap;
+    margin:3px 0;
+    text-overflow:ellipsis;
+    overflow:hidden;
+}
+.deinfo strong{
+    color:red;
+    font-size:1.4em;
+}
+.sep{
+    font-size:0.8em;
+    color:gray;
+}
+.sep span:first-child{
+    float:right;
+}

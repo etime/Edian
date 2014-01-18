@@ -170,6 +170,7 @@ class Search extends BaseSearch {
                 $ans[$i] = $this->mitem->getDetailInfo($ans[$i]);
             }
         }
+
         // 将所得结果按照指定顺序排序
         $ans = $this->_sort($ans, $button, $order);
         // 将所得的结果进行分页
@@ -180,6 +181,7 @@ class Search extends BaseSearch {
         $commonUrl = site_url('search/searchAction/' . $button . '/' . $order);
         $ans['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount'], $getString);
         $this->help->showArr($ans);
+        $this->load->view("search");
     }
 }
 ?>
