@@ -5,7 +5,7 @@
   > Last_Modified: 2013-09-18 20:53:02
  ************************************************************************/
 /**
- * 尽量减少和外界的瓜葛,这里的耦合太多了
+ * 尽量减少和外界的瓜葛,这里的耦合太多了,目前将这个做成一个插件
  */
 var totalPrc = 0;
 function alogin(){
@@ -26,6 +26,9 @@ function alogin(){
     });
     $(".afli").css("display","none");
 }
+/**
+ * 删除购物车的内容
+ */
 function delCart(node){
     while(node && ($(node).attr("tagName") != "LI")){
         node = node.parentNode;
@@ -146,9 +149,11 @@ function getCart(){
         }
     });
 }
+/**
+ * 点击下单的页面
+ * e点下单的设定,既然可以点，就证明地址是全的，提交的时候，确定地址购买量和订单号就好，属性是之前设定好的，而且，加入购物车之后，不可以修改了，后台添加一个备注，e点下单就没有了,在具体购物车页面可以添加，这里就算了
+ */
 function order() {
-    //e点下单的设定,既然可以点，就证明地址是全的，提交的时候，确定地址购买量和订单号就好，属性是之前设定好的，而且，加入购物车之后，不可以修改了，后台添加一个备注，e点下单就没有了,在具体购物车页面可以添加，这里就算了
-    //调用设置在getcart success 之后，不然dom没有完成，没有意义 的
     $("#setDown").click(function(event){
         var addr = $("#inaddr").val();
         var url = $(this).attr("href")+"/1";//添加ajax的标记
@@ -231,10 +236,10 @@ function calTot() {
     }
     $("#cap").text(cap).attr("name",totalPrc);
 }
+
+//向购物车中添加新的商品,添加的备注，图片，价格，还有返回的信息，添加的商品号码
 function appNewItem(data,img,info,price,itemIdApp,buyNum) {
-    //向购物车中添加新的商品,添加的备注，图片，价格，还有返回的信息，添加的商品号码
     info = info?info:"";
-    debugger;
     if(buyNum == undefined )buyNum = 1;//没有添加的情况下默认为1
     var sel = $("#order").find(".sel"),name,flag = 1;
     //var img = $("#mImg").attr("src");//缩略图的图片
@@ -265,3 +270,99 @@ function appNewItem(data,img,info,price,itemIdApp,buyNum) {
         lsp[lsp.length] = temp;
     }
 }
+/**
+ * 对info进行编码
+ * 目前只是在sendord中调用了
+ */
+function deinfo(str) {
+    if(str){
+        var temp = str.split("|");
+        var res = "",now;
+        for (var i = 0, l = temp.length; i < l; i ++) {
+            now = temp[i].split(":");
+            if(i == 0){
+                res+=now[0];
+            }else{
+                res+="|"+now[0];
+            }
+        }
+        return res;
+    }
+    return false;
+}
+/**
+ * 发送订单,加入购物车,det中 fmIf调用
+ * @param {node} buyNum 向dom input 中读取购买数量
+ * @param {node} attr   将属性信息保存到dom 中？
+ */
+function sendOrd(){
+    var info = $("#info").val();
+    info  =  deinfo(info);
+    var buyNum = $("#buyNum").val();
+    //var reg = /http\:\/\/[\/\.\da-zA-Z]*\.jpg/;
+    var  cartHref = site_url+"/order/add/"+itemId;
+    $.ajax({
+        url: cartHref,
+        type: 'POST',
+        data: {"info":info,"buyNum":buyNum},
+        dataType:'json',
+        success: function (data, textStatus, jqXHR) {
+            console.log(data);//目前就算了吧，不做删除的功能,返回的id是为删除准备的
+            if(data["flag"]){
+                $.alet("成功加入购物车");
+                //添加到表单之中
+                appNewItem(data,$("#mImg").attr("src"),info,price,itemId,buyNum);
+                //计算总和
+                calTot();
+            }else{
+                $.alet(data["atten"]);
+            }
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            $.alet("加入购物车失败");
+        }
+    });
+}
+
+/**
+ * 对attr中的库存价格，显示控制
+ */
+function attrControl() {
+    attr = eval(attr);//对全局变量进行解析
+    var faAttr = $(".attr");
+    var posx  = -1,valuex,posy = -1,valuey;
+    faAttr.delegate(".attrValue" , 'click' , function (event) {
+        var parNode = this.parentNode;
+        //进行选择框的切换
+        $(parNode).find('.atvC').removeClass('atvC');
+        $(this).addClass("atvC");
+        var pos = $(parNode).attr("alt");
+        if(parseInt(pos,10) === 0 ){
+            posx = $(this).attr("alt");
+            valuex = $(this).attr("title");
+        } else {
+            posy = $(this).attr("alt");
+            valuey = $(this).attr('title');
+        }
+        if ( ( posx !== -1 ) && ( posy !== -1 ) && faAttr.length === 2){
+            setAttrData();
+        } else if( (faAttr.length === 1 ) && ( posx !== -1 ) ){
+            setAttrData();
+        }
+    })
+    //将晚上属性的添加，将对应的价格和库存修改
+    function setAttrData(){
+        if(faAttr.length === 1){
+            console.log(attr[posx]);
+            var sp = attr[posx];
+            $("#info").val(valuex);
+        }else if(faAttr.length === 2){
+            $("#info").val(valuex + '|' + valuey);
+            var sp = attr[posx][posy];
+        }
+        $("#price").text(sp.prc);
+        $("#tS").text(sp.store);
+    }
+}
+
+

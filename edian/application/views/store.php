@@ -41,6 +41,7 @@
     <div id = 'body' class = "width clearfix">
         <div id = "side">
             <div class = "stCom block">
+            <!-- 店铺评分，商店距离，-->
                 <h3>何氏专辑店</h3>
                 <blockquote>
                     银鳞胸甲，蓝色品质，五金一件，先到先得
@@ -48,6 +49,14 @@
                 <img src="<?php echo $logo?>" alt="商店logo" />
             </div>
             <div class = "store block">
+                <p>
+                    <span class = "item">店铺评分</span>
+                    <strong class = "bc"><?php echo $credit ?></strong>
+                </p>
+                <p><span class = "item">距离您</span>    <strong class = "bc">4.5</strong>km</p>
+
+                <p><span class = "item">电话</span><?php  echo $servicePhone?></p>
+                <p><span class = "item">客服 </span><?php  echo $serviceQQ?></p>
                 <div class = "bustime clearfix">
                     <span class = "item">营业时间</span>
                     <ul alt = "<?php echo $deliveryTime ?>">
@@ -57,17 +66,10 @@
                     </ul>
                 </div>
                 <p>
-                    <span class = "item">店铺评分</span>
-                    <strong class = "bc"><?php echo $credit ?></strong>
-                </p>
-                <p><span class = "item">送货范围</span><strong><?php echo $deliveryArea ?></strong>米</p>
-                <p>
                     <span class = "item">送货速度</span>
                     <strong><?php echo $duration ?></strong>分钟
                 </p>
-                <p><span class = "item">商店距离您</span>    <strong class = "bc">4.5</strong>km</p>
-                <p><span class = "item">电话</span><?php  echo $servicePhone?></p>
-                <p><span class = "item">客服QQ  </span><?php  echo $serviceQQ?></p>
+                <p><span class = "item">送货范围</span><strong><?php echo $deliveryArea ?></strong>米</p>
                 <img id = "mapImg" src = "<?php echo $baseUrl.'image/52/mix/map.png' ?>" alt = "地图图片" title = "双击打开地图" />
             </div>
         </div>
