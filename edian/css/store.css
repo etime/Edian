@@ -182,6 +182,9 @@ body{
     color:black;
     margin:0 3px;
 }
+.snav a[href$='#']{
+    color:#DDD;
+}
 .snav form{
     float:right;
     margin:0;

@@ -27,7 +27,8 @@ class Search extends MY_Controller {
             show_404();
             return;
         }
-        $key = $_GET
+        //$key = $_GET
+        $this->load->view("search");
     }
 }
 ?>
