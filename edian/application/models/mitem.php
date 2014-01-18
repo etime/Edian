@@ -594,8 +594,27 @@ class Mitem extends Ci_Model {
     }
 
     /**
+     * 根据商品的编号获取商品详细信息
+     * @param int $itemId  商品编号
+     * @return boolean | array
+     */
+    public function getDetailInfo($itemId) {
+        $sql = "SELECT id, title, price, satisfyScore, sellNum, mainThumbnail, belongsTo, rating FROM item WHERE id = $itemId";
+        $res = $this->db->query($sql);
+        if ($res->num_rows === 0) {
+            return false;
+        } else {
+            $res = $res->result_array();
+            $res = $res[0];
+            $res['id'] = $itemId;
+            $res['mainThumbnail'] = $this->_fixMainThumbnailPath($res['belongsTo'], $res['mainThumbnail']);
+            return $res;
+        }
+    }
+
+    /**
      * 通过商品编号获取商品的详细信息，通过商品 rating 排序
-     * @param int $itemId
+     * @param int $itemId 商品编号
      * @return boolean | array
      */
     public function getItemByItemId($itemId) {
@@ -618,7 +637,7 @@ class Mitem extends Ci_Model {
 
     /**
      * 通过商店编号获取所有商品详细信息，通过商品 rating 排序
-     * @param int $storeId
+     * @param int $storeId 商店编号
      * @return boolean | array
      */
     public function getItemByStoreId($storeId) {
@@ -640,7 +659,28 @@ class Mitem extends Ci_Model {
     }
 
     /**
-     * 与本店搜索对应，在商品的标题中搜索
+     * 与店外搜索对应，在商品的标题和分类中进行
+     * @param string $key 要搜索的关键字
+     * @return boolean | array
+     */
+    public function searchOutStore($key) {
+        $key = mysql_real_escape_string($key);
+        $sql = "SELECT id FROM item WHERE title LIKE '%" . $key . "%' OR category LIKE '%" . $key . "%' ORDER BY id";
+        $res = $this->db->query($sql);
+        if ($res->num_rows === 0) {
+            return false;
+        } else {
+            $len = (int)$res->num_rows;
+            $res = $res->result_array();
+            for ($i = 0; $i < $len; $i ++) {
+                $res[$i] = $res[$i]['id'];
+            }
+            return $res;
+        }
+    }
+
+    /**
+     * 与本店搜索对应，在商品的标题和分类中搜索
      * @param string $key 要搜索的关键字
      * @param int $storeId 对应的商店的编号
      * @return boolean | array

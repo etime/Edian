@@ -1,18 +1,12 @@
 <?php
 class BaseSearch extends MY_Controller {
 
-    // 非法字符集和
-    protected $IllegalString;
-
     function __construct() {
         parent::__construct();
         $this->load->model('store');
         $this->load->model('mitem');
         $this->load->config('edian');
         $this->load->library('pagesplit');
-
-//         设置非法字符集
-        $this->IllegalString = "` -=[]\\;',./~_+)(*&^%$#@!{}|:\"<>?`-=·「、；，。/《》？：“|}{+——）（×&……%￥#@！～";
     }
 
     /**
@@ -110,9 +104,9 @@ class BaseSearch extends MY_Controller {
     }
 
     protected function _safeFilter($string) {
-//        $string = str_replace('%20', ' ', $string);
-//        $string = str_replace('%27', ' ', $string);
-//        $string = str_replace('%2527', ' ', $string);
+        $string = str_replace('%20', ' ', $string);
+        $string = str_replace('%27', ' ', $string);
+        $string = str_replace('%2527', ' ', $string);
         $string = str_replace('`', ' ', $string);
         $string = str_replace('~', ' ', $string);
         $string = str_replace("!", ' ', $string);
@@ -154,23 +148,8 @@ class BaseSearch extends MY_Controller {
      * @return array 过滤之后的字符串数组
      */
     protected function _filterKeywords($key) {
-        echo('原始字符串是 : ' . $key . '<br>');
         $key = $this->_safeFilter($key);
-        echo($key);
-        $ans = '';
-        for ($i = 0, $len = (int)strlen($key); $i < $len; ) {
-            if ($key[$i] != ' ') {
-                $ans .= $key[$i ++];
-            } else {
-                while ($i < $len && $key[$i] == ' ') {
-                    $i ++;
-                }
-                if ($i != $len) {
-                    $ans .= ' ';
-                }
-            }
-        }
-        return explode(' ', $ans);
+        return explode(' ', $key);
     }
 }
 ?>

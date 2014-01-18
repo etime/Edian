@@ -55,11 +55,6 @@ class Shop extends BaseSearch {
             $this->load->view('storeMap', $res);
         }
     }
-
-    public function testSearchInStore() {
-        $this->load->view('farmerjian');
-    }
-
     /**
      * 本店搜索，需要用户输入关键字并且提供商店编号
      */
@@ -80,22 +75,20 @@ class Shop extends BaseSearch {
         // 存储用户输入的原始关键字
         $keyBackUp = $key;
         // 将所有的关键字字符串过滤掉非法字符并拆分成关键字数组
-        echo('key = ' . $key . '<br>');
         $key = $this->_filterKeywords($key);
-        $this->help->showArr($key);
-        echo('<br>');
         // 对关键字数组中的所有关键字进行搜索，搜索的范围是：指定商店编号，在商品的 title 和 category 中搜索
         $data = array();
         for ($i = 0, $len = (int)count($key); $i < $len; $i ++) {
+            if ($key[$i] == '') {
+                continue;
+            }
             $temp = $this->mitem->searchInStore($key[$i], $storeId);
             if ($temp != false) {
                 array_push($data, $temp);
             }
         }
-
         // 将所有的搜索结果去重
         $ans = $this->_mergeDimensionalArray($data);
-
         // 根据商品编号获取所有商品的详细信息
         if ($ans == false) {
             $ans = array();
@@ -104,7 +97,6 @@ class Shop extends BaseSearch {
                 $ans[$i] = $this->mitem->getItemByItemId($ans[$i]);
             }
         }
-
         // 将所得的结果进行分页
         $temp = $this->pagesplit->split($ans, $pageId, $this->config->item('pageSize'));
         $ans = array();
@@ -112,8 +104,6 @@ class Shop extends BaseSearch {
         $ans['key'] = $keyBackUp;
         $commonUrl = site_url('shop/search/' . $storeId);
         $ans['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount'], $getString);
-
-        $this->help->showArr($ans);
         // 调出相关页面进行显示
         $this->showView($ans, $storeId);
     }
