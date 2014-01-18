@@ -109,6 +109,45 @@ class BaseSearch extends MY_Controller {
         return $ans;
     }
 
+    protected function _safeFilter($string) {
+//        $string = str_replace('%20', ' ', $string);
+//        $string = str_replace('%27', ' ', $string);
+//        $string = str_replace('%2527', ' ', $string);
+        $string = str_replace('`', ' ', $string);
+        $string = str_replace('~', ' ', $string);
+        $string = str_replace("!", ' ', $string);
+        $string = str_replace('@', ' ', $string);
+        $string = str_replace('#', ' ', $string);
+        $string = str_replace('$', ' ', $string);
+        $string = str_replace('%', ' ', $string);
+        $string = str_replace("^", ' ', $string);
+        $string = str_replace('&', ' ', $string);
+        $string = str_replace('*', ' ', $string);
+        $string = str_replace('(', ' ', $string);
+        $string = str_replace(')', ' ', $string);
+        $string = str_replace('_', ' ', $string);
+        $string = str_replace('+', ' ', $string);
+        $string = str_replace('-', ' ', $string);
+        $string = str_replace('=', ' ', $string);
+        $string = str_replace('[', ' ', $string);
+        $string = str_replace(']', ' ', $string);
+        $string = str_replace('\\', ' ', $string);
+        $string = str_replace(';', ' ', $string);
+        $string = str_replace('\'', ' ', $string);
+        $string = str_replace(',', ' ', $string);
+        $string = str_replace('.', ' ', $string);
+        $string = str_replace('/', ' ', $string);
+        $string = str_replace('{', ' ', $string);
+        $string = str_replace('}', ' ', $string);
+        $string = str_replace('|', ' ', $string);
+        $string = str_replace(':', ' ', $string);
+        $string = str_replace('"', ' ', $string);
+        $string = str_replace('<', ' ', $string);
+        $string = str_replace('>', ' ', $string);
+        $string = str_replace('?', ' ', $string);
+        return $string;
+    }
+
     /**
      * 过滤敏感字符，将所有敏感字符替换为空格，并将所有连续的空格替换为一个空格，然后拆分成数组返回
      * @param string $key 待过滤字符串
@@ -116,9 +155,7 @@ class BaseSearch extends MY_Controller {
      */
     protected function _filterKeywords($key) {
         echo('原始字符串是 : ' . $key . '<br>');
-        for ($i = 0, $len = (int)strlen($this->IllegalString); $i < $len; $i ++) {
-            $key = str_replace($this->IllegalString[$i],  ' ', $key);
-        }
+        $key = $this->_safeFilter($key);
         echo($key);
         $ans = '';
         for ($i = 0, $len = (int)strlen($key); $i < $len; ) {
