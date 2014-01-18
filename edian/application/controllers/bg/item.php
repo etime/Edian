@@ -60,6 +60,53 @@ class item extends Home {
     }
 
     /**
+     * 更新指定编号商品的状态
+     */
+    public function changeState() {
+        if ($this->_checkAuthority(site_url('bg/item/itemcom')) === false) {
+            return;
+        }
+        if (! ($this->storeId && $this->bossId)) {
+            $this->choseStore($this->bossId);
+            return;
+        }
+        if (isset($_GET['itemId'])) {
+            $itemId = $_GET['itemId'];
+        } else {
+            return;
+        }
+        if (isset($_GET['state'])) {
+            $state = $_GET['state'];
+        } else {
+            return;
+        }
+        $this->mitem->updateState($itemId, $state);
+    }
+
+    /**
+     * 更新指定商品编号的 rating，只有管理员能进行这一操作，需要更新的 rating 通过 POST 的方式提交，商品编码通过 GET 方式提交
+     */
+    public function changeRating() {
+        if ($this->_checkAuthority(site_url('bg/item/changeRating')) === false) {
+            return;
+        }
+        if ($this->isAdmin == false) {
+            return;
+        }
+        if (! $this->storeId) {
+            $this->choseStore(false);
+            return;
+        }
+        if (isset($_GET['itemId'])) {
+            $itemId = $_GET['itemId'];
+        } else {
+            return;
+        }
+        $rating = (int)trim($this->input->post('rating'));
+        $this->mitem->updateRating($itemId, $rating);
+    }
+
+    /**
      * @param int $pageId 分页号
      */
     public function itemCom($pageId = 1) {
