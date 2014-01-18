@@ -96,10 +96,12 @@ class item extends MY_Controller {
      *      item_id    被评论商品编号，通过 url 参数传递获取
      * </pre>
      * @param int $itemId 商品编号
+     * @todo 吐槽一句，感觉实现好蛋疼，itemid,date,userid居然有三处重复，
      */
     public function addComment($itemId = -1) {
         $itemId = (int)$itemId;
-        if ($this->userId == -1) {
+        $this->userId = 52;
+        if ($this->userId === -1) {
             echo 'false';
             return;
         }
@@ -119,6 +121,7 @@ class item extends MY_Controller {
         $data['item_id'] = (int)$itemId;
         $data['user_id'] = (int)$this->userId;
         $data['text'] = $temp;
+        $this->help->showArr($data);
         $ans = $this->comitem->insert($data);
         if ($ans) {
             echo '1';
@@ -241,15 +244,6 @@ class item extends MY_Controller {
             $res["atten"] = "插入失败";
         }
         echo json_encode($res);
-    }
-    private function showArray($array)
-    {
-        foreach($array as $index => $value){
-            var_dump($index);
-            echo "   =>   ";
-            var_dump($value);
-            echo "<br>";
-        }
     }
 }
 ?>

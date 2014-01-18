@@ -63,7 +63,7 @@ class Shop extends BaseSearch {
     /**
      * 本店搜索，需要用户输入关键字并且提供商店编号
      */
-    public function searchInStore($storeId, $pageId = 1) {
+    public function search($storeId, $pageId = 1) {
         $storeId = (int)$storeId;
         if ($storeId === 0) {
             show_404();
@@ -110,7 +110,7 @@ class Shop extends BaseSearch {
         $ans = array();
         $ans['item'] = $temp['newData'];
         $ans['key'] = $keyBackUp;
-        $commonUrl = site_url('shop/searchInStore/' . $storeId);
+        $commonUrl = site_url('shop/search/' . $storeId);
         $ans['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount'], $getString);
 
         $this->help->showArr($ans);
@@ -123,7 +123,7 @@ class Shop extends BaseSearch {
      * @param $storeId
      * @param int $pageId
      */
-    public function selectInStore($storeId, $pageId = 1) {
+    public function select($storeId, $pageId = 1) {
         $storeId = (int)$storeId;
         if ($storeId === 0) {
             show_404();
@@ -153,7 +153,7 @@ class Shop extends BaseSearch {
         $ans = array();
         $ans['item'] = $temp['newData'];
         $ans['key'] = $categoryName;
-        $commonUrl = site_url('shop/selectInStore/' . $storeId);
+        $commonUrl = site_url('shop/select/' . $storeId);
         $ans['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount'], $getString);
 
         // 调出相关页面进行显示

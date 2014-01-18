@@ -16,6 +16,7 @@ a{
 a:hover{
     text-decoration:underline;
 }
+
 ul{
     list-style:none;
     padding:0px;
@@ -281,3 +282,58 @@ button[name = 'toCart']{
     width:50%;
 }
 
+/* 评论的css */
+.ucom .cuser{
+    float:left;
+    color:gray;
+    width:108px;
+    text-align:center;
+    font-size:0.8em;
+}
+
+.ucom p{
+    margin:3px 0;
+}
+.comt>p{
+    border-bottom:1px solid rgb(228, 228, 228);
+    position:relative;
+}
+.comt strong{
+    font-size:1.5em;
+}
+.comt>p span:first-child{
+    right:5px;
+    bottom:0;
+    position:absolute;
+}
+.comt p span{
+    margin:0 5px;
+}
+.cuser img{
+    width:50px;
+    max-height:100px;
+    border-radius:2px;
+}
+.ucom li{
+    margin:10px 0;
+}
+.comt{
+    float:left;
+    width:635px;
+    border-radius:2px;
+    border:1px solid rgb(204, 204, 204);
+    min-height:130px;
+}
+.comt ul{
+    padding-left:6em;
+    font-size:0.8em;
+}
+.reply{
+    border-radius:2px;
+    background:#DDD;
+    padding:10px 6px 2px;
+}
+.reply blockquote{
+    margin:3px;
+    text-indent:2em;
+}
