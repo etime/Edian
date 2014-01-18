@@ -145,7 +145,7 @@ class Home extends MY_Controller {
      *      如果有一个，就直接跳转到店铺
      *      如果有多个，就给出选择页面
      * 通过 session 获取老板的所有商店的 id 和 name
-     * @param int $ownerId  店铺的拥有者boss的id
+     * @param int $ownerId  店铺的拥有者编号，如果是管理员，$ownerId = false
      */
     protected function choseStore($ownerId) {
         if ($ownerId != false) {

@@ -736,6 +736,38 @@ class Mitem extends Ci_Model {
             return $res;
         }
     }
+
+    /**
+     * 更新指定编号商品的 rating
+     * @param int $itemId 商品编号
+     * @param int $rating 需要更新的 rating
+     * @return boolean
+     */
+    public function updateRating($itemId, $rating) {
+        $itemId = (int)$itemId;
+        if ($itemId == 0) {
+            return false;
+        }
+        $rating = (int)$rating;
+        $sql = "UPDATE item SET rating = $rating WHERE id = $itemId";
+        return $this->db->query($sql);
+    }
+
+    /**
+     * 更新指定编号商品的 state
+     * @param int $itemId 指定的商品编号
+     * @param int $state 更新后的状态
+     * @return boolean
+     */
+    public function updateState($itemId, $state) {
+        $itemId = (int)$itemId;
+        if ($itemId == 0) {
+            return false;
+        }
+        $state = (int)$state;
+        $sql = "UPDATE item SET state = $state WHERE id = $itemId";
+        return $this->db->query($sql);
+    }
 /**********************************************************************************************************************/
 /**********************************************************************************************************************/
 /**********************************************************************************************************************/
