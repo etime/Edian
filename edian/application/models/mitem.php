@@ -95,8 +95,8 @@ class Mitem extends Ci_Model {
         $ans = '';
         $ans .= $data['keyi'] . ';';
         $ans .= $data['keyj'] . ';';
-        $ans .= $data['keyk'] . ';';
-        $ans .= $data['category'] . '|';
+        $ans .= $data['keyk'] . '|';
+        $ans .= $data['category'];
         return $ans;
     }
 
@@ -109,11 +109,13 @@ class Mitem extends Ci_Model {
      * @param string $category  数据库中提取出来的字符串
      * @return array            返回的数组，必须使用以上四个单词作为键值
      */
-    private function _decode($category) {
+    private function _decodeCategory($category) {
         $res = explode(';', $category);
         $ans['keyi'] = $res[0];
         $ans['keyj'] = $res[1];
-        $ans['keyk'] = substr($res[2], 0, -1);
+        $res = explode('|', $res[2]);
+        $ans['keyk'] = $res[0];
+        $ans['category'] = $res[1];
         return $ans;
     }
 
@@ -549,17 +551,21 @@ class Mitem extends Ci_Model {
      *  @param int $bossId  商品所属boss 的id
      *  return array | boolean 成功是数据数组，失败是false
      */
-    public function getBgList($bossId) {
-        $bossId = (int)$bossId;
-        if ($bossId == 0) {
+    public function getBgList($storeId) {
+        $storeId = (int)$storeId;
+        if ($storeId == 0) {
             return false;
         }
-        $sql = "SELECT id, title, storeNum, price, state FROM item WHERE belongsTo = $bossId";
+        $sql = "SELECT id, title, storeNum, price, state, rating, category FROM item WHERE belongsTo = $storeId";
         $res = $this->db->query($sql);
         if ($res->num_rows === 0) {
             return false;
         } else {
+            $len = $res->num_rows;
             $res = $res->result_array();
+            for ($i = 0; $i < $len; $i ++) {
+                $res[$i]['category'] = $this->_decodeCategory($res[$i]['category']);
+            }
             return $res;
         }
     }
