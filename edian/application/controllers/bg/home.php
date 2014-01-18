@@ -123,15 +123,9 @@ class Home extends MY_Controller {
     /**
      * 初始化storeId,表示店家在选择了店铺的操作
      * 对应了直接页面提交和其他函数提交的两种情况
-     *
      * @param int $storeId  表示选择的storId
      */
     protected function receiveStoreId($storeId = -1) {
-        /*
-        if ($this->_checkAuthority(site_url('bg/home/receiveStoreId/') . $storeId) === false) {
-            return;
-        }
-         */
         $storeId = (int)$storeId;
         $bossId = $this->session->userdata("bossId");
         // 判断该老板是否拥有该商店
@@ -154,12 +148,6 @@ class Home extends MY_Controller {
      * @param int $ownerId  店铺的拥有者boss的id
      */
     protected function choseStore($ownerId) {
-        //没有检查的必要，因为调用之前检查了
-        /*
-        if ($this->_checkAuthority(site_url('bg/home/choseStore/') . $ownerId) === false) {
-            return;
-        }
-         */
         if ($ownerId != false) {
             $data['store'] = $this->store->getIdNameByOwnerId($ownerId);
         } else {
@@ -183,7 +171,6 @@ class Home extends MY_Controller {
      * @param int $storeId 选择的店铺id
      */
     function index($storeId = 0) {
-        //header("Content-type: text/html; charset=utf-8");
         $credit = $this->_checkAuthority(site_url('bg/home/index'));
         if ($credit === false) {
             return;
@@ -224,7 +211,6 @@ class Home extends MY_Controller {
         if ($this->_checkAuthority(site_url('bg/home/set')) === false) {
             return;
         }
-        //$data = $this->user->getExtro($this->userId);//获取之前的类型
         $data["type"] = $this->user->getType($this->userId);//获取用户的类型，方便差异化处理
         $data["type"] = 0;//普通用户
         //选择当前登录者的权限，根据不同的权限，决定不同的事情
@@ -237,7 +223,6 @@ class Home extends MY_Controller {
             );
         }
         $this->load->model("img");
-        //$data["show_picture"] = $this->img->select_show_picture($this->userId);
         $this->load->view("bgHomeSet",$data);
     }
 

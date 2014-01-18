@@ -3,35 +3,17 @@ svn:wc:ra_dav:version-url
 V 47
 /unasm/!svn/ver/95/1/ci/application/controllers
 END
-reg.php
+showart.php
 K 25
 svn:wc:ra_dav:version-url
-V 55
-/unasm/!svn/ver/96/1/ci/application/controllers/reg.php
+V 59
+/unasm/!svn/ver/11/1/ci/application/controllers/showart.php
 END
-test.php
-K 25
-svn:wc:ra_dav:version-url
-V 57
-/unasm/!svn/ver/103/1/ci/application/controllers/test.php
-END
-art_list.php
-K 25
-svn:wc:ra_dav:version-url
-V 60
-/unasm/!svn/ver/97/1/ci/application/controllers/art_list.php
-END
-mainpage.php
-K 25
-svn:wc:ra_dav:version-url
-V 61
-/unasm/!svn/ver/103/1/ci/application/controllers/mainpage.php
-END
-index.html
+space.php
 K 25
 svn:wc:ra_dav:version-url
 V 58
-/unasm/!svn/ver/11/1/ci/application/controllers/index.html
+/unasm/!svn/ver/106/1/ci/application/controllers/space.php
 END
 message.php
 K 25
@@ -39,11 +21,35 @@ svn:wc:ra_dav:version-url
 V 59
 /unasm/!svn/ver/97/1/ci/application/controllers/message.php
 END
-showart.php
+cscope.out
 K 25
 svn:wc:ra_dav:version-url
 V 59
-/unasm/!svn/ver/11/1/ci/application/controllers/showart.php
+/unasm/!svn/ver/106/1/ci/application/controllers/cscope.out
+END
+mainpage.php
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/unasm/!svn/ver/103/1/ci/application/controllers/mainpage.php
+END
+art_list.php
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/unasm/!svn/ver/97/1/ci/application/controllers/art_list.php
+END
+index.html
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/unasm/!svn/ver/11/1/ci/application/controllers/index.html
+END
+test.php
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/unasm/!svn/ver/103/1/ci/application/controllers/test.php
 END
 chome.php
 K 25
@@ -57,15 +63,9 @@ svn:wc:ra_dav:version-url
 V 59
 /unasm/!svn/ver/11/1/ci/application/controllers/welcome.php
 END
-space.php
+reg.php
 K 25
 svn:wc:ra_dav:version-url
-V 58
-/unasm/!svn/ver/106/1/ci/application/controllers/space.php
-END
-cscope.out
-K 25
-svn:wc:ra_dav:version-url
-V 59
-/unasm/!svn/ver/106/1/ci/application/controllers/cscope.out
+V 55
+/unasm/!svn/ver/96/1/ci/application/controllers/reg.php
 END

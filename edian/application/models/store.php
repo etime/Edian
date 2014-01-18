@@ -44,8 +44,7 @@ class Store extends CI_Model {
 
     /**
      * 构成more中的数组
-     *
-     * 注意，为了实现反转码，必须不能存在|=两种字符串
+     * 注意，为了实现反转码，必须不能存在 | = 两种字符串
      * @param array $arr 想转化为字符串的一维数组
      */
     protected function encodeMore($arr) {
@@ -104,7 +103,6 @@ class Store extends CI_Model {
 
     /**
      * 修改store信息的时候使用的函数
-     *
      * @param   array   $arr     array中的规则是这样的，没一个key对应的都是数据库中的字段名，后面是想更改成的数值
      * @return  boolen          修改成功，或者失败
      * @author  unasm
@@ -130,7 +128,6 @@ class Store extends CI_Model {
 
     /**
      * 利用提供的 storeId 和 ownerId，判断一个 owner 是否拥有这个 store
-     *
      * @param int $storeId 商店 id
      * @param int $ownerId 老板 id
      * @return bool 如果匹配，返回 true，否则返回 false
@@ -496,12 +493,12 @@ class Store extends CI_Model {
             return $res;
         }
     }
+
     /**
      * 获取店铺的状态，为管理员操作服务
      * 管理员权限，所以不需要输入，或者说，目前不需要输入
      */
-    public function getStateList()
-    {
+    public function getStateList() {
         $res = $this->db->query('SELECT name, id ,state , ownerId  FROM store');
         if($res->num_rows){
             return $res->result_array();
@@ -517,11 +514,30 @@ class Store extends CI_Model {
      * @param int   $state      想要修改的店铺的状态
      * @return boolean  update的返回值是一个布尔类型
      */
-    public function updateStoreState($storeId,$state)
-    {
+    public function updateStoreState($storeId,$state) {
         $storeId = (int)$storeId;
         $state = (int)$state;
         return $this->db->query('update store set state =' . $state . ' where id = ' . $storeId);
+    }
+
+    /**
+     * 获取指定商店编号的平均送货时间
+     * @param int $storeId 商店编号
+     * @return boolean | int
+     */
+    public function getDuration($storeId) {
+        $storeId = (int)$storeId;
+        if ($storeId == 0) {
+            return false;
+        }
+        $sql = "SELECT duration FROM store WHERE id = $storeId";
+        $res = $this->db->query($sql);
+        if ($res->num_rows == 0) {
+            return false;
+        } else {
+            $res = $res->result_array();
+            return $res[0]['duration'];
+        }
     }
 }
 ?>

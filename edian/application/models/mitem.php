@@ -95,8 +95,8 @@ class Mitem extends Ci_Model {
         $ans = '';
         $ans .= $data['keyi'] . ';';
         $ans .= $data['keyj'] . ';';
-        $ans .= $data['keyk'] . ';';
-        $ans .= $data['category'] . '|';
+        $ans .= $data['keyk'] . '|';
+        $ans .= $data['category'];
         return $ans;
     }
 
@@ -109,11 +109,13 @@ class Mitem extends Ci_Model {
      * @param string $category  数据库中提取出来的字符串
      * @return array            返回的数组，必须使用以上四个单词作为键值
      */
-    private function _decode($category) {
+    private function _decodeCategory($category) {
         $res = explode(';', $category);
         $ans['keyi'] = $res[0];
         $ans['keyj'] = $res[1];
-        $ans['keyk'] = substr($res[2], 0, -1);
+        $res = explode('|', $res[2]);
+        $ans['keyk'] = $res[0];
+        $ans['category'] = $res[1];
         return $ans;
     }
 
@@ -549,17 +551,21 @@ class Mitem extends Ci_Model {
      *  @param int $bossId  商品所属boss 的id
      *  return array | boolean 成功是数据数组，失败是false
      */
-    public function getBgList($bossId) {
-        $bossId = (int)$bossId;
-        if ($bossId == 0) {
+    public function getBgList($storeId) {
+        $storeId = (int)$storeId;
+        if ($storeId == 0) {
             return false;
         }
-        $sql = "SELECT id, title, storeNum, price, state FROM item WHERE belongsTo = $bossId";
+        $sql = "SELECT id, title, storeNum, price, state, rating, category FROM item WHERE belongsTo = $storeId";
         $res = $this->db->query($sql);
         if ($res->num_rows === 0) {
             return false;
         } else {
+            $len = $res->num_rows;
             $res = $res->result_array();
+            for ($i = 0; $i < $len; $i ++) {
+                $res[$i]['category'] = $this->_decodeCategory($res[$i]['category']);
+            }
             return $res;
         }
     }
@@ -594,8 +600,27 @@ class Mitem extends Ci_Model {
     }
 
     /**
+     * 根据商品的编号获取商品详细信息
+     * @param int $itemId  商品编号
+     * @return boolean | array
+     */
+    public function getDetailInfo($itemId) {
+        $sql = "SELECT id, title, price, satisfyScore, sellNum, mainThumbnail, belongsTo, rating FROM item WHERE id = $itemId";
+        $res = $this->db->query($sql);
+        if ($res->num_rows === 0) {
+            return false;
+        } else {
+            $res = $res->result_array();
+            $res = $res[0];
+            $res['id'] = $itemId;
+            $res['mainThumbnail'] = $this->_fixMainThumbnailPath($res['belongsTo'], $res['mainThumbnail']);
+            return $res;
+        }
+    }
+
+    /**
      * 通过商品编号获取商品的详细信息，通过商品 rating 排序
-     * @param int $itemId
+     * @param int $itemId 商品编号
      * @return boolean | array
      */
     public function getItemByItemId($itemId) {
@@ -618,7 +643,7 @@ class Mitem extends Ci_Model {
 
     /**
      * 通过商店编号获取所有商品详细信息，通过商品 rating 排序
-     * @param int $storeId
+     * @param int $storeId 商店编号
      * @return boolean | array
      */
     public function getItemByStoreId($storeId) {
@@ -640,7 +665,28 @@ class Mitem extends Ci_Model {
     }
 
     /**
-     * 与本店搜索对应，在商品的标题中搜索
+     * 与店外搜索对应，在商品的标题和分类中进行
+     * @param string $key 要搜索的关键字
+     * @return boolean | array
+     */
+    public function searchOutStore($key) {
+        $key = mysql_real_escape_string($key);
+        $sql = "SELECT id FROM item WHERE title LIKE '%" . $key . "%' OR category LIKE '%" . $key . "%' ORDER BY id";
+        $res = $this->db->query($sql);
+        if ($res->num_rows === 0) {
+            return false;
+        } else {
+            $len = (int)$res->num_rows;
+            $res = $res->result_array();
+            for ($i = 0; $i < $len; $i ++) {
+                $res[$i] = $res[$i]['id'];
+            }
+            return $res;
+        }
+    }
+
+    /**
+     * 与本店搜索对应，在商品的标题和分类中搜索
      * @param string $key 要搜索的关键字
      * @param int $storeId 对应的商店的编号
      * @return boolean | array

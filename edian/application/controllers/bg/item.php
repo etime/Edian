@@ -21,8 +21,6 @@ class item extends Home {
         parent::__construct();
         $this->load->model('mitem');
         $this->load->library('pagesplit');
-        $this->load->config('edian');
-        $this->load->library('help');
         $this->load->model('comitem');
 
         $this->userId = $this->getUserId();
@@ -35,9 +33,8 @@ class item extends Home {
      * 商品管理页面的后台
      * @param int $pageId
      */
-    public function mange($pageId = 1) {
-        if ($this->userId == -1) {
-            $this->noLogin(site_url('bg/item/mange'));
+    public function manage($pageId = 1) {
+        if ($this->_checkAuthority(site_url('bg/item/itemcom')) === false) {
             return;
         }
         if (! ($this->storeId && $this->bossId)) {
@@ -48,14 +45,17 @@ class item extends Home {
         	$pageId = $_GET['pageId'];
         }
         $data = array();
+        echo($this->storeId);
+        echo($this->bossId);
         $data['item'] = $this->mitem->getBgList($this->storeId);
         $data['stateMark'] = $this->config->item('state');
         if ($data['item']) {
             $temp = $this->pagesplit->split($data['item'], $pageId, $this->pageSize);
             $data['item'] = $temp['newData'];
-            $commonUrl = site_url() . '/bg/item/mange';
+            $commonUrl = site_url('/bg/item/manage');
             $data['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount']);
         }
+        $this->help->showArr($data);
         $this->load->view('bgItemMan', $data);
     }
 
