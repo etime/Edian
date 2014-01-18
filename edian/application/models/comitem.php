@@ -100,7 +100,7 @@ class ComItem extends CI_Model {
             return false;
         }
         $second = $this->lenDay * $day;
-        $sql = "SELECT user_id, id, score, context, time, item_id FROM comItem WHERE unix_timestamp(time) > (unix_timestamp(now()) - $second) AND seller = $storeId";
+        $sql = "SELECT id, score, context FROM comItem WHERE unix_timestamp(time) > (unix_timestamp(now()) - $second) AND seller = $storeId";
         $res = $this->db->query($sql);
         if ($res->num_rows === 0) {
             return false;

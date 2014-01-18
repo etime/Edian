@@ -83,6 +83,27 @@ class item extends Home {
         $storeId = $this->session->userdata('storeId');
         $comment = $this->comitem->getRecentComment($storeId, $day);
 
+        // 获取被评论商品的标题
+        if ($comment != false) {
+            for ($i = 0, $len = (int)count($comment); $i < $len; $i++) {
+                $temp = $this->mitem->getTitle($comment[$i]['context'][0][1]);
+                $comment[$i]['title'] = $temp;
+            }
+        }
+
+        // 获取所有评论者的信息
+        for ($idx = 0, $len = (int)count($comment); $idx < $len; $idx ++) {
+            for ($i = 0, $tot = (int)count($comment[$idx]['context']); $i < $tot; $i ++) {
+                for ($j = 0; $j < 2; $j ++) {
+                    $userId = $comment[$idx]['context'][$i][$j];
+                    $userInfo = $this->user->getPubById($userId);
+                    $comment[$idx]['context'][$i][$j] = array();
+                    $comment[$idx]['context'][$i][$j]['id'] = $userId;
+                    $comment[$idx]['context'][$i][$j]['nickname'] = $userInfo['nickname'];
+                }
+            }
+        }
+
         //分页
         if ($comment != false) {
             $pageSize = $this->config->item('pageSize');
@@ -90,19 +111,13 @@ class item extends Home {
             $comment = $temp['newData'];
             $commonUrl = site_url('/bg/item/itemCom');
             $data['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount']);
-            $len = (int)count($comment);
         } else {
-            $len = 0;
         }
 
-        for ($i = 0; $i < $len; $i++) {
-            $temp = $this->mitem->getTitle($comment[$i]["item_id"]);
-            $comment[$i]['title'] = $temp;
-        }
         $data['com'] = $comment;
         $data['isAdmin'] = $this->isAdmin ? 1 : 0;
         $data['title'] = $storeId . '号店的最近' . $day . '内的所有评论';
-//        $this->help->showArr($data);
+        $this->help->showArr($data);
         $this->load->view('bgcom', $data);
     }
 /**********************************************************************************************************************/
