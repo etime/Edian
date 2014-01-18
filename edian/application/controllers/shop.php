@@ -110,12 +110,12 @@ class Shop extends BaseSearch {
         $ans = array();
         $ans['item'] = $temp['newData'];
         $ans['key'] = $keyBackUp;
-        $commonUrl = site_url('shop/search/' . $storeId);
+        $commonUrl = site_url('shop/searchInStore/' . $storeId);
         $ans['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount'], $getString);
 
         $this->help->showArr($ans);
         // 调出相关页面进行显示
-//        $this->showView($ans, $storeId);
+        $this->showView($ans, $storeId);
     }
 
     /**
@@ -153,7 +153,7 @@ class Shop extends BaseSearch {
         $ans = array();
         $ans['item'] = $temp['newData'];
         $ans['key'] = $categoryName;
-        $commonUrl = site_url('shop/select/' . $storeId);
+        $commonUrl = site_url('shop/selectInStore/' . $storeId);
         $ans['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount'], $getString);
 
         // 调出相关页面进行显示
