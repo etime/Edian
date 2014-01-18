@@ -65,6 +65,42 @@ class ComItem extends CI_Model {
     }
 
     /**
+     * 对筛选到的评论信息进行解码，把评论者和被评论者的编号、昵称解析出来，如果被评论者是商品，昵称则为商品的标题
+     * @param array $comment 待解析的评论数组
+     */
+    protected function _decodeCommenterInfo($comment) {
+        $this->load->model('user');
+        $this->load->model('mitem');
+        for ($idx = 0, $len = (int)count($comment); $idx < $len; $idx ++) {
+            $tot = (int)count($comment[$idx]['context']);
+
+            // 每条评论的第一个评论需要特殊处理，因为被评论者是商品
+            $userId = $comment[$idx]['context'][0][0];
+            $userInfo = $this->user->getPubById($userId);
+            $comment[$idx]['context'][0][0] = array();
+            $comment[$idx]['context'][0][0]['userId'] = $userId;
+            $comment[$idx]['context'][0][0]['nickname'] = $userInfo['nickname'];
+
+            $itemId = $comment[$idx]['context'][0][1];
+            $comment[$idx]['context'][0][1] = array();
+            $itemTitle = $this->mitem->getTitle($itemId);
+            $comment[$idx]['context'][0][1]['itemId'] = $itemId;
+            $comment[$idx]['context'][0][1]['itemTitle'] = $itemTitle;
+
+            for ($i = 1; $i < $tot; $i ++) {
+                for ($j = 0; $j < 2; $j ++) {
+                    $userId = $comment[$idx]['context'][$i][$j];
+                    $userInfo = $this->user->getPubById($userId);
+                    $comment[$idx]['context'][$i][$j] = array();
+                    $comment[$idx]['context'][$i][$j]['userId'] = $userId;
+                    $comment[$idx]['context'][$i][$j]['nickname'] = $userInfo['nickname'];
+                }
+            }
+        }
+        return $comment;
+    }
+
+    /**
      * 获取指定编号的商品的评论信息
      * @param int $itemId 商品编号
      * @return boolean | array
@@ -83,6 +119,7 @@ class ComItem extends CI_Model {
             for ($i = 0, $len = (int)count($res); $i < $len; $i ++) {
                 $res[$i]['context'] = $this->_decodeContext($res[$i]['context']);
             }
+            $res = $this->_decodeCommenterInfo($res);
             return $res;
         }
     }
@@ -110,6 +147,7 @@ class ComItem extends CI_Model {
             for ($i = 0; $i < $len; $i ++) {
                 $res[$i]['context'] = $this->_decodeContext($res[$i]['context']);
             }
+            $res = $this->_decodeCommenterInfo($res);
             return $res;
         }
     }

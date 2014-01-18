@@ -91,19 +91,6 @@ class item extends Home {
             }
         }
 
-        // 获取所有评论者的信息
-        for ($idx = 0, $len = (int)count($comment); $idx < $len; $idx ++) {
-            for ($i = 0, $tot = (int)count($comment[$idx]['context']); $i < $tot; $i ++) {
-                for ($j = 0; $j < 2; $j ++) {
-                    $userId = $comment[$idx]['context'][$i][$j];
-                    $userInfo = $this->user->getPubById($userId);
-                    $comment[$idx]['context'][$i][$j] = array();
-                    $comment[$idx]['context'][$i][$j]['id'] = $userId;
-                    $comment[$idx]['context'][$i][$j]['nickname'] = $userInfo['nickname'];
-                }
-            }
-        }
-
         //分页
         if ($comment != false) {
             $pageSize = $this->config->item('pageSize');

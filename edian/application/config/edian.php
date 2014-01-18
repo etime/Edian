@@ -66,6 +66,8 @@ $config['adminMail'] = '1264310280@qq.com';
 
 // 设置sellNum + 1 rating 线性变化的幅度
 $config['sellNumAffect'] = 1400;
+// 设置visitorNum + 1 rating 线性变化的幅度
 $config['visitorNumAffect'] = 100;
+// 设置对 rating 的影响
 $config['satisfyScoreAffect'] = 300;
 ?>

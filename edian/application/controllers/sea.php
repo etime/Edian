@@ -12,40 +12,28 @@
  * @name            sea.php
  * @package         controller
  */
-class Sea extends MY_Controller
-{
-    /** 每页显示的数据条数 */
-    var $pageNum;
-    function __construct()
-    {
+class Sea extends MY_Controller {
+
+    function __construct() {
         parent::__construct();
-        $this->load->model("mitem");
-        $this->load->model("user");
-        $this->load->model("mwrong");//为了避免多次载入，在开头直接载入
-        $this->load->config("edian");//配置文件
-        $this->pageNum = 4;
+        $this->load->model('mitem');
+        $this->load->model('user');
+        $this->load->model('mwrong');
+        $this->load->config('edian');
     }
-    protected function res()
-    {//增加搜索页面，显示搜索结果
+
+    /**
+     * 显示搜索结果
+     */
+    protected function res() {
         $keyword = trim($_GET["sea"]);
         $ans = $this->index(0,$keyword,1);
     }
+
     /**
-     * 这里是处理首页数据申请的地方
-     *
-     * 这里通过url传入的参数，决定查找的方向，可以查找热区和二手，其他目前则为关键字超找。
-     *
-     * <var>$currentPage</var> int 当前正在搜索的页面<br/>
-     * <var>$keyword</var>     string 关键词，需要查找的关键字
-     *
+     * 商品搜索对应的后台处理函数
      */
-    public function index()
-    {//通过减少查询工作量，增加查询次数，减少io读写，我想是一个优化，具体，其实还是需要检验
-    //那么，这个函数将成为我最重要的函数吗？
-        /**
-         * @access private
-         * @internal int
-         */
+    public function index() {
         $currentPage = trim(@$_GET["pg"]);
         $currentPage = $currentPage?$currentPage:0;
         if($currentPage<0){

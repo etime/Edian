@@ -12,6 +12,10 @@ class MY_Controller extends  CI_Controller {
     function __construct()
     {
         parent::__construct();
+
+        header("Content-type: text/html; charset=utf-8");
+        $this->load->library('help');
+
         session_start();
         date_default_timezone_set("Asia/Chongqing");
         //$this->load->library("session");
