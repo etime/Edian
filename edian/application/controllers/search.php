@@ -135,6 +135,8 @@ class Search extends BaseSearch {
      *      2  表示按照 升序 排序
      * </pre>
      * @param int $pageId 分页号
+     * @todo 两点，一个是belongsTo ，不能只是一个编号，而且应该有名字, satisfyScore 应该是评论的，是总的除以评论的人
+     * @todo 在ans数组中传入button和order
      */
     public function searchAction($button = 1, $order = 1, $pageId = 1) {
         // 通过 GET 的方式获得用户输入的关键字，并设置 url 中的 GET 字段
@@ -181,7 +183,9 @@ class Search extends BaseSearch {
         $commonUrl = site_url('search/searchAction/' . $button . '/' . $order);
         $ans['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount'], $getString);
         $this->help->showArr($ans);
-        $this->load->view("search");
+        $ans['type'] = $button;
+        $ans['desc'] = $order;
+        $this->load->view("search" , $ans);
     }
 }
 ?>

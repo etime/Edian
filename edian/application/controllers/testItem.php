@@ -22,5 +22,10 @@ class testItem extends MY_Controller
     {
         echo "index";
     }
+    public function testSearch()
+    {
+        $data['key'] = "测试";
+        $this->help->curl($data , site_url("search/searchAction"));
+    }
 }
 ?>

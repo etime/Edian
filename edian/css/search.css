@@ -13,6 +13,12 @@ ul, body{
 li{
     list-style:none;
 }
+a{
+    text-decoration:none;
+}
+a:hover{
+    text-decoration:underline;
+}
 .clearfix:after{
     visibility:hidden;
     display:block;
@@ -28,6 +34,20 @@ li{
 .snav{
     padding:8px;
     margin-left:10px;
+}
+.snav form{
+    float:right;
+}
+.snav a{
+    color:black;
+    margin:0 5px;
+}
+.snav input{
+    width:30px;
+    border-radius:2px;
+}
+a[href$='#']{
+    color:gray;
 }
 .snav > *{
     margin:5px;
