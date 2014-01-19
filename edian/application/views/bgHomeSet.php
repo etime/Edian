@@ -8,6 +8,7 @@
 <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.8 ,maximum-scale= 1.2 user-scalable=yes" />
+    <link rel="stylesheet" href="<?php echo $baseUrl .'css/bgset.css'?>" type="text/css" media="all" />
     <title>商城设置</title>
 <script type="text/javascript" charset="utf-8">
     var baseUrl = "<?php echo $baseUrl ?>";
@@ -41,7 +42,7 @@
             <span><input type = "text" name = "storeName" maxlength = "10" value = " <?php echo $name ?>"></span>
         </li>
         <li>
-            <span>店铺logo：</span>
+            <span class = "item">店铺logo:</span>
 <!--
             <input type="file" name="logo" id="logo"/>
             <span class="button" id = "butLogo">上传图片</span>
@@ -59,7 +60,7 @@
             <input type="text" name="serviceQQ" maxlength = "11" value = " <?php echo $serviceQQ ?>"/>
         </li>
         <li>
-            最低起送价：
+            <span class = "item">最低起送价:</span>
             <input type="text" name="lestPrc" id="lestPrc"/>
         </li>
         <li>
@@ -98,17 +99,36 @@
 -->
             </div>
         </li>
-        <li>
-            <span class="item">商品类别:</span>
+        <li class = "clearfix">
+            <span class="item" style = "float:left">商品类别:</span>
+            <!--
             <ul class = "list clearfix" id = "list" title = "点击删除">
                 <?php foreach($category as $val):?>
                 <li> <?php echo $val?></li>
                 <?php endforeach?>
             </ul>
-            <p>
-                <input type="text" name="listName" maxlength = "4"/>
-                <span class="button" id = "listBut">添加类别</span>
-            </p>
+            -->
+            <div class = "cate">
+                <table border="1">
+
+                    <tr style = "background:#e9e9e9">
+                        <th>类别名</th>
+                        <th>商品数</th>
+                        <th>操作</th>
+                    </tr>
+                    <?php foreach($category as $val):?>
+                    <tr>
+                        <td><?php echo $val ?></td>
+                        <td>-1</td>
+                        <td><a>修改</a> <a>删除</a></td>
+                    </tr>
+                    <?php endforeach?>
+                </table>
+                <p>
+                    <input type="text" name="listName" maxlength = "4"/>
+                    <span class="button" id = "listBut">添加类别</span>
+                </p>
+            </div>
         </li>
         <li>
             <span class="item">dtu名字:</span>
@@ -149,64 +169,6 @@ eod;
     <input type="submit" name="sub" id="sub" value="提交" />
     </form>
 </body>
-<style type="text/css" media="all">
-    #distance{
-        width:50px;
-    }
-    .item{
-        width:100px;
-        display:inline-block;
-    }
-    li{
-        list-style:none;
-        line-height:1.5em;
-        border-bottom:1px solid rgb(0, 181, 226);
-    }
-    #allmap{
-        width:900px;
-        height:400px;
-    }
-    /*
- *   body, html,#allmap {width: 500px;height: 500px;overflow: hidden;margin:0;}
- */
-    .button{
-        background:#ececec;
-        border-radius:2px;
-        border:1px solid rgb(148, 148, 153);
-        padding:2px 4px;
-        font-size:0.8em;
-    }
-    .button:hover{
-        background:#888888;
-    }
-    .list li{
-        float:left;
-        margin:0 5px;
-    }
-    .list{
-        clear:both;
-    }
-    .clearfix:after {
-        DISPLAY: block;
-        HEIGHT: 0px;
-        VISIBILITY: hidden;
-        CLEAR: both;
-        overflow:hidden;
-        content:"";
-    }
-/*
- * 对应的是关闭空间的css
- */
-    .close{
-        width:52px;
-        height:52px;
-        DISPLAY:block;
-        background:url(../../../bgimage/arrow.png) -108 no-repeat;
-        margin-top:-25px;
-        position:absolute;
-        right:-30px;
-    }
-</style>
 
 <script type="text/javascript" charset="utf-8" src = "<?php echo $baseUrl.'js/jquery.js' ?>"></script>
 <!--

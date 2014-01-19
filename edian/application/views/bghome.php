@@ -83,5 +83,8 @@ if($type === 1){
 ?>
     <iframe id = "main" frameborder="0" name="content" src="<?php echo $src?>"></iframe>
 </div>
-     </body>
+<script type="text/javascript" charset="utf-8" src = "<?php echo $baseUrl . '/js/jquery.min.js' ?>"></script>
+<!-- 以后使用原生的js来做-->
+<script type="text/javascript" charset="utf-8" src = "<?php echo $baseUrl . '/js/bghome.js' ?>"></script>
+</body>
  </html>

@@ -1,0 +1,96 @@
+/**
+ * @name        ../../../css/bgset.css
+ * @author      unasm < 1264310280@qq.com >
+ * @since       2014-01-20 02:34:17
+*/
+#distance{
+    width:50px;
+}
+body{
+    background:rgb(226, 226, 226);
+    margin:0;
+}
+li{
+    list-style:none;
+    line-height:1.5em;
+    margin:10px 0;
+    min-height:28px;
+}
+#allmap{
+    width:900px;
+    height:400px;
+}
+.button{
+    background:#ececec;
+    border-radius:2px;
+    border:1px solid rgb(148, 148, 153);
+    padding:4px 4px;
+    font-size:0.8em;
+}
+.button:hover{
+    background:#888888;
+}
+.list li{
+    float:left;
+    margin:0 5px;
+}
+.list{
+    clear:both;
+}
+.clearfix:after {
+    DISPLAY: block;
+    HEIGHT: 0px;
+    VISIBILITY: hidden;
+    CLEAR: both;
+    overflow:hidden;
+    content:"";
+}
+/*
+* 对应的是关闭空间的css
+*/
+.close{
+    width:52px;
+    height:52px;
+    DISPLAY:block;
+    background:url(../../../bgimage/arrow.png) -108 no-repeat;
+    margin-top:-25px;
+    position:absolute;
+    right:-30px;
+}
+input[type='text']{
+    padding:3px 2px;
+    border-radius:3px;
+    border:1px solid rgb(192, 192, 192);
+    box-shadow:1px 1px 4px rgb(213,213,213) inset;
+    margin:2px;
+}
+input[type = 'text']:hover{
+    border:2px solid rgb(99, 228, 39);
+    margin:0px;
+    outline:none;
+}
+.item{
+    width:100px;
+    display:inline-block;
+    text-align:right;
+    margin-right:5px;
+}
+#tarea{
+    margin-left:120px;
+}
+table{
+    border-spacing:0;
+    width:600px;
+}
+tr:hover{
+    background:#00A200;
+}
+td ,th{
+    border:none;
+}
+.cate p{
+    text-align:right;
+}
+.cate{
+    float:left;
+}

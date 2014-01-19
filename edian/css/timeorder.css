@@ -10,6 +10,9 @@ h3 span , .init span{
     text-align:center;
     position:relative;
 }
+body{
+    background:rgb(252, 248, 248);
+}
 ul,body{
     margin:0;
     padding:0;
