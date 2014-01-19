@@ -5,6 +5,7 @@
  * @since       2014-01-18 16:09:47
  */
  $baseUrl = base_url();
+ $siteUrl = site_url();
 ?>
 <!DOCTYPE html>
 <html>
@@ -21,14 +22,26 @@
     </div>
     <div id="context" class = "width context">
         <div class = "snav">
-            <span>综合</span>
-            <span>价格</span>
-            <span>销量</span>
-            <span style = "display:none">距离</span>
-            <span>送货速度</span>
-            <span>评分</span>
+            <?php echo $pageNumFooter ?>
+            <a href = "<?php echo $siteUrl . '/search/searchAction?key=' . $key ?>">综合</a>
+            <?php
+             $snav = array(
+                2 => array('font' => '价格' , 'initState' => 2),
+                3 => array('font' => '销量' , 'initState' => 1),
+                4 => array('font' => '销量' , 'initState' => 1),
+                6 => array('font' => '送货速度' , 'initState' => 2)
+             );
+             foreach($snav as $key => $val){
+                 if($key == $type){
+                    echo "<a href = '" . $siteUrl . "/search/searchAction/$key/" . (3 - $val['initState']) .'?key=' . $key . "'>" . $val['font']. "</a>";
+                 }else {
+                    echo "<a href = '" . $siteUrl . "/search/searchAction/$key/" . $val['initState'] .'?key=' . $key . "'>" . $val['font']. "</a>";
+                 }
+             }
+            ?>
         </div>
         <ul class = "good">
+        <!--
             <li class = "details">
                 <div class = "img">
                     <img src="http://www.pkusky.com/upfile/images/MEI%20NV.jpg" alt="图片" class = "mainImg"/>
@@ -45,22 +58,31 @@
                     </p>
                 </div>
             </li>
+            -->
+            <?php  foreach ($item as $val):?>
             <li class = "details">
                 <div class = "img">
-                    <img src="http://www.pkusky.com/upfile/images/MEI%20NV.jpg" alt="图片" class = "mainImg"/>
+                        <a href = "<?php echo $siteUrl . '/item/index/' . $val['id']?>">
+                            <img src="<?php echo $val['mainThumbnail'] ?>" alt="图片" class = "mainImg"/>
+                        </a>
                 </div>
                 <div class = "deinfo">
-                    <p>斯蒂芬阿斯顿发商店阿斯顿还是地方</p>
-                    <p class = "sep">
-                        <span>评分3.2</span>
-                        <strong>￥90.00</strong>
+                    <p>
+                        <a href = "<?php echo $siteUrl . '/item/index/' . $val['id']?>">
+                            <?php echo $val['title'] ?>
+                        </a>
                     </p>
                     <p class = "sep">
-                        <span>已售32</span>
+                    <span>评分<?php echo $val['satisfyScore'] ?></span>
+                    <strong>￥<?php echo $val['price']?></strong>
+                    </p>
+                    <p class = "sep">
+                    <span>已售<?php echo $val['sellNum'] ?></span>
                         <span>奥蒂旗舰店</span>
                     </p>
                 </div>
             </li>
+            <?php endforeach ?>
         </ul>
     </div>
 </body>

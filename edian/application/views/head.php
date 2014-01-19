@@ -9,7 +9,7 @@
             <a>注册</a>  |
             <a>帮助</a>
         </p>
-        <form action="<?php echo site_url('/search/searchAction') ?>" method="post" accept-charset="utf-8" class = "search">
+        <form action="<?php echo site_url('/search/searchAction') ?>" method="get" accept-charset="utf-8" class = "search">
             <div>
                 <input type="text" name="key" id="sea" placeholder = "搜索" />
             </div>
