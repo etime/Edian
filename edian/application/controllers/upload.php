@@ -513,8 +513,7 @@ class Upload extends MY_Controller {
     /**
     * 这里上传的是之前的有关键字和索引的图片
     */
-    function upload_picture()
-    {
+    function upload_picture() {
         $user_id = $this->getUserId();
         $re = $this->upload_config();
         $re['category'] = $this->input->post('category');

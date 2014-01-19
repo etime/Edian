@@ -4,18 +4,30 @@
  * 现在作为二手市场的显示和操作class
  * 数据的得到是首先通过php获得具体的店主，商品信息，其他的信息通过ajax获得,和mail不同，我想是因为信息量不同导致的吧
  **/
-class Sec extends MY_Controller
-{
-	var $user_id;
-	function __construct()
-	{
+class Sec extends MY_Controller {
+
+	protected $user_id;
+
+	function __construct() {
 		parent::__construct();
 		$this->user_id = $this->user_id_get();
 		$this->load->model("art");
 		$this->load->model("user");
 	}
-	public function index($art_id = -1)
-	{
+
+    private function _getIndexData($art_id) {
+        //将要获取的不止是art的内容，and userinfomation其实还有评价的内容，我想通过ajax得到。
+        $ans = $this->art->getById($art_id);
+        if($ans == false)show_404();
+        if ($ans["author_id"] == $this->user_id) {//当用户浏览的是自己的帖子的时候，因为动态已经看到，所以没有必要再给出new，将new去除，commer不变
+            $this->art->changeNew($art_id);//将最新的状态修改
+        }
+        $data2 = $this->user->getPubNoIntro($ans["author_id"]);//获取大量的信息哦
+        $ans = array_merge($ans,$data2);
+        return $ans;
+    }
+
+	public function index($art_id = -1) {
 		if($art_id == -1)show_404();
 		$data = $this->_getIndexData($art_id);
 		$this->add($art_id);
@@ -32,8 +44,8 @@ class Sec extends MY_Controller
 		$data["dir"] = $this->part;
 		$this->load->view("showart",$data);
 	}
-	public function index2($art_id)
-	{
+
+	public function index2($art_id) {
 		//通过传进来的art_id给出具体的数据``,浏览页面
 		$data = $this->_getIndexData($art_id);
 		$this->add($art_id);
@@ -45,8 +57,8 @@ class Sec extends MY_Controller
 		}
 		$this->load->view("showart2",$data);
 	}
-	public function test()
-	{
+
+	public function test() {
 		$data["tit"] = "testting title";
 		$data["cont"] = "testing content";
 		$data["part"] = rand(0,10);
@@ -59,25 +71,13 @@ class Sec extends MY_Controller
 		$res = $this->art->cinsertArt($data,"19");
 		var_dump($res);
 	}
-	private function _getIndexData($art_id)
-	{
-		//将要获取的不止是art的内容，and userinfomation其实还有评价的内容，我想通过ajax得到。
-		$ans = $this->art->getById($art_id);
-		if($ans == false)show_404();
-		if ($ans["author_id"] == $this->user_id) {//当用户浏览的是自己的帖子的时候，因为动态已经看到，所以没有必要再给出new，将new去除，commer不变
-			$this->art->changeNew($art_id);//将最新的状态修改
-		}
-		$data2 = $this->user->getPubNoIntro($ans["author_id"]);//获取大量的信息哦
-		$ans = array_merge($ans,$data2);
-		return $ans;
-	}
-	public function add($art_id)
-	{
+
+	public function add($art_id) {
 		$this->art->addvisitor($art_id);
 		//每当一个用户浏览的话，就增加一个浏览量加value
 	}
-	public function getCom($artId  = "-1")
-	{
+
+	public function getCom($artId  = "-1") {
 		$this->load->model("comment");
 		if($artId  =="-1"){
 			exit("code");
@@ -92,8 +92,9 @@ class Sec extends MY_Controller
 		}
 		echo json_encode($ans);
 	}
-	public function addCom($artId)
-	{//根据artId向其中添加评论
+
+    //根据artId向其中添加评论
+	public function addCom($artId) {
 		if($this->user_id == false){
 			exit("0");
 		}

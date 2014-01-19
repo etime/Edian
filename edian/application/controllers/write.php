@@ -1,6 +1,6 @@
 <?php
 /**
- *      这个文件是用来发表文章的，
+ *  这个文件是用来发表文章的，
  *  处理各种文章信息，作为发布文章和数据，上传到网站后台，包括二手和商城
  * 需要检验后台上传数据的时候，强制前端所有信息重新检验,数据必须合格
  *
@@ -8,17 +8,14 @@
  * @since       2013/03/28 12:31:53 AM
  * @package     controller
  */
-class Write extends MY_Controller
-{
+class Write extends MY_Controller {
 
-    /**
-     * 用户的id，登录者的id
-     * 每个controller都有会，记录登录者的id，方便处理,提供数据
-     * @var int
-     */
-    var $userId;
-    var $isBoss;
-    var $isAdmin;
+    // 用户编号
+    protected $userId;
+    // 是否是商店老板
+    protected $isBoss;
+    // 是否是管理员
+    protected $isAdmin;
 
     /**
      * 默认的头像图片
@@ -26,12 +23,14 @@ class Write extends MY_Controller
      * @var string $defaultImg 是在用户没有提交图片的情况下的默认图片
      * @todo 废弃掉这个
      */
-    var $defaultImg;
+    protected $defaultImg;
 
     function __construct() {
         parent::__construct();
+
         define('imgDir',"upload/");
         define('THUMB',"upload/");
+
         $this->defaultImg = "real.png";
         $this->userId = $this->getUserId();
         $this->load->model("art");
@@ -99,24 +98,6 @@ class Write extends MY_Controller
         return $flag;
     }
 
-//    /**
-//     * 目前暂时废弃，write和对应的js，view和后台都不改变，将来需要可以随时添加，只是对应的表已经变了
-//     */
-//    public function index2()
-//    {
-//        $data["title"] = "发表新帖";
-//        if($this->userId == -1){
-//            $atten["uri"] = site_url("mainpage/index");
-//            $atten["uriName"] = "登陆页面";//如果将来有时间，专门做一个登陆的页面把
-//            $atten["time"] = 5;
-//            $atten["title"] = "请首先登陆";
-//            $atten["atten"] = "请登陆后发表新帖";
-//            $this->load->view("jump",$atten);
-//            return;
-//        }
-//        $this->load->view("write", $data);
-//    }
-
     /**
      * 重新编辑修改的页面
      * 对帖子进行修改重新编辑的函数，除了id，value之外，什么都修改吧
@@ -145,12 +126,12 @@ class Write extends MY_Controller
         //var_dump($data);
         $this->load->view("wChange",$data);
     }
+
     /**
      * 修改帖子的时候
      * 应该是和上面的change差不多，都是修改商品的，这里是提交之后，后台逻辑处理
      */
-    public function reAdd($artId)
-    {
+    public function reAdd($artId) {
         if($this->isNoLogin())return;
         $info = $this->art->getImgId($artId);//取得author_id 和img 的信息,
         if($info == false)show_404();
@@ -167,7 +148,7 @@ class Write extends MY_Controller
             unlink(imgDir.$info["img"]);//这里即使没有删除成功也没有办法，继续是必然的
             unlink(THUMB.$info["img"]);//这里即使没有删除成功也没有办法，继续是必然的
         }
-        $temp = $this->insertJudge();
+        $temp = $this->_insertJudge();
         if($temp === false)return;
         $insert = array_merge($temp,$insert);
         $flag = $this->art->reAdd($insert,$artId);
@@ -186,8 +167,7 @@ class Write extends MY_Controller
      * 为下面的cadd提供抱错的函数
      * @param string $error 错误的原因
      */
-    private function addError($error)
-    {
+    private function addError($error) {
         $atten["uri"] = site_url("write/index");
         $atten["uriName"] = "新品发表页";//如果将来有时间，专门做一个登陆的页面把
         $atten["title"] = "图片出错了";
@@ -202,8 +182,7 @@ class Write extends MY_Controller
      *  向用户显示错误信息，同时想wrong检测报错
      * @param string $error 错误的原因
      */
-    private function bgError($error)
-    {
+    private function bgError($error) {
         $atten["uri"] = site_url("bg/home/itemadd");
         $atten["uriName"] = "新品发布";//如果将来有时间，专门做一个登陆的页面把
         $atten["title"] = "出错了";
@@ -271,12 +250,12 @@ class Write extends MY_Controller
         $keys = trim($this->input->post("key"));
         $keys = preg_split("/[^\x{4e00}-\x{9fa5}0-9a-zA-Z]+/u",$keys);//以非汉字，数字，字母为分界点开始分割;
         $key  = trim($this->input->post("part"));
-        $keys = $this->getrepeat($keys,$key);
+        $keys = $this->_getrepeat($keys,$key);
         $key  = trim($this->input->post("keyj"));
-        $keys = $this->getrepeat($keys,$key);
+        $keys = $this->_getrepeat($keys,$key);
         $key  = trim($this->input->post("keyk"));//这些不进行检验是不安全的
-        $keys = $this->getrepeat($keys,$key);
-        $data["keys"] = $this->formate($keys);//以上是对关键字的处理
+        $keys = $this->_getrepeat($keys,$key);
+        $data["keys"] = $this->_formate($keys);//以上是对关键字的处理
         return $data;
     }
 
@@ -284,9 +263,7 @@ class Write extends MY_Controller
      * 返回标题，价格，内容，分区
      * 在这里读取数据，检验数据，对输入信息判断的函数，因此两次添加修改的判断一样，合并
      */
-    private function insertJudge()
-    {
-
+    private function _insertJudge() {
         $data["tit"] = trim($this->input->post("title"));
         if(strlen($data["tit"])==0){
             $this->addError("没有添加标题");
@@ -308,10 +285,10 @@ class Write extends MY_Controller
         $keys = trim($this->input->post("key"));
         $keys = preg_split("/[^\x{4e00}-\x{9fa5}0-9a-zA-Z]+/u",$keys);//以非汉字，数字，字母为分界点开始分割;
         $key = trim($this->input->post("keyj"));
-        $keys = $this->getrepeat($keys,$key);
+        $keys = $this->_getrepeat($keys,$key);
         $key = trim($this->input->post("keyk"));
-        $keys = $this->getrepeat($keys,$key);
-        $data["keys"] = $this->formate($keys);
+        $keys = $this->_getrepeat($keys,$key);
+        $data["keys"] = $this->_formate($keys);
         return $data;
     }
 
@@ -320,12 +297,11 @@ class Write extends MY_Controller
      * @param array 想要转化成为字符串的数组
      * @return string
      */
-    private  function formate($arr)
-    {
+    private function _formate($arr) {
         $temp = ";";
         for($i = 0,$len = count($arr); $i < $len;$i++){
             if($arr[$i]!="")
-            $temp.=$arr[$i].";";
+                $temp.=$arr[$i].";";
         }
         return $temp;
     }
@@ -335,8 +311,7 @@ class Write extends MY_Controller
      * @param array $arr 想要检验的数组
      * @param string $value 查找的值
      */
-    private function getrepeat($arr,$value)
-    {
+    private function _getrepeat($arr,$value) {
         if(strlen($value)== 0)return $arr;
         $len = count($arr);
         for($i = 0; $i < $len;$i++){
@@ -350,8 +325,7 @@ class Write extends MY_Controller
      * 商家添加数据使用那个，
      * 应该已经被废弃了
      */
-    public function cadd()
-    {
+    public function cadd() {
         if(!$this->userId){
             exit("请登陆后继续");//这里修改成主页调转
         }
@@ -374,7 +348,7 @@ class Write extends MY_Controller
                 $data["file_name"] = $this->defaultImg;
             }
             $data["value"] = time();//value ，标示一个帖子含金量的函数,初始的值为当时的事件辍
-            $temp = $this->insertJudge();
+            $temp = $this->_insertJudge();
             if($temp === false)return;//返回false，代表出错，而且，已经进入了调转
             $data = array_merge($temp,$data);
             $re = $this->art->cinsertArt($data,$this->userId);
@@ -643,30 +617,30 @@ class Write extends MY_Controller
             elseif(!empty($upfile['error'])){
                 switch($upfile['error'])
                 {
-                case '1':
-                    $err = '文件大小超过了php.ini定义的upload_max_filesize值';
-                    break;
-                case '2':
-                    $err = '文件大小超过了HTML定义的MAX_FILE_SIZE值';
-                    break;
-                case '3':
-                    $err = '文件上传不完全';
-                    break;
-                case '4':
-                    $err = '无文件上传';
-                    break;
-                case '6':
-                    $err = '缺少临时文件夹';
-                    break;
-                case '7':
-                    $err = '写文件失败';
-                    break;
-                case '8':
-                    $err = '上传被其它扩展中断';
-                    break;
-                case '999':
-                default:
-                    $err = '无有效错误代码';
+                    case '1':
+                        $err = '文件大小超过了php.ini定义的upload_max_filesize值';
+                        break;
+                    case '2':
+                        $err = '文件大小超过了HTML定义的MAX_FILE_SIZE值';
+                        break;
+                    case '3':
+                        $err = '文件上传不完全';
+                        break;
+                    case '4':
+                        $err = '无文件上传';
+                        break;
+                    case '6':
+                        $err = '缺少临时文件夹';
+                        break;
+                    case '7':
+                        $err = '写文件失败';
+                        break;
+                    case '8':
+                        $err = '上传被其它扩展中断';
+                        break;
+                    case '999':
+                    default:
+                        $err = '无有效错误代码';
                 }
             }
             elseif(
@@ -720,10 +694,11 @@ class Write extends MY_Controller
         }
         echo "{'err':'".$this->jsonString($err)."','msg':".$msg."}";
     }
-    function jsonString($str)
-    {
+
+    function jsonString($str) {
         return preg_replace("/([\\\\\/'])/",'\\\$1',$str);
     }
+
     /**
      * 计算文件大小的函数
      * @param int  $bytes 文件的大小比特
@@ -740,6 +715,55 @@ class Write extends MY_Controller
         }
         return $bytes;
     }
+
+//    /**
+//     * 目前暂时废弃，write和对应的js，view和后台都不改变，将来需要可以随时添加，只是对应的表已经变了
+//     */
+//    public function index2()
+//    {
+//        $data["title"] = "发表新帖";
+//        if($this->userId == -1){
+//            $atten["uri"] = site_url("mainpage/index");
+//            $atten["uriName"] = "登陆页面";//如果将来有时间，专门做一个登陆的页面把
+//            $atten["time"] = 5;
+//            $atten["title"] = "请首先登陆";
+//            $atten["atten"] = "请登陆后发表新帖";
+//            $this->load->view("jump",$atten);
+//            return;
+//        }
+//        $this->load->view("write", $data);
+//    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 }
 ?>

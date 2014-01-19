@@ -9,5 +9,6 @@ tags
 *.swp
 .buildpath
 *.orig
+.settings/
 #忽略Document 和upload整个文件夹
 farmerjian.php

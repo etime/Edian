@@ -6,6 +6,7 @@ class Search extends BaseSearch {
     function __construct() {
         parent::__construct();
         $this->load->model('store');
+        $this->load->model('comitem');
     }
 
     /**
@@ -168,7 +169,8 @@ class Search extends BaseSearch {
             for ($i = 0, $len = (int)count($ans); $i < $len; $i ++) {
                 $itemId = $ans[$i];
                 $ans[$i] = $this->mitem->getDetailInfo($itemId);
-                $commenterAmount = (int)$this->comitem->getCommenterAmount($itemId);
+                $commenterAmount = $this->comitem->getCommenterAmount($itemId);
+                $ans[$i]['storeName'] = $this->store->getStoreName($ans[$i]['belongsTo']);
                 if ($commenterAmount != false && $commenterAmount != 0) {
                     $ans[$i]['satisfyScore'] = $ans[$i]['satisfyScore'] / $commenterAmount;
                 }

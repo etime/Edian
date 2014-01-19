@@ -1,4 +1,3 @@
-
 <?php
 /**
  * 处理所有注册有关的操作
@@ -68,6 +67,31 @@ class Register extends CI_Controller {
     }
 
     /**
+     * 检验手机号码的合法性和唯一性
+     *
+     * @param int $phoneNum 用户将要注册的手机号码
+     * @return array 如果该手机号码合法且不存在，返回一个空的数组，否则返回 $ans['failed']
+     */
+    private function _checkPhoneNum($phoneNum) {
+        // 判断用户输入的手机号码是否合法
+        $data = array();
+        if (! preg_match("/^1[\d]{10,10}$/", $phoneNum)) {
+            $data['failed'] = '您输入的手机号码格式非法';
+            return $data;
+        }
+
+        // 判断用户输入的手机号码是否已经被注册
+        $ans = $this->user->isUserExistByPhone($phoneNum);
+        if ($ans) {
+            $data['failed'] = '您输入的手机号码已经被注册';
+            return $data;
+        }
+
+        // 该手机号码合法且未被注册
+        return $data;
+    }
+
+    /**
      * 检测 loginName 的合法性和唯一性，供 ajax 和内部检查调用
      *
      * @param $loginName 用户将要注册的用户名
@@ -132,31 +156,6 @@ class Register extends CI_Controller {
             echo "true";
         }
         return true;
-    }
-
-    /**
-     * 检验手机号码的合法性和唯一性
-     *
-     * @param int $phoneNum 用户将要注册的手机号码
-     * @return array 如果该手机号码合法且不存在，返回一个空的数组，否则返回 $ans['failed']
-     */
-    private function _checkPhoneNum($phoneNum) {
-        // 判断用户输入的手机号码是否合法
-        $data = array();
-        if (! preg_match("/^1[\d]{10,10}$/", $phoneNum)) {
-            $data['failed'] = '您输入的手机号码格式非法';
-            return $data;
-        }
-
-        // 判断用户输入的手机号码是否已经被注册
-        $ans = $this->user->isUserExistByPhone($phoneNum);
-        if ($ans) {
-            $data['failed'] = '您输入的手机号码已经被注册';
-            return $data;
-        }
-
-        // 该手机号码合法且未被注册
-        return $data;
     }
 
     /**
