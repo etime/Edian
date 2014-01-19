@@ -166,8 +166,9 @@ $siteUrl = site_url();
                 <!-- 这里放什么呢-->
                 </div>
                 <ul id = "ucom" class = "ucom">
-                <?php foreach ($comment  as $com):?>
+                <?php for($i = 0 ,$len = $comment ? count($comment) : 0; $i < $len ; $i++):?>
                 <?php
+                    $com = $comment[$i];
                     $context = $com['context'];
                     $head = $context[0];
                 ?>
@@ -203,7 +204,7 @@ $siteUrl = site_url();
                             </ul>
                         </div>
                     </li>
-                <?php endforeach ?>
+                <?php endfor ?>
                 </ul>
             </div>
         </div>

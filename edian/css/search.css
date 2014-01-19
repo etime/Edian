@@ -33,10 +33,10 @@ a:hover{
 }
 .snav{
     padding:8px;
-    margin-left:10px;
 }
 .snav form{
     float:right;
+    margin:0px;
 }
 .snav a{
     color:black;
@@ -59,15 +59,15 @@ a[href$='#']{
     padding:0 5px;
 }
 .details{
-    width:245px;
+    width:224px;
     float:left;
-    margin:5px;
+    margin:8px;
 }
 .mainImg{
     width:100%;
 }
 .img{
-    height:245px;
+    height:224px;
     width:100%;
     overflow:hidden;
 }

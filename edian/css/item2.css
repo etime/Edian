@@ -295,7 +295,6 @@ button[name = 'toCart']{
     margin:3px 0;
 }
 .comt>p{
-    border-bottom:1px solid rgb(228, 228, 228);
     position:relative;
 }
 .comt strong{
@@ -316,13 +315,13 @@ button[name = 'toCart']{
 }
 .ucom li{
     margin:10px 0;
+    border-bottom:1px solid #DDD;
 }
 .comt{
     float:left;
     width:635px;
     border-radius:2px;
-    border:1px solid rgb(204, 204, 204);
-    min-height:130px;
+    min-height:100px;
 }
 .comt ul{
     padding-left:6em;

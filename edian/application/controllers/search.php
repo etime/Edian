@@ -182,7 +182,7 @@ class Search extends BaseSearch {
         $ans['key'] = $keyBackUp;
         $commonUrl = site_url('search/searchAction/' . $button . '/' . $order);
         $ans['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount'], $getString);
-        $this->help->showArr($ans);
+        //$this->help->showArr($ans);
         $ans['type'] = $button;
         $ans['desc'] = $order;
         $this->load->view("search" , $ans);
