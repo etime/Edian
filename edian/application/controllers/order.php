@@ -17,9 +17,7 @@ define('TEST',1);
 //测试完成之后，修改成0，或者是删除
 class Order extends My_Controller{
     var  $userId;
-    /**
-     * 构造函数
-     */
+
     function __construct() {
         parent::__construct();
         $this->load->model('morder');
@@ -34,13 +32,130 @@ class Order extends My_Controller{
      * 用户未登陆
      * @param string $url 希望登陆之后，跳转到的页面的 url
      */
-    protected function nologin($url) {
+    protected function _nologin($url) {
         $data['url'] = $url;
         $this->load->view('login', $data);
     }
 
-    public function testAddOrder() {
+    /**
+     * 处理用户的购物车中的商品信息
+     * 需要注意的情况：购物车中无商品，此时 $order === false
+     * @param array $order 购物车中的商品
+     * @return array  整理后的购物车
+     */
+    private function _dealCart($order) {
+        // 订单中无信息
+        if ($order === false) {
+            return;
+        }
+        $seller = array();
+        for ($i = 0, $len = count($order); $i < $len; $i++) {
+            $cart = $order[$i];
+            $seller[$i] = $cart['seller'];
+            $this->load->model('store');
+            $ownerId = $this->store->getOwnerIdByStoreId($cart['seller']);
+            $this->load->model('boss');
+            $loginName = $this->boss->getLoginNameByBossId($ownerId);
+            $bossUserId = $this->user->getUserIdByLoginName($loginName);
+            $order[$i]['selinf'] = $this->user->getPubById($bossUserId);
+            $order[$i]['item'] = $this->mitem->getOrder($cart['item_id']);
+        }
+        //对店家进行排序,方便分组
+        array_multisort($seller, SORT_NUMERIC, $order);
+        return $order;
+    }
 
+    /**
+     * 这个函数是将info的具体解析出来
+     * 供打印使用的，目前的格式为inf|inf 的格式，返回(inf)(inf)的格式
+     */
+    private function _spInf($info) {
+        $res = '';
+        $info = explode('|', $info);
+        for ($i = 0, $len = count($info); $i < $len; $i ++) {
+            $res .= '('. $info[$i] . ')';
+        }
+        return $res;
+    }
+
+    /**
+     * 通过用户的id取得用户下单地址的函数
+     */
+    private function _getUser($adIdx) {
+        $user = $this->user->ordaddr($this->userId);
+        $user = $this->addrDecode($user);
+        return $user[$adIdx];
+    }
+
+    /**
+     *    打印成功之后，修改对应的状态,已经被废弃
+     * 传入对应的 id，修改成为对应的状态
+     * 这里就不做反馈了，一来复杂，而来因为这个反馈不是给用户看的，一般不会出问题，
+     * @param int $ordId 购物车的商品id
+     * @param int $state 修改完成之后，对应的状态，
+     */
+    private function _afPnt($ordId,$state) {
+        $this->morder->setState($addr,$arr["ordId"],$info,$state);
+    }
+
+    /**
+     * 获取商店的起送价
+     * @param array $cart
+     * @return array | boolean
+     */
+    protected function _getSendPrice($cart) {
+        if ($cart === false) {
+            return false;
+        }
+        $cal = 0;
+        $lsp = Array();
+        for ($i = 0, $len = count($cart); $i < $len; ) {
+            $last = $cart[$i]['seller'];
+            $slIdx = $i;
+            while (($i < $len) && ($last == $cart[$i]['seller'])) {
+                $i++;
+            }
+            if ($cart[$slIdx]['seller'] == 0) {
+                continue;
+            }
+            $sendPrice = $this->store->getSendPriceByStoreId($cart[$slIdx]['seller']);
+            if ($sendPrice === false) {
+                $sendPrice = 0;
+            }
+            $lsp[$cal]['lestPrc'] = $sendPrice;
+            $lsp[$cal]['user_name'] = $cart[$slIdx]['selinf']['nickname'];
+            $lsp[$cal]["userId"]  = $last;
+            $cal ++;
+        }
+        return $lsp;
+    }
+
+    /**
+     * 解码用户的地址
+     * @param array $buyer
+     * @return array
+     */
+    private function _addrDecode($buyer) {
+        $res = Array();
+        $tmp = explode('&', $buyer['address']);
+        $cntAddr = 0;
+        for ($i = 0, $length = count($tmp); $i < $length; $i ++) {
+            if ($tmp[$i] == '') continue;
+            $now = explode('|', $tmp[$i]);
+            $len = count($now);
+            if (($i == 0) && ($len == 1)) {
+                $res[0]['phone'] = $buyer['phone'];
+                $res[0]['address'] = $now[0];
+                $res[0]['name'] = $this->session->userdata('loginName');
+                $cntAddr ++;
+            } else if ($len == 3) {
+                $res[$cntAddr]['phone'] = $now[1];
+                $res[$cntAddr]['address'] = $now[2];
+                $res[$cntAddr]['name'] = $now[0];
+                $cntAddr ++;
+            }
+        }
+        return $res;
     }
 
     /**
@@ -118,116 +233,6 @@ class Order extends My_Controller{
     }
 
     /**
-     * 处理用户的购物车中的商品信息
-     * 需要注意的情况：购物车中无商品，此时 $order === false
-     * @param array $order 购物车中的商品
-     * @return array  整理后的购物车
-     */
-    private function dealCart($order) {
-        // 订单中无信息
-        if ($order === false) {
-            return;
-        }
-        $seller = array();
-        for ($i = 0, $len = count($order); $i < $len; $i++) {
-            $cart = $order[$i];
-            $seller[$i] = $cart['seller'];
-            $this->load->model('store');
-            $ownerId = $this->store->getOwnerIdByStoreId($cart['seller']);
-            $this->load->model('boss');
-            $loginName = $this->boss->getLoginNameByBossId($ownerId);
-            $bossUserId = $this->user->getUserIdByLoginName($loginName);
-            $order[$i]['selinf'] = $this->user->getPubById($bossUserId);
-            $order[$i]['item'] = $this->mitem->getOrder($cart['item_id']);
-        }
-        //对店家进行排序,方便分组
-        array_multisort($seller, SORT_NUMERIC, $order);
-        return $order;
-    }
-
-    /**
-     * 这个函数是将info的具体解析出来
-     * 供打印使用的，目前的格式为inf|inf 的格式，返回(inf)(inf)的格式
-     */
-    private function spInf($info) {
-        $res = '';
-        $info = explode('|', $info);
-        for ($i = 0, $len = count($info); $i < $len; $i ++) {
-            $res .= '('. $info[$i] . ')';
-        }
-        return $res;
-    }
-
-    /**
-     * 通过用户的id取得用户下单地址的函数
-     */
-    private function getUser($adIdx) {
-        $user = $this->user->ordaddr($this->userId);
-        $user = $this->addrDecode($user);
-        return $user[$adIdx];
-    }
-
-    /**
-     * 获取商店的起送价
-     * @param array $cart
-     * @return array | boolean
-     */
-    protected function getSendPrice($cart) {
-        if ($cart === false) {
-            return false;
-        }
-        $cal = 0;
-        $lsp = Array();
-        for ($i = 0, $len = count($cart); $i < $len; ) {
-            $last = $cart[$i]['seller'];
-            $slIdx = $i;
-            while (($i < $len) && ($last == $cart[$i]['seller'])) {
-                $i++;
-            }
-            if ($cart[$slIdx]['seller'] == 0) {
-                continue;
-            }
-            $sendPrice = $this->store->getSendPriceByStoreId($cart[$slIdx]['seller']);
-            if ($sendPrice === false) {
-                $sendPrice = 0;
-            }
-            $lsp[$cal]['lestPrc'] = $sendPrice;
-            $lsp[$cal]['user_name'] = $cart[$slIdx]['selinf']['nickname'];
-            $lsp[$cal]["userId"]  = $last;
-            $cal ++;
-        }
-        return $lsp;
-    }
-
-    /**
-     * 解码用户的地址
-     * @param array $buyer
-     * @return array
-     */
-    private function addrDecode($buyer) {
-        $res = Array();
-        $tmp = explode('&', $buyer['address']);
-        $cntAddr = 0;
-        for ($i = 0, $length = count($tmp); $i < $length; $i ++) {
-            if ($tmp[$i] == '') continue;
-            $now = explode('|', $tmp[$i]);
-            $len = count($now);
-            if (($i == 0) && ($len == 1)) {
-                $res[0]['phone'] = $buyer['phone'];
-                $res[0]['address'] = $now[0];
-                $res[0]['name'] = $this->session->userdata('loginName');
-                $cntAddr ++;
-            } else if ($len == 3) {
-                $res[$cntAddr]['phone'] = $now[1];
-                $res[$cntAddr]['address'] = $now[2];
-                $res[$cntAddr]['name'] = $now[0];
-                $cntAddr ++;
-            }
-        }
-        return $res;
-    }
-
-    /**
      * 用户下单页面
      * 通过 post 得到的数据：
      *      inst   立即下单
@@ -250,16 +255,16 @@ class Order extends My_Controller{
             if ($type > 0) {
                 echo json_encode(0);
             } else {
-                $this->nologin(site_url('order/index'));
+                $this->_nologin(site_url('order/index'));
             }
             return;
         }
         $order = $this->morder->getOrder($this->userId);
-        $cart = $this->dealCart($order);
-        $data['lsp'] = $this->getSendPrice($cart);
+        $cart = $this->_dealCart($order);
+        $data['lsp'] = $this->_getSendPrice($cart);
         $data['cart']  = $cart;
         $temp = $this->user->ordaddr($this->userId);
-        $data['buyer'] = $this->addrDecode($temp);
+        $data['buyer'] = $this->_addrDecode($temp);
 
         $this->help->showArr($data);
 
@@ -297,7 +302,7 @@ class Order extends My_Controller{
         $res = Array();
         //查找下订单的人的信息，地址，电话
         $inf = $this->user->ordaddr($userId);
-        $temp = $this->addrDecode($inf);//用户保存的地址id中记录的就是addrdecode 生成的地址列表中的下标号码
+        $temp = $this->_addrDecode($inf);//用户保存的地址id中记录的就是addrdecode 生成的地址列表中的下标号码
         return $temp[0];
     }
 
@@ -312,7 +317,7 @@ class Order extends My_Controller{
             if($ajax){
                 echo json_encode(0);
             }else{
-                $this->nologin(site_url()."/order/myorder");
+                $this->_nologin(site_url()."/order/myorder");
             }
             return;
         }
@@ -561,7 +566,7 @@ class Order extends My_Controller{
         $title = $this->mitem->getTitle($temp["item_id"]);
         if($title){
             //当info存在并且不是字符串false的时候，分割，否则返回空
-            $inf = ($temp["info"] && $temp["info"] != "false") ? $this->spInf($temp["info"]):"";
+            $inf = ($temp["info"] && $temp["info"] != "false") ? $this->_spInf($temp["info"]):"";
             $list  .= $title["title"].$inf." ".$temp["buyNum"]." x ".$temp["price"]."\n";
             $cntAl += $temp["buyNum"]*$temp["price"];
             //more是不一定存在的
@@ -603,7 +608,7 @@ class Order extends My_Controller{
         $ordInfo = $this->getOrderInfo( $data["orderId"] ,$data["buyNum"] ,$data["more"]);
         $quoto = "e点工作室竭诚为您服务";//口号
         $time  = date("Y-m-d H:i:s");
-        $user  = $this->getUser($data["addr"]);//取得用户的信息，$user中有名字，地址和联系方式，
+        $user  = $this->_getUser($data["addr"]);//取得用户的信息，$user中有名字，地址和联系方式，
         $this->load->config("edian");                    //根据对应状态修改对应的商品的状态
         $idlist = Array();//保存打印处理商品的菜单id
         for($i = 0 ,$cnt = count($ordInfo) ;$i < $cnt;){
@@ -708,17 +713,7 @@ class Order extends My_Controller{
         }
         return false;
     }
-    /**
-     *    打印成功之后，修改对应的状态,已经被废弃
-     * 传入对应的 id，修改成为对应的状态
-     * 这里就不做反馈了，一来复杂，而来因为这个反馈不是给用户看的，一般不会出问题，
-     * @param int $ordId 购物车的商品id
-     * @param int $state 修改完成之后，对应的状态，
-     */
-    private function afPnt($ordId,$state)
-    {
-        $this->morder->setState($addr,$arr["ordId"],$info,$state);
-    }
+
 
 
 

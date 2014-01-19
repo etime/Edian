@@ -10,11 +10,8 @@
  */
 class item extends MY_Controller {
     // 存储用户的 userId
-    var $userId;
+    protected $userId;
 
-    /**
-     * 开始声明userId,因为用到的地方比较多，My_controller中集成了几个经常用到的操作
-     */
     function __construct() {
         parent::__construct();
         $this->userId = $this->getUserId();
@@ -25,8 +22,8 @@ class item extends MY_Controller {
         $this->load->model('morder');
         $this->load->library('help');
     }
-    public function item2()
-    {
+
+    public function item2() {
         $this->load->view('item2');
     }
 

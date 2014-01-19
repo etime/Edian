@@ -6,6 +6,7 @@ class Search extends BaseSearch {
     function __construct() {
         parent::__construct();
         $this->load->model('store');
+        $this->load->model('comitem');
     }
 
     /**
@@ -139,7 +140,6 @@ class Search extends BaseSearch {
      * @todo 在ans数组中传入button和order
      */
     public function searchAction($button = 1, $order = 1, $pageId = 1) {
-        // 通过 GET 的方式获得用户输入的关键字，并设置 url 中的 GET 字段
         if (isset($_GET['key'])) {
             $key = trim($_GET['key']);
             $getString = '?key=' . $key;
@@ -147,9 +147,7 @@ class Search extends BaseSearch {
             $key = '';
             $getString = '';
         }
-        // 存储用户输入的原始关键字
         $keyBackUp = $key;
-        // 将所有的关键字字符串过滤掉非法字符并拆分成关键字数组
         $key = $this->_filterKeywords($key);
         // 对关键字数组中的所有关键字进行搜索，搜索的范围是：在商品的 title 和 category 中搜索
         $data = array();
@@ -169,10 +167,15 @@ class Search extends BaseSearch {
             $ans = array();
         } else {
             for ($i = 0, $len = (int)count($ans); $i < $len; $i ++) {
-                $ans[$i] = $this->mitem->getDetailInfo($ans[$i]);
+                $itemId = $ans[$i];
+                $ans[$i] = $this->mitem->getDetailInfo($itemId);
+                $commenterAmount = $this->comitem->getCommenterAmount($itemId);
+                $ans[$i]['storeName'] = $this->store->getStoreName($ans[$i]['belongsTo']);
+                if ($commenterAmount != false && $commenterAmount != 0) {
+                    $ans[$i]['satisfyScore'] = $ans[$i]['satisfyScore'] / $commenterAmount;
+                }
             }
         }
-
         // 将所得结果按照指定顺序排序
         $ans = $this->_sort($ans, $button, $order);
         // 将所得的结果进行分页

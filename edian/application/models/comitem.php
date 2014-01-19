@@ -252,6 +252,22 @@ class ComItem extends CI_Model {
         $sql = "UPDATE comItem SET context = '$newComment' WHERE id = $cmtId";
         return $this->db->query($sql);
     }
+
+    /**
+     * 获取指定商品编号的评论者数量
+     * @param $itemId 商品编号
+     * @return boolean | int 如果有人评论，返回评论数量，否则返回 false
+     */
+    public function getCommenterAmount($itemId) {
+        $sql = "SELECT COUNT(*) FROM comItem WHERE item_id = $itemId";
+        $ans = $this->db->query($sql);
+        if ($ans->num_rows == 0) {
+            return false;
+        } else {
+            $ans = $ans->result_array();
+            return $ans[0]['COUNT(*)'];
+        }
+    }
 /**********************************************************************************************************************/
 /**********************************************************************************************************************/
 /**********************************************************************************************************************/

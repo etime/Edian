@@ -14,6 +14,23 @@ class Shop extends BaseSearch {
     }
 
     /**
+     *  显示上面view,select,index三个的页面显示
+     *  将三个页面都应该有的数据进行索引，添加，同时传入原来三个页面的不同的数据
+     *  @param  array   $good   商品的列表，来源有三个不同的函数
+     *  @param  int     $store  商店的id
+     *  @param  string  $page   商店的分页内容
+     */
+    protected function _showView($good, $store) {
+        $data1 = $this->store->getShopInfo($store);
+        //$data1['itemlist'] = $good;
+        //$data1['pageNumFooter'] = $page;
+        $data1['storeId'] = $store;
+        $data1 = array_merge($good , $data1);
+        //$this->help->showArr($data1);
+        $this->load->view('store' , $data1);
+    }
+
+    /**
      * 商店首页入口
      * @param int $store 商店编号
      * @return boolean
@@ -37,7 +54,7 @@ class Shop extends BaseSearch {
         $commonUrl = site_url('shop/index/' . $storeId);
         $ans['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount']);
         //$this->help->showArr($ans);
-        $this->showView($ans, $storeId);
+        $this->_showView($ans, $storeId);
     }
 
     /**
@@ -105,7 +122,7 @@ class Shop extends BaseSearch {
         $commonUrl = site_url('shop/search/' . $storeId);
         $ans['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount'], $getString);
         // 调出相关页面进行显示
-        $this->showView($ans, $storeId);
+        $this->_showView($ans, $storeId);
     }
 
     /**
@@ -147,25 +164,7 @@ class Shop extends BaseSearch {
         $ans['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount'], $getString);
 
         // 调出相关页面进行显示
-        $this->showView($ans, $storeId);
-    }
-
-    /**
-     *  显示上面view,select,index三个的页面显示
-     *  将三个页面都应该有的数据进行索引，添加，同时传入原来三个页面的不同的数据
-     *  @param  array   $good   商品的列表，来源有三个不同的函数
-     *  @param  int     $store  商店的id
-     *  @param  string  $page   商店的分页内容
-     */
-    protected function showView($good , $store)
-    {
-        $data1 = $this->store->getShopInfo($store);
-        //$data1['itemlist'] = $good;
-        //$data1['pageNumFooter'] = $page;
-        $data1['storeId'] = $store;
-        $data1 = array_merge($good , $data1);
-        //$this->help->showArr($data1);
-        $this->load->view('store' , $data1);
+        $this->_showView($ans, $storeId);
     }
 }
 ?>

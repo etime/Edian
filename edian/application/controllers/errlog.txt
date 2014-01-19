@@ -1,6 +1,0 @@
-1376159381,dsprint	,dtuid:308001300434,	return:	OK,timeout:	3
-1376159657,dsprint	,dtuid:308001300434,	return:	OK,timeout:	3
-1376162655,dsprint	,dtuid:308001300434,	return:	OK,timeout:	3
-1376162782,dsprint	,dtuid:308001300434,	return:	OK,timeout:	3
-1376162994,dsprint	,dtuid:308001300434,	return:	OK,timeout:	3
-1376163217,dsprint	,dtuid:308001300434,	return:	OK,timeout:	3

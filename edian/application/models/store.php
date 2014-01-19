@@ -31,12 +31,6 @@
  *
  */
 class Store extends CI_Model {
-    /**
-     * 构造函数
-     *
-     * @author farmerjian <chengfeng1992@hotmail.com>
-     * @since 2013-11-24 09:55:40
-     */
     public function __construct() {
         parent::__construct();
         $this->load->model("mwrong");
@@ -537,6 +531,26 @@ class Store extends CI_Model {
         } else {
             $res = $res->result_array();
             return $res[0]['duration'];
+        }
+    }
+
+    /**
+     * 获取指定编号商店的商店名字
+     * @param int $storeId 商店编号
+     * @return boolean | string
+     */
+    public function getStoreName($storeId) {
+        $storeId = (int)$storeId;
+        if ($storeId == 0) {
+            return false;
+        }
+        $sql = "SELECT name FROM store WHERE id = $storeId";
+        $ans = $this->db->query($sql);
+        if ($ans->num_rows == 0) {
+            return false;
+        } else {
+            $ans = $ans->result_array();
+            return $ans[0]['name'];
         }
     }
 }
