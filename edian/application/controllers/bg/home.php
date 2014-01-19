@@ -32,6 +32,7 @@ class Home extends MY_Controller {
         $this->load->model('store');
         $this->load->config('edian');
         $this->load->library('help');
+        $this->load->library('pagesplit');
         $this->userId = $this->getUserId();
         $this->isAdmin = false;
         $this->isBoss = false;

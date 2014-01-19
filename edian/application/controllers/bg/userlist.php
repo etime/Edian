@@ -7,29 +7,47 @@ require "home.php";
  * @subpackage bg
  * @author unasm | farmerjian
  */
-class Userlist extends Home{
-    function __construct(){
+class Userlist extends Home {
+
+    function __construct() {
         parent::__construct();
         $this->user_id = $this->getUserId();
-        $this->load->library('help');
     }
+
     /**
      * 商店管理的函数，
      */
-    function index(){
-        $this->_checkAuthority(site_url('bg/userlist/index'));
-        if($this->isAdmin){
-            $this->load->model("store");
+    function index($pageId = 1) {
+        if (! $this->_checkAuthority(site_url('bg/userlist/index'))) {
+            return false;
+        }
+        if ($this->isAdmin) {
             $data['storeAll'] = $this->store->getStateList();
+
+            if (isset($_GET['$pageId'])) {
+                $pageId = $_GET['pageId'];
+            }
+            $pageId = (int)$pageId;
+
+            // 将所得的结果进行分页
+            if ($data['storeAll'] != false) {
+                $temp = $this->pagesplit->split($data['storeAll'], $pageId, $this->config->item('pageSize'));
+                $data['storeAll'] = array();
+                $data['storeAll'] = $temp['newData'];
+                $commonUrl = site_url('bg/userlist/index');
+                $data['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount']);
+            }
+
             $data['state'] = $this->config->item("storeState");
+            $this->help->showArr($data);
             $this->load->view("bgStoreList" , $data);
-        }else {
+        } else {
             echo '权限不足';
             return false;
         }
     }
-    public function mange($storeId = -1,$state = -1)
-    {
+
+    public function mange($storeId = -1,$state = -1) {
         //将用户block的状态修改成指定的状态
         if(($state != -1 ) && ($state != -1)){
             $this->_checkAuthority(site_url('bg/userlist/index'));
@@ -55,14 +73,28 @@ class Userlist extends Home{
     *  管理boss和user表的内容
     *  感觉没有必要再对这两个表的东西修改了，一切的差异化，都在后台实现吧
      */
-    public function user($pageId  = 0)
-    {
+    public function user($pageId  = 1) {
         $this->_checkAuthority(site_url('bg/userlist/user'));
         if($this->isAdmin){
             $this->load->model('user');
             $data['userList'] = $this->user->getCilnrsList($pageId);
             $data['state'] = $this->config->item('userState');
-            //$this->help->showArr($data['userList']);
+
+            if (isset($_GET['$pageId'])) {
+                $pageId = $_GET['pageId'];
+            }
+            $pageId = (int)$pageId;
+
+            // 将所得的结果进行分页
+            if ($data['userList'] != false) {
+                $temp = $this->pagesplit->split($data['userList'], $pageId, $this->config->item('pageSize'));
+                $data['userList'] = array();
+                $data['userList'] = $temp['newData'];
+                $commonUrl = site_url('bg/userlist/user');
+                $data['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount']);
+            }
+
+            $this->help->showArr($data);
             $this->load->view('bgUserList' , $data);
         } else {
             exit('权限不足');
