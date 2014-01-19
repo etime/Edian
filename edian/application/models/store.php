@@ -494,7 +494,7 @@ class Store extends CI_Model {
      */
     public function getStateList() {
         $res = $this->db->query('SELECT name, id ,state , ownerId  FROM store');
-        if($res->num_rows){
+        if ($res->num_rows) {
             return $res->result_array();
         } else {
             $this->load->model('mwrong');

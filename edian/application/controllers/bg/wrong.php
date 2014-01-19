@@ -77,7 +77,7 @@ class Wrong extends MY_Controller
     protected function getTp($userId)
     {
         $this->load->model("user");
-        return $this->user->getType($userId);
+        return $this->user->getCredit($userId);
     }
     /**
      * 删除错误的报告，之后跳转到index

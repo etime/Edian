@@ -109,10 +109,6 @@ class Order extends Home {
         if ($this->_checkAuthority(site_url('bg/order/ontime')) == false) {
             return;
         }
-//        if (isset($_GET['pageId'])) {
-//            $pageId = $_GET['pageId'];
-//        }
-//        $pageSize = $this->config->item('pageSize');
         //只是检验storeId,因为storeId才是决定一个商店最重要的角色
         if(!$this->userId){
             $this->nologin(site_url()."/order/ontime");
@@ -133,19 +129,6 @@ class Order extends Home {
                 $data["order"] = $this->morder->getOntime($storeId);
             }
         }
-        //因为及时订单比较少，所以不想加分页，店家也不想，不是吗？
-        /*
-        if ($data['order']) {
-            $temp = $this->pagesplit->split($data['order'], $pageId, $pageSize);
-            $data['order'] = $temp['newData'];
-            $data['pageNumFooter'] = $this->pagesplit->setPageUrl( site_url('order/ontime'), $pageId, $temp['pageAmount']);
-        }
-         */
-        /*
-        if($data["order"])
-            $data["order"] = $this->formData($data["order"]);
-        echo $data['pageNumFooter'] . '<br>';
-         */
         var_dump($data['order'][0]);
         $this->load->view("onTimeOrder",$data);
     }
