@@ -126,7 +126,7 @@
                     </p>
                     <p class = "sep">
                     <span>已售<?php echo $val['sellNum'] ?></span>
-                        <span>奥蒂旗舰店</span>
+                        <a href = "<?php echo $siteUrl . '/sho/index/' . $val['belongsTo'] ?>"><?php echo $val['storeName'] ?></a>
                     </p>
                 </div>
             </li>

@@ -13,42 +13,47 @@ ul{
 }
 a{
     text-decoration:none;
-    color:gray;
 }
-a:visited{
-    color:gray;
-}
-a:hover{
-    text-decoration:underline;
-}
-a:active{
-    color:yellow;
+body, html , #frameCon{
+    height:100%;
 }
 body{
-    height:100%;
-    margin:0px;
+    margin:0px auto;
     overflow:hidden;
+    width:1200px;
 }
 #frameCon{
-    border:none;
     margin:0;
     border:none;
-    position:absolute;
-    left:156px;
-    top:70px;
-    bottom:0px;
-    right:0px;
     overflow:hidden;
+    float:left;
+    width:1075px;
 }
 iframe{
     height:100%;
     width:100%;
 }
 .side{
-    width:150px;
-    position:absolute;
-    background:#363636;
+    width:115px;
+    float:left;
+    padding:5px;
+}
+.side li{
+    color:white;
+    background:#434343;
+    border-radius:3px;
+    padding:5px;
+    margin:5px 0;
+}
+.side li:hover ,.side .liCse{
+    background:rgb(99, 228, 39);
 }
 .top{
     border-bottom:1px solid #F0F0F0;
+    background:#434343;
+    height:80px;
+}
+select{
+    width:100%;
+    overflow:hidden;
 }

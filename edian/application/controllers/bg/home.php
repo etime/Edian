@@ -193,7 +193,6 @@ class Home extends MY_Controller {
         } else if($credit === 2){
             $data['storeList'] = $this->store->getStoreList();
         }
-        //$this->help->showArr($data);
         $this->load->view('bghome', $data);
     }
 

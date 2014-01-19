@@ -12,7 +12,7 @@ $siteUrl = site_url();
  </head>
  <body>
     <div class="top">
-        <h2 ><span>E点,悠闲生活</span>这里是管理员页面 ,欢迎吐槽</h2>
+        <strong>Edian</strong>
     </div>
 <div class="side" id = "side">
 <!--这里是art的开始------>
@@ -33,13 +33,13 @@ if($type === 2){
     </ul>
 -->
     <ul id = "order" class = "order">
-        <a href = "<?php echo $siteUrl.('/bg/order/ontime') ?>" target = "content"><li>待处理订单</li></a>
+        <a href = "<?php echo $siteUrl.('/bg/order/ontime') ?>" target = "content"><li class = "liCse">待处理订单</li></a>
         <a href = "<?php echo $siteUrl.('/bg/order/today') ?>" target = "content"><li>今日订单</li></a>
         <a href = "<?php echo $siteUrl.('/bg/order/history') ?>" target = "content"><li>历史订单</li></a>
     </ul>
     <ul class = "art" id = "art" >
         <a href = "<?php echo $siteUrl.'/bg/set/setAct' ?>" target="content"><li>商城设置</li></a>
-        <a href ="<?php  echo $siteUrl.('/bg/item/mange')?>" target="content">
+        <a href ="<?php  echo $siteUrl.('/bg/item/manage')?>" target="content">
             <li>商品管理</li>
         </a>
         <!--商品管理其实分两个部分，一个是用户自己看的，一个是网站工作人员看的-->
@@ -47,8 +47,6 @@ if($type === 2){
         <!-- 评论分为店家看的和管理员可以修改的部分-->
         <a href = "<?php  echo $siteUrl.('/bg/home/item')?>" target="content"><li>添加商品</li></a>
     </ul>
-<!--这里是art的结束------>
-<!--这里是img的开始------>
 <!--
     <ul id = "img" class = "img">
         <a href = "<?php echo site_url('bg/home/imglist')?>" target="content"><li>图片管理</li></a>
@@ -60,6 +58,7 @@ if($type === 2){
     </ul>
     <form action="<?php echo $siteUrl . '/bg/home/index/' ?>" method="post" accept-charset="utf-8">
         <select name = 'storeId'>
+        <option value="1">test sdf asd f asdf asd fa ds </option>
         <?php foreach ($storeList  as $value){
                 if($value['id'] == $storeId){
                     echo "<option value=" . $value['id'] . " selected = 'selected'>".$value['name'] ."</option>";
