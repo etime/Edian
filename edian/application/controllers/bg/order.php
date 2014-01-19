@@ -10,9 +10,10 @@ include 'home.php';
  *  @sub_package bg
  */
 class Order extends Home {
-    // 存储商店编号
-    var $storeId;
-    var $pageSize;
+    /** 存储商店编号*/
+    protected  $storeId;
+    /** 是分页的大小，每页多少内容 */
+    protected $pageSize;
 
     // 构造函数
     function __construct() {
@@ -89,16 +90,18 @@ class Order extends Home {
         }
         $data['order'] = $this->morder->hist($this->storeId);
         if ($data['order']) {
-            $temp = $this->pagesplit->split($data['order'], $pageId, $pageSize);
-            $data['order'] = $temp['newData'];
+            $temp = $this->pagesplit->split($data['order'], $pageId, $this->pageSize);
+            //$data['order'] = $temp['newData'];
             $commonUrl = site_url() . '/order/hist';
             $data['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount']);
             echo $data['pageNumFooter'];
         }
+        //$this->help->showArr($data['order']);
         if ($data['order']) {
-            $data['order'] = $this->histForm($data['order']);
+            //$data['order'] = $this->histForm($data['order']);
         }
-        $this->load->view('histOrder',$data);
+        //$this->help->showArr($data);
+        $this->load->view('histOrder2');
     }
 
     /**

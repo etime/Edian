@@ -148,6 +148,7 @@ class Morder extends Ci_Model {
     /**
      * 获取制定商店的所有历史订单
      * @param int $storeId 商店的编号
+     * @param int $pageId  页码号，
      * @return boolean | array 商店的所有历史订单
      */
     public function hist($storeId) {
@@ -160,8 +161,8 @@ class Morder extends Ci_Model {
         if ($res->num_rows === 0) {
             return false;
         } else {
+            $len = $res->num_rows;
             $res = $res->result_array();
-            $len = count($res);
             for ($i = 0; $i < $len; $i ++) {
                 $res[$i]['info'] = $this->_decodeInfo($res[$i]['info']);
             }

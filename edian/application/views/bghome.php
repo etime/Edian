@@ -14,6 +14,7 @@ $siteUrl = site_url();
     <div class="top">
         <strong>Edian</strong>
     </div>
+
 <div class="side" id = "side">
 <!--这里是art的开始------>
 <?php
