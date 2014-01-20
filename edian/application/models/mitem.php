@@ -784,8 +784,11 @@ class Mitem extends Ci_Model {
         return $res;
     }
 
+    /**
+     * 对title进行反转义
+     * 废弃掉了，addslashes的方式弱爆了
+     */
     private function titleFb($res){
-        //对title进行反转义
         for($i = 0; $i < count($res);$i++){
             $res[$i]["title"] = stripslashes($res[$i]["title"]);
         }

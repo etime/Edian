@@ -47,9 +47,9 @@
             <input type="file" name="logo" id="logo"/>
             <span class="button" id = "butLogo">上传图片</span>
 -->
-            <input type="button" name="butLogo" id="butLogo" value="上传图片" />
             <input type="hidden" name="logo" />
             <img  id = "afterUpload" src = "<?php echo @$logo ?>" />
+            <input type="button" name="butLogo" id="butLogo" value="上传图片" />
         </li>
         <li>
             <span class = "item">客服电话:</span>

@@ -1,6 +1,8 @@
 <?php
 /**
  * 用于处理所有和 user 这个表有关的数据信息
+ * address 的编码:
+ *      第一位是用户的地址，第二位是第二选择地址，由名字，手机号码，地址构成，解码之后第一位是名字，第二位是号码，第三位是地址，具体有getAddr做
  * @author  farmerjian <chengfeng1992@hotmail.com>
  * @since   2013-11-24 23:29:38
  * @todo    http://wudi.in/archives/127.html  看下这个。。
@@ -329,6 +331,40 @@ class User extends CI_Model {
     }
 
     /**
+     * 通过地址的下表获取对应的地址
+     * 传入单个的字符，和用户id，获取对方在下单的时候，选择的id
+     *
+     * @return array
+     * @author unasm
+     */
+    public function getAddrSub($pos , $userId)
+    {
+        //$this->db->query("")
+    }
+    /**
+     *  对地址进行解码
+     *  @param  string  $addr   地址构成的字符串
+     *  @param  int     $sub    下表，如果下表为-1，返回数组
+     *  return array
+     */
+    protected function decodeAddr($addr)
+    {
+        $adArr = explode('&', $addr);
+        $res = Array();
+        foreach ($adArr as $value) {
+            if($value){
+                $temp = explode('|' , $value);
+                if( (count($temp) === 3 ) || (count($temp) === 1) ){
+                    array_push($res, $temp);
+                } else{
+                    $this->load->mode('mwrong');
+                    $this->mwrong->insert(basename($_SERVER['PHP_SELF']) . __LINE__ . '行出现以外格式地址，请检查，地址字符串为' . $addr);
+                }
+            }
+        }
+        return $res;
+    }
+    /**
      * 根据用户编号获取用户昵称
      * @param int $userId         用户编号
      * @return boolean | string   用户昵称，或者返回用户不存在信息：false
@@ -347,7 +383,10 @@ class User extends CI_Model {
             return $res[0]['nickname'];
         }
     }
-
+    /**
+    *  获取手机号码和地址
+    *  @todo 地址没有解码
+     */
     public function ordaddr($userId) {
         $sql = 'SELECT phone, address FROM user WHERE id = ' . $userId;
         $res = $this->db->query($sql);
@@ -360,10 +399,38 @@ class User extends CI_Model {
     }
 
     /**
+     *  获取对应的下表和和用户手机，登录名,address , phone loginName，
+     *  @param int  $userId     用户的id
+     *  @param int  $addrSub    用户的地址下标，默认为-1 ，那个时候不在解码
+     *  @return array
+     */
+    public function getAplById($userId , $addrSub = -1)
+    {
+        $res = $this->db->query('SELECT address, phone, loginName FROM user where id = ' . $userId);
+        if($res->num_rows){
+            $res = $res->result_array();
+            $res = $res[0];
+            $address = $this->decodeAddr($res['address']);
+            if($addrSub == 0 && count($address[0]) === 1){
+                $temp[0] = $res['loginName'];
+                $temp[1] = $res['phone'];
+                $temp[2] = $address[0][0];
+                return $temp;
+            } else if($addrSub === -1){
+                return $res;
+            }else {
+                return $address[$addrSub];
+            }
+        } else {
+            return false;
+        }
+    }
+    /**
      * 为用户新增一个地址
      * @param string $addr
      * @param int $userId
      * @return mixed
+     * @todo,地址应该通过编码之后处理
      */
     public function appaddr($addr, $userId) {
         $userId = (int)$userId;

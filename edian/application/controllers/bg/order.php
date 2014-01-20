@@ -88,22 +88,81 @@ class Order extends Home {
         if (isset($_GET['pageId'])) {
             $pageId = $_GET['pageId'];
         }
+        $this->storeId = 2;
         $data['order'] = $this->morder->hist($this->storeId);
         if ($data['order']) {
             $temp = $this->pagesplit->split($data['order'], $pageId, $this->pageSize);
-            //$data['order'] = $temp['newData'];
+            $data['order'] = $temp['newData'];
             $commonUrl = site_url() . '/order/hist';
             $data['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount']);
-            echo $data['pageNumFooter'];
+            //echo $data['pageNumFooter'];
         }
         //$this->help->showArr($data['order']);
         if ($data['order']) {
-            //$data['order'] = $this->histForm($data['order']);
+            $data['order'] = $this->orderForm($data['order']);
         }
-        //$this->help->showArr($data);
-        $this->load->view('histOrder2');
+        //$this->help->showArr($data['order']);
+        $data['storeId'] =  $this->storeId;
+        $this->load->view('histOrder2' , $data);
     }
 
+    /**
+     *  对订单信息进行修缮弥补
+     *  很多购物车订单里面的信息只是保存了id，下标，现在开始修补完成，为呈现准备，目前是为历史订单准备
+     *  采用判断的方式是为了方便兼容，不是所有的修缮都会有对应的键值
+     *  目前针对的格式为
+     *  <pre>
+     *  0 => (
+     *      id=> 150
+     *      addr=> 0
+    *           info => (
+    *               orderNum=>
+    *               more=>
+    *               price=>
+    *               info=>
+    *           )
+    *       item_id=> 55
+    *       time=> 2013-12-29 23:17:37
+    *       ordor=> 52
+    *       state=> 2
+    *  )
+    *  </pre>
+     *  @param  array   $data 包含了各种各样需要修缮的订单信息，
+     *  @todo 需要检验各个同一时间的订单的state是否相同
+     */
+    protected function orderForm($data)
+    {
+        $cnt = 0;
+        for($i = 0, $len = count($data); $i < $len ; $i++){
+            $buyer = $data[$i]['ordor'];
+            $order = Array();
+            if(array_key_exists('addr' , $data[$i])){
+                $user = $this->user->getAplById($data[$i]['ordor'], $data[$i]['addr']);
+                $user['id'] = $data[$i]['ordor'];
+                //$res[$cnt]['order'] = $temp;
+            }
+            $res[$cnt]['item'] = Array();
+            $res[$cnt]['state'] = $data[$i]['state'];
+            $res[$cnt]['time'] = $data[$i]['time'];
+            $total = 0;
+            while($i < $len && $data[$i]['ordor'] === $buyer){
+                $item = Array();
+                if(array_key_exists('item_id' , $data[$i])){
+                    $item['id'] = $data[$i]['item_id'];
+                    $item['title'] = $this->mitem->getTitle($item['id']);
+                }
+                $item['info'] = $data[$i]['info'];
+                $total += $data[$i]['info']['price'] ;
+                $item['orderId'] = $data[$i]['id'];
+                array_push( $res[$cnt]['item'] , $item);
+                $i++;
+            }
+            $res[$cnt]['user'] = $user;
+            $res[$cnt]['total'] = $total;
+            $cnt++;
+        }
+        return $res;
+    }
     /**
      * 显示后台当前正要处理的订单信息
      * 为后台实时刷新的页面提供数据,显示正要处理的订单信息

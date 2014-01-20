@@ -7,7 +7,7 @@
     width:50px;
 }
 body{
-    background:rgb(226, 226, 226);
+    background:rgb(243,243,243);
     margin:0;
 }
 li{
@@ -83,7 +83,7 @@ table{
     width:600px;
 }
 tr:hover{
-    background:#00A200;
+    background:#B6B6B6;
 }
 td ,th{
     border:none;
@@ -93,4 +93,7 @@ td ,th{
 }
 .cate{
     float:left;
+}
+#afterUpload{
+    width:176px;
 }

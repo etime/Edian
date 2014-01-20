@@ -33,6 +33,7 @@
  * 付款方式：(目前必然是货到付款，之后就再说吧,这个，目前没有为它设置字段，放到info中去吧
  * ordor 下订单的人
  * 所谓的购物车，就是order中state为0的东西
+ * SELECT * FROM `content` WHERE id <= (SELECT id FROM `content` ORDER BY id desc LIMIT ".($page-1)*$pagesize.", 1) ORDER BY id desc LIMIT $pagesize>
  *  @name       models/order.php
  *  @Author     unasm<1264310280@qq.com>
  *  @since      2013-07-17 12:47:45
@@ -147,16 +148,17 @@ class Morder extends Ci_Model {
 
     /**
      * 获取制定商店的所有历史订单
-     * @param int $storeId 商店的编号
-     * @param int $pageId  页码号，
+     * @param int $storeId      商店的编号
+     * @param int $pageId       页码号，
+     * @param int $pageSize     每页的数据
      * @return boolean | array 商店的所有历史订单
      */
-    public function hist($storeId) {
+    public function hist($storeId , $pageId  = -2, $pageSize  = -1) {
         $storeId = (int)$storeId;
         if ($storeId === 0) {
             return false;
         }
-        $sql = "SELECT id, addr, info, item_id, time, ordor, state FROM ord WHERE seller = $storeId AND state > 0";
+        $sql = "SELECT id, addr, info, item_id, time, ordor, state FROM ord WHERE seller = $storeId AND state > 0 ORDER BY time";
         $res = $this->db->query($sql);
         if ($res->num_rows === 0) {
             return false;
