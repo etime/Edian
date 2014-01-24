@@ -37,7 +37,7 @@ $baseUrl = base_url();
                 <span><?php echo $order[$i]['time'] ?></span>
                 <font class = "up"> </font>
             </div>
-            <div class = "buyer clearfix" style = "display:none">
+            <div class = "buyer clearfix" >
                 <div class = "clearfix">
                     <div class = "info">
                         <ul>
@@ -98,7 +98,7 @@ $baseUrl = base_url();
                 <span>1293-32-32 32:12:21</span>
                 <font class = "up"> </font>
             </div>
-            <div class = "buyer clearfix" style = "display:none">
+            <div class = "buyer clearfix">
                 <div class = "info">
                     <ul>
                         <li>

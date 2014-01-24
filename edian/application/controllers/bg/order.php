@@ -133,8 +133,10 @@ class Order extends Home {
     protected function orderForm($data)
     {
         $cnt = 0;
+        $this->help->showArr($data);
         for($i = 0, $len = count($data); $i < $len ; $i++){
             $buyer = $data[$i]['ordor'];
+            $time = $data[$i]['time'];
             $order = Array();
             if(array_key_exists('addr' , $data[$i])){
                 $user = $this->user->getAplById($data[$i]['ordor'], $data[$i]['addr']);
@@ -145,7 +147,7 @@ class Order extends Home {
             $res[$cnt]['state'] = $data[$i]['state'];
             $res[$cnt]['time'] = $data[$i]['time'];
             $total = 0;
-            while($i < $len && $data[$i]['ordor'] === $buyer){
+            while($i < $len && ($data[$i]['ordor'] === $buyer ) && ($time === $data[$i]['time'])){
                 $item = Array();
                 if(array_key_exists('item_id' , $data[$i])){
                     $item['id'] = $data[$i]['item_id'];
