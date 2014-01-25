@@ -1,19 +1,27 @@
+<?php
+    $baseUrl = base_url();
+?>
 <!DOCTYPE html>
 <html>
     <head>
         <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-        <title>test</title>
+        <title>游戏开发</title>
     </head>
     <body>
-        <form action="" method="get" accept-charset="utf-8">
-            <a href = "">当前1/3</a>
-            <a href = "">第一页</a>
-            <a href = "">上一页</a>
-            <a href = "">下一页</a>
-            <span>
-                <input type="text" name="pageId"   />
-            </span>
-            <a href = "">尾页</a>
-        </form>
+        <h1>豆家杰SB</h1>
+        <canvas id = "canvas">
+            your browser didn't support canvas;
+        </canvas>
+        <p>
+            <input type="button" name="bton" id="bton" value="投掷" />
+        </p>
     </body>
+    <script type="text/javascript" charset="utf-8" src = "<?php  echo $baseUrl . 'js/game.js'?>"></script>
+<style type="text/css" media="all">
+    #canvas{
+        width:400px;
+        height:200px;
+        background:#ddd;
+    }
+</style>
 </html>
