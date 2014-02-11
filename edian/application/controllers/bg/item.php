@@ -48,13 +48,15 @@ class item extends Home {
         echo($this->storeId);
         echo($this->bossId);
         $data['item'] = $this->mitem->getBgList($this->storeId);
-        $data['stateMark'] = $this->config->item('state');
+        $data['stateMark'] = $this->config->item('itemState');
         if ($data['item']) {
             $temp = $this->pagesplit->split($data['item'], $pageId, $this->pageSize);
             $data['item'] = $temp['newData'];
             $commonUrl = site_url('/bg/item/manage');
             $data['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount']);
         }
+        //$this->isAdmin = true;
+        //$data['isAdmin'] = $this->isAdmin;
         $this->help->showArr($data);
         $this->load->view('bgItemMan', $data);
     }
@@ -162,6 +164,16 @@ class item extends Home {
 /**********************************************************************************************************************/
 /**********************************************************************************************************************/
 /**********************************************************************************************************************/
+    /**
+     * 修改商品的上传时候的信息
+     * 在商品列表里面，对商品信息进行修改，
+     * @param int   $itemId     商品对应的id
+     * @author unasm    2014-02-11 10:29:30
+     */
+    public function update($itemId = -1)
+    {
+        $this->load->view("mBgItemAdd" , $data);
+    }
     public function set($state = -1,$itemId = -1)
     {
         //指定商品指定状态
