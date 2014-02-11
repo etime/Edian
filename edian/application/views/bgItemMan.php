@@ -23,9 +23,17 @@
 ?>
     <table border = "1">
         <tr>
-            <th>标题</th>
+            <th>全站类别</th>
+            <th>本店类别</th>
+            <th>商品名</th>
             <th>库存</th>
+
             <th>价格(元)</th>
+            <?php
+                if(isset($isAdmin) && $isAdmin){
+                    echo '<th>积分</th>';
+                }
+            ?>
             <th>状态</th>
             <th class = "oper">操作</th>
         </tr>
@@ -42,24 +50,35 @@ $now = $item[$i];
 ?>
         <tr>
             <td>
+                <?php echo $now['category']['keyi'] . ' >> ' . $now['category']['keyj'] . ' >> ' . $now['category']['keyk'] ?>
+            </td>
+            <td>
+                <?php
+                    echo $now['category']['category'];
+                ?>
+            </td>
+            <td>
        <a href = "<?php echo $siteUrl.'/item/index/'.$now['id'] ?>" target = "__blank"><?php echo $now["title"] ?></a></td>
             <td><?php echo $now['storeNum'] ?></td>
             <td>￥<?php echo $now["price"] ?></td>
+            <?php
+                if(isset($isAdmin) && $isAdmin){
+                    echo '<td> <input type="text" name="rating" value=' . $now['rating']. ' /><td>';
+                }
+            ?>
             <td>
                 <?php
-                    /*
-                    if($now["state"] == 0 )echo "<span class = 'onsale'>销售中..</span>";
-                    else if($now["state"] == 1)echo "<span class = 'down'>下架中..</span>";
-                    else if($now["state"] == 2)echo "<span class = 'prp'>预备中..</span>";
-                    */
                     echo '<span>' . $stateMark[$now['state']]. ' </span>';
                 ?>
             </td>
             <td class = "oper">
                 <?php
-                foreach ($stateMark  as $key => $val) {
-                    echo "<a href = '$siteUrl/bg/item/set/$key' " . $now['id'] . ">$val</a>";
+                if($stateMark){
+                    foreach ($stateMark  as $key => $val) {
+                        echo "<a href = '$siteUrl/bg/item/set/$key' " . $now['id'] . ">$val</a>";
+                    }
                 }
+                    echo '<a href = ' . $siteUrl .'/bg/item/update/' . $now['id'] . '>修改</a>';
                 ?>
             </td>
         </tr>
@@ -77,12 +96,9 @@ if(isset($pageNumFooter))
     .del{
         color:#000;
     }
-    .oper{
-        width:190px;
-    }
     .oper a{
     margin:0 5px;
-}
+    }
     td{
         text-align:center;
     }
@@ -100,6 +116,9 @@ if(isset($pageNumFooter))
     }
     .down{
         color:green;
+    }
+    tr:hover{
+        background:rgb(145, 214, 145);
     }
 </style>
 </body>
