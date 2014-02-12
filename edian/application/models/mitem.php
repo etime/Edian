@@ -178,7 +178,7 @@ class Mitem extends Ci_Model {
 
         // 更新商品上架时间
         $date = date('Y-m-d H:i:s', $date);
-        $sql = "UPDATE item SET putawayTime = $date WHERE id = $itemId";
+        $sql = "UPDATE item SET putawayTime = '$date' WHERE id = $itemId";
         $this->db->query($sql);
         return $itemId;
     }
@@ -397,6 +397,7 @@ class Mitem extends Ci_Model {
         // 对attr的解码
         $res['attr'] = $this->decodeAttr($res['attr'] , $itemId);
         // 获取相应老板的 userId
+        /*
         $this->load->model('store');
         $bossId = $this->store->getOwnerIdByStoreId($res['belongsTo']);
 
@@ -406,6 +407,8 @@ class Mitem extends Ci_Model {
         $this->load->model('user');
         $userId = $this->user->getUserIdByLoginName($loginName);
 
+        */
+        $userId = $this->getUserByBelongsTo($res['belongsTo']);
         if (is_array($res['attr']) && array_key_exists('idx', $res['attr'])) {
             $this->fixAttrImg($res['attr']['idx'], $userId);
         }
@@ -415,6 +418,23 @@ class Mitem extends Ci_Model {
         return $res;
     }
 
+    /**
+     *  根据storeid，即belongsto获取对应的userid，在补全路径的时候使用
+     *  @param int $storeId 获取店铺的id
+     */
+    public function getUserByBelongsTo($storeId)
+    {
+        $this->load->model('store');
+        $bossId = $this->store->getOwnerIdByStoreId($storeId);
+
+        $this->load->model('boss');
+        $loginName = $this->boss->getLoginNameByBossId($bossId);
+
+        $this->load->model('user');
+        //$userId = $this->user->getUserIdByLoginName($loginName);
+        return $this->user->getUserIdByLoginName($loginName);
+
+    }
     /**
      *  将attr中的img信息和路径补全
      *  目前在getItemInfo中调用
@@ -1091,6 +1111,27 @@ class Mitem extends Ci_Model {
             }
         }
         return $re;
+    }
+    /**
+     *  获得的都是上传时候的信息，现在重新获取，然后修改
+     *  @param int $itemId  想要修改的商品的编号
+     */
+    public function getInfoToChange($itemId)
+    {
+        $itemId = (int)$itemId;
+        $sql = 'SELECT title , detail , belongsTo , storeNum , price , thumbnail , attr , mainThumbnail , category  FROM item WHERE id = ' . $itemId;
+        $res = $this->db->query($sql);
+        if($res->num_rows){
+            $res = $res->result_array();
+            $res = $res[0];
+            $userId = $this->getUserByBelongsTo($res['belongsTo']);
+            $res['mainThumbnail'] = $this->fixImg($res['mainThumbnail'], $userId, 'main');
+            $res['thumbnail'] = $this->formThumb($res['thumbnail'], $userId);
+            $res['attr'] = $this->decodeAttr($res['attr'] , $itemId);
+            $res['category'] = $this->_decodeCategory($res['category'] , $itemId);
+            return $res;
+        }
+        return false;
     }
 }
 ?>

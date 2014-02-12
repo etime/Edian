@@ -78,6 +78,7 @@ class Write extends MY_Controller {
             $this->isBoss = false;
             return false;
         }
+        $this->load->model('user');
         $credit = $this->user->getCredit($this->userId);
         // 不是管理员或者老板权限
         $flag = false;

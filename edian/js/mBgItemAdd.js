@@ -26,7 +26,7 @@ function forbid() {
 $(document).ready(function  () {
     var NoImg = 1,doc = document;
     dir = eval(dir);//对dir数组进行编码
-    listAdd();
+    listAdd();      //添加本店列表
     forbid();       //处理禁止输入的字符
     $("form").submit(function () {
         //检查全站分类
@@ -245,9 +245,26 @@ function part (list) {
     /**
      * 在刚开始的时候，检验那些已经被选择了
      */
+    /*
     $("#part input").each(function  () {
         if(this.checked){
             getSon( $(this).val() );
+        }
+    })
+    */
+    var keyi = $("#part").find("input[name = 'keyi']");
+    var keyj = $("#part").find("input[name = 'keyj']");
+    var keyk = $("#part").find("input[name = 'keyk']");
+    keyi.each(function () {
+        if(this.checked && keyj.length === 0){
+            console.log('yes');
+            getSon( $(this).val() );
+        }
+    })
+    keyj.each(function () {
+        if(this.checked && keyk.length === 0){
+            console.log('eys');
+            getSon($(this).val());
         }
     })
     /**
@@ -255,40 +272,35 @@ function part (list) {
      */
     function getSon (text) {
         //清空之前添加的，防止错误
+        /*
         if(tempk){
             $("#kk").detach();
         }
         if (temp){
             $("#kj").detach();
         }
+        */
         $.each(list,function  (key,value) {
             if(key == text){
                 flag = 1;
-                if (temp)  {
-                    $("#kj").detach();
-                }
-                temp = "<p id = 'kj'><span class = 'item'>"+text+"</span>";
+                $("#kk").empty();
+                temp = "<span class = 'item'>"+text+"</span>";
                 for(var keyj in value){
                     temp+="<input type = 'radio' name = 'keyj' value = "+keyj+"><span>"+keyj+"</span>";
                 }
                 temp+="<input type = 'radio' name = 'keyj' value = '其他'><span>其他</span>";
-                temp+="</p>";
-                partId.after(temp);
+                $("#kj").html(temp);
                 $("#kj").delegate("input","click",function  () {
                     text = $(this.nextSibling).text();
-                    if(tempk){
-                        $("#kk").detach();
-                    }
                     $.each(value,function  (keyj,vj) {
                         if(text == keyj){
                             vj = decodeURI(vj).split(",");
-                            tempk="<p id = 'kk'><span class = 'item'>"+keyj+"</span>";
+                            tempk="<span class = 'item'>"+keyj+"</span>";
                             for (var k = 0,len = vj.length;k<len;k++) {
                                 tempk+="<input type = 'radio' name = 'keyk' value = "+vj[k]+"><span>"+vj[k]+"</span>";
                             }
                             tempk+="<input type = 'radio' name = 'keyk' value ='其他' ><span>其他</span>";
-                            tempk+="</p>";
-                            $("#kj").after(tempk);
+                            $("#kk").html(tempk);
                             return;
                         }
                     })

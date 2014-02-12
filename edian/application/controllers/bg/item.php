@@ -172,6 +172,13 @@ class item extends Home {
      */
     public function update($itemId = -1)
     {
+        if($this->_checkAuthority(site_url('bg/item/update/' . $itemId )) === false){
+            return;
+        }
+        $data = $this->mitem->getInfoToChange($itemId);
+        $data['dir'] = $this->part;
+        $data['update'] = 1;
+        //$this->help->showArr($data);
         $this->load->view("mBgItemAdd" , $data);
     }
     public function set($state = -1,$itemId = -1)

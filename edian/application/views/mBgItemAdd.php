@@ -19,21 +19,64 @@
 <body class = "clearfix">
     <div id="content" class="contSpace">
         <form action="<?php echo $siteUrl.('/write/bgAdd')?>" method="post" enctype = "multipart/form-data" accept-charset = "utf-8">
-            <div class = "part">
-                <p class = "col" id = "part">
+            <div class = "part" id = "part">
+                <p class = "col" >
                         <span class = "item">全站类别<span class = "X">*</span>:</span>
                     <!--js控制选择-->
-                    <?php foreach ($dir as $key => $value):?>
-                        <input type="radio" name="keyi" value="<?php echo $key ?>" />
-                            <span><?php echo $key?></span>
-                    <?php endforeach?>
-                </p>
+<?php
+    if(isset($update) && $update){
+        $str = '';
+        foreach ($dir as $key => $value){
+            if($key === $category['keyi']){
+                $str  .=  "<input type='radio' name='keyi' value= $key checked = checked/><span>$key</span>";
+                $arrkey = $value;
+                $keyIdx = $key;
+            } else {
+                $str .= "<input type='radio' name='keyi' value= $key /><span>$key</span>";
+            }
+        }
+        $dir = $arrkey;
+        $str .= "</p><p id = 'kj'><span class = 'item'>$keyIdx<span class = 'X'>*</span>:</span>";
+        foreach ($dir as $key => $value){
+            if($key === $category['keyj']){
+                $str  .=  "<input type='radio' name='keyj' value= $key checked = checked/><span>$key</span>";
+                $arrkey = $value;
+                $keyIdx = $key;
+            } else {
+                $str .= "<input type='radio' name='keyj' value= $key /><span>$key</span>";
+            }
+        }
+        $str .= '</p>';
+        $dir = $arrkey;
+        $str .= "</p><p id = 'kk'><span class = 'item'>$keyIdx<span class = 'X'>*</span>:</span>";
+        foreach ($dir as $value){
+            if($value === $category['keyk']){
+                $str  .=  "<input type='radio' name='keyk' value= $value checked = checked/><span>$value</span>";
+            } else {
+                $str .= "<input type='radio' name='keyk' value= $value /><span>$value</span>";
+            }
+        }
+        $str .= '</p>';
+        echo $str;
+    } else {
+        foreach ($dir as $key => $value){
+            echo "<input type='radio' name='keyi' value= $key /><span>$key</span>";
+        }
+        echo "</p><p id = 'kj'></p><p id = 'kk'></p>";
+    }
+?>
             </div>
             <li class = "col">
                 <span class = "item">本店分类<span class = "X">*</span>:</span>
                 <div id = "category">
                 <?php foreach ($category as $value):?>
-                    <input type = "radio" name = "category" value = "<?php echo $value?>" >
+<?php
+    if(isset($update) && $update && $value === $category['category']){
+        echo "<input type = 'radio' name = 'category' value = $value  checked = checked>";
+    } else {
+        echo "<input type = 'radio' name = 'category' value = $value >";
+    }
+?>
                     <span>
                         <?php echo $value;?>
                     </span>
@@ -43,14 +86,14 @@
             </li>
             <li class = "clearfix label col">
                 <span class = "item">商品名称<span>*</span></span>
-                <input type="text" name="title" id = "title" class = "title"  placeholder = "请用简短的描述商品,尽量包含名称和特点，尽量50字以内哦"/>
+                <input type="text" name="title" id = "title" class = "title"  placeholder = "请用简短的描述商品,尽量包含名称和特点，尽量50字以内哦" value="<?php echo @$title ?>"/>
                 <!----------------title太差劲了。,学习以下taobao了-------->
             </li>
             <li class = "col">
                 <span class = "item">商品价格
                     <span>*</span>:
                 </span>
-                <input type="text" name="price" class = "float" id = "price" />
+                <input type="text" name="price" class = "float" id = "price" value="<?php echo @$price?>"/>
                 <span>(元)</span>
                 <span class = "item" style = "display:none">促销价格:(元)</span><input type="hidden" name="sale" id = "sale"  class = "price"/><span id = "patten"></span>
             </li>
@@ -60,36 +103,41 @@
                 <input type = "button" name = "mainInput" value = "上传图片"  id = "mainInput"/>
                 <input type="hidden" name="mainThumbnail" />
                 <span id = "imgAtten">请用800*800以下图片,超过标准会压缩</span>
-                <img src = "" id = "toImgMain"/>
+                <img src = "<?php echo @$mainThumbnail ?>" id = "toImgMain"/>
             </li>
             <li class = "col">
                 <span class = "item">商品属性:</span>
                 <span>可以在下面灰色框添加至多两组属性,如颜色,重量,规格,口味等，右边添加黄色,绿色,或者是选用图片 </span>
                 </p>
                 <table  id = "pro" class = "pro" border = "1">
+                    <?php
+                        if(!$attr['idx'])$attr['idx'] = array();
+                        foreach($attr['idx'] as $key => $value):
+                    ?>
                     <tr  class="proBl clearfix">
-                        <td class = "proK">
-                            <input type = "text" name = "proKey" placeholder = "颜色尺寸等属性名称" >
-                        </td>
+                    <td class = 'proK'><input type = 'text' name = 'proKey' placeholder = '颜色尺寸等属性名称' value = "<?php echo @$key ?>" ></td>
                         <td class = "proVal">
                             <table >
                             <!--将来添加js禁止标点哦-->
+                            <?php foreach($value as $liAtr):?>
                                 <tr>
-                                    <td><input type = "text" name = "proVal" class = "liVal" placeholder = "红色XL等属性值"></td>
+                                <td><input type = "text" name = "proVal" class = "liVal" placeholder = "红色XL等属性值" value="<?php  echo @$liAtr['font']?>"></td>
                                     <td><a class = "choseImg" href = "#">选择图片</a></td>
                                     <td><a class = "uploadImg" href = "#">上传图片</a></td>
-                                    <td><img class = "chosedImg" src = ""/></td>
+                                    <td><img class = "chosedImg" src = "<?php echo @$liAtr['img'] ?>"/></td>
                                 </tr>
+                            <?php endforeach ?>
                             </table>
                         </td>
                     </tr>
+                <?php endforeach ?>
                 </table>
             <!--下面两个div  是为了上传图片准备的，一个是选择，一个是上传-->
 
 
             <li class = "col">
                 <span class = "item">总库存量<span >*</span>:</span>
-                <input type = "text" name = "storeNum" id = "storeNum" class = "float">
+                <input type = "text" name = "storeNum" id = "storeNum" class = "float" value="<?php echo @$storeNum ?>">
                 <span id = "as"></span>
                 <!--attten store-->
             </li>
@@ -101,6 +149,11 @@
                     <span class = "item">商品图片<span>*</span></span>
                     <input type = "button" name = "thumbButton" id = "thumbButton" value = "上传图片" />
                 </p>
+                <?php
+                    foreach ($thumbnail as $img) {
+                        echo "<img src = '" .$img ."' />";
+                    }
+                ?>
             </div>
             <input type="hidden" name="thumbnail" id="Img" />
             <!--通过js 修改value 所有图片的集合-->
@@ -119,7 +172,7 @@
 
             <li class = "col"><span class = "item">商品描述<span>*</span>:</span></li>
             <tr id = "tcont">
-                <td><textarea name="detail" id = "cont" style = "width:100%"> <?php echo "测试信息" ?></textarea></td>
+                <td><textarea name="detail" id = "cont" style = "width:100%"> <?php echo $detail ?></textarea></td>
             </tr>
          <input type="submit" name = "sub" class = "button" value="发表" />
         </form>
