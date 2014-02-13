@@ -49,7 +49,7 @@ td{
     height:13px;
     line-height:13px;
     padding:6px;
-    width:94%;
+    width:40%;
 }
 .button{
     padding:7px;
@@ -69,7 +69,11 @@ label{
     font-size:10px;
 }
 .item{
-    color:rgb(1, 93, 231);
+    width:80px;
+    display:inline-block;
+    margin-right:5px;
+    text-align:right;
+    color:black;
 }
 p{
     margin:8px 0;
@@ -90,6 +94,10 @@ p{
 input[type = "text"]{
     padding:5px;
     border-radius:2px;
+    border:1px solid rgb(156, 156, 156);
+}
+input[type = 'text']:hover{
+    border:1px solid rgb(99, 228, 39);
 }
 .item span{
     font-size:20px;
@@ -182,20 +190,13 @@ input[type = "text"]{
     clear:both;
 }
 .col{
-    border-bottom:1px solid #cfcfcf;
-    padding-bottom:5px;
+    padding-bottom:13px;
 }
 .intxt,.trnd input{
     width:55px;
 }
 .attrB{
     width:130px;
-}
-.part{
-    border-bottom:1px solid #cfcfcf;
-}
-.part .col{
-    border-bottom:none;
 }
 .button{
     background:#ececec;
@@ -207,4 +208,21 @@ input[type = "text"]{
 }
 .button:hover{
     background:#888888;
+}
+
+#category{
+    float:left;
+    display:inline-block;
+    width:690px;
+}
+#toImgMain{
+    width:90px;
+    height:90px;
+    border:1px solid rgb(209, 209, 209);
+}
+.dmg{
+    float:left;
+}
+.atten{
+    color:gray;
 }

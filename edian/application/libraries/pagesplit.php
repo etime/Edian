@@ -49,7 +49,7 @@ class PageSplit {
      *       <a href = "">上一页</a>
      *       <a href = "">下一页</a>
      *       <span>
-     *           跳转到<input type="text" name="pageId"/>
+     *           跳转到<input type="text" name="pageId" style = "width:20px"/>
      *       </span>
      *       <a href = "">尾页</a>
      * </form>
@@ -88,7 +88,7 @@ class PageSplit {
         }
         $ans .= "<a href = '$pageUrl'>下一页</a>";
         $ans .= "<span>";
-        $ans .= "跳转到<input type='text' name='pageId'/>";
+        $ans .= "跳转到<input type='text' name='pageId' style = 'width:20px'/>";
         $ans .= "</span>";
         $pageUrl = $commonUrl . '/' . $pageAmount . $getString;
         $ans .= "<a href = '$pageUrl'>尾页</a>";

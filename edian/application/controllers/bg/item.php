@@ -45,8 +45,6 @@ class item extends Home {
         	$pageId = $_GET['pageId'];
         }
         $data = array();
-        echo($this->storeId);
-        echo($this->bossId);
         $data['item'] = $this->mitem->getBgList($this->storeId);
         $data['stateMark'] = $this->config->item('itemState');
         if ($data['item']) {
@@ -57,7 +55,7 @@ class item extends Home {
         }
         //$this->isAdmin = true;
         //$data['isAdmin'] = $this->isAdmin;
-        $this->help->showArr($data);
+        //$this->help->showArr($data);
         $this->load->view('bgItemMan', $data);
     }
 

@@ -66,72 +66,95 @@
     }
 ?>
             </div>
-            <li class = "col">
-                <span class = "item">本店分类<span class = "X">*</span>:</span>
+            <li class = "col clearfix">
+                <span class = "item" style = "float:left">本店分类<span class = "X">*</span>:</span>
                 <div id = "category">
                 <?php foreach ($category as $value):?>
-<?php
-    if(isset($update) && $update && $value === $category['category']){
-        echo "<input type = 'radio' name = 'category' value = $value  checked = checked>";
-    } else {
-        echo "<input type = 'radio' name = 'category' value = $value >";
-    }
-?>
+                    <?php
+                        if(isset($update) && $update && $value === $category['category']){
+                            echo "<input type = 'radio' name = 'category' value = $value  checked = checked>";
+                        } else {
+                            echo "<input type = 'radio' name = 'category' value = $value >";
+                        }
+                    ?>
                     <span>
                         <?php echo $value;?>
                     </span>
                 <?php endforeach?>
-                </div>
                 <input type="text" name="listName" /><span class = "button" id = "listBut">添加分类</span>
+                </div>
             </li>
             <li class = "clearfix label col">
-                <span class = "item">商品名称<span>*</span></span>
+                <span class = "item">名称<span>*</span>:</span>
                 <input type="text" name="title" id = "title" class = "title"  placeholder = "请用简短的描述商品,尽量包含名称和特点，尽量50字以内哦" value="<?php echo @$title ?>"/>
                 <!----------------title太差劲了。,学习以下taobao了-------->
             </li>
             <li class = "col">
-                <span class = "item">商品价格
+                <span class = "item">价格
                     <span>*</span>:
                 </span>
                 <input type="text" name="price" class = "float" id = "price" value="<?php echo @$price?>"/>
                 <span>(元)</span>
                 <span class = "item" style = "display:none">促销价格:(元)</span><input type="hidden" name="sale" id = "sale"  class = "price"/><span id = "patten"></span>
             </li>
-            <li  class = "col">
-                <span class = "item">商品主图<span>*</span>:</span>
-                <!-- <input type="file" name="userfile" size = "14"/> -->
-                <input type = "button" name = "mainInput" value = "上传图片"  id = "mainInput"/>
-                <input type="hidden" name="mainThumbnail" />
-                <span id = "imgAtten">请用800*800以下图片,超过标准会压缩</span>
-                <img src = "<?php echo @$mainThumbnail ?>" id = "toImgMain"/>
+            <li  class = "col clearfix">
+                <span class = "item" style = "float:left">主图<span>*</span>:</span>
+                <div class = "dmg">
+                    <p>
+                        <input type = "button" name = "mainInput" value = "上传图片"  id = "mainInput"/>
+                        <span class = "atten">请用1:1的图片</span>
+                        <input type="hidden" name="mainThumbnail" value="<?php echo @$mainThumbnail ?>" />
+                    </p>
+                    <img src = "<?php echo @$mainThumbnail ?>" id = "toImgMain"/>
+                    <!-- <input type="file" name="userfile" size = "14"/> -->
+
+                </div>
             </li>
-            <li class = "col">
-                <span class = "item">商品属性:</span>
-                <span>可以在下面灰色框添加至多两组属性,如颜色,重量,规格,口味等，右边添加黄色,绿色,或者是选用图片 </span>
+            <div id = "thumbnail" class = "col" title = "双击图片删除">
+                <p>
+                    <span class = "item">副图<span>*</span></span>
+                    <input type = "button" name = "thumbButton" id = "thumbButton" value = "上传图片" />
+                    <span class="atten">请将宽度限制在1：2和2：1之内之内</span>
                 </p>
-                <table  id = "pro" class = "pro" border = "1">
-                    <?php
-                        if(!$attr['idx'])$attr['idx'] = array();
-                        foreach($attr['idx'] as $key => $value):
-                    ?>
-                    <tr  class="proBl clearfix">
-                    <td class = 'proK'><input type = 'text' name = 'proKey' placeholder = '颜色尺寸等属性名称' value = "<?php echo @$key ?>" ></td>
-                        <td class = "proVal">
-                            <table >
-                            <!--将来添加js禁止标点哦-->
-                            <?php foreach($value as $liAtr):?>
-                                <tr>
-                                <td><input type = "text" name = "proVal" class = "liVal" placeholder = "红色XL等属性值" value="<?php  echo @$liAtr['font']?>"></td>
-                                    <td><a class = "choseImg" href = "#">选择图片</a></td>
-                                    <td><a class = "uploadImg" href = "#">上传图片</a></td>
-                                    <td><img class = "chosedImg" src = "<?php echo @$liAtr['img'] ?>"/></td>
-                                </tr>
-                            <?php endforeach ?>
-                            </table>
-                        </td>
-                    </tr>
-                <?php endforeach ?>
-                </table>
+                <?php
+                    if(isset($thumbnail) && $thumbnail){
+                        foreach ($thumbnail as $img) {
+                            echo "<img src = '" .$img ."' />";
+                        }
+                    }
+
+                ?>
+            </div>
+            <li class = "col clearfix">
+                <span class = "item" style = "float:left">商品属性:</span>
+                <div class = "dmg">
+                    <span class = "atten">可以在下面灰色框添加至多两组属性,如颜色,重量,规格,口味等，右边添加黄色,绿色,或者是选用图片 </span>
+                    <table  id = "pro" class = "pro" border = "1">
+                        <?php
+                            if(!(isset($attr['idx']) && $attr['idx']))$attr['idx'] = array('' => array(''));
+                            //var_dump($attr['idx']);
+                            foreach($attr['idx'] as $key => $value):
+                        ?>
+                        <tr  class="proBl clearfix">
+                        <td class = 'proK'><input type = 'text' name = 'proKey' placeholder = '颜色尺寸等属性名称' value = "<?php echo @$key ?>" ></td>
+                            <td class = "proVal">
+                                <table >
+                                <!--将来添加js禁止标点哦-->
+                                <?php foreach($value as $liAtr):?>
+                                    <tr>
+                                    <td><input type = "text" name = "proVal" class = "liVal" placeholder = "红色XL等属性值" value="<?php  echo @$liAtr['font']?>"></td>
+                                        <td><a class = "choseImg" href = "#">选择图片</a></td>
+                                        <td><a class = "uploadImg" href = "#">上传图片</a></td>
+                                        <td><a class = "uploadImg" href = "#">删除</a></td>
+                                        <td><img class = "chosedImg" src = "<?php echo @$liAtr['img'] ?>"/></td>
+                                    </tr>
+                                <?php endforeach ?>
+                                </table>
+                            </td>
+                        </tr>
+                    <?php endforeach ?>
+                    </table>
+                </div>
             <!--下面两个div  是为了上传图片准备的，一个是选择，一个是上传-->
 
 
@@ -144,17 +167,7 @@
             <!--final ans 最终所有的答案都需要到这里查找-->
             <div id = "store"  >
             </div>
-            <div id = "thumbnail" class = "col" title = "双击图片删除">
-                <p>
-                    <span class = "item">商品图片<span>*</span></span>
-                    <input type = "button" name = "thumbButton" id = "thumbButton" value = "上传图片" />
-                </p>
-                <?php
-                    foreach ($thumbnail as $img) {
-                        echo "<img src = '" .$img ."' />";
-                    }
-                ?>
-            </div>
+
             <input type="hidden" name="thumbnail" id="Img" />
             <!--通过js 修改value 所有图片的集合-->
             <input type="hidden" name="attr" id="attr" />
@@ -172,7 +185,7 @@
 
             <li class = "col"><span class = "item">商品描述<span>*</span>:</span></li>
             <tr id = "tcont">
-                <td><textarea name="detail" id = "cont" style = "width:100%"> <?php echo $detail ?></textarea></td>
+                <td><textarea name="detail" id = "cont" style = "width:100%"> <?php echo @$detail ?></textarea></td>
             </tr>
          <input type="submit" name = "sub" class = "button" value="发表" />
         </form>
