@@ -7,6 +7,8 @@
 <?php
     $baseUrl = base_url();
     $siteUrl = site_url();
+    if(! (isset($update) && $update ) )$update = 0;
+    if(! (isset($itemId) && $itemId ) )$itemId = 0;
 ?>
     <link rel="stylesheet" href="<?php echo base_url('css/bgItemAdd.css')?>" type="text/css" charset="UTF-8">
     <link rel="icon" href="favicon.ico">
@@ -18,9 +20,9 @@
 </script>
 <body class = "clearfix">
     <div id="content" class="contSpace">
-        <form action="<?php echo $siteUrl.('/write/bgAdd')?>" method="post" enctype = "multipart/form-data" accept-charset = "utf-8">
+        <form action="<?php echo $siteUrl.('/write/bgAdd/' . $update . '/' . $itemId)?>" method="post" enctype = "multipart/form-data" accept-charset = "utf-8">
             <div class = "part" id = "part">
-                <p class = "col" >
+                <p>
                         <span class = "item">全站类别<span class = "X">*</span>:</span>
                     <!--js控制选择-->
 <?php
@@ -110,20 +112,22 @@
 
                 </div>
             </li>
-            <div id = "thumbnail" class = "col" title = "双击图片删除">
-                <p>
-                    <span class = "item">副图<span>*</span></span>
-                    <input type = "button" name = "thumbButton" id = "thumbButton" value = "上传图片" />
-                    <span class="atten">请将宽度限制在1：2和2：1之内之内</span>
-                </p>
-                <?php
-                    if(isset($thumbnail) && $thumbnail){
-                        foreach ($thumbnail as $img) {
-                            echo "<img src = '" .$img ."' />";
+            <div id = "thumbnail" class = "col clearfix" title = "双击图片删除">
+                <span class = "item" style = "float:left">副图<span>*</span></span>
+                <div class = "dmg">
+                    <p>
+                        <input type = "button" name = "thumbButton" id = "thumbButton" value = "上传图片" />
+                        <span class="atten">请将宽度限制在1：2和2：1之内之内</span>
+                    </p>
+                    <?php
+                        if(isset($thumbnail) && $thumbnail){
+                            foreach ($thumbnail as $img) {
+                                echo "<img src = '" .$img ."' />";
+                            }
                         }
-                    }
 
-                ?>
+                    ?>
+                </div>
             </div>
             <li class = "col clearfix">
                 <span class = "item" style = "float:left">商品属性:</span>
@@ -166,6 +170,8 @@
             </li>
             <!--final ans 最终所有的答案都需要到这里查找-->
             <div id = "store"  >
+            <table  border = "1">
+            </table>
             </div>
 
             <input type="hidden" name="thumbnail" id="Img" />

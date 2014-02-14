@@ -5,15 +5,14 @@
         <title>test</title>
     </head>
     <body>
-        <form action="" method="get" accept-charset="utf-8">
-            <a href = "">当前1/3</a>
-            <a href = "">第一页</a>
-            <a href = "">上一页</a>
-            <a href = "">下一页</a>
-            <span>
-                <input type="text" name="pageId"   />
-            </span>
-            <a href = "">尾页</a>
-        </form>
+
+<form action="" method="post" accept-charset="utf-8">
+    <input type="checkbox" name="test[]" value="1" />
+    <input type="checkbox" name="test[]" value="2" />
+    <input type="checkbox" name="test[]" value="3" />
+    <input type="checkbox" name="test[]" value="4" />
+<input type="submit" name="sub"  value="提交" />
+</form>
+
     </body>
 </html>

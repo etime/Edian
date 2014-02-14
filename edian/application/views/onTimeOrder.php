@@ -41,19 +41,16 @@ $baseUrl = base_url();
                     <div class = "info">
                         <ul>
                             <li>
-                                <img src = "www.baidu.com" / >
                                 <strong>金华火腿(2斤,红烧)</strong>
                                 <span>￥12.00 x 12</span>
                                 <span class = "note">要嫩猪肉</span>
                             </li>
                             <li>
-                                <img src = "www.baidu.com" / >
                                 <strong>金华火腿</strong>
                                 <span>￥12.00 x 12</span>
                                 <span class = "note">要嫩猪肉</span>
                             </li>
                             <li>
-                                <img src = "www.baidu.com" / >
                                 <strong>金华火腿</strong>
                                 <span>￥12.00 x 12</span>
                                 <span class = "note">要嫩猪肉</span>

@@ -207,9 +207,11 @@ function order() {
         event.preventDefault();
     })
 }
+/**
+ * 计算添加或者是减去后商品的总和，修改到总和#cap上
+ * 将添加商品和计算总和分开
+ */
 function calTot() {
-    //计算添加或者是减去后商品的总和，修改到总和#cap上
-    //将添加商品和计算总和分开
     var sel = $("#order").find(".sel");
     var cap = "",totalPrc = 0;//flag表示购物车有没有找到和当前用户相同的
     for (var i = 0, lig = sel.length; i < lig; i ++) {

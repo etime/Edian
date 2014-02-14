@@ -70,7 +70,7 @@ class Order extends Home {
             $data['today'] = $temp['newData'];
             $commonUrl = site_url('bg/order/today');
             $data['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount']);
-            echo $data['pageNumFooter'];
+//            echo $data['pageNumFooter'];
         }
         $this->load->view('ordtoday', $data);
     }
@@ -93,16 +93,15 @@ class Order extends Home {
         if ($data['order']) {
             $temp = $this->pagesplit->split($data['order'], $pageId, $this->pageSize);
             $data['order'] = $temp['newData'];
-            $commonUrl = site_url() . '/order/hist';
+            $commonUrl = site_url() . '/bg/order/history';
             $data['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount']);
-            //echo $data['pageNumFooter'];
         }
-        //$this->help->showArr($data['order']);
         if ($data['order']) {
             $data['order'] = $this->orderForm($data['order']);
         }
-        //$this->help->showArr($data['order']);
+        $this->help->showArr($data['order']);
         $data['storeId'] =  $this->storeId;
+        $this->help->showArr($data);
         $this->load->view('histOrder2' , $data);
     }
 
@@ -133,7 +132,7 @@ class Order extends Home {
     protected function orderForm($data)
     {
         $cnt = 0;
-        $this->help->showArr($data);
+        //$this->help->showArr($data);
         for($i = 0, $len = count($data); $i < $len ; $i++){
             $buyer = $data[$i]['ordor'];
             $time = $data[$i]['time'];
@@ -151,7 +150,8 @@ class Order extends Home {
                 $item = Array();
                 if(array_key_exists('item_id' , $data[$i])){
                     $item['id'] = $data[$i]['item_id'];
-                    $item['title'] = $this->mitem->getTitle($item['id']);
+                    $tmp = $this->mitem->getTitPrice($item['id']);
+                    $item = array_merge($item , $tmp);
                 }
                 $item['info'] = $data[$i]['info'];
                 $total += $data[$i]['info']['price'] ;
@@ -193,7 +193,6 @@ class Order extends Home {
                 $data["order"] = $this->morder->getOntime($storeId);
             }
         }
-        var_dump($data['order'][0]);
         $this->load->view("onTimeOrder",$data);
     }
 }

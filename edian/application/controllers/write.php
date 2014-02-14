@@ -440,7 +440,7 @@ class Write extends MY_Controller {
      * 说明：老板上传成功商品之后，跳转到该商品的商品详情页面
      * @todo 判断商品属性是否合法
      */
-    public function bgAdd() {
+    public function bgAdd($flag = 0 , $itemId = 0) {
         // 检查用户是否登陆以及权限是否足够
         if (! $this->_checkAuthority()) {
             return;
@@ -577,7 +577,11 @@ class Write extends MY_Controller {
         // 判断商品详细信息是否合法，暂时不做
 
         // 经过重重难关，终于能够上传了！
-        $itemId = $this->mitem->addItem($data);
+        if($flag && $itemId){
+            $this->mitem->updateItem($data , $itemId);
+        }else{
+            $itemId = $this->mitem->addItem($data);
+        }
 
         // 跳转到该商品的详情页面
         $url = site_url('item/index/' . $itemId);

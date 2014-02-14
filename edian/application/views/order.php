@@ -110,7 +110,7 @@ $idx = -1;
                 <span><?php echo $buyer[$i]["phone"] ?></span>
             </div>
             <div>
-                <?php echo $buyer[$i]["addr"]?>
+                <?php echo $buyer[$i]["address"]?>
             </div>
             <span class = "aten">收货地址</span>
         </div>

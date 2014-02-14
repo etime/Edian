@@ -4,114 +4,78 @@
     > Mail :         douunasm@gmail.com
     > Last_Modified: 2013-09-17 21:25:42
  ************************************************************************/
-/*
-.botmenu{
+
+.dcart{
+    width:300px;
+    background-color:#c9c9c9;
     position:fixed;
-    right:0px;
-    bottom:0px;
-    background:#0067C5;
-    border-radius:7px 0px 0px;
-    overflow:hidden;
-    min-height:40px;
-    width:290px;
+    right:0;
+    bottom:0;
+    max-height:400px;
+    overflow-y:scroll;
+    overflow-x:hidden;
 }
-    */
-.order{
-    padding:5px;
+.clist {
+    font-size:0.8em;
+    border-spacing:0;
+    width:100%;
 }
-.order img{
-    height:50px;
-    max-width:100%;
-    float:left;
-}
-.botAtr{
-    float:left;
-    overflow:hidden;
-    width:104px;
-}
-.botOpr{
-    float:left;
-    text-align:center;
-    width:100px;
-    overflow:hidden;
-}
-.order li{
-    border-top:1px solid #ccc;
-    max-height:52px;
-    overflow:hidden;
-}
-.order li a,.order li span{
+.shop{
+    background-color:#e5e5e5;
     margin:0 2px;
+    border-radius:4px;
 }
-.sel{
-    border-radius:3px;
-    border:1px solid rgb(200,200,200);
-    margin:3px 0;
+.clist img{
+    width:50px;
+    height:50px;
 }
-.botmenu{
-    position:fixed;
-    right:0px;
-    bottom:0px;
-    background:#fff;
-    /*
-    background:#0067C5;
-    */
-    border-left:1px solid #0067C5;
-    border-top:1px solid #0067C5;
-    border-radius:7px 0px 0px;
+tr{
+    background-color:white;
+    margin-bottom:1px;
+}
+table , td{
+    border:none;
+}
+td{
+    border-bottom:1px solid #e5e5e5;
+}
+.clist p{
+    margin:8px 0;
+    white-space:nowrap;
+    width:145px;
     overflow:hidden;
-    min-height:40px;
-    width:290px;
+    text-overflow:ellipsis;
 }
-.botmenu a{
-    color:#000;
+.tp{
+    margin:5px 3px;
+    padding-top:3px;
 }
-.igar{
-    width:70px;
-    float:left;
-    display:block;
-}
-.atten{
-    font-size:1.4em;
-    margin-left:2%;
-}
-#cap{
+.cnt{
     float:right;
-    margin-right:10px;
 }
-.order input[type = 'text']{
-    width:22px;
+.price{
+    color:#990002;
 }
-.ordor>div{
-    float:left;
-    width:142px;
+.con{
+}
+.con span{
+    color:#990002;
+    font-size:1.8em;
+}
+.con input{
+    padding:7px 10px;
+    float:right;
+    background-color:#DB080B;
+    border:none;
+    color:wheat;
+    border-radius:5px;
+    margin:5px;
+}
+.con p{
+    margin:0 ;
     font-size:0.8em;
 }
-.ordor .buton{
-    width:63px;
-    height:40px;
-    line-height:40px;
-    margin:5px;
-    text-align:center;
-    /*
-    background:#744A00;
-    */
-    border-radius:3px;
-}
-.addr{
-    max-height:30px;
-    overflow:hidden;
-}
-.bcl{
-   background:linear-gradient(#DAD229,#BE8319);
-   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#DAD229', endColorstr='#BE8319')";
-   box-shadow:1px 1px 5px #9C9C9C;
-}
-.ba{
-   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFA0A0', endColorstr='#FF3A3A')" ;
-    background:linear-gradient(#FFA0A0,#FF3A3A);
-    box-shadow:1px 1px 5px #9C9C9C;
-}
-.rt{
-    float:right;
+.con div{
+    float:left;
+    margin-left:5px;
 }

@@ -29,8 +29,10 @@ if($type === 2){
 }
 ?>
     <ul id = "order" class = "order">
+<!--
         <a href = "<?php echo $siteUrl.('/bg/order/ontime') ?>" target = "content"><li  name = 'ontime' class = "liCse">待处理订单</li></a>
-        <a href = "<?php echo $siteUrl.('/bg/order/today') ?>" target = "content"><li  name="today">今日订单</li></a>
+-->
+        <a href = "<?php echo $siteUrl.('/bg/order/ontime') ?>" target = "content"><li  name="today">今日订单</li></a>
         <a href = "<?php echo $siteUrl.('/bg/order/history') ?>" target = "content"><li  name = 'hist'>历史订单</li></a>
     </ul>
     <ul class = "art" id = "art" >

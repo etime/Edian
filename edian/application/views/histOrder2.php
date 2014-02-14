@@ -23,7 +23,7 @@ $baseUrl = base_url();
         <span class = "state">状态</span>
         <span class = "order">订单号</span>
         <span >买家</span>
-        <span >金额</span>
+        <span >合计金额</span>
         <span >下单时间</span>
     </h3>
     <ul id = "list" class = "list">
@@ -75,13 +75,21 @@ $baseUrl = base_url();
                     <div class = "oper">
                         <a href = "">接单</a>
                         <a href = "">打印</a>
-                        <a href = "">拒绝订单</a>
-                        <a href = "">恶意订单</a>
+                        <a name = 'refuse' href = "">拒绝订单</a>
+                        <a name = "sick" href = "">恶意订单</a>
                     </div>
                 </div>
-                <form action="" method="post" accept-charset="utf-8" >
+                <!-- 店家对商品的反馈-->
+                <form action="<?php echo $siteUrl . '/order/changeNote/1' ?>" method="post" accept-charset="utf-8" class = "refuse" style = "display:none" >
                     <fieldset>
                         <legend >拒绝订单:</legend>
+                        <textarea name="context" placeholder = "请输入拒绝理由"></textarea>
+                        <input type="button" name="reject"  value="提交" />
+                    </fieldset>
+                </form>
+                <form action="<?php echo $siteUrl . '/order/changeNote/2' ?>" method="post" accept-charset="utf-8" class = "sick" style = "display:none">
+                    <fieldset>
+                        <legend >恶意订单:</legend>
                         <textarea name="context" placeholder = "请输入拒绝理由"></textarea>
                         <input type="button" name="reject"  value="提交" />
                     </fieldset>
@@ -89,6 +97,7 @@ $baseUrl = base_url();
             </div>
         </li>
         <?php endfor ?>
+        <!--
         <li>
             <div class = "init">
                 <span class="state">打印失败</span>
@@ -140,23 +149,10 @@ $baseUrl = base_url();
                 </div>
             </div>
         </li>
+        -->
     </ul>
+    <?php  echo $pageNumFooter;?>
 </body>
 <script type="text/javascript" charset="utf-8" src = "<?php echo $baseUrl . 'js/jquery.min.js' ?>"></script>
-<script type="text/javascript" charset="utf-8">
-$(document).ready(function () {
-        console.log("yes");
-    $("#list").delegate("li","click",function (event) {
-        console.log(event.target);
-        var name = $(event.target).attr('class');
-        if(name === 'down'){
-            $(this).find(".buyer").slideUp();
-            $(event.target).removeClass("down").addClass("up");
-        } else if(name === 'up'){
-            $(this).find(".buyer").slideDown();
-            $(event.target).removeClass("up").addClass("down");
-        }
-    })
-})
-</script>
+<script type="text/javascript" charset="utf-8" src = "<?php echo $baseUrl . 'js/histOrder.js'?>"></script>
 </html>

@@ -266,7 +266,7 @@ class Order extends My_Controller{
         $temp = $this->user->ordaddr($this->userId);
         $data['buyer'] = $this->_addrDecode($temp);
 
-        $this->help->showArr($data);
+        //$this->help->showArr($data);
 
         if ($type == 1) {
             echo json_encode($data);

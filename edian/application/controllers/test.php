@@ -31,9 +31,10 @@ class Test extends MY_Controller{
     }
     public function map()
     {
-        echo ($_SERVER['PHP_SELF']);
         //phpinfo();
-        //$this->load->view("test");
+        $this->load->library('help');
+        $this->help->showArr($_POST);
+        $this->load->view("test");
     }
     public function abc()
     {

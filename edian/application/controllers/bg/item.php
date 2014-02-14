@@ -176,6 +176,7 @@ class item extends Home {
         $data = $this->mitem->getInfoToChange($itemId);
         $data['dir'] = $this->part;
         $data['update'] = 1;
+        $data['itemId'] = $itemId;
         //$this->help->showArr($data);
         $this->load->view("mBgItemAdd" , $data);
     }

@@ -137,6 +137,7 @@ class Mitem extends Ci_Model {
      *
      * @param array $data
      * @return int 上传的商品的 id 号
+     * @todo 感觉效率有问题哦，明明一个insert就可以搞定的，比如rating和putawayTime，insert的时候直接插入不就是了吗
      */
     public function addItem($data) {
         // 把分类列表进行编码
@@ -182,7 +183,34 @@ class Mitem extends Ci_Model {
         $this->db->query($sql);
         return $itemId;
     }
+    /**
+     * 更新商品的信息
+     */
+    public function updateItem($data , $itemId)
+    {
+        // 把分类列表进行编码
+        $data['category'] = $this->_encodeCategory($data);
 
+        // 将所有要存入数据库中的数据进行转义
+        foreach ($data as $key => $val) {
+            $data[$key] = mysql_real_escape_string($val);
+        }
+
+        $date = date('Y-m-d H:i:s', $date);
+        $sql = "UPDATE item set category = '" .$data['category'].
+            "' , price = '" . $data['price'] .
+            "' , mainThumbnail = '" . $data['mainThumbnail'] .
+            "' , attr = '" . $data['attr'].
+            "' , storeNum = '". $data['storeNum'].
+            "' , thumbnail = '" . $data['thumbnail'] .
+            "' , title = '" . $data['title'] .
+            "' , detail = '" . $data['detail'].
+            "' , belongsTo = '" .  $data['belongsTo'].
+            "' , putawayTime = '". $date. "' WHERE id =  ". $itemId;
+        $res = $this->db->query($sql);
+        // 更新商品上架时间
+        return $res;
+    }
     /**
      * 判断 storeId 的商店中有没有商品使用本店分类 category
      * @param string $category
@@ -949,6 +977,20 @@ class Mitem extends Ci_Model {
         if($res->num_rows){
             $res = $res->result_array();
             return $res[0]["price"];
+        }
+        return false;
+    }
+    /**
+     * 对获取商品的标题价格
+     */
+    public function getTitPrice($itemId)
+    {
+        $itemId = (int)$itemId;
+        if(!$itemId)return false;
+        $res = $this->db->query("select price , title from item where id = $itemId");
+        if($res->num_rows){
+            $res = $res->result_array();
+            return $res[0];
         }
         return false;
     }
