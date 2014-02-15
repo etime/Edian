@@ -213,91 +213,93 @@
     </div>
 <!--
     <form action="<?php $siteUrl . '/order/setPrint'?>" method="post" accept-charset="utf-8" id = "dcart" class = "dcart">
-        <div class="info">
-            <p class = "addr">斯蒂芬斯蒂芬商店 </p>
-            <div class = "buyer">
-                <p>豆家敏收</p>
-                <p>12832321222</p>
+        <div class = "tohide">
+            <div class="info">
+                <p class = "addr">斯蒂芬斯蒂芬商店 </p>
+                <div class = "buyer">
+                    <p>豆家敏收</p>
+                    <p>12832321222</p>
+                </div>
             </div>
-        </div>
-        <div class="shop">
-            <p title = "店铺小计/最低起送价" class = "tp">
-                <span class = "cnt"><span class = 'cntNum'>12.02</span>/<span class = "sendPrc">15</span></span>
-                <input type="checkbox" name="chose"  />
-                <span>指尖蛋糕店</span>
-            </p>
-            <table class = "clist" border = "1">
-                <tr>
-                    <td>
-                        <input type="checkbox" name="tobuy[]" value = "1" checked = "checked"/>
-                    </td>
-                    <td>
-                        <img src="http://c.hiphotos.baidu.com/image/w%3D2048/sign=22a06418be315c6043956cefb989ca13/c83d70cf3bc79f3d3a822c3db8a1cd11728b2958.jpg" alt="zhoutong" />
-                    </td>
-                    <td class = "title">
-                        <p title = "牧师蛋糕是世界上最好的蛋糕">牧师蛋糕是世界上最好吃的东西</p>
-                        <p>(巧克力味道)(红色)</p>
-                    </td>
-                    <td>
-                        <p class = "sp">￥<span class = "price">18.00</span> x <input type="text" name="ordNum"  value="3" /></p>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <input type="checkbox" name="tobuy[]" value = "1" />
-                    </td>
-                    <td>
-                        <img src="http://c.hiphotos.baidu.com/image/w%3D2048/sign=22a06418be315c6043956cefb989ca13/c83d70cf3bc79f3d3a822c3db8a1cd11728b2958.jpg" alt="zhoutong" />
-                    </td>
-                    <td class = "title">
-                        <p title = "牧师蛋糕是世界上最好的蛋糕">牧师蛋糕是世界上最好吃的东西</p>
-                        <p>(巧克力味道)(红色)</p>
-                    </td>
-                    <td>
-                        <p class = "sp">￥<span>18.00</span> x 3</p>
-                    </td>
-                </tr>
-            </table>
-        </div>
-        <div class="shop">
-            <p title = "店铺小计/最低起送价" class = "tp">
-                <span class = "cnt"><span>12.02</span>/15</span>
-                <input type="checkbox" name="chose"  />
-                <span>指尖蛋糕店</span>
-            </p>
-            <table class = "clist" border = "1">
-                <tr>
-                    <td>
-                        <input type="checkbox" name="tobuy[]" value = "1" />
-                    </td>
-                    <td>
-                        <img src="http://c.hiphotos.baidu.com/image/w%3D2048/sign=22a06418be315c6043956cefb989ca13/c83d70cf3bc79f3d3a822c3db8a1cd11728b2958.jpg" alt="zhoutong" />
-                    </td>
-                    <td class = "title">
-                        <p title = "牧师蛋糕是世界上最好的蛋糕">牧师蛋糕是世界上最好吃的东西</p>
-                        <p>(巧克力味道)(红色)</p>
-                    </td>
-                    <td>
-                        <p class = "sp">￥<span class = "price">18.00</span> x 3</p>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <input type="checkbox" name="tobuy[]" value = "1" />
-                    </td>
-                    <td>
-                        <img src="http://c.hiphotos.baidu.com/image/w%3D2048/sign=22a06418be315c6043956cefb989ca13/c83d70cf3bc79f3d3a822c3db8a1cd11728b2958.jpg" alt="zhoutong" />
-                    </td>
-                    <td class = "title">
-                        <p title = "牧师蛋糕是世界上最好的蛋糕">牧师蛋糕是世界上最好吃的东西</p>
-                        <p>(巧克力味道)(红色)</p>
-                    </td>
-                    <td>
-                        <p class = "sp">￥<span>18.00</span> x 3</p>
-                    </td>
-                </tr>
-            </table>
-        </div>
+            <div class="shop">
+                <p title = "店铺小计/最低起送价" class = "tp">
+                    <span class = "cnt"><span class = 'cntNum'>12.02</span>/<span class = "sendPrc">15</span></span>
+                    <input type="checkbox" name="chose"  />
+                    <span>指尖蛋糕店</span>
+                </p>
+                <table class = "clist" border = "1">
+                    <tr>
+                        <td>
+                            <input type="checkbox" name="tobuy[]" value = "1" checked = "checked"/>
+                        </td>
+                        <td>
+                            <img src="http://c.hiphotos.baidu.com/image/w%3D2048/sign=22a06418be315c6043956cefb989ca13/c83d70cf3bc79f3d3a822c3db8a1cd11728b2958.jpg" alt="zhoutong" />
+                        </td>
+                        <td class = "title">
+                            <p title = "牧师蛋糕是世界上最好的蛋糕">牧师蛋糕是世界上最好吃的东西</p>
+                            <p>(巧克力味道)(红色)</p>
+                        </td>
+                        <td>
+                            <p class = "sp">￥<span class = "price">18.00</span> x <input type="text" name="ordNum"  value="3" /></p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="checkbox" name="tobuy[]" value = "1" />
+                        </td>
+                        <td>
+                            <img src="http://c.hiphotos.baidu.com/image/w%3D2048/sign=22a06418be315c6043956cefb989ca13/c83d70cf3bc79f3d3a822c3db8a1cd11728b2958.jpg" alt="zhoutong" />
+                        </td>
+                        <td class = "title">
+                            <p title = "牧师蛋糕是世界上最好的蛋糕">牧师蛋糕是世界上最好吃的东西</p>
+                            <p>(巧克力味道)(红色)</p>
+                        </td>
+                        <td>
+                            <p class = "sp">￥<span>18.00</span> x 3</p>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="shop">
+                <p title = "店铺小计/最低起送价" class = "tp">
+                    <span class = "cnt"><span>12.02</span>/15</span>
+                    <input type="checkbox" name="chose"  />
+                    <span>指尖蛋糕店</span>
+                </p>
+                <table class = "clist" border = "1">
+                    <tr>
+                        <td>
+                            <input type="checkbox" name="tobuy[]" value = "1" />
+                        </td>
+                        <td>
+                            <img src="http://c.hiphotos.baidu.com/image/w%3D2048/sign=22a06418be315c6043956cefb989ca13/c83d70cf3bc79f3d3a822c3db8a1cd11728b2958.jpg" alt="zhoutong" />
+                        </td>
+                        <td class = "title">
+                            <p title = "牧师蛋糕是世界上最好的蛋糕">牧师蛋糕是世界上最好吃的东西</p>
+                            <p>(巧克力味道)(红色)</p>
+                        </td>
+                        <td>
+                            <p class = "sp">￥<span class = "price">18.00</span> x 3</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="checkbox" name="tobuy[]" value = "1" />
+                        </td>
+                        <td>
+                            <img src="http://c.hiphotos.baidu.com/image/w%3D2048/sign=22a06418be315c6043956cefb989ca13/c83d70cf3bc79f3d3a822c3db8a1cd11728b2958.jpg" alt="zhoutong" />
+                        </td>
+                        <td class = "title">
+                            <p title = "牧师蛋糕是世界上最好的蛋糕">牧师蛋糕是世界上最好吃的东西</p>
+                            <p>(巧克力味道)(红色)</p>
+                        </td>
+                        <td>
+                            <p class = "sp">￥<span>18.00</span> x 3</p>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        <div>
         <div class = "con">
             <div>
                 <p>共计<span>￥<strong id = "total">1123</strong></span></p>

@@ -11,6 +11,12 @@
     position:fixed;
     right:0;
     bottom:0;
+    padding-top:5px;
+    border-radius:5px 0 0 0;
+    margin:0;
+}
+.tohide{
+    width:100%;
     max-height:400px;
     overflow-y:scroll;
     overflow-x:hidden;
@@ -20,7 +26,7 @@
     border-spacing:0;
     width:100%;
 }
-.shop{
+.cinfo , .shop{
     background-color:#e5e5e5;
     margin:0 2px;
     border-radius:4px;
@@ -40,7 +46,7 @@ td{
     border-bottom:1px solid #e5e5e5;
 }
 .clist p{
-    margin:8px 0;
+    margin:4px 0;
     white-space:nowrap;
     width:145px;
     overflow:hidden;
@@ -55,8 +61,6 @@ td{
 }
 .price{
     color:#990002;
-}
-.con{
 }
 .con span{
     color:#990002;
@@ -78,4 +82,30 @@ td{
 .con div{
     float:left;
     margin-left:5px;
+}
+input[name = 'ordNum']{
+    width:30px;
+}
+.addr{
+    width:190px;
+    float:left;
+    margin-right:2px;
+}
+.buyer{
+    float:left;
+    width:90px;
+}
+.cinfo{
+    font-size:0.8em;
+    height:38px;
+    overflow:hidden;
+}
+.cinfo p{
+    line-height:1.5em;
+    margin:0;
+}
+.buyer p{
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
 }
