@@ -394,6 +394,7 @@ class User extends CI_Model {
             return false;
         } else {
             $res = $res->result_array();
+            $res[0]['address'] = $this->decodeAddr($res[0]['address']);
             return $res[0];
         }
     }
@@ -403,6 +404,7 @@ class User extends CI_Model {
      *  @param int  $userId     用户的id
      *  @param int  $addrSub    用户的地址下标，默认为-1 ，那个时候不在解码
      *  @return array
+     *  @todo 这里应该增加一个报错呢
      */
     public function getAplById($userId , $addrSub = -1)
     {
@@ -417,7 +419,7 @@ class User extends CI_Model {
                 $temp[2] = $address[0][0];
                 return $temp;
             } else if($addrSub === -1){
-                return $res;
+                return $address;
             }else {
                 return $address[$addrSub];
             }

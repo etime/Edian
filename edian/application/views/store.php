@@ -230,7 +230,7 @@
                 <table class = "clist" border = "1">
                     <tr>
                         <td>
-                            <input type="checkbox" name="tobuy[]" value = "1" checked = "checked"/>
+                            <input type="checkbox" name="orderId[]" value = "1" checked = "checked"/>
                         </td>
                         <td>
                             <img src="http://c.hiphotos.baidu.com/image/w%3D2048/sign=22a06418be315c6043956cefb989ca13/c83d70cf3bc79f3d3a822c3db8a1cd11728b2958.jpg" alt="zhoutong" />
@@ -245,7 +245,7 @@
                     </tr>
                     <tr>
                         <td>
-                            <input type="checkbox" name="tobuy[]" value = "1" />
+                            <input type="checkbox" name="orderId[]" value = "1" />
                         </td>
                         <td>
                             <img src="http://c.hiphotos.baidu.com/image/w%3D2048/sign=22a06418be315c6043956cefb989ca13/c83d70cf3bc79f3d3a822c3db8a1cd11728b2958.jpg" alt="zhoutong" />
@@ -269,7 +269,7 @@
                 <table class = "clist" border = "1">
                     <tr>
                         <td>
-                            <input type="checkbox" name="tobuy[]" value = "1" />
+                            <input type="checkbox" name="orderId[]" value = "1" />
                         </td>
                         <td>
                             <img src="http://c.hiphotos.baidu.com/image/w%3D2048/sign=22a06418be315c6043956cefb989ca13/c83d70cf3bc79f3d3a822c3db8a1cd11728b2958.jpg" alt="zhoutong" />
@@ -284,7 +284,7 @@
                     </tr>
                     <tr>
                         <td>
-                            <input type="checkbox" name="tobuy[]" value = "1" />
+                            <input type="checkbox" name="orderId[]" value = "1" />
                         </td>
                         <td>
                             <img src="http://c.hiphotos.baidu.com/image/w%3D2048/sign=22a06418be315c6043956cefb989ca13/c83d70cf3bc79f3d3a822c3db8a1cd11728b2958.jpg" alt="zhoutong" />

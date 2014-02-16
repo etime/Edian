@@ -63,7 +63,7 @@ class Morder extends Ci_Model {
     private function _decodeInfo($info) {
         $temp = explode('&', $info);
         $res['orderNum'] = $temp[0];
-        $res['more'] = (count($temp) === 4) ? $temp[3] : ' ';
+        $res['more'] = (count($temp) === 4) ? $temp[3] : '';
         $res['price'] = $temp[2];
         $res['info'] = '';
         if ($temp[1]) {
@@ -196,10 +196,10 @@ class Morder extends Ci_Model {
      * 添加订单
      * <pre>
      * data 中主要包含：
-     *      itemId
-     *      ordor
-     *      seller
-     *      orerNum
+     *      itemId  商品的id
+     *      ordor   下单的人
+     *      seller  店铺的id
+     *      orerNum  购买的数量
      *      info
      *      price
      *      more
@@ -334,14 +334,20 @@ class Morder extends Ci_Model {
 
        Line Number: 167
        </code>
+     * @todo 目前的修改只是针对controller/order/setPrint中进行修改，也就是说目前只能针对setPrint进行服务
      *
      */
     public function setOrder($addr,$id,$info,$state)
     {
         $id = (int)$id;
         if(!$id)return false;
-        $sql = "update ord set  state = $state,info = '$info',addr = '$addr' where id = $id && state < ".$state;
-        return $this->db->query($sql);
+        $info = $this->_formInfo( $info );
+        if($info){
+            $addr = (int)$addr;
+            $sql = "update ord set  state = $state,info = '$info',addr = '$addr' where id = $id ";
+            return $this->db->query($sql);
+        }
+
     }
 
     /**
@@ -350,11 +356,12 @@ class Morder extends Ci_Model {
      * @param int $state 指定的状态
      * @param int $id 指定订单的id
      */
-    public function setState($state,$id)
+    public function setState($id , $state)
     {
-        $id = (int)$id;
+        $id     = (int)$id;
+        $state  = (int)$state;
         if(!$id)return false;
-        return $this->db->query("update ord set state = $state where id = $id && state < ".$state);
+        return $this->db->query("update ord set state = $state where id = $id && state < ". $state);
     }
     /**
      * 修改下单之前得到要修改的信息
@@ -376,14 +383,18 @@ class Morder extends Ci_Model {
         return false;
     }
     /**
-     * 需要即时处理的订单,状态为未打印和未发货
+     * 需要即时处理的订单,状态为未打印,打印失败的和未发货
      * 搜索店家刚刚得到的下单
-     * @param int $userId 商家的id，其实是店铺的id
+     * @param int $storeId      商家的id，其实是店铺的id
+     * @param int $failed       错误状态的编号
      */
-    public function getOntime($userId){
-        $userId = (int)$userId;
-        if(!$userId)return false;
-        $res = $this->db->query("select id,addr,info,item_id,time,ordor,state from ord where ( state = 1 or state = 2 ) && seller = $userId");
+    public function getOntime($storeId , $failed){
+        $storeId = (int)$storeId;
+        if(!$storeId)return false;
+        $now = time();
+        $now -= 86400;
+        $sql = "select id,addr,info,item_id,time,ordor,state from ord where state &&  seller = $storeId &&  UNIX_TIMESTAMP(time) > " . $now . ' && state <= ' . $failed;
+        $res = $this->db->query($sql);
         if($res->num_rows){
             $len = $res->num_rows;
             $res = $res->result_array();

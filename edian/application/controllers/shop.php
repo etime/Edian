@@ -139,7 +139,8 @@ class Shop extends BaseSearch {
         // 通过 GET 的方式获得关键字
         if (isset($_GET['name'])) {
             $key = trim($_GET['name']);
-            $categoryName = $this->_filterKeywords($key);
+            //将返回的数组变成字符串，方便下次接着索引 by unasm 2014-02-16 01:49:05
+            $categoryName = implode($this->_filterKeywords($key) , ',');
             $getString = '?key=' . $categoryName;
         } else {
             $categoryName = '';

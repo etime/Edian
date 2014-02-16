@@ -23,6 +23,9 @@ class Mwrong extends Ci_Model {
      * @param string $text 想要插入的内容，最初设计为数组，现在慢慢想变成插入string,其他的内容，如id,时间，都是自动
      */
     public function insert($text) {
+        if(is_array($text)){
+            $text = $text['text'];
+        }
         $wrong = mysql_real_escape_string($text);
         $sql = "INSERT INTO wrong(content) VALUES('$wrong')";
         $this->db->query($sql);
@@ -30,6 +33,7 @@ class Mwrong extends Ci_Model {
 
     /**
     * 对wrong进行解码
+    * 已经被废弃。。。没有编码解码的必要
     * @param string $text 编码之后的字符串
     * @return array 解码之后的数组
     */

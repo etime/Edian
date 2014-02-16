@@ -39,10 +39,10 @@ function getCart() {
             re += "<table class = 'clist' border = '1'>"
             while((i < len) && (seller === cart[i]['seller'])){
                 var orderNode = cart[i];
-                re += "<tr><td><input type = 'checkbox' name = 'tobuy[]' value = '" + orderNode['id'] + "' /></td>";
+                re += "<tr><td><input type = 'checkbox' name = 'orderId[]' value = '" + orderNode['id'] + "' /></td>";
                 re += "<td><a href ='" + site_url + '/item/index/' + orderNode['item_id'] + "' ><img src = '" + orderNode['item']['mainThumbnail']+ "' </a></td>";
                 re += "<td class = 'title'><p><a href = '" + site_url + '/item/index/'+ orderNode['item_id'] + "' >" + orderNode['item']['title']+ "</a></p><p>" + orderNode['info']['info'] + "</p></td>"
-                re += "<td><p class = 'sp'>￥<span class = 'price'>" + orderNode['item']['price']+ "</span></p> <p>x <input type = 'text' name = 'ordNum' value = '" + orderNode['info']['orderNum']+ "'</p></td>";
+                re += "<td><p class = 'sp'>￥<span class = 'price'>" + orderNode['item']['price']+ "</span></p> <p>x <input type = 'text' name = 'buyNums[]' value = '" + orderNode['info']['orderNum']+ "'</p></td>";
                 i++;
             }
             re += "</table></div>"
@@ -104,9 +104,9 @@ function calTot() {
         for (var i = 0, lig = sel.length; i < lig; i ++) {
             var temp = sel[i];
             var captmp = 0;// 计算临时的价格,每家店的商品综合
-            var chose = $(temp).find("input[name = 'tobuy[]']");
+            var chose = $(temp).find("input[name = 'orderId[]']");
             var price = $(temp).find(".price");
-            var num = $(temp).find("input[name = 'ordNum']");
+            var num = $(temp).find("input[name = 'buyNums[]']");
             for (var j = 0, l = chose.length; j < l; j ++) {
                 if($(chose[j]).prop('checked')){
                     captmp += parseFloat($(price[j]).text()) *  parseInt($(num[j]).val());
@@ -124,7 +124,7 @@ function calTot() {
         if($(target).attr('type') === 'checkbox'){
             var name = $(target).attr('name');
             if(name === 'chose'){
-                var list = $(this).find("input[name = 'tobuy[]']");
+                var list = $(this).find("input[name = 'orderId[]']");
                 var state = $(target).prop("checked");
                 for (var i = 0, l = list.length; i < l; i ++) {
                     $(list[i]).prop('checked' , state);

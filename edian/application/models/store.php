@@ -553,5 +553,20 @@ class Store extends CI_Model {
             return $ans[0]['name'];
         }
     }
+    /**
+     * 获取通知店家下单的方式
+     */
+     public function informInfo($storeId = 0)
+     {
+         $storeId = (int)$storeId;
+         $res = $this->db->query('SELECT servicePhone , more FROM store WHERE id = ' . $storeId);
+         if($res->num_rows){
+             $res = $res->result_array();
+             $res = $res[0];
+             $res['more'] = $this->decodeMore($res['more']);
+             return $res;
+         }
+         return false;
+     }
 }
 ?>

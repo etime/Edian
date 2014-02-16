@@ -80,11 +80,19 @@ class Order extends My_Controller{
 
     /**
      * 通过用户的id取得用户下单地址的函数
+     * 废弃了。。没有必要在controller中做这个
      */
     private function _getUser($adIdx) {
         $user = $this->user->ordaddr($this->userId);
-        $user = $this->addrDecode($user);
-        return $user[$adIdx];
+        //$user = $this->user->getAplById($this->userId , $adIdx);
+        if(array_key_exists( $adIdx , $user['address'] )){
+            $user['address'] = $user['address'][$adIdx];
+        } else {
+            exit("地址译码出错，请联系管理员");
+            $this->mwrong->insert('地址译码出错，该用户是' . $this->userId .' , 当前的地址编号是' . $adIdx);
+            return false;
+        }
+        return $user;
     }
 
     /**
@@ -137,7 +145,7 @@ class Order extends My_Controller{
      */
     private function _addrDecode($buyer) {
         $res = Array();
-        $tmp = explode('&', $buyer['address']);
+        //$tmp = explode('&', $buyer['address']);
         $cntAddr = 0;
         for ($i = 0, $length = count($tmp); $i < $length; $i ++) {
             if ($tmp[$i] == '') continue;
@@ -263,8 +271,8 @@ class Order extends My_Controller{
         $cart = $this->_dealCart($order);
         $data['lsp'] = $this->_getSendPrice($cart);
         $data['cart']  = $cart;
-        $temp = $this->user->ordaddr($this->userId);
-        $data['buyer'] = $this->_addrDecode($temp);
+        $data['buyer'] = $this->user->getAplById($this->userId);
+        //$data['buyer'] = $this->_addrDecode($temp);
 
         //$this->help->showArr($data);
 
@@ -322,7 +330,6 @@ class Order extends My_Controller{
             return;
         }
         $data["cart"] = $this->morder->allMyOrder($this->userId);
-        //$this->showArr($data["cart"]);
         if($data["cart"]){
             for ($i = 0,$len = count($data["cart"]); $i < $len; $i++) {
                 /**************分解info，得到其中的各种信息****************/
@@ -394,25 +401,26 @@ class Order extends My_Controller{
     private function getData()
     {
         //读取数据，返回信息
-        $res["addr"] = trim($this->input->post("addr"));
-        $res["orderId"] = trim($this->input->post("orderId"));
+        $res["addr"]    = (int)trim($this->input->post("addr") );
+        $res["orderId"] = $this->input->post("orderId");
+        $res["buyNum"]  = $this->input->post("buyNums");
+        $res["more"]    = $this->input->post("more");
         // 和下面的buynum 一样都是 123&123 这种
-        if(!preg_match("/^\d+[&\d]*$/",$res["orderId"])){
-            $res["failed"] = "订单号不正确";
-            $temp["text"] = "在order/getData/".__LINE__."行orderId格式不符合要求,res[orderId] = ".
-                $res["orderId"]."，当前用户的id为".$this->userId;
-            $this->mwrong->insert($temp);
-            return $res;
+        foreach ($res['orderId'] as $value) {
+            if(!preg_match("/^\d+[&\d]*$/" , $value)){
+                $res["failed"] = "订单号不正确";
+                $this->mwrong->insert("在order/getData/" . __LINE__ . "行orderId格式不符合要求,res[orderId] = " . $value . "，当前用户的id为".$this->userId);
+                return $res;
+            }
         }
-        $res["buyNum"] = trim($this->input->post("buyNums"));
-        if(!preg_match("/^\d+[&\d]*$/",$res["buyNum"])){
-            $res["failed"] = "商品的购买量不对";
-            $temp["text"] = "在order/getData/".__LINE__."行buyNums格式不符合要求,res[buyNum] = ".
-                $res["buyNum"]."，当前用户的id为".$this->userId;
-            $this->mwrong->insert($temp);
-            return $res;
+        foreach ($res['buyNum'] as $value) {
+            if(!preg_match("/^\d+[&\d]*$/" , $value)){
+                $res["failed"] = "商品的购买量不对";
+                $this->mwrong->insert("在order/getData/".__LINE__."行buyNums格式不符合要求,res[buyNum] = " . $value . "，当前用户的id为" . $this->userId);
+                return $res;
+            }
         }
-        $res["more"] = trim($this->input->post("more"));
+
         /*
          //$res["more"] = "jial速度发！。，？：；-";
          // 禁止除了汉字，数字，英文标点符号之外的符号!。？：；，下面的花括号\x是各种中文标点
@@ -425,16 +433,22 @@ class Order extends My_Controller{
         }
          */
         //|{}` & '" = <>=;:  *空格都是不允许输入的
-        if(preg_match("/[\s\\\"\\\'\\\\{}*;|=><]/" ,$res["more"])){
-            $res["failed"] = "在备注中请不要输入特殊字符";
-            $temp["text"] = "在order/getData/".__LINE__."行出现不允许的特殊字符:".
-            $res["more"].";请检查，当前用户为$userId = ".$this->userId;
-            $this->mwrong->insert($temp);
-            return $res;
+        if($res['more']){
+            foreach ($res['more'] as $value) {
+                if(preg_match("/[\s\\\"\\\'\\\\{}*;|=><]/" , $value)){
+                    $res["failed"] = "在备注中请不要输入特殊字符";
+                    $this->mwrong->insert("在order/getData/" . __LINE__ . "行出现不允许的特殊字符:" . $value . ";请检查，当前用户为userId = " . $this->userId);
+                    return $res;
+                }
+            }
         }
+
+        /*
         $res["orderId"] = explode("&",$res["orderId"]);
         $res["buyNum"] = explode("&",$res["buyNum"]);
         $res["more"] = explode("&",$res["more"]);
+         */
+        //$this->help->showArr($res);
         return $res;
     }
 
@@ -567,7 +581,7 @@ class Order extends My_Controller{
         if($title){
             //当info存在并且不是字符串false的时候，分割，否则返回空
             $inf = ($temp["info"] && $temp["info"] != "false") ? $this->_spInf($temp["info"]):"";
-            $list  .= $title["title"].$inf." ".$temp["buyNum"]." x ".$temp["price"]."\n";
+            $list  .= $title . $inf." ".$temp["buyNum"]." x ".$temp["price"]."\n";
             $cntAl += $temp["buyNum"]*$temp["price"];
             //more是不一定存在的
             if($temp["more"]){
@@ -587,7 +601,9 @@ class Order extends My_Controller{
      *  setPrint 首先进行打印，不行或者没有打印机的话，就短信，失败之后就宣布通知失败，
      * 下单的时候，格式控制，只发送一次就好，不然的会重复下单，也会多打印的
      *
-     * @todo 过一段时间，加上在线验证吧,就是当用户在线的时候，就不发送，用户不在线的时候，就发送短信，
+     * @todo    过一段时间，加上在线验证吧,就是当用户在线的时候，就不发送，用户不在线的时候，就发送短信，
+     * @todo    订购了这个短信服务的人才可以接收短信，
+     * @todo    之后添加一个在线即时聊天的功能，或许也可以截流一部分短信
      */
     public function setPrint()
     {
@@ -608,55 +624,63 @@ class Order extends My_Controller{
         $ordInfo = $this->getOrderInfo( $data["orderId"] ,$data["buyNum"] ,$data["more"]);
         $quoto = "e点工作室竭诚为您服务";//口号
         $time  = date("Y-m-d H:i:s");
-        $user  = $this->_getUser($data["addr"]);//取得用户的信息，$user中有名字，地址和联系方式，
-        $this->load->config("edian");                    //根据对应状态修改对应的商品的状态
+        //$user  = $this->_getUser($data["addr"]);//取得用户的信息，$user中有名字，地址和联系方式，
+        $user = $this->user->getAplById($this->userId , $data['addr']);
+        //$this->load->config("edian");                    //根据对应状态修改对应的商品的状态
+        //$orderedState = $this->config->item('orderState');
         $idlist = Array();//保存打印处理商品的菜单id
+        $this->load->model('store');
+        $this->help->showArr($ordInfo);
         for($i = 0 ,$cnt = count($ordInfo) ;$i < $cnt;){
             $nowSeller = $ordInfo[$i]["seller"];
             $list   = "";
-            $cntAl  = 0;//将要打印的清单和总和
-            $cntPnt = 0;//将要打印的item_id array长度，为了在打印成功之后，进行处理
+            $cntAl  = 0;    //将要打印的清单和总和
+            $cntPnt = 0;    //将要打印的item_id array长度，为了在打印成功之后，进行处理
             while(($i < $cnt) && ($ordInfo[$i]["seller"] == $nowSeller)){
                 $this->getPrintReady($ordInfo[$i], $list ,$cntAl);
+                $ordInfo[$i]['orderNum']  = $ordInfo[$i]['buyNum'];
                 $idlist[$cntPnt++] = $i++;
             }
             $sellerName = $this->user->getNameById($nowSeller);  //获取店家的名字
-            //需要打印的代码
-            $text = "\n顾客: ".$user["name"]."\n".
-                    "手机号: ".$user["phone"]."\n".
-                    "地址: "  .$user["addr"]."\n".
+            //需要打印的字符串
+            $text = "\n顾客: ".$user[0]."\n".
+                    "手机号: ".$user[1]."\n".
+                    "地址: "  .$user[2]."\n".
                     "店家: "  .$sellerName["user_name"]."\n".
                     "清单:\n" .$list.
                     "合计: \t￥\x1B\x21\x08".$cntAl."\x1B\x21\x00(元)\n".
                     "下单时间: ".$time."\n".
                     "\t".$quoto."\n\n\n\n";
-            $sellerInfo = $this->user->informInfo($nowSeller);
-            $flag = $this->printInform($text , $sellerInfo["extro"]["dtuId"] , $sellerInfo["extro"]["dtuNum"]);  //这里首先进行打印，之后尝试短信
-            if($flag == "pr"){                        //打印成功
-                $printed = $this->config->item("printed");
-                for($k = 0;$k < $cntPnt ;$k ++){
-                    $this->morder->setState($idlist[$k],$printed);
-                }
-                continue;
-            }
-            if(array_key_exists("smsOrd" , $sellerInfo)){
-                //订购了这个短信服务的人才可以接收短信，
-                //之后添加一个在线即时聊天的功能，或许也可以截流一部分短信
-                $flag = $this->smsInform($text,$sellerInfo["contract1"]);
-                if($flag == "sms"){                              //成功发送短信
-                    $smsed = $this->config->item("smsed");
+            $store = $this->store->informInfo($nowSeller);
+
+            //接下来的几项 , smsed , printed , failed要和config中的orderstate严格对应
+            if(array_key_exists('dtuId' , $store['more']) && array_key_exists('dtuNum' , $store['more'])){
+                $flag = $this->printInform($text , $store["more"]["dtuId"] , $store["more"]["dtuNum"]);  //这里首先进行打印，之后尝试短信
+                if($flag == "pr"){                        //打印成功
+                    $printed = 2; //打印完毕
                     for($k = 0;$k < $cntPnt ;$k ++){
-                        $this->morder->setState($idlist[$k],$smsed);
+                        $this->morder->setOrder($data['addr'] , $ordInfo[$idlist[$k]]['ordId'] , $ordInfo[$idlist[$k]],$printed);
+                    }
+                    continue;
+                }
+            }
+
+            if(array_key_exists("smsOrd" , $store)){
+                $flag = $this->smsInform($text,$store["servicePhone"]);
+                if($flag == "sms"){                              //成功发送短信
+                    $smsed = 3; //短信发送完毕
+                    for($k = 0;$k < $cntPnt ;$k ++){
+                        $this->morder->setOrder( $data['addr'] ,$ordInfo[$idlist[$k]]['ordId'] , $ordInfo[$idlist[$k]],$smsed);
                     }
                 }
                 continue;
             }
-            //其他的通知方式都失败
-            $failed = $this->config->item("infoFaild");
+            $failed = 9;//其他的通知方式都失败
             for($k = 0 ;$k < $cntPnt ;$k ++){
-                $this->morder->setState($idlist[$k],$failed);
+                $this->morder->setOrder( $data['addr'] , $ordInfo[$idlist[$k]]['ordId'] , $ordInfo[$idlist[$k]],$failed);
             }
         }
+        echo "下单完成";
     }
     /**
      * printInform是通知系统，在用户下单之后进行的多种联络通知手段
@@ -721,6 +745,7 @@ class Order extends My_Controller{
 
     /**
      * 历史订单的内容构成
+     * 我想已经被废弃了
      * @param array $arr 对得到的id信息进行丰富，和添加
      * @return array $arr 历史订单的结果
      */

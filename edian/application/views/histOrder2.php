@@ -37,7 +37,7 @@ $baseUrl = base_url();
                 <span><?php echo $order[$i]['time'] ?></span>
                 <font class = "up"> </font>
             </div>
-            <div class = "buyer clearfix" >
+            <div class = "buyer clearfix" style = "display:none">
                 <div class = "clearfix">
                     <div class = "info">
                         <ul>
@@ -90,7 +90,7 @@ $baseUrl = base_url();
                 <form action="<?php echo $siteUrl . '/order/changeNote/2' ?>" method="post" accept-charset="utf-8" class = "sick" style = "display:none">
                     <fieldset>
                         <legend >恶意订单:</legend>
-                        <textarea name="context" placeholder = "请输入拒绝理由"></textarea>
+                        <textarea name="context" placeholder = "请说明详情"></textarea>
                         <input type="button" name="reject"  value="提交" />
                     </fieldset>
                 </form>

@@ -99,9 +99,9 @@ class Order extends Home {
         if ($data['order']) {
             $data['order'] = $this->orderForm($data['order']);
         }
-        $this->help->showArr($data['order']);
+        //$this->help->showArr($data['order']);
         $data['storeId'] =  $this->storeId;
-        $this->help->showArr($data);
+        //$this->help->showArr($data);
         $this->load->view('histOrder2' , $data);
     }
 
@@ -190,8 +190,12 @@ class Order extends Home {
             if(!$storeId){
                 exit("登录失效，请刷新页面");
             }else{
-                $data["order"] = $this->morder->getOntime($storeId);
+                $data["order"] = $this->morder->getOntime($storeId , $this->config->item('infFailed'));
+                $data['order'] = $this->orderForm($data['order']);
             }
+            $data['orderState'] = $this->config->item('orderState');
+            $data['storeId'] = $storeId;
+            //$this->help->showArr($data['order']);
         }
         $this->load->view("onTimeOrder",$data);
     }
