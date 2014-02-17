@@ -40,8 +40,8 @@ $baseUrl = base_url();
                 <span><?php echo $value['time'] ?></span>
                 <font class = "down"> </font>
             </div>
-            <div class = "buyer clearfix">
-                <div>
+            <div class = "buyer">
+                <div class = "clearfix">
                     <div class = "info">
                         <ul>
                             <?php foreach ($value['item'] as $item):?>
@@ -73,20 +73,23 @@ $baseUrl = base_url();
                         </ul>
                     </div>
                     <div class = "oper">
-                    <a href = "<?php echo $siteUrl .'/bg/order/changeNote/' . $orderNum?>">接单</a>
-                        <a href = "">再次打印</a>
-                        <a href = "" name = 'reject'>拒绝订单</a>
-                        <a href = "" name = 'evil'>恶意订单</a>
+                    <?php $val = 8;?>
+                        <a href = "<?php echo $siteUrl .'/bg/order/changeNote/' . "$orderNum/$val"?>"><?php echo $orderState[$val] ?></a>
+                        <a href = "<?php echo $siteUrl .'bg/order/rePrint/' . $orderNum?>">重新打印</a>
+                    <?php $val = 11;?>
+                        <a name = 'reject' href = "<?php echo $siteUrl .'/bg/order/changeNote/' . "$orderNum/$val"?>"><?php echo $orderState[$val] ?></a>
+                    <?php $val = 12;?>
+                        <a name = 'evil' href = "<?php echo $siteUrl .'/bg/order/changeNote/' . "$orderNum/$val"?>"><?php echo $orderState[$val] ?></a>
                     </div>
                 </div>
-                <form action="<?php echo $siteUrl . '/order/changeNote/1' ?>" method="post" accept-charset="utf-8" class = "refuse" style = "display:none" >
+                <form action = "<?php echo $siteUrl .'/bg/order/changeNote/' . "$orderNum/$val"?>" method="post" accept-charset="utf-8" class = "reject" style = "display:none" >
                     <fieldset>
                         <legend >拒绝订单:</legend>
                         <textarea name="context" placeholder = "请输入拒绝理由"></textarea>
                         <input type="button" name="reject"  value="提交" />
                     </fieldset>
                 </form>
-                <form action="<?php echo $siteUrl . '/order/changeNote/2' ?>" method="post" accept-charset="utf-8" class = "sick" style = "display:none">
+                <form action="<?php echo $siteUrl .'/bg/order/changeNote/' . "$orderNum/$val"?>" method="post" accept-charset="utf-8" class = "evil" style = "display:none">
                     <fieldset>
                         <legend >恶意订单:</legend>
                         <textarea name="context" placeholder = "请说明详情"></textarea>
@@ -150,20 +153,5 @@ $baseUrl = base_url();
     </ul>
 </body>
 <script type="text/javascript" charset="utf-8" src = "<?php echo $baseUrl . 'js/jquery.min.js' ?>"></script>
-<script type="text/javascript" charset="utf-8">
-$(document).ready(function () {
-        console.log("yes");
-    $("#list").delegate("li","click",function (event) {
-        console.log(event.target);
-        var name = $(event.target).attr('class');
-        if(name === 'down'){
-            $(this).find(".buyer").slideUp();
-            $(event.target).removeClass("down").addClass("up");
-        } else if(name === 'up'){
-            $(this).find(".buyer").slideDown();
-            $(event.target).removeClass("up").addClass("down");
-        }
-    })
-})
-</script>
+<script type="text/javascript" charset="utf-8" src = "<?php echo $baseUrl . 'js/histOrder.js' ?>"></script>
 </html>

@@ -366,7 +366,7 @@ class Morder extends Ci_Model {
 
     /**
      * 允许店铺老板修改自己店铺的商品订单状态;
-     * @param   int     $id     订单的编号
+     * @param   int     $id     订单的编号 ,实际上是时间戳
      * @param   int     $state  想要修改的状态
      * @param   int     $storeId 店铺的id
      * @todo 其实应该只是允许店铺老板修改几个特定的状态，现在赶时间，先不做
@@ -377,7 +377,7 @@ class Morder extends Ci_Model {
         $state  = (int)$state;
         $storeId= (int)$storeId ;
         $context = mysql_real_escape_string($context);
-        return $this->db->query("update ord set state = $state , note = '" . $context . "' where id = $id && seller = $storeId ");
+        return $this->db->query("update ord set state = $state , note = '" . $context . "' where UNIX_TIMESTAMP(time) = $id && seller = $storeId ");
     }
     /**
      * 修改下单之前得到要修改的信息

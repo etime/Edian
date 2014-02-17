@@ -106,11 +106,11 @@ $idx = -1;
     <?php for($i = 0,$len = count($buyer);$i < $len;$i++):?>
         <div class = "addr <?php if($i == 0) echo "addCse"?>" name = "<?php echo $i ?>">
             <div class = "fir">
-            <span><?php echo $buyer[$i]["name"] ?></span>(收)
-                <span><?php echo $buyer[$i]["phone"] ?></span>
+            <span><?php echo $buyer[$i][0] ?></span>(收)
+                <span><?php echo $buyer[$i][1] ?></span>
             </div>
             <div>
-                <?php echo $buyer[$i]["address"]?>
+                <?php echo $buyer[$i][2]?>
             </div>
             <span class = "aten">收货地址</span>
         </div>

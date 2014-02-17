@@ -101,7 +101,6 @@ class Order extends Home {
         }
         //$this->help->showArr($data['order']);
         $data['storeId'] =  $this->storeId;
-        //$this->help->showArr($data);
         $this->load->view('histOrder2' , $data);
     }
 
@@ -132,11 +131,8 @@ class Order extends Home {
     protected function orderForm($data)
     {
         $cnt = 0;
-        $this->help->showArr($data);
-        echo "<br/>";
-        echo "<br/>";
-        echo "<br/>";
-        for($i = 0, $len = count($data); $i < $len ;){
+        $res = Array();
+        for($i = 0, $len = $data ? count($data) : 0; $i < $len ;){
             $buyer = $data[$i]['ordor'];
             $time = $data[$i]['time'];
             $order = Array();
@@ -198,42 +194,49 @@ class Order extends Home {
             }
             $data['orderState'] = $this->config->item('orderState');
             $data['storeId'] = $storeId;
-            $this->help->showArr($data['order']);
+            //$this->help->showArr($data['order']);
         }
         $this->load->view("onTimeOrder",$data);
     }
 
     /**
      * 修改订单的状态，这个是为了后台准备的
-     * @param   int     $orderId    订单的编号
+     * 因为在设计的时候的问题，同一次下单的东西之间联系并不大，所以时间就成联系的根本节点了
+     * @param   int     $orderId    订单的编号 ,实际上，是storeId和时间的结合，要简言之这种格式
      * @param   int     $state      将要修改的状态
-     * @param   string  $goto       完成之后要跳转去的地方
+     * @param   string  $goto       完成之后要跳转去的地方 ,默认是今日订单
      * @param   post    $context    投诉或者是拒绝时候输入的内容
      */
-    public function changeNote($orderId = -1 , $state , $goto)
+    public function changeNote($orderId = -1 , $state , $goto = 'ontime')
     {
-        if($this->_checkAuthority(site('bg/order/ontime')) === false){
+        if($this->_checkAuthority(site_url('bg/order/ontime')) === false){
             return;
         }
-
-        $storeId = $this->session->userdata('storeId');
-        $stateArr = $this->config->item('orderState');
-        var_dump($stateArr);
-        die;
-        if(array_key_exists($state , $stateArr)){
-            //管理员并没有拒绝订单和举报恶意订单的功能
-            if($this->isAdmin){
-                $this->morder->setState($orderId , $state);
-            } else if($storeId){
-                $context = trim($this->input->post('context'));
-                $this->morder->setStateByStore($orderId , $state , $storeId , $context);
+        $orderId = explode('_' , $orderId);
+        if(count($orderId) === 2){
+            $storeId = $this->session->userdata('storeId');
+            $stateArr = $this->config->item('orderState');
+            if(array_key_exists($state , $stateArr)){
+                //管理员并没有拒绝订单和举报恶意订单的功能
+                if($this->isAdmin){
+                    $this->morder->setState($orderId , $state);
+                } else if($storeId){
+                    $context = trim($this->input->post('context'));
+                    $this->morder->setStateByStore($orderId[1] , $state , $storeId , $context);
+                } else {
+                    $this->load->model('mwrong');
+                    $this->mwrong->insert("有人非法入侵bg/order/changeNote " . __LINE__);
+                }
             } else {
-                $this->load->model('mwrong');
-                $this->mwrong->insert("有人非法入侵bg/order/changeNote");
+                $this->mwrong->insert("storeId = $storeId 的用户输入了不存在的订单状态state = $state" );
             }
-        } else {
-            $this->mwrong->insert("storeId = $storeId 的用户输入了不存在的订单状态state = $state" );
         }
+
+        $data['uri'] = site_url('bg/order/' . $goto);
+        $data['uriName'] = '订单列表';
+        $data['atten'] = '已经完成';
+        $this->load->view('jump2' , $data);
+        //Header('Location: ' . site_url('bg/order/' . $goto));
     }
 }
 ?>

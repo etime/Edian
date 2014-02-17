@@ -5,10 +5,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title><?php echo $title ?></title>
 <script type="text/javascript">
-var time="<?php
-if(isset($time))
-	echo $time;
-else echo "5";?>";
+var time="<?php  echo isset($time) ? $time : 5; ?>";
 function getready()
 {
 	var  atten=document.getElementById("atten");
