@@ -6,7 +6,7 @@
         </div>
         <p style="float:right">
             <a>登录</a>  |
-            <a>注册</a>  |
+            <a href = "<?php echo site_url('/register/userRegister/') ?>">注册</a>  |
             <a>帮助</a>
         </p>
         <form action="<?php echo site_url('/search/searchAction') ?>" method="get" accept-charset="utf-8" class = "search">
