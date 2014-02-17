@@ -114,12 +114,12 @@ class Order extends Home {
      *  0 => (
      *      id=> 150
      *      addr=> 0
-    *           info => (
-    *               orderNum=>
-    *               more=>
-    *               price=>
-    *               info=>
-    *           )
+    *       info => (
+    *           orderNum=>
+    *           more=>
+    *           price=>
+    *           info=>
+    *       )
     *       item_id=> 55
     *       time=> 2013-12-29 23:17:37
     *       ordor=> 52
@@ -132,8 +132,11 @@ class Order extends Home {
     protected function orderForm($data)
     {
         $cnt = 0;
-        //$this->help->showArr($data);
-        for($i = 0, $len = count($data); $i < $len ; $i++){
+        $this->help->showArr($data);
+        echo "<br/>";
+        echo "<br/>";
+        echo "<br/>";
+        for($i = 0, $len = count($data); $i < $len ;){
             $buyer = $data[$i]['ordor'];
             $time = $data[$i]['time'];
             $order = Array();
@@ -144,7 +147,7 @@ class Order extends Home {
             }
             $res[$cnt]['item'] = Array();
             $res[$cnt]['state'] = $data[$i]['state'];
-            $res[$cnt]['time'] = $data[$i]['time'];
+            $res[$cnt]['time'] = $time;
             $total = 0;
             while($i < $len && ($data[$i]['ordor'] === $buyer ) && ($time === $data[$i]['time'])){
                 $item = Array();
@@ -195,9 +198,42 @@ class Order extends Home {
             }
             $data['orderState'] = $this->config->item('orderState');
             $data['storeId'] = $storeId;
-            //$this->help->showArr($data['order']);
+            $this->help->showArr($data['order']);
         }
         $this->load->view("onTimeOrder",$data);
+    }
+
+    /**
+     * 修改订单的状态，这个是为了后台准备的
+     * @param   int     $orderId    订单的编号
+     * @param   int     $state      将要修改的状态
+     * @param   string  $goto       完成之后要跳转去的地方
+     * @param   post    $context    投诉或者是拒绝时候输入的内容
+     */
+    public function changeNote($orderId = -1 , $state , $goto)
+    {
+        if($this->_checkAuthority(site('bg/order/ontime')) === false){
+            return;
+        }
+
+        $storeId = $this->session->userdata('storeId');
+        $stateArr = $this->config->item('orderState');
+        var_dump($stateArr);
+        die;
+        if(array_key_exists($state , $stateArr)){
+            //管理员并没有拒绝订单和举报恶意订单的功能
+            if($this->isAdmin){
+                $this->morder->setState($orderId , $state);
+            } else if($storeId){
+                $context = trim($this->input->post('context'));
+                $this->morder->setStateByStore($orderId , $state , $storeId , $context);
+            } else {
+                $this->load->model('mwrong');
+                $this->mwrong->insert("有人非法入侵bg/order/changeNote");
+            }
+        } else {
+            $this->mwrong->insert("storeId = $storeId 的用户输入了不存在的订单状态state = $state" );
+        }
     }
 }
 ?>

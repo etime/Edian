@@ -363,6 +363,22 @@ class Morder extends Ci_Model {
         if(!$id)return false;
         return $this->db->query("update ord set state = $state where id = $id && state < ". $state);
     }
+
+    /**
+     * 允许店铺老板修改自己店铺的商品订单状态;
+     * @param   int     $id     订单的编号
+     * @param   int     $state  想要修改的状态
+     * @param   int     $storeId 店铺的id
+     * @todo 其实应该只是允许店铺老板修改几个特定的状态，现在赶时间，先不做
+     */
+    public function setStateByStore($id , $state , $storeId , $context )
+    {
+        $id     = (int)$id;
+        $state  = (int)$state;
+        $storeId= (int)$storeId ;
+        $context = mysql_real_escape_string($context);
+        return $this->db->query("update ord set state = $state , note = '" . $context . "' where id = $id && seller = $storeId ");
+    }
     /**
      * 修改下单之前得到要修改的信息
      *   查找下单时候，要修改的内容,目前仅为order set 效力
@@ -393,7 +409,7 @@ class Morder extends Ci_Model {
         if(!$storeId)return false;
         $now = time();
         $now -= 86400;
-        $sql = "select id,addr,info,item_id,time,ordor,state from ord where state &&  seller = $storeId &&  UNIX_TIMESTAMP(time) > " . $now . ' && state <= ' . $failed;
+        $sql = "select id,addr,info,item_id,time,ordor,state from ord where state &&  seller = $storeId &&  UNIX_TIMESTAMP(time) > " . $now . ' && state < ' . $failed . ' || state = ' . $failed . ' order by time';
         $res = $this->db->query($sql);
         if($res->num_rows){
             $len = $res->num_rows;

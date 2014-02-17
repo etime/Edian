@@ -28,10 +28,13 @@ $baseUrl = base_url();
     </h3>
     <ul id = "list" class = "list">
         <?php foreach ($order as $value) :?>
+        <?php
+            $orderNum = $storeId . '_' . strtotime($value['time']);
+        ?>
         <li>
             <div class = "init">
                 <span class="state"><?php echo $orderState[$value['state']] ?></span>
-                <span class="order"><?php echo $storeId . strtotime($value['time']) ?></span>
+                <span class="order"><?php echo $orderNum?></span>
                 <span><?php  echo $value['user'][0]?></span>
                 <span>￥<?php echo $value['total'] ?></span>
                 <span><?php echo $value['time'] ?></span>
@@ -70,7 +73,7 @@ $baseUrl = base_url();
                         </ul>
                     </div>
                     <div class = "oper">
-                        <a href = "">接单</a>
+                    <a href = "<?php echo $siteUrl .'/bg/order/changeNote/' . $orderNum?>">接单</a>
                         <a href = "">再次打印</a>
                         <a href = "" name = 'reject'>拒绝订单</a>
                         <a href = "" name = 'evil'>恶意订单</a>
