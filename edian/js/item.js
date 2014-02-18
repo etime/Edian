@@ -11,266 +11,36 @@ $(document).ready(function(){
     //login();//登录
     //setOrder();
 })
-/**
- * 登录的管理和控制
- */
-function login(){
-    var atten = $("#atten");
-    var login = $("#login");
-    user_id = 1;
-    if(!user_id){
-        var flag = 0;
-        atten.text("登陆");
-        //购物车的登录
-        $(".lok").click(function(event){
-            if(user_id){
-                return false;
-            }
-            event.preventDefault();
-            login.fadeToggle();
-            if(flag == 0){
-                flag = 1;//禁止发送多次，事件只绑定一次
-                var url = login.attr("action")+"/1";
-                login.submit(function(event){
-                    var userName = login.find("input[name = 'userName']").val();
-                    var passwd = login.find("input[name = 'passwd']").val();
-                    if(!(userName && passwd))return false;
-                    login.fadeOut();
-                    $.ajax({
-                            url: url,
-                            type: 'POST',
-                            dataType: 'json',
-                            data: {"userName":userName,"passwd":passwd},
-                            success: function (data, textStatus, jqXHR) {
-                                console.log(data);//这里还没有进行测试
-                                if(data["flag"]){
-                                    user_id = data["user_id"];
-                                    user_name = userName;
-                                    atten.unbind("click");
-                                    alogin();//alogin中处理登录之后的事情
-                                    $.alet("登录成功");
-                                }else{
-                                    $.alet(data["atten"]);
-                                }
-                            },
-                            error: function (jqXHR, textStatus, errorThrown) {
-                                $.alet("登录失败了");
-                            }
-                        });
-                    event.preventDefault();
-                });
-            }
-        })
-    } else {
-        alogin();
-    }
-    $("#cel").click(function(event){
-        //cancel login
-        login.fadeOut();
-        event.preventDefault();
-    })
-}
 
 /*
  * pg切换有关的操作,tab 切换
+ * 包括页面的评论和缩略图
  */
 function pg() {
-    var temp,pg = $("#pg");//pg 页面切换的ul
-    var des = $("#des"),dcom = $("#dcom");
-    var last = des;//决定下面那个首先显示
-    $("#judge").click(function () {
-        var lis = pg.find("li");
-        for (var i = lis.length - 1; i >= 0; i --) {
-            temp = $(lis[i]).attr("class");//不知道所个class的时候，会不会出错呢
-            if(temp == "cse")$(lis[i]).removeClass("cse");
-            temp = $(lis[i]).attr("name");
-            if(temp == "comment"){
-                $(lis[i]).addClass("cse");
-                last.css("display","none");
-                last = dcom;
-                last.fadeIn();
-            }
+    var img = $("#mainImg");
+    //缩略图和主图直接的切换
+    $("#thumb").delegate("img" ,  'mouseenter' , function () {
+        console.log("tsing");
+        img.prop('src' , $(this).prop("src"));
+    })
+    // 评论和商品详情之间的切换
+    $("#ittab").delegate('li' , 'click' , function () {
+        var name = $(this).attr('name');
+        if(name === 'good'){
+            $("#ucom").css('display' , 'none');
+            $("#good").fadeIn();
+        } else {
+            $("#good").css('display' , 'none');
+            $("#ucom").fadeIn();
         }
-    });
-    pg.delegate("li","click",function(){
-        var name = $(this).attr("name");
-        pg.find(".cse").removeClass("cse");
-        $(this).addClass("cse");
-        last.fadeOut(function(){
-            if(name == "more"){
-                last = des;
-                last.fadeIn();
-            }else if(name == "comment"){
-                last = dcom;
-                last.fadeIn();
-            }
-        })
     })
 }
 
-/**
- * 集中了和评论有关的操作，包括隐藏，添加，上传等等
- */
-function comment(){
-    $("#com").delegate(".reCom","click",function(event){
-        console.log(event.srcElement);
-        if(!user_id){
-            $.alet("请首先登录");
-            return false;
-        }
-        var ftr = this;
-        var node = event.srcElement;
-        var name = $(node).attr("name");
-        console.log(name);
-        if(name == "comRe"){
-            $(ftr).find("form").slideToggle();//.slideDown();
-        }else if(name == "sub"){
-            //这里是提交
-            var cont = $.trim($(ftr).find("textarea").val());
-            var action = $.trim($(ftr).find("form").attr("action"));
-            if(cont.length < 2){
-                $.alet("呵呵,别这么短嘛");
-                return false;
-            }
-            var id = $(node).attr("id");
-            upCom(action,cont,appcom,id);
-            event.preventDefault();
-        }else if(name == "context"){
-            $(node).animate({
-                height:"80px"
-            })
-        }
-    })
-    $("#comForm").submit(function(){
-        console.log("开始处理上传之前的事情");
-        if(!user_id){
-            $.alet("请首先登录哦");
-            return false;
-        }
-        var context = $.trim($("#context").val());
-        if(context.length < 5){
-            $.alet("字数少，显示不出诚意嘛");
-            return false;
-        }
-        var score = $("#score").val();
-        upCom(site_url+"/item/newcom/"+itemId,context,newComBack,score);
-        event.preventDefault();
-    })
-    $("#context").focus(function(){
-        $(this).animate({
-            height:"100px"
-        })
-    })
-    /***************处理评分显示的问题*********************/
-    var mks = $(".mk"),temp,mark = new  Array(0,0,0,0);
-    for (var i = 0, l = mks.length; i < l; i ++) {
-        temp = parseInt($(mks[i]).text());
-        console.log(temp);
-        if(temp== 10){
-            mark[0]++;
-        }else if(temp > 5){
-            mark[1]++;
-        }else if(temp){
-            mark[2]++;
-        }else{
-            mark[3]++;
-        }
-    }
-    mks = $("#coms span");
-    for(var i = 0,l = mks.length;i < l;i++){
-        $(mks[i]).text(mark[i]);
-    }
-    /******************评分结束*************************/
-    $("#coms").delegate("a","click",function(event){
-        var name = $(this).attr("name");
-        if(name == "a"){
-            showAge(0,10);
-        }else if(name == "h"){
-            showAge(10,10);
-        }else if(name == "m"){
-            showAge(5,9)
-        }else if(name == "l"){
-            showAge(1,4);
-        }else if(name == "w"){
-            showAge(0,0);
-        }
-        event.preventDefault();
-    })
-    var comli = $("#com li");
-    function showAge(low,high){
-        var val;
-        for(var i = 0,l = comli.length;i< l;i++){
-            val = parseInt($(comli[i]).find(".mk").text());
-            if((val<=high) && (low <= val)){
-                $(comli[i]).fadeIn();
-            }else{
-                $(comli[i]).fadeOut();
-            }
-        }
-    }
-    /**********添加评论时候评分的处理***********************/
-    var txts = $("#txts"),score = $("#score"),mkImg = $("#mark img");
-    $("#mark").delegate("img","click",function(event){
-        var name = parseInt($(this).attr("name"));
-        txts.text(name);
-        score.val(name);
-        for(var i = 0;i <= name;i++){
-            $(mkImg[i]).removeClass("no");
-        }
-        for(var i = name+1;i <= 10;i++){
-            $(mkImg[i]).addClass("no");
-        }
-    })
-    /***********************************/
-}
-function newComBack(context,score) {
-    var tar = $("#com li").first();
-    var str = "<li><p class = 'cp'><span>评分:</span><span class = 'sp'>"+score+"</span><span>"+user_name+"</span><span>"+date()+"</span></p><blockquote>"+context+"</blockquote><div class = 'reCom' ><span name = 'comRe' class = 'comRe'>回复</span><form action="+site_url+'/item/appcom/'+itemId+" method='post' accept-charset='utf-8' enctype = 'multipart/form-data' style = 'display:none'><textarea  name = 'context' placeholder = '评论...' ></textarea><input type='submit' name='sub'  value='回复' /></form></div></li>";
-    $(tar).before(str);
-    console.log(str);
-    $("#context").val("");
-    $("#context").animate({
-        "height":"33px"
-    })
-}
+
 function date() {
 //获得本地的时间"2013-4-6 20:27:32"的形式
     var time=new Date();
     return time.getFullYear()+"-"+(time.getMonth()+1)+"-"+time.getDate();
-}
-function appcom(cont,id){
-    var node = document.getElementById(id);
-    node = node.parentNode;
-    $(node).slideUp();//将form隐藏
-    node = node.parentNode;//插入到recom之前
-    var str = "<div class = 'reCom'><p>"+cont+"</p><span>"+user_name+"</span><span>"+date()+"</span></div>";
-    $(node).before(str);
-    var area = $(node).find("textarea");
-    $(area).val("");
-}
-function upCom(href,con,callback,score) {
-    $.ajax({
-        url: href,
-        type: 'POST',
-        dataType: 'json',
-        data:{"context":con,"score":score},
-        complete: function (jqXHR, textStatus) {
-            console.log(textStatus);
-        },
-        success: function (data, textStatus, jqXHR) {
-            //success callback;
-            if(data["flag"] == -1){
-                $.alet($data["atten"]);
-            }else{
-                $.alet("评论成功");
-                callback(con,score,data["flag"]);
-            }
-        },
-        error: function (jqXHR, textStatus, errorThrown) {
-            $.alet("评论失败");
-            // error callback
-        }
-    });
 }
 
 /**

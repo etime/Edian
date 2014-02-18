@@ -6,7 +6,7 @@
     <div class="tab">
         <ul class="clearfix">
             <li>导航分类</li>
-            <li>首页</li>
+            <a href = "<?php echo site_url() ?>"><li>首页</li></a>
             <li>商城</li>
             <li>店面</li>
             <li>活动</li>
@@ -32,7 +32,7 @@ margin:0;
 .tab li:hover{
     background:rgb(125,3,3);
 }
-.tab{
+.tab ,  .tab a{
     background:#990002;
     color:white;
 }

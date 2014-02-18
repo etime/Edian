@@ -31,10 +31,7 @@ class Test extends MY_Controller{
     }
     public function map()
     {
-        //phpinfo();
-        $this->load->library('help');
-        $this->help->showArr($_POST);
-        $this->load->view("test");
+        $this->load->view("item");
     }
     public function abc()
     {

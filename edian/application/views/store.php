@@ -23,7 +23,7 @@
     ?>
     <div id = "nav" class = "nav">
         <div class="cnav width clearfix">
-            <h4>商品类别</h4>
+            <h4>导航分类</h4>
             <ul class = "list">
             <a href = "<?php echo $siteUrl.'/shop/index/' .$storeId ?>"><li <?php  if(!$key) echo "class = 'ccd'"?> >全部</li></a>
                 <?php foreach ($category  as $value): ?>

@@ -5,7 +5,7 @@
             <h1>e<span>點</span></h1>
         </div>
         <p style="float:right">
-            <a>登录</a>  |
+            <a href = "#" id = "gotoLogin">登录</a>  |
             <a href = "<?php echo site_url('/register/userRegister/') ?>">注册</a>  |
             <a>帮助</a>
         </p>
@@ -17,7 +17,57 @@
         </form>
     </div>
 </div>
+<div id = "login" class = "login">
+    <form action="" method="post" accept-charset="utf-8">
+        <p>
+            <input type="text" name="username" placeholder = "用户名/手机号" />
+        </p>
+        <p>
+            <input type="password" name="password" placeholder = "密码" />
+        </p>
+        <input type="submit" name="sub"  value="登录" />
+    </form>
+</div>
+<!-- 以后这里做能内部嵌入js代码的 -->
+<script type="text/javascript" charset="utf-8" src = "<?php echo  base_url('js/login.js')?>"></script>
 <style type="text/css" media="all">
+.login{
+    position:fixed;
+    top:100px;
+    width:100%;
+    z-index:10;
+}
+.login form{
+    width:250px;
+    background:rgb(241, 241, 241);
+    margin:0px auto;
+    text-align:center;
+    border-radius:5px;
+    padding:5px;
+}
+.login p{
+    margin:5px ;
+}
+.login input[type = 'submit']{
+    background:#046F00;
+    border:none;
+    border-radius:5px;
+    padding:7px 10px;
+    color:#F5DFB5;
+    box-shadow:3px 1px 2px #BBB7B7;
+    width:120px;
+}
+.login input[type = 'text'] , .login input[type = 'password']{
+    padding:7px;
+    border:1px solid rgb(221, 221, 221);
+    box-shadow:2px 2px 3px rgb(196, 196, 196) inset;
+    border-radius:5px;
+    width:90%;
+}
+.login input[type = 'text']:focus , .login input[type = 'password']:focus{
+    border:1px solid gray;
+    box-shadow:1px 1px 4px rgb(150, 150, 150) inset;
+}
 #header{
     background:#cc0001;
 }
@@ -77,5 +127,8 @@
 #header{
     background-color:#cc0001;
     overflow:hidden;
+}
+a{
+    color:inherit;
 }
 </style>

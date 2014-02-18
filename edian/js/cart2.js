@@ -96,7 +96,6 @@ var objOrder = (function () {
  */
 function getCart(){
     //获取购物车的内容,只有在登录的情况下可以哦
-    var href = ;
     $.ajax({
         url: site_url+"/order/index/1" ,
         type: 'POST', dataType: 'json',
@@ -108,7 +107,7 @@ function getCart(){
             var cap = "";
             var cal  = 0;
             lsp = data["lsp"];
-            for(var i = 0,l = cart.length;i < l;){
+            for(var i = 0,l = cart ? cart.length :0 ;i < l;){
                 var lastSeller =  cart[i]["seller"];
                 var captmp = 0;
                 var slIdx = i;
@@ -177,7 +176,7 @@ function getCart(){
             $.alet("拉取购物车失败");
         }
     });
-
+}
 /**
  * 发送订单,加入购物车,det中 fmIf调用
  * @param {node} buyNum 向dom input 中读取购买数量

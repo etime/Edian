@@ -17,16 +17,6 @@ $siteUrl = site_url();
     <?php
         $this->load->view("homeHeader");
     ?>
-    <!--
-        <div class="tab">
-            <ul class="clearfix">
-                <li>首页</li>
-                <li>商城</li>
-                <li>二手</li>
-                <li>活动</li>
-            </ul>
-        </div>
-    -->
         <div class="path">
             <div>
                 <a href="<?php echo $siteUrl ?>">e点</a> >>
@@ -41,10 +31,10 @@ $siteUrl = site_url();
     <div id = "top"  >
         <div class = "clearfix">
             <div class="showImg ">
-                <div id = "mainImg" class = "mainImg">
-                    <img src="<?php echo $item['mainThumbnail'] ?>" alt="这里是图片" />
+                <div class = "mainImg">
+                    <img id = "mainImg" src="<?php echo $item['mainThumbnail'] ?>" alt="这里是图片" />
                 </div>
-                <div class = "thumb">
+                <div class = "thumb"  id = "thumb">
                     <img src="<?php echo $item['mainThumbnail'] ?>" alt="这里是图片" />
                 <?php
                     if($item['thumbnail']){
@@ -157,15 +147,15 @@ $siteUrl = site_url();
             </div>
         </div>
         <div id = "item">
-            <ul class="ittab clearfix">
-                <li><h3>商品详情</h3></li>
-                <li><h3 style="border-right:none">评价</h3></li>
+            <ul class="ittab clearfix" id = "ittab">
+                <li name = "good"><h3>商品详情</h3></li>
+                <li name = "ucom"><h3 style="border-right:none">评价</h3></li>
             </ul>
             <div>
-                <div>
-                <!-- 这里放什么呢-->
+                <div id = "good">
+                    <?php echo $item['detail'] ?>
                 </div>
-                <ul id = "ucom" class = "ucom">
+                <ul id = "ucom" class = "ucom" style = "display:none">
                 <?php for($i = 0 ,$len = $comment ? count($comment) : 0; $i < $len ; $i++):?>
                 <?php
                     $com = $comment[$i];
@@ -214,9 +204,10 @@ $siteUrl = site_url();
 </body>
 <script type="text/javascript" charset="utf-8">
     var site_url = "<?php echo $siteUrl ?>";
-    var itemId = "<?php echo $itemId ?>";
+    var baseUrl  = "<?php echo $baseUrl ?>";
+    var itemId   = "<?php echo $itemId ?>";
 </script>
 <script type="text/javascript" charset="utf-8" src = "<?php echo $baseUrl. 'js/jquery.min.js'?>"></script>
-<script type="text/javascript" charset="utf-8" src = "<?php echo $baseUrl. 'js/cart2.js'?>"></script>
+<script type="text/javascript" charset="utf-8" src = "<?php echo $baseUrl. 'js/cart3.js'?>"></script>
 <script type="text/javascript" charset="utf-8" src = "<?php echo $baseUrl. 'js/item.js'?>"></script>
 </html>

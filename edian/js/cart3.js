@@ -15,7 +15,7 @@ function getCart() {
     function formBuyer(buyer) {
         if(buyer.length >= 1){
             buyer = buyer[0];
-            return "<div class = 'cinfo clearfix'><p class = 'addr'>" + buyer['address']+ "</p><div class = 'buyer'><p>" +buyer['name']+ "</p><p>"+buyer['phone']+"</p></div></div>";
+            return "<div class = 'cinfo clearfix'><p class = 'addr'>" + buyer[2]+ "</p><div class = 'buyer'><p>" +buyer[0]+ "</p><p>"+buyer[1]+"</p></div></div>";
         } else{
             return false;
         }
@@ -30,7 +30,7 @@ function getCart() {
         console.log(cart);
         var cnt = 0;
         var re = '';
-        for (var i = 0, len = cart.length; i < len; i ++) {
+        for (var i = 0, len = cart ? cart.length : 0; i < len; i ++) {
             var seller = cart[i]['seller'];
             re += "<div class = 'shop'>";
             re += "<p title = '店铺小计/最低起送价' class = 'tp'>";
