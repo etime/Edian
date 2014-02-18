@@ -88,17 +88,18 @@ class Order extends Home {
         if (isset($_GET['pageId'])) {
             $pageId = $_GET['pageId'];
         }
-        $this->storeId = 2;
         $data['order'] = $this->morder->hist($this->storeId);
-        if ($data['order']) {
-            $temp = $this->pagesplit->split($data['order'], $pageId, $this->pageSize);
-            $data['order'] = $temp['newData'];
-            $commonUrl = site_url() . '/bg/order/history';
-            $data['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount']);
-        }
         if ($data['order']) {
             $data['order'] = $this->orderForm($data['order']);
         }
+        if ($data['order']) {
+            $temp = $this->pagesplit->split($data['order'], $pageId, $this->pageSize);
+            $data['order'] = $temp['newData'];
+            $commonUrl = site_url('/bg/order/history');
+            $data['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount']);
+        }
+        //$this->help->showArr($data);
+
         //$this->help->showArr($data['order']);
         $data['storeId'] =  $this->storeId;
         $this->load->view('histOrder2' , $data);
@@ -184,16 +185,15 @@ class Order extends Home {
         if($type == $this->config->item("adminCredit")){
             $data["order"] = $this->morder->getAllOntime();
         }else if($type == $this->config->item('bossCredit')){
-            $storeId = $this->session->userdata("storeId");
             //之所以这么处理，是因为考虑bg/home/index函数负责了店铺的选择和控制
-            if(!$storeId){
+            if(!$this->storeId){
                 exit("登录失效，请刷新页面");
             }else{
-                $data["order"] = $this->morder->getOntime($storeId , $this->config->item('infFailed'));
+                $data["order"] = $this->morder->getOntime($this->storeId , $this->config->item('infFailed'));
                 $data['order'] = $this->orderForm($data['order']);
             }
             $data['orderState'] = $this->config->item('orderState');
-            $data['storeId'] = $storeId;
+            $data['storeId'] = $this->storeId;
             //$this->help->showArr($data['order']);
         }
         $this->load->view("onTimeOrder",$data);
@@ -214,13 +214,13 @@ class Order extends Home {
         }
         $orderId = explode('_' , $orderId);
         if(count($orderId) === 2){
-            $storeId = $this->session->userdata('storeId');
+            //$storeId = $this->session->userdata('storeId');
             $stateArr = $this->config->item('orderState');
             if(array_key_exists($state , $stateArr)){
                 //管理员并没有拒绝订单和举报恶意订单的功能
                 if($this->isAdmin){
                     $this->morder->setState($orderId , $state);
-                } else if($storeId){
+                } else if($this->storeId){
                     $context = trim($this->input->post('context'));
                     $this->morder->setStateByStore($orderId[1] , $state , $storeId , $context);
                 } else {
@@ -228,7 +228,7 @@ class Order extends Home {
                     $this->mwrong->insert("有人非法入侵bg/order/changeNote " . __LINE__);
                 }
             } else {
-                $this->mwrong->insert("storeId = $storeId 的用户输入了不存在的订单状态state = $state" );
+                $this->mwrong->insert("storeId = $this->storeId 的用户输入了不存在的订单状态state = $state" );
             }
         }
 

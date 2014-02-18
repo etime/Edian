@@ -10,6 +10,9 @@ h3 span , .init span{
     text-align:center;
     position:relative;
 }
+a{
+    text-decoration:none;
+}
 body{
     background:rgb(252, 248, 248);
 }
@@ -95,7 +98,6 @@ li{
     background:#c9c9c9;
     padding:4px 0;
     border-radius:3px;
-    text-decoration:none;
 }
 .list li{
     margin:5px 0;

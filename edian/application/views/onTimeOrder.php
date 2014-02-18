@@ -86,14 +86,14 @@ $baseUrl = base_url();
                     <fieldset>
                         <legend >拒绝订单:</legend>
                         <textarea name="context" placeholder = "请输入拒绝理由"></textarea>
-                        <input type="button" name="reject"  value="提交" />
+                        <input type="submit" name="reject"  value="提交" />
                     </fieldset>
                 </form>
                 <form action="<?php echo $siteUrl .'/bg/order/changeNote/' . "$orderNum/$val"?>" method="post" accept-charset="utf-8" class = "evil" style = "display:none">
                     <fieldset>
                         <legend >恶意订单:</legend>
                         <textarea name="context" placeholder = "请说明详情"></textarea>
-                        <input type="button" name="evil"  value="提交" />
+                        <input type="submit" name="evil"  value="提交" />
                     </fieldset>
                 </form>
             </div>

@@ -158,7 +158,7 @@ class Morder extends Ci_Model {
         if ($storeId === 0) {
             return false;
         }
-        $sql = "SELECT id, addr, info, item_id, time, ordor, state FROM ord WHERE seller = $storeId AND state > 0 ORDER BY time";
+        $sql = "SELECT id, addr, info, item_id, time, ordor, state FROM ord WHERE seller = $storeId AND state ORDER BY time";
         $res = $this->db->query($sql);
         if ($res->num_rows === 0) {
             return false;
