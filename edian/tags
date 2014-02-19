@@ -1704,7 +1704,7 @@ appLine	js/home.js	/^    function appLine(data,node) {$/;"	f
 appNewItem	js/cart.js	/^function appNewItem(data,img,info,price,itemIdApp,buyNum) {$/;"	f
 appaddr	application/models/user.php	/^    public function appaddr($addr, $userId) {$/;"	f
 appcom	application/controllers/item.php	/^    public function appcom($comId)$/;"	f
-appcom	js/item.js	/^function appcom(cont,id){$/;"	f
+appcom	js/comment.js	/^function appcom(cont,id){$/;"	f
 append	application/models/comitem.php	/^    public function append($data,$comId)$/;"	f
 append_output	system/core/Output.php	/^	function append_output($output)$/;"	f
 appends	system/libraries/Upload.php	/^		 * This function appends an number onto the end of$/;"	f
@@ -2104,7 +2104,7 @@ changeCategory	application/models/store.php	/^    public function changeCategory
 changeInfo	application/models/user.php	/^    public function changeInfo($data,$userId)$/;"	f
 changeLoginTime	application/models/user.php	/^    public function changeLoginTime($userId)$/;"	f
 changeNew	application/models/art.php	/^    public function changeNew($artId)$/;"	f
-changeNote	application/controllers/bg/order.php	/^    public function changeNote($orderId = -1 , $state)$/;"	f
+changeNote	application/controllers/bg/order.php	/^    public function changeNote($orderId = -1 , $state , $goto = 'ontime')$/;"	f
 changePart	js/home.js	/^function changePart () {$/;"	f
 changePart	js/mainpage2.js	/^function changePart () {$/;"	f
 changeRating	application/controllers/bg/item.php	/^    public function changeRating() {$/;"	f
@@ -2314,13 +2314,13 @@ comconstru	js/messout.js	/^function comconstru () {$/;"	f
 comment	application/controllers/bg/item.php	/^            $comment = $temp['newData'];$/;"	v
 comment	application/controllers/bg/item.php	/^        $comment = $this->comitem->getRecentComment($storeId, $day);$/;"	v
 comment	application/models/comment.php	/^			$comment = addslashes($comment);$/;"	v
-comment	js/item.js	/^function comment(){$/;"	f
-comment.showAge	js/item.js	/^    function showAge(low,high){$/;"	f
+comment	js/comment.js	/^function comment(){$/;"	f
+comment.showAge	js/comment.js	/^    function showAge(low,high){$/;"	f
 commenterAmount	application/controllers/search.php	/^                $commenterAmount = $this->comitem->getCommenterAmount($itemId);$/;"	v
 commonUrl	application/controllers/bg/item.php	/^            $commonUrl = site_url('\/bg\/item\/itemCom');$/;"	v
 commonUrl	application/controllers/bg/item.php	/^            $commonUrl = site_url('\/bg\/item\/manage');$/;"	v
+commonUrl	application/controllers/bg/order.php	/^            $commonUrl = site_url('\/bg\/order\/history');$/;"	v
 commonUrl	application/controllers/bg/order.php	/^            $commonUrl = site_url('bg\/order\/today');$/;"	v
-commonUrl	application/controllers/bg/order.php	/^            $commonUrl = site_url() . '\/bg\/order\/history';$/;"	v
 commonUrl	application/controllers/bg/userlist.php	/^                $commonUrl = site_url('bg\/userlist\/index');$/;"	v
 commonUrl	application/controllers/bg/userlist.php	/^                $commonUrl = site_url('bg\/userlist\/user');$/;"	v
 commonUrl	application/controllers/search.php	/^        $commonUrl = site_url('search\/searchAction\/' . $button . '\/' . $order);$/;"	v
@@ -2443,8 +2443,10 @@ content	system/helpers/html_helper.php	/^	function meta($name = '', $content = '
 contents	system/libraries/Cache/drivers/Cache_file.php	/^		$contents = array($/;"	v
 contents	system/libraries/Cart.php	/^	function contents()$/;"	f
 context	application/controllers/bg/item.php	/^        $context = $this->comitem->getContext($comId);$/;"	v
+context	application/controllers/bg/order.php	/^                    $context = trim($this->input->post('context'));$/;"	v
 context	application/models/comitem.php	/^        $context = explode('~', $context);$/;"	v
 context	application/models/comitem.php	/^        $context = implode('~', $context);$/;"	v
+context	application/models/morder.php	/^        $context = mysql_real_escape_string($context);$/;"	v
 context	application/views/item2.php	/^                    $context = $com['context'];$/;"	v
 controller	system/libraries/javascript/Jquery.php	/^		$controller = (strpos(':\/\/', $controller) === FALSE) ? $controller : $this->CI->config->site_url($controller);$/;"	v
 controller_obj	system/libraries/Xmlrpcs.php	/^	var $controller_obj;$/;"	v
@@ -3738,7 +3740,7 @@ getById	application/models/mess.php	/^	public function getById($messId)$/;"	f
 getByImgId	application/models/imgcomment.php	/^	public function getByImgId($imgId)$/;"	f
 getByUserId	application/models/comment.php	/^		public function getByUserId($userId)$/;"	f
 getCart	js/cart.js	/^function getCart(){$/;"	f
-getCart.sendOrd	js/cart2.js	/^function sendOrd(attr , buyNum , img  , price){$/;"	f
+getCart	js/cart2.js	/^function getCart(){$/;"	f
 getCategoryByStoreId	application/models/store.php	/^    public function getCategoryByStoreId($storeId) {$/;"	f
 getChange	application/models/morder.php	/^    public function getChange($id)$/;"	f
 getCilnrsList	application/models/user.php	/^    public function getCilnrsList($pageId )$/;"	f
@@ -3934,6 +3936,7 @@ globalEvents	system/libraries/ckeditor.php	/^			$this->globalEvents = array();$/
 globalEvents	system/libraries/ckeditor.php	/^	private $globalEvents = array();$/;"	v
 gmt_to_local	system/helpers/date_helper.php	/^	function gmt_to_local($time = '', $timezone = 'UTC', $dst = FALSE)$/;"	f
 good	system/core/URI.php	/^		$good	= array('&#36;',	'&#40;',	'&#41;',	'&#40;',	'&#41;');$/;"	v
+goto	application/controllers/bg/order.php	/^    public function changeNote($orderId = -1 , $state , $goto = 'ontime')$/;"	v
 greater_than	system/libraries/Form_validation.php	/^	public function greater_than($str, $min)$/;"	f
 grid_color	system/helpers/captcha_helper.php	/^		$grid_color		= imagecolorallocate($im, 255, 182, 182);$/;"	v
 group_by	system/database/DB_active_rec.php	/^	public function group_by($by)$/;"	f
@@ -4869,7 +4872,7 @@ len	application/controllers/basesearch.php	/^        for ($i = 0, $len = (int)co
 len	application/controllers/basesearch.php	/^        for ($i = 1, $len = (int)count($srcArray); $i < $len; $i ++) {$/;"	v
 len	application/controllers/bg/item.php	/^            for ($i = 0, $len = (int)count($comment); $i < $len; $i++) {$/;"	v
 len	application/controllers/bg/order.php	/^            for ($i = 0, $len = count($ans); $i < $len; $i ++) {$/;"	v
-len	application/controllers/bg/order.php	/^        for($i = 0, $len = count($data); $i < $len ; $i++){$/;"	v
+len	application/controllers/bg/order.php	/^        for($i = 0, $len = $data ? count($data) : 0; $i < $len ;){$/;"	v
 len	application/controllers/bg/wrong.php	/^                $len = count($wrong);$/;"	v
 len	application/controllers/dsconfig.class.php	/^	$len = strlen($str);$/;"	v
 len	application/controllers/item.php	/^        $len = count($attr);$/;"	v
@@ -5271,7 +5274,8 @@ log_exception	system/core/Exceptions.php	/^	function log_exception($severity, $m
 log_message	system/core/Common.php	/^	function log_message($level = 'error', $message, $php_error = FALSE)$/;"	f
 login	application/controllers/message.php	/^	public  function login()$/;"	f
 login	application/libraries/help.php	/^        $login = "登录名字";$/;"	v
-login	js/item.js	/^    var login = $("#login");$/;"	v
+login	js/login.js	/^function login(callBack){$/;"	f
+login.replaceDom	js/login.js	/^    function replaceDom() {$/;"	f
 loginA	js/art.js	/^function loginA (name,data) {$/;"	f
 loginCheck	application/controllers/login.php	/^    public function loginCheck() {$/;"	f
 loginName	application/controllers/bg/home.php	/^        $loginName = $this->session->userdata('loginName');$/;"	v
@@ -6286,7 +6290,7 @@ new	application/controllers/userspace/user_photo.php	/^		$new=imagecreatetruecol
 new	system/libraries/Table.php	/^		$new = array();$/;"	v
 newCategory	application/controllers/bg/set.php	/^        $newCategory = '';$/;"	v
 newCategory	application/models/store.php	/^        $newCategory = mysql_real_escape_string($newCategory);$/;"	v
-newComBack	js/item.js	/^function newComBack(context,score) {$/;"	f
+newComBack	js/comment.js	/^function newComBack(context,score) {$/;"	f
 newComment	application/models/comitem.php	/^        $newComment = $this->_encodeContext($oldComment);$/;"	v
 newData	application/libraries/pagesplit.php	/^        $newData = array();$/;"	v
 newFilename	application/controllers/write.php	/^                    $newFilename=date("YmdHis").mt_rand(1000,9999).'.'.$extension;$/;"	v
@@ -6518,7 +6522,9 @@ order	application/controllers/search.php	/^            $order = 1;$/;"	v
 order	application/controllers/search.php	/^    public function searchAction($button = 1, $order = 1, $pageId = 1) {$/;"	v
 order	js/cart.js	/^function order() {$/;"	f
 orderForm	application/controllers/bg/order.php	/^    protected function orderForm($data)$/;"	f
+orderId	application/controllers/bg/order.php	/^        $orderId = explode('_' , $orderId);$/;"	v
 orderInfo	application/models/morder.php	/^        $orderInfo = $this->_formInfo($data);$/;"	v
+orderNum	application/views/onTimeOrder.php	/^            $orderNum = $storeId . '_' . strtotime($value['time']);$/;"	v
 order_by	system/database/DB_active_rec.php	/^	public function order_by($orderby, $direction = '')$/;"	f
 orderby	system/database/DB_active_rec.php	/^			$orderby = $this->_protect_identifiers($orderby);$/;"	v
 orderby	system/database/DB_active_rec.php	/^			$orderby = ''; \/\/ Random results want or don't need a field name$/;"	v
@@ -6768,7 +6774,6 @@ persist_cookies	application/controllers/HttpClient.class.php	/^        $this->pe
 persist_cookies	application/controllers/HttpClient.class.php	/^    var $persist_cookies = true;  \/\/ If true, received cookies are placed in the $this->cookies array ready for the next request$/;"	v
 persist_referers	application/controllers/HttpClient.class.php	/^        $this->persist_referers = $boolean;$/;"	v
 persist_referers	application/controllers/HttpClient.class.php	/^    var $persist_referers = true; \/\/ For each request, sends path of last request as referer$/;"	v
-pg	js/item.js	/^function pg() {$/;"	f
 phone	application/controllers/order.php	/^        $phone = $this->input->post('phone');$/;"	v
 phone	application/controllers/test.php	/^        $phone = "18011419947";$/;"	v
 phone	application/libraries/sms.php	/^		$phone = trim($phone);$/;"	v
@@ -7097,6 +7102,7 @@ query_times	system/database/DB_driver.php	/^	var $query_times	= array();$/;"	v
 querystring	application/controllers/HttpClient.class.php	/^    		$querystring = substr($querystring, 0, -1); \/\/ Eliminate unnecessary &$/;"	v
 querystring	application/controllers/HttpClient.class.php	/^    	    $querystring = $data;$/;"	v
 querystring	application/controllers/HttpClient.class.php	/^        $querystring = '';$/;"	v
+queue	application/controllers/shop.php	/^    public function queue()$/;"	f
 quickAdd	application/controllers/message.php	/^	public function quickAdd($messId = -1,$ajax = false)$/;"	f
 quickAdd	application/models/mess.php	/^	public function quickAdd($data)$/;"	f
 quickGet	application/controllers/HttpClient.class.php	/^    function quickGet($url) {$/;"	f
@@ -7202,6 +7208,7 @@ referer	application/controllers/HttpClient.class.php	/^            $this->refere
 referer	application/controllers/HttpClient.class.php	/^    var $referer;$/;"	v
 referrer	system/libraries/User_agent.php	/^	public function referrer()$/;"	f
 reflections	system/libraries/Driver.php	/^	private static $reflections = array();$/;"	v
+refuse	js/histOrder.js	/^function refuse() {$/;"	f
 reg	application/controllers/item.php	/^        $reg = "\/^\\d+$\/";$/;"	v
 reg	application/core/MY_Controller.php	/^        $reg = array_unique($reg);$/;"	v
 reg2	application/controllers/item.php	/^        $reg2 = "\/^\\d+\\.jpg$\/";$/;"	v
@@ -7258,6 +7265,7 @@ requires	system/libraries/Encrypt.php	/^				show_error('In order to use the encr
 res	application/controllers/bg/blocklist.php	/^						$res=$this->mbgblocklist->enable_user($user_id);$/;"	v
 res	application/controllers/bg/imglist.php	/^                    $res=$this->mhome->mupload($temp['file_name'],2);$/;"	v
 res	application/controllers/bg/imglist.php	/^                \/\/      $res=unlink(base_url("upload")."\/".$img_name);$/;"	v
+res	application/controllers/bg/order.php	/^        $res = Array();$/;"	v
 res	application/controllers/bg/userlist.php	/^            $res=$this->mbguserlist->user_block($user_id);$/;"	v
 res	application/controllers/chome.php	/^            $res=$this->img->mupload($re['file_name'], $re["upload_name"], $re['classfication'], $re['key_word'], $user_id);$/;"	v
 res	application/controllers/message.php	/^		$res = $this->mess->quickAdd($data);$/;"	v
@@ -7695,6 +7703,7 @@ send	system/libraries/Trackback.php	/^	function send($tb_data)$/;"	f
 send	system/libraries/Xmlrpc.php	/^	function send($msg)$/;"	f
 sendInMess	application/models/mess.php	/^	public function sendInMess($userId)$/;"	f
 sendOrd	js/cart.js	/^function sendOrd(){$/;"	f
+sendOrd	js/cart2.js	/^function sendOrd(attr , buyNum , img  , price){$/;"	f
 sendPayload	system/libraries/Xmlrpc.php	/^	function sendPayload($msg)$/;"	f
 sendPrice	application/controllers/order.php	/^                $sendPrice = 0;$/;"	v
 sendPrice	application/controllers/order.php	/^            $sendPrice = $this->store->getSendPriceByStoreId($cart[$slIdx]['seller']);$/;"	v
@@ -7789,6 +7798,7 @@ setPersistReferers	application/controllers/HttpClient.class.php	/^    function s
 setPrint	application/controllers/order.php	/^    public function setPrint()$/;"	f
 setState	application/models/mitem.php	/^    public function setState($state,$itemId)$/;"	f
 setState	application/models/morder.php	/^    public function setState($id , $state)$/;"	f
+setStateByStore	application/models/morder.php	/^    public function setStateByStore($id , $state , $storeId , $context )$/;"	f
 setTextContent	application/Document/js/jquery.dotdotdot-1.5.9.js	/^	function setTextContent( e, content )$/;"	f
 setUserAgent	application/controllers/HttpClient.class.php	/^    function setUserAgent($string) {$/;"	f
 set_allowed_types	system/libraries/Upload.php	/^	public function set_allowed_types($types)$/;"	f
@@ -8101,12 +8111,12 @@ sql	application/models/morder.php	/^            $sql = "update ord set  state = 
 sql	application/models/morder.php	/^            $sql = 'SELECT last_insert_id()';$/;"	v
 sql	application/models/morder.php	/^        $sql = "INSERT INTO ord(info, seller, item_id, ordor) VALUES('$orderInfo', '$data[belongsTo]', '$data[itemId]', '$data[ordor]')";$/;"	v
 sql	application/models/morder.php	/^        $sql = "SELECT count(*) FROM ord WHERE item_id = $itemId && state";$/;"	v
-sql	application/models/morder.php	/^        $sql = "SELECT id, addr, info, item_id, time, ordor, state FROM ord WHERE seller = $storeId AND state > 0 ORDER BY time";$/;"	v
+sql	application/models/morder.php	/^        $sql = "SELECT id, addr, info, item_id, time, ordor, state FROM ord WHERE seller = $storeId AND state ORDER BY time";$/;"	v
 sql	application/models/morder.php	/^        $sql = "SELECT id, addr, info, item_id, time, ordor, state FROM ord WHERE state > 0";$/;"	v
 sql	application/models/morder.php	/^        $sql = "SELECT id, info, item_id, seller FROM ord WHERE ordor = $userId && state = 0";$/;"	v
 sql	application/models/morder.php	/^        $sql = "SELECT time, item_id, state, ordor, info FROM ord WHERE (unix_timestamp(time) > unix_timestamp(now()) - 86400) OR state = $this->printed OR state = $this->Ordered";$/;"	v
 sql	application/models/morder.php	/^        $sql = "SELECT time, item_id, state, ordor, info FROM ord WHERE seller = $storeId AND unix_timestamp(time) > unix_timestamp(now()) - 86400 OR state = $this->printed OR state = $this->Ordered";$/;"	v
-sql	application/models/morder.php	/^        $sql = "select id,addr,info,item_id,time,ordor,state from ord where state &&  seller = $storeId &&  UNIX_TIMESTAMP(time) > " . $now . ' && state <= ' . $failed;$/;"	v
+sql	application/models/morder.php	/^        $sql = "select id,addr,info,item_id,time,ordor,state from ord where state &&  seller = $storeId &&  UNIX_TIMESTAMP(time) > " . $now . ' && state < ' . $failed . ' || state = ' . $failed . ' order by time';$/;"	v
 sql	application/models/mphoto.php	/^		$sql="select * from img where img_id = '$img_id'";$/;"	v
 sql	application/models/mphoto.php	/^		$sql="select img_id from img where user_id = '$user_id'";$/;"	v
 sql	application/models/mphoto.php	/^		$sql="select img_name from img where img_id = '$img_id'";$/;"	v
@@ -8125,6 +8135,7 @@ sql	application/models/store.php	/^            $sql = 'SELECT name, id FROM stor
 sql	application/models/store.php	/^            $sql = 'model\/store\/' . __LINE__ . '行出现了不应该出现的bug，ownerId在强制转换之后成为了0';$/;"	v
 sql	application/models/store.php	/^            $sql = __LINE__."行model\/store\/changeCategory\/查询了一个不存在的storeId,storeId = " . $storeId;$/;"	v
 sql	application/models/store.php	/^        $sql = "INSERT INTO store(ownerId) values('$ownerId')";$/;"	v
+sql	application/models/store.php	/^        $sql = "SELECT briefInfo , name, logo, serviceQQ, servicePhone, address, longitude, latitude, category, more, deliveryTime, deliveryArea FROM store WHERE id = $storeId";$/;"	v
 sql	application/models/store.php	/^        $sql = "SELECT category FROM store WHERE id = $storeId";$/;"	v
 sql	application/models/store.php	/^        $sql = "SELECT count(*) FROM store WHERE id = $storeId && ownerId = $ownerId";$/;"	v
 sql	application/models/store.php	/^        $sql = "SELECT duration FROM store WHERE id = $storeId";$/;"	v
@@ -8133,7 +8144,6 @@ sql	application/models/store.php	/^        $sql = "SELECT id, name FROM store";$
 sql	application/models/store.php	/^        $sql = "SELECT longitude, latitude, deliveryArea, name FROM store WHERE id = $storeId";$/;"	v
 sql	application/models/store.php	/^        $sql = "SELECT name FROM store WHERE id = $storeId";$/;"	v
 sql	application/models/store.php	/^        $sql = "SELECT name, briefInfo, deliveryTime, deliveryArea, credit, duration, servicePhone, serviceQQ, logo, category FROM store WHERE id = $storeId";$/;"	v
-sql	application/models/store.php	/^        $sql = "SELECT name, logo, serviceQQ, servicePhone, address, longitude, latitude, category, more, deliveryTime, deliveryArea FROM store WHERE id = $storeId";$/;"	v
 sql	application/models/store.php	/^        $sql = "SELECT ownerId FROM store WHERE id = $storeId";$/;"	v
 sql	application/models/store.php	/^        $sql = "SELECT sendPrice FROM store WHERE id = $storeId";$/;"	v
 sql	application/models/store.php	/^        $sql = "UPDATE store SET category = '$newCategory' WHERE id = $storeId";$/;"	v
@@ -8298,6 +8308,7 @@ state	application/models/morder.php	/^        $state  = (int)$state;$/;"	v
 state	application/models/store.php	/^        $state = (int)$state;$/;"	v
 state	application/models/user.php	/^        $state  = (int) $state;$/;"	v
 state	application/views/myorder.php	/^    $state = $cart[$cnt]["state"];$/;"	v
+stateArr	application/controllers/bg/order.php	/^            $stateArr = $this->config->item('orderState');$/;"	v
 stati	system/core/Common.php	/^		$stati = array($/;"	v
 status	application/controllers/HttpClient.class.php	/^    	        $this->status = $m[2];$/;"	v
 status	application/controllers/HttpClient.class.php	/^    var $status;$/;"	v
@@ -8328,9 +8339,7 @@ storeId	application/controllers/bg/home.php	/^        $storeId = (int)$storeId;$
 storeId	application/controllers/bg/item.php	/^        $storeId = $this->session->userdata('storeId');$/;"	v
 storeId	application/controllers/bg/item.php	/^        $this->storeId = $this->session->userdata('storeId');$/;"	v
 storeId	application/controllers/bg/item.php	/^    var $storeId;$/;"	v
-storeId	application/controllers/bg/order.php	/^            $storeId = $this->session->userdata("storeId");$/;"	v
 storeId	application/controllers/bg/order.php	/^        $this->storeId = $this->session->userdata('storeId');$/;"	v
-storeId	application/controllers/bg/order.php	/^        $this->storeId = 2;$/;"	v
 storeId	application/controllers/bg/order.php	/^    protected  $storeId;$/;"	v
 storeId	application/controllers/bg/set.php	/^            $storeId = 2;\/\/这里是为了测试$/;"	v
 storeId	application/controllers/bg/set.php	/^            else $storeId = $this->session->userdata("storeId");$/;"	v
@@ -8341,6 +8350,7 @@ storeId	application/models/comitem.php	/^        $storeId = (int)$storeId;$/;"	v
 storeId	application/models/mitem.php	/^        $storeId = $belongsTo;$/;"	v
 storeId	application/models/mitem.php	/^        $storeId = (int)$storeId;$/;"	v
 storeId	application/models/morder.php	/^        $storeId = (int)$storeId;$/;"	v
+storeId	application/models/morder.php	/^        $storeId= (int)$storeId ;$/;"	v
 storeId	application/models/store.php	/^         $storeId = (int)$storeId;$/;"	v
 storeId	application/models/store.php	/^        $storeId = (int)$storeId;$/;"	v
 storeId	application/models/store.php	/^        $storeId = mysql_real_escape_string($storeId);$/;"	v
@@ -8837,6 +8847,7 @@ test	application/controllers/chome.php	/^    function test(){$/;"	f
 test	application/controllers/home.php	/^    public function test($id = 0) {$/;"	f
 test	application/controllers/mainpage.php	/^    public function test($id = 0)$/;"	f
 test	application/controllers/sec.php	/^	public function test() {$/;"	f
+test	application/controllers/shop.php	/^    public function test()$/;"	f
 test	application/controllers/showart.php	/^    public function test() {$/;"	f
 test	application/controllers/wrong.php	/^    public function test() {$/;"	f
 test	application/libraries/cache.php	/^    protected function test()$/;"	f
@@ -9125,7 +9136,7 @@ unset_userdata	system/libraries/Session.php	/^	function unset_userdata($newdata 
 unwatch	application/Document/js/jquery.dotdotdot-1.5.9.min.js	/^(function(a){function c(a,b,c){var d=a.children(),e=!1;a.empty();for(var g=0,h=d.length;h>g;g++){var i=d.eq(g);if(a.append(i),c&&a.append(c),f(a,b)){i.remove(),e=!0;break}c&&c.remove()}return e}function d(b,c,g,h,i){var j=b.contents(),k=!1;b.empty();for(var l="table, thead, tbody, tfoot, tr, col, colgroup, object, embed, param, ol, ul, dl, select, optgroup, option, textarea, script, style",m=0,n=j.length;n>m&&!k;m++){var o=j[m],p=a(o);void 0!==o&&(b.append(p),i&&b[b.is(l)?"after":"append"](i),3==o.nodeType?f(g,h)&&(k=e(p,c,g,h,i)):k=d(p,c,g,h,i),k||i&&i.remove())}return k}function e(a,b,c,d,h){var k=!1,l=a[0];if(l===void 0)return!1;for(var m="letter"==d.wrap?"":" ",n=j(l).split(m),o=-1,p=-1,q=0,r=n.length-1;r>=q;){var s=Math.floor((q+r)\/2);if(s==p)break;p=s,i(l,n.slice(0,p+1).join(m)+d.ellipsis),f(c,d)?r=p:(o=p,q=p)}if(-1==o||1==n.length&&0==n[0].length){var u=a.parent();a.remove();var v=h?h.length:0;if(u.contents().size()>v){var w=u.contents().eq(-1-v);k=e(w,b,c,d,h)}else{var x=u.prev(),l=x.contents().eq(-1)[0];if(l!==void 0){var t=g(j(l),d);i(l,t),h&&x.append(h),u.remove(),k=!0}}}else{var t=g(n.slice(0,o+1).join(m),d);k=!0,i(l,t)}return k}function f(a,b){return a.innerHeight()>b.maxHeight}function g(b,c){for(;a.inArray(b.slice(-1),c.lastCharacter.remove)>-1;)b=b.slice(0,-1);return 0>a.inArray(b.slice(-1),c.lastCharacter.noEllipsis)&&(b+=c.ellipsis),b}function h(a){return{width:a.innerWidth(),height:a.innerHeight()}}function i(a,b){a.innerText?a.innerText=b:a.nodeValue?a.nodeValue=b:a.textContent&&(a.textContent=b)}function j(a){return a.innerText?a.innerText:a.nodeValue?a.nodeValue:a.textContent?a.textContent:""}function k(b,c){return b===void 0?!1:b?"string"==typeof b?(b=a(b,c),b.length?b:!1):"object"==typeof b?b.jquery===void 0?!1:b:!1:!1}function l(a){for(var b=a.innerHeight(),c=["paddingTop","paddingBottom"],d=0,e=c.length;e>d;d++){var f=parseInt(a.css(c[d]),10);isNaN(f)&&(f=0),b-=f}return b}function m(a,b){return a?(b="string"==typeof b?"dotdotdot: "+b:["dotdotdot:",b],window.console!==void 0&&window.console.log!==void 0&&window.console.log(b),!1):!1}if(!a.fn.dotdotdot){a.fn.dotdotdot=function(e){if(0==this.length)return e&&e.debug===!1||m(!0,'No element found for "'+this.selector+'".'),this;if(this.length>1)return this.each(function(){a(this).dotdotdot(e)});var g=this;g.data("dotdotdot")&&g.trigger("destroy.dot"),g.data("dotdotdot-style",g.attr("style")),g.css("word-wrap","break-word"),g.bind_events=function(){return g.bind("update.dot",function(b,e){b.preventDefault(),b.stopPropagation(),j.maxHeight="number"==typeof j.height?j.height:l(g),j.maxHeight+=j.tolerance,e!==void 0&&(("string"==typeof e||e instanceof HTMLElement)&&(e=a("<div \/>").append(e).contents()),e instanceof a&&(i=e)),q=g.wrapInner('<div class="dotdotdot" \/>').children(),q.empty().append(i.clone(!0)).css({height:"auto",width:"auto",border:"none",padding:0,margin:0});var h=!1,k=!1;return n.afterElement&&(h=n.afterElement.clone(!0),n.afterElement.remove()),f(q,j)&&(k="children"==j.wrap?c(q,j,h):d(q,g,q,j,h)),q.replaceWith(q.contents()),q=null,a.isFunction(j.callback)&&j.callback.call(g[0],k,i),n.isTruncated=k,k}).bind("isTruncated.dot",function(a,b){return a.preventDefault(),a.stopPropagation(),"function"==typeof b&&b.call(g[0],n.isTruncated),n.isTruncated}).bind("originalContent.dot",function(a,b){return a.preventDefault(),a.stopPropagation(),"function"==typeof b&&b.call(g[0],i),i}).bind("destroy.dot",function(a){a.preventDefault(),a.stopPropagation(),g.unwatch().unbind_events().empty().append(i).attr("style",g.data("dotdotdot-style")).data("dotdotdot",!1)}),g},g.unbind_events=function(){return g.unbind(".dot"),g},g.watch=function(){if(g.unwatch(),"window"==j.watch){var b=a(window),c=b.width(),d=b.height();b.bind("resize.dot"+n.dotId,function(){c==b.width()&&d==b.height()&&j.windowResizeFix||(c=b.width(),d=b.height(),p&&clearInterval(p),p=setTimeout(function(){g.trigger("update.dot")},10))})}else o=h(g),p=setInterval(function(){var a=h(g);(o.width!=a.width||o.height!=a.height)&&(g.trigger("update.dot"),o=h(g))},100);return g},g.unwatch=function(){return a(window).unbind("resize.dot"+n.dotId),p&&clearInterval(p),g};var i=g.contents(),j=a.extend(!0,{},a.fn.dotdotdot.defaults,e),n={},o={},p=null,q=null;return n.afterElement=k(j.after,g),n.isTruncated=!1,n.dotId=b++,g.data("dotdotdot",!0).bind_events().trigger("update.dot"),j.watch&&g.watch(),g},a.fn.dotdotdot.defaults={ellipsis:"... ",wrap:"word",lastCharacter:{remove:[" ",",",";",".","!","?"],noEllipsis:[]},tolerance:0,callback:null,after:null,height:null,watch:!1,windowResizeFix:!0,debug:!1};var b=1,n=a.fn.html;a.fn.html=function(a){return a!==void 0?this.data("dotdotdot")&&"function"!=typeof a?this.trigger("update",[a]):n.call(this,a):n.call(this)};var o=a.fn.text;a.fn.text=function(b){if(b!==void 0){if(this.data("dotdotdot")){var c=a("<div \/>");return c.text(b),b=c.html(),c.remove(),this.trigger("update",[b])}return o.call(this,b)}return o.call(this)}}})(jQuery);/;"	f
 unwrap	system/helpers/text_helper.php	/^		$unwrap = array();$/;"	v
 unwrap	system/libraries/Email.php	/^		$unwrap = array();$/;"	v
-upCom	js/item.js	/^function upCom(href,con,callback,score) {$/;"	f
+upCom	js/comment.js	/^function upCom(href,con,callback,score) {$/;"	f
 upComment	application/models/comment.php	/^		public function upComment($id,$comment)$/;"	f
 upExt	application/controllers/write.php	/^        $upExt='txt,rar,zip,jpg,jpeg,gif,png';\/\/上传扩展名$/;"	v
 update	application/controllers/bg/item.php	/^    public function update($itemId = -1)$/;"	f
@@ -9376,6 +9387,9 @@ val	application/controllers/HttpClient.class.php	/^    	        $val = trim($m[2
 val	application/controllers/bg/set.php	/^        $val = array("adb",'saf','sdba','sdfa');$/;"	v
 val	application/controllers/test.php	/^        $val = array($/;"	v
 val	application/models/store.php	/^                $val = mysql_real_escape_string($val);$/;"	v
+val	application/views/onTimeOrder.php	/^                    <?php $val = 11;?>$/;"	v
+val	application/views/onTimeOrder.php	/^                    <?php $val = 12;?>$/;"	v
+val	application/views/onTimeOrder.php	/^                    <?php $val = 8;?>$/;"	v
 val	application/views/store.php	/^                    $val = $item[$i];$/;"	v
 val	system/core/Loader.php	/^	public function vars($vars = array(), $val = '')$/;"	v
 val	system/core/Router.php	/^					$val = preg_replace('#^'.$key.'$#', $val, $uri);$/;"	v

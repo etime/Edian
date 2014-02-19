@@ -167,5 +167,17 @@ class Shop extends BaseSearch {
         // 调出相关页面进行显示
         $this->_showView($ans, $storeId);
     }
+
+    /**
+     * 店铺列表页面
+     */
+    public function queue()
+    {
+        $this->load->view('storeList');
+        $this->test();
+    }
+    public function test()
+    {
+    }
 }
 ?>

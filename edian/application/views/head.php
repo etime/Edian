@@ -5,8 +5,11 @@
             <h1>e<span>點</span></h1>
         </div>
         <p style="float:right">
-            <a href = "#" id = "gotoLogin">登录</a>  |
-            <a href = "<?php echo site_url('/register/userRegister/') ?>">注册</a>  |
+            <!-- replace 中的是登录之后替换的东西-->
+            <span class = "replace">
+                <a href = "#" id = "gotoLogin">登录</a>  |
+                <a href = "<?php echo site_url('/register/userRegister/') ?>">注册</a>
+            </span> |
             <a>帮助</a>
         </p>
         <form action="<?php echo site_url('/search/searchAction') ?>" method="get" accept-charset="utf-8" class = "search">
@@ -17,17 +20,22 @@
         </form>
     </div>
 </div>
-<div id = "login" class = "login">
-    <form action="" method="post" accept-charset="utf-8">
+<div id = "login" class = "login" style = "display:none">
+    <form action="<?php echo site_url('login/loginCheck') ?>" method="post" accept-charset="utf-8">
+        <span class = "close">关闭</span>
         <p>
-            <input type="text" name="username" placeholder = "用户名/手机号" />
+            <input type="text" name="userName" placeholder = "用户名/手机号" />
         </p>
         <p>
             <input type="password" name="password" placeholder = "密码" />
         </p>
+        <p class = "atten"></p>
         <input type="submit" name="sub"  value="登录" />
     </form>
 </div>
+<script type="text/javascript" charset="utf-8">
+    var userId = "<?php echo $this->session->userdata("userId") ?>";
+</script>
 <!-- 以后这里做能内部嵌入js代码的 -->
 <script type="text/javascript" charset="utf-8" src = "<?php echo  base_url('js/login.js')?>"></script>
 <style type="text/css" media="all">
@@ -44,6 +52,7 @@
     text-align:center;
     border-radius:5px;
     padding:5px;
+    position:relative;
 }
 .login p{
     margin:5px ;
@@ -68,8 +77,10 @@
     border:1px solid gray;
     box-shadow:1px 1px 4px rgb(150, 150, 150) inset;
 }
-#header{
-    background:#cc0001;
+.login .close{
+    position:absolute;
+    top:0;
+    right:0;
 }
 #header > div{
     margin:0 auto;
@@ -92,9 +103,10 @@
     padding:2px;
 }
 #header .search{
-    float:left;
-    margin:15px 0 0 387px;
     width:500px;
+    position:absolute;
+    right:100px;
+    bottom:20px;
 }
 #header .search div{
     height:27px;
@@ -127,6 +139,7 @@
 #header{
     background-color:#cc0001;
     overflow:hidden;
+    position:relative;
 }
 a{
     color:inherit;

@@ -54,34 +54,40 @@ function getCart() {
      * 构成底部的控制区域
      */
     function formCon() {
-        return "<div class = 'con clearfix'><div><p>共计<span>￥<strong id = 'total'></strong></span></p><p>查看详情</p></div><input type = 'submit' name = 'cart' value = '立即下单' /></div>";
+        return "<div class = 'con clearfix'><div><p>共计<span>￥<strong id = 'total'></strong></span></p><p><a href='" + site_url +'/order/index' + "'>查看详情</a></p></div><input type = 'submit' name = 'cart' value = '立即下单' /></div>";
     }
-    $.ajax({
-        url: site_url + '/order/index/1',
-        dataType: 'json',
-        success: function (data, textStatus, jqXHR) {
-            if(data){
-                var str =  "<form action=" + site_url + '/order/setPrint' +" method='post' accept-charset='utf-8' id = 'dcart' class = 'dcart'><div class = 'tohide' id = 'tohide' style = 'display:none'>" + formBuyer(data['buyer']);
-                str += formCart(data['cart'] , data['lsp']) + '</div>';
-                str += formCon();
-                str += "</form>";
-                $('body').append(str);
-                var box = $("#dcart").find("input[type = 'checkbox']");
-                for (var i = 0, l = box.length; i < l; i ++) {
-                    $(box[i]).attr('checked' , true);
+    if(userId){
+        getData();
+    }
+    function getData() {
+        $.ajax({
+            url: site_url + '/order/index/1',
+            dataType: 'json',
+            success: function (data, textStatus, jqXHR) {
+                if(data){
+                    var str =  "<form action=" + site_url + '/order/setPrint' +" method='post' accept-charset='utf-8' id = 'dcart' class = 'dcart'><div class = 'tohide' id = 'tohide' style = 'display:none'>" + formBuyer(data['buyer']);
+                    str += formCart(data['cart'] , data['lsp']) + '</div>';
+                    str += formCon();
+                    str += "</form>";
+                    $('body').append(str);
+                    var box = $("#dcart").find("input[type = 'checkbox']");
+                    for (var i = 0, l = box.length; i < l; i ++) {
+                        $(box[i]).attr('checked' , true);
+                    }
+                    calTot();
+                    showCartList();
+                } else if(textStatus === 'success'){
+                    console.log("请登录 ");
+                } else {
+                    console.log('向后台报告');
                 }
-                calTot();
-                showCartList();
-            } else if(textStatus === 'success'){
-                console.log("请登录 ");
-            } else {
-                console.log('向后台报告');
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log("向后台报告");
             }
-        },
-        error: function (jqXHR, textStatus, errorThrown) {
-            console.log("向后台报告");
-        }
-    });
+        });
+    }
+
 }
 /**
  * 控制菜单的显示和隐藏

@@ -97,3 +97,9 @@ td ,th{
 #afterUpload{
     width:176px;
 }
+textarea{
+    border-radius:3px;
+    border:1px solid gray;
+    resize:none;
+    height:50px;
+}

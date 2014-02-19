@@ -181,6 +181,7 @@ class Order extends My_Controller{
      * @param int       $itemId     商品的id
      * @return array    其中的flag为0的时候代表失败，atten是失败的原因，flag > 1的时候，成功，flag代表orderId
      * @todo    这里的设计有问题，在ci中是不能包含中文的url的，而info中很可能导致这种情况;
+     * @todo    返回的信息需要增加，增加店铺的信息和最低起送价，还有商品的名字，需要用这些信息构建购物车的表
      */
     public function add($itemId = 0) {
         if ($this->userId === -1) {

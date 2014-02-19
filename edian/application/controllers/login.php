@@ -111,17 +111,18 @@ class Login extends CI_Controller {
         if ($url == ' ') {
             $url = site_url();
         }
-
         // 进行登录验证
         $flag = $this->checkMatch($userName, $password);
 
+        /*
         if (isset($_SERVER["HTTP_X_REQUESTED_WITH"]) && strtolower($_SERVER["HTTP_X_REQUESTED_WITH"]) == 'xmlhttprequest') {
             if ($flag == -1) {
-                echo 'false';
+                echo json_encode('false');
             } else {
-                echo 'true';
+                echo json_encode('true');
             }
         }
+        */
         // 对返回的错误代码进行分析
         if ($flag != -1) {
 
@@ -140,7 +141,6 @@ class Login extends CI_Controller {
                 // 获取用户的 userId 和 loginName
                 $userId = $this->user->getUserIdByLoginName($userName);
                 $loginName = $userName;
-
                 // 将用户的 userId 和 loginName 存到 session 中
                 $this->session->set_userdata('userId', $userId);
                 $this->session->set_userdata('loginName', $loginName);
@@ -148,17 +148,19 @@ class Login extends CI_Controller {
 
             // 跳转到用户登录之前访问的页面
             if (isset($_SERVER["HTTP_X_REQUESTED_WITH"]) && strtolower($_SERVER["HTTP_X_REQUESTED_WITH"]) == 'xmlhttprequest') {
-                echo 'true';
+                echo json_encode('true');
             } else {
                 header("Location: $url");
             }
+            return;
         } else {
             // 用户登录失败，返回用户登陆失败的信息，怎么调整这个信息的显示方式，我使用了 span，具体到时候设计稿出来了再修改
             $message = "<span>用户名或密码错误！</span>";
-            echo $message;
             if (isset($_SERVER["HTTP_X_REQUESTED_WITH"]) && strtolower($_SERVER["HTTP_X_REQUESTED_WITH"]) == 'xmlhttprequest') {
+            echo json_encode($message);
                 return;
             }
+            echo ($message);
             $this->load->view('login');
         }
     }

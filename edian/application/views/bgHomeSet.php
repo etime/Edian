@@ -64,6 +64,10 @@
             <input type="text" name="lestPrc" id="lestPrc"/>
         </li>
         <li>
+            <span class="item">店铺简介</span>
+            <textarea name="briefInfo" maxlength = "40" placeholder = "40字以内"><?php echo $briefInfo ?></textarea>
+        </li>
+        <li>
             <span class = "item">营业时间:</span>
             <span id="addTime" class = "button">添加时间段</span>
             <input type="hidden" name="businessTime" id="time" />

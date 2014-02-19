@@ -209,7 +209,7 @@ class Store extends CI_Model {
         if ($storeId === 0) {
             return false;
         }
-        $sql = "SELECT name, logo, serviceQQ, servicePhone, address, longitude, latitude, category, more, deliveryTime, deliveryArea FROM store WHERE id = $storeId";
+        $sql = "SELECT briefInfo , name, logo, serviceQQ, servicePhone, address, longitude, latitude, category, more, deliveryTime, deliveryArea FROM store WHERE id = $storeId";
         $res = $this->db->query($sql);
         if ($res->num_rows === 0) {
             $sql = "在model/store/getSetInfo/中num_rows 位0，有人对不应该存在的storeId进行了索引,storeId = ".$storeId;

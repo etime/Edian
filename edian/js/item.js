@@ -6,12 +6,27 @@
  ************************************************************************/
 $(document).ready(function(){
     pg();//集中了页面切换的操作
+    login();
+    sellNum();
     //det();//头部商品介绍
     //comment();//评论的处理,还有分类没有处理
     //login();//登录
     //setOrder();
 })
-
+/**
+ * 控制下单数，购买量的加减
+ */
+function sellNum() {
+    var button = $("#NumCon").find("input[name = 'buyNum']");
+    $("#NumCon").delegate("input[type = 'button']" , 'click' , function () {
+        var name = $(this).prop("name");
+        if(name === 'add'){
+            button.val(parseInt(button.val() , 10) + 1);
+        } else {
+            button.val(Math.max(1 , parseInt(button.val() , 10) - 1));
+        }
+    })
+}
 /*
  * pg切换有关的操作,tab 切换
  * 包括页面的评论和缩略图
@@ -20,7 +35,6 @@ function pg() {
     var img = $("#mainImg");
     //缩略图和主图直接的切换
     $("#thumb").delegate("img" ,  'mouseenter' , function () {
-        console.log("tsing");
         img.prop('src' , $(this).prop("src"));
     })
     // 评论和商品详情之间的切换

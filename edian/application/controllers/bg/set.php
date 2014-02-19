@@ -267,7 +267,7 @@ class set extends MY_Controller
         if($data['logo']){
             $data['logo']  = base_url('image/' . $this->user_id . '/mix/' . $data['logo']);
         }
-        //$this->help->showArr($data);
+        $this->help->showArr($data);
         $this->load->view("bgHomeSet",$data);
     }
     /**

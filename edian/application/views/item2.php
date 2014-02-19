@@ -61,7 +61,7 @@ $siteUrl = site_url();
                         <span class="ps"><strong id = "price" class = "price"><?php echo $item['price'] ?></strong>元</span>
                         <span class="item">评分</span>
                         <span class="ps">
-                        <strong id = "score"><?php echo $item['satisfyScore'] ?></strong>/10<a class = "cnt"> 共4774条</a>
+                        <strong id = "score"><?php echo $item['satisfyScore'] ?></strong>/10<a class = "cnt"> 共<?php  echo $comment ? count($comment) : 0?>条</a>
                         </span>
                     </li>
                     <li>
@@ -93,9 +93,12 @@ $siteUrl = site_url();
                     }
                     ?>
                     </li>
-                    <li>
+                    <!-- 这里由item.js sellNum控制-->
+                    <li id = "NumCon">
                         <span class = "item">购买量</span>
-                        <input type="text" name="buyNum" value = "2" />
+                        <input type="button" name="dec"  value="-" />
+                        <input type="text" name="buyNum" value = "1" />
+                        <input type="button" name="add"  value="+" />
                     </li>
                 </ul>
                 <button name = "toCart">加入购物车</button>
