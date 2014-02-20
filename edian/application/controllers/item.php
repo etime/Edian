@@ -79,7 +79,7 @@ class item extends MY_Controller {
         $data['item'] = $itemInfo;
         $data['store'] = $storeInfo;
         $this->mitem->addvisitor($itemId);
-        $this->help->showArr($data);
+        //$this->help->showArr($data);
         $this->load->view('item2', $data);
     }
 

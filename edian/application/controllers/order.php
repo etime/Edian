@@ -175,7 +175,7 @@ class Order extends My_Controller{
      * 测试完毕,by unasm
      * <pre>
      *  下面的参数通过post提交
-     *      string    $info       备注信息，用户希望添加的备注(100)
+     *      string    $info       选择的属性，如果有两个属性的话，就中间通过|进行分割
      *      int       $buyNum     表示希望购买的商品数目，虽然一般都是1，但是却必须保存
      *</pre>
      * @param int       $itemId     商品的id

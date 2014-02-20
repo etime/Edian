@@ -215,6 +215,9 @@ form button{
     padding:9px 0;
     border-radius:2px;
 }
+form button:active{
+    background-color:#CF3A05;
+}
 button[name = 'instant']{
     background-color:#fe0000;
     color:white;

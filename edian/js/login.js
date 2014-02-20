@@ -18,7 +18,6 @@ function login(callBack){
      */
     function replaceDom() {
         var str = "<a href = '" + site_url + '/destory/zhuxiao'+ "'>注销</a>";
-        console.log(login.find(".replace"));
         $('.replace').replaceWith(str);
     }
     //如果已经登录，就替换dom
@@ -37,6 +36,7 @@ function login(callBack){
                         if(callBack){
                             callBack();
                         }
+                        userId = true;
                         replaceDom();
                     } else {
                         login.find(".atten").html(data);

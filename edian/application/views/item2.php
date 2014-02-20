@@ -48,7 +48,14 @@ $siteUrl = site_url();
             <!--
             <div class="details">
             -->
-            <form action="<?php echo $siteUrl .'/order/' . $itemId  ?>" method="post" accept-charset="utf-8" class = "details" name = "<?php echo json_encode($item['attr']['storePrc'])?>" >
+<?php
+//对str进行转换，方便重新js获取
+    $str = json_encode($item['attr']['storePrc']);
+    for($i = 0,$len = strlen($str) ; $i < $len ; $i++){
+        if($str[$i] === '"')$str[$i] = '\'';
+    }
+?>
+            <form action="<?php echo $siteUrl .'/order/add/' . $itemId  ?>" method="post" accept-charset="utf-8" class = "details" name = "<?php echo  $str ?>" >
                 <ul>
                 <h2><?php echo $item['title'] ?></h2>
         <!--
@@ -72,7 +79,7 @@ $siteUrl = site_url();
                     </li>
                     <li>
                         <span class = "item">库存</span>
-                        <span><strong id = "store"><?php echo $item['storeNum'] ?></strong>件</span>
+                        <span><strong id = "store" class = "storeNum"><?php echo $item['storeNum'] ?></strong>件</span>
                     </li>
                     <li class = "clearfix">
                     <?php
@@ -84,16 +91,11 @@ $siteUrl = site_url();
                             for ($i = 0 , $len = count($value); $i < $len; $i++) {
                                 $attr = $value[$i];
                                  if($attr['img']){
-                                    $list .= "<li><img  class = 'attrValue' src = '" . $attr['img'] . "' alt = '" . $attr['font']. "'><span class = 'attrValue' style = 'display:none' alt = '" . $attr['font'] . "' name = '" . $i . "'>" . $attr['font']. "</span></li>";
+                                    $list .= "<li><img  class = 'attrValue' src = '" . $attr['img'] . "' alt = '" . $attr['font']. "' name = '" . $i. "'><span class = 'attrValue' style = 'display:none' alt = '" . $attr['font'] . "' name = '" . $i . "'>" . $attr['font']. "</span></li>";
                                 } else {
                                     $list .= "<li><span class = 'attrValue' alt = '" . $attr['font'] . "' name = '" . $i. "'>" . $attr['font']. "</span></li>";
                                 }
                             }
-                            /*
-                                foreach ($value as $attr) {
-
-                                }
-                             */
                             $list.="</ul>";
                             echo $list;
                         }

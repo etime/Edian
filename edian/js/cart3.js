@@ -1,6 +1,7 @@
 /**
  * 约定：库存和价格的信息通过name保存在form节点上面，attr是父节点，attrvalue是子节点，一切信息都在form内部通过class和name获得，
  * 想要加入购物车的商品必须被id = itemList 包裹
+ * form中库存class为storeNum ,价格.price
  * 这样做是为了之后的列表那里方便，或者说是可行
  * @name        ../js/cart3.js
  * @author      unasm < 1264310280@qq.com >
@@ -156,16 +157,80 @@ function sendOrder() {
         }
         return node;
     }
+    /**
+     * 检查attr时候都已经选择了
+     * @param {node} node 节点，通常是form节点，检查节点下面的attr时候都已经选择了
+     */
+    function checkAttr(attr) {
+        var flag = 1;
+        for (var i = 0, l = attr.length; i < l; i ++) {
+            if(!$(attr[i]).find(".attrChose"))flag = 0;
+        }
+        return flag;
+    }
     $("#itemList").delegate("form" , 'click' ,function (event) {
         var name = $(event.target).prop('class');
-        console.log(name);
+        event.preventDefault();
+
         //对应库存的修改, 价格。。也要加入进去
         if(name.indexOf('attrValue') !== -1){
             var node = findAttr(event.target);
             $(node).find(".attrChose").removeClass('attrChose');
             $(event.target).addClass('attrChose');
+            var attr = $(this).find(".attr");
+            if(checkAttr(attr)){
+                var storePrc = eval( $(this).attr('name') );
+                var name = [];
+                for (var i = 0, l = attr.length; i < l; i ++) {
+                    name[i] = $(attr[i]).find(".attrChose").attr('name');
+                }
+                if(name.length === 1){
+                    $(this).find('.store').text( storePrc[name[0]]['store'] );
+                    $(this).find('.price').text( storePrc[name[0]]['prc'] );
+                } else if(name.length === 2){
+                    //看到具体的格式再解析
+                }
+            }
         } else if(name.indexOf('toCart') !== -1){
-            event.preventDefault();
+
+            var attr = $(this).find(".attr");
+            if(checkAttr(attr)){
+                if(!userId){
+                    alert("请首先登录，如果确认登录，请刷新页面");
+                    login(send);
+                    //$.alet("请登录");
+                    return;
+                }
+                var info = '';
+                if(attr.length === 2){
+                    info = $(attr[0]).find(".attrChose").prop('alt') + '|' + $(attr[0]).find('.attrChose').prop('alt');
+                } else if(attr.length === 1){
+                    info = $(attr[0]).find(".attrChose").prop('alt');
+                }
+                send($(this).prop('action') , info , $(this).find("input[name = 'buyNum']").val());
+            }
         }
     })
+
+}
+/**
+ * 向后台发送数据
+ * @todo  一定时间内拒绝操作，防止机器
+ */
+function send(href,info,buyNum) {
+    $.ajax({
+        url: href,
+        type: 'POST',
+        dataType: 'json',
+        data: {'buyNum' : buyNum , 'info' : info },
+        success: function (data, textStatus, jqXHR) {
+            //要提供一个好的反馈，让用户明白自己下单成功
+            //添加成功之后的处理。。。有点复杂呢
+
+            console.log(data);
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.log(textStatus);
+        }
+    });
 }
