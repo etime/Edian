@@ -29,7 +29,7 @@ $siteUrl = site_url();
         </div>
     </div>
     <div id = "top"  >
-        <div class = "clearfix">
+        <div class = "clearfix" id = "itemList">
             <div class="showImg ">
                 <div class = "mainImg">
                     <img id = "mainImg" src="<?php echo $item['mainThumbnail'] ?>" alt="这里是图片" />
@@ -48,7 +48,7 @@ $siteUrl = site_url();
             <!--
             <div class="details">
             -->
-            <form action="<?php echo $siteUrl .'/order/' . $itemId  ?>" method="post" accept-charset="utf-8" class = "details">
+            <form action="<?php echo $siteUrl .'/order/' . $itemId  ?>" method="post" accept-charset="utf-8" class = "details" name = "<?php echo json_encode($item['attr']['storePrc'])?>" >
                 <ul>
                 <h2><?php echo $item['title'] ?></h2>
         <!--
@@ -77,19 +77,27 @@ $siteUrl = site_url();
                     <li class = "clearfix">
                     <?php
                     if(is_array($item['attr'])){
+                        $cnt = 0;
                         foreach ($item['attr']['idx'] as $key => $value) {
                             $list = "<span class = 'item' style = 'float:left'>" . $key . "</span>";
-                            $list.= "<ul class = 'attr'>";
-                                foreach ($value as $attr) {
-                                    if($attr['img']){
-                                        $list .= "<li><img  class = 'attrValue test' src = '" . $attr['img'] . "' alt = '" . $attr['font']. "'><span class = 'attrValue' style = 'display:none'>" . $attr['font']. "</span></li>";
-                                    } else {
-                                        $list .= "<li><span class = 'attrValue' alt = '" . $attr['font'] . "'>" . $attr['font']. "</span></li>";
-                                    }
+                            $list.= "<ul class = 'attr' name = '" . $cnt. "'>";
+                            for ($i = 0 , $len = count($value); $i < $len; $i++) {
+                                $attr = $value[$i];
+                                 if($attr['img']){
+                                    $list .= "<li><img  class = 'attrValue' src = '" . $attr['img'] . "' alt = '" . $attr['font']. "'><span class = 'attrValue' style = 'display:none' alt = '" . $attr['font'] . "' name = '" . $i . "'>" . $attr['font']. "</span></li>";
+                                } else {
+                                    $list .= "<li><span class = 'attrValue' alt = '" . $attr['font'] . "' name = '" . $i. "'>" . $attr['font']. "</span></li>";
                                 }
+                            }
+                            /*
+                                foreach ($value as $attr) {
+
+                                }
+                             */
                             $list.="</ul>";
                             echo $list;
                         }
+                        $cnt ++;
                     }
                     ?>
                     </li>
@@ -101,7 +109,7 @@ $siteUrl = site_url();
                         <input type="button" name="add"  value="+" />
                     </li>
                 </ul>
-                <button name = "toCart">加入购物车</button>
+                <button name = "toCart" class = "toCart">加入购物车</button>
              </form>
         </div>
     </div>

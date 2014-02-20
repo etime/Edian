@@ -1,4 +1,7 @@
 /**
+ * 约定：库存和价格的信息通过name保存在form节点上面，attr是父节点，attrvalue是子节点，一切信息都在form内部通过class和name获得，
+ * 想要加入购物车的商品必须被id = itemList 包裹
+ * 这样做是为了之后的列表那里方便，或者说是可行
  * @name        ../js/cart3.js
  * @author      unasm < 1264310280@qq.com >
  * @since       2014-02-14 20:14:22
@@ -6,6 +9,7 @@
 $(document).ready(function () {
     $("body").append("<link rel='stylesheet' href=" + baseUrl + "/css/cart.css type='text/css' media='all' />");
     getCart();
+    sendOrder();
 })
 /**
  * 获取购物车的内容,并构成相应的dom节点
@@ -137,6 +141,31 @@ function calTot() {
                 }
             }
             count();
+        }
+    })
+}
+/**
+ * 向购物车添加东西
+ */
+function sendOrder() {
+    //寻找.attrvalue的上级节点.attr
+    function findAttr(node){
+        node = node.parentNode;
+        while(node && $(node).prop('class').indexOf('attr') === -1){
+            node = node.parentNode;
+        }
+        return node;
+    }
+    $("#itemList").delegate("form" , 'click' ,function (event) {
+        var name = $(event.target).prop('class');
+        console.log(name);
+        //对应库存的修改, 价格。。也要加入进去
+        if(name.indexOf('attrValue') !== -1){
+            var node = findAttr(event.target);
+            $(node).find(".attrChose").removeClass('attrChose');
+            $(event.target).addClass('attrChose');
+        } else if(name.indexOf('toCart') !== -1){
+            event.preventDefault();
         }
     })
 }

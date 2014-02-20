@@ -191,9 +191,6 @@ h2{
 /*  选择属性值后的显示*/
 .attrChose , .attr span:hover{
     border-radius:2px;
-    /*
-    padding:2px 3px;
-    */
     border:2px solid rgb(15, 179, 67);
     cursor:pointer;
 }

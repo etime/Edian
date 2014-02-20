@@ -4,6 +4,7 @@
     > Mail :         douunasm@gmail.com
     > Last_Modified: 2013-09-19 23:33:44
  ************************************************************************/
+//模拟星星的效果
 window.onload = ready;
 function ready(){
     var str = "";
