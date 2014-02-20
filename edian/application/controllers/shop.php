@@ -176,8 +176,5 @@ class Shop extends BaseSearch {
         $this->load->view('storeList');
         $this->test();
     }
-    public function test()
-    {
-    }
 }
 ?>

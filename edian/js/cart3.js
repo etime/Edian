@@ -164,7 +164,7 @@ function sendOrder() {
     function checkAttr(attr) {
         var flag = 1;
         for (var i = 0, l = attr.length; i < l; i ++) {
-            if(!$(attr[i]).find(".attrChose"))flag = 0;
+            if( $(attr[i]).find(".attrChose").length  === 0)flag = 0;
         }
         return flag;
     }
@@ -185,19 +185,20 @@ function sendOrder() {
                     name[i] = $(attr[i]).find(".attrChose").attr('name');
                 }
                 if(name.length === 1){
-                    $(this).find('.store').text( storePrc[name[0]]['store'] );
+                    $(this).find('.storeNum').text( storePrc[name[0]]['store'] );
                     $(this).find('.price').text( storePrc[name[0]]['prc'] );
                 } else if(name.length === 2){
-                    //看到具体的格式再解析
+                    $(this).find('.storeNum').text( storePrc[name[0]][name[1]]['store'] );
+                    $(this).find('.price').text( storePrc[name[0]][name[1]]['prc'] );
                 }
             }
         } else if(name.indexOf('toCart') !== -1){
-
             var attr = $(this).find(".attr");
             if(checkAttr(attr)){
                 if(!userId){
-                    alert("请首先登录，如果确认登录，请刷新页面");
-                    login(send);
+                    //alert("请首先登录，如果确认登录，请刷新页面");
+                    //login.fadeIn();
+                    $("#login").fadeIn();
                     //$.alet("请登录");
                     return;
                 }
@@ -208,6 +209,8 @@ function sendOrder() {
                     info = $(attr[0]).find(".attrChose").prop('alt');
                 }
                 send($(this).prop('action') , info , $(this).find("input[name = 'buyNum']").val());
+            }else{
+                alet("请首先选择具体商品")
             }
         }
     })
@@ -226,8 +229,9 @@ function send(href,info,buyNum) {
         success: function (data, textStatus, jqXHR) {
             //要提供一个好的反馈，让用户明白自己下单成功
             //添加成功之后的处理。。。有点复杂呢
-
-            console.log(data);
+            alet("下单成功");
+            $("#dcart").empty();
+            getCart();
         },
         error: function (jqXHR, textStatus, errorThrown) {
             console.log(textStatus);

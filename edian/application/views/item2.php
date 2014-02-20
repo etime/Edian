@@ -50,10 +50,13 @@ $siteUrl = site_url();
             -->
 <?php
 //对str进行转换，方便重新js获取
+if(is_array($item['attr'])){
     $str = json_encode($item['attr']['storePrc']);
     for($i = 0,$len = strlen($str) ; $i < $len ; $i++){
         if($str[$i] === '"')$str[$i] = '\'';
     }
+} else $str = ' ';
+
 ?>
             <form action="<?php echo $siteUrl .'/order/add/' . $itemId  ?>" method="post" accept-charset="utf-8" class = "details" name = "<?php echo  $str ?>" >
                 <ul>
@@ -81,12 +84,11 @@ $siteUrl = site_url();
                         <span class = "item">库存</span>
                         <span><strong id = "store" class = "storeNum"><?php echo $item['storeNum'] ?></strong>件</span>
                     </li>
-                    <li class = "clearfix">
                     <?php
                     if(is_array($item['attr'])){
                         $cnt = 0;
                         foreach ($item['attr']['idx'] as $key => $value) {
-                            $list = "<span class = 'item' style = 'float:left'>" . $key . "</span>";
+                            $list = "<li class = 'clearfix'><span class = 'item' style = 'float:left'>" . $key . "</span>";
                             $list.= "<ul class = 'attr' name = '" . $cnt. "'>";
                             for ($i = 0 , $len = count($value); $i < $len; $i++) {
                                 $attr = $value[$i];
@@ -96,13 +98,12 @@ $siteUrl = site_url();
                                     $list .= "<li><span class = 'attrValue' alt = '" . $attr['font'] . "' name = '" . $i. "'>" . $attr['font']. "</span></li>";
                                 }
                             }
-                            $list.="</ul>";
+                            $list.="</ul></li>";
                             echo $list;
                         }
                         $cnt ++;
                     }
                     ?>
-                    </li>
                     <!-- 这里由item.js sellNum控制-->
                     <li id = "NumCon">
                         <span class = "item">购买量</span>

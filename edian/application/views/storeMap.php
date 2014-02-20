@@ -19,6 +19,7 @@
     #allmap{
         width:100%;
         height:400px;
+        background:#F0E1D7;
     }
     h2{
         position:absolute;

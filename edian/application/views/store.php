@@ -110,7 +110,9 @@
                 ?>
                 <li>
                     <div class = "img">
-                        <img class = "main" src = "<?php echo $val['mainThumbnail']?>" />
+                        <a href = "<?php echo $siteUrl.'/item/index/' . $val['id'] ?>">
+                            <img class = "main" src = "<?php echo $val['mainThumbnail']?>" />
+                        </a>
                         <span class = "cart" alt = "123"> Cart </span>
                     </div>
                     <div class = "info">

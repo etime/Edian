@@ -58,6 +58,7 @@ td{
 }
 .cnt{
     float:right;
+    margin-right:10px;
 }
 .price{
     color:#990002;

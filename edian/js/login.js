@@ -11,6 +11,7 @@
  * 只需要外界调用login，就可以完成登录的内容
  * @param {string} callBack  回调函数，在成功的时候触发，这个是为了适应不同的情况和情景
  */
+
 function login(callBack){
     var login = $("#login");
     /**
@@ -63,5 +64,35 @@ function login(callBack){
         login.fadeToggle();
         event.preventDefault();
     })
+}
+/**
+ * 弹出框，一定时间后自动小时
+ * @param {string} cont 通过弹出框想要说的内容
+ */
+function alet(cont) {//给出各种提示的函数，和alert不同，这个过1s就消失
+    var alet = document.createElement("div");
+    var p = document.createElement("p");
+    var css = {
+        width:'200px'
+    };
+    $(alet).css(css);
+    css = {
+        position:'absolute',
+        padding:'15px',
+        background:'#000',
+        top:$(window).scrollTop()+100+"px",
+        left:$(document).width()/2-100+"px",
+        margin:'0 auto',
+        "border-radius":"5px",
+        color:"white",
+        "z-index":"20"
+    }
+    $(p).css(css);
+    $(p).text(cont);
+    $(alet).append(p);
+    $("body").append(alet);
+    setTimeout(function  () {
+        $(alet).detach();
+    },3999);
 }
 
