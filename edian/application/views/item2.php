@@ -93,9 +93,9 @@ if(is_array($item['attr'])){
                             for ($i = 0 , $len = count($value); $i < $len; $i++) {
                                 $attr = $value[$i];
                                  if($attr['img']){
-                                    $list .= "<li><img  class = 'attrValue' src = '" . $attr['img'] . "' alt = '" . $attr['font']. "' name = '" . $i. "'><span class = 'attrValue' style = 'display:none' alt = '" . $attr['font'] . "' name = '" . $i . "'>" . $attr['font']. "</span></li>";
+                                    $list .= "<li><img  class = 'attrValue' src = '" . $attr['img'] . "' alt = '" . $attr['font']. "' title = '" . $attr['font'] . "' name = '" . $i. "'><span class = 'attrValue' style = 'display:none' alt = '" . $attr['font'] . "' name = '" . $i . "'>" . $attr['font']. "</span></li>";
                                 } else {
-                                    $list .= "<li><span class = 'attrValue' alt = '" . $attr['font'] . "' name = '" . $i. "'>" . $attr['font']. "</span></li>";
+                                    $list .= "<li><span class = 'attrValue' alt = '" . $attr['font'] . "' title = '" . $attr['font'] . "' name = '" . $i. "'>" . $attr['font']. "</span></li>";
                                 }
                             }
                             $list.="</ul></li>";

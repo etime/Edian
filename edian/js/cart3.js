@@ -11,6 +11,7 @@ $(document).ready(function () {
     $("body").append("<link rel='stylesheet' href=" + baseUrl + "/css/cart.css type='text/css' media='all' />");
     getCart();
     sendOrder();
+    login();
 })
 /**
  * 获取购物车的内容,并构成相应的dom节点
@@ -170,10 +171,9 @@ function sendOrder() {
     }
     $("#itemList").delegate("form" , 'click' ,function (event) {
         var name = $(event.target).prop('class');
-        event.preventDefault();
-
         //对应库存的修改, 价格。。也要加入进去
         if(name.indexOf('attrValue') !== -1){
+            event.preventDefault();
             var node = findAttr(event.target);
             $(node).find(".attrChose").removeClass('attrChose');
             $(event.target).addClass('attrChose');
@@ -193,6 +193,7 @@ function sendOrder() {
                 }
             }
         } else if(name.indexOf('toCart') !== -1){
+            event.preventDefault();
             var attr = $(this).find(".attr");
             if(checkAttr(attr)){
                 if(!userId){
@@ -204,9 +205,9 @@ function sendOrder() {
                 }
                 var info = '';
                 if(attr.length === 2){
-                    info = $(attr[0]).find(".attrChose").prop('alt') + '|' + $(attr[0]).find('.attrChose').prop('alt');
+                    info = $(attr[0]).find(".attrChose").prop('title') + '|' + $(attr[1]).find('.attrChose').prop('title');
                 } else if(attr.length === 1){
-                    info = $(attr[0]).find(".attrChose").prop('alt');
+                    info = $(attr[0]).find(".attrChose").prop('title');
                 }
                 send($(this).prop('action') , info , $(this).find("input[name = 'buyNum']").val());
             }else{
@@ -230,7 +231,7 @@ function send(href,info,buyNum) {
             //要提供一个好的反馈，让用户明白自己下单成功
             //添加成功之后的处理。。。有点复杂呢
             alet("下单成功");
-            $("#dcart").empty();
+            $("#dcart").detach();
             getCart();
         },
         error: function (jqXHR, textStatus, errorThrown) {

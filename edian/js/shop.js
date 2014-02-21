@@ -33,6 +33,18 @@ function pageDisable() {
         }
     })
 }
+
+/**
+ * 控制icart的显示和隐藏
+ * 前提要求，所有需要隐藏显示的都必须由icart包裹，所有商品列表由itemlist控制
+ */
+function iCartShow() {
+    $("#itemList").delegate('li' , 'mouseenter' , function () {
+        $(this).find(".icart").css("display", 'block');
+    }).delegate('li' , 'mouseleave' , function () {
+        $(this).find('.icart').css('display' , 'none');
+    })
+}
 /**
  * 显示地图，
  * @param {int} storeid  在.php页面，通过php传入的数值
@@ -56,4 +68,5 @@ $(document).ready(function () {
     fixpos();
     showMap();
     pageDisable();
+    iCartShow();
 })

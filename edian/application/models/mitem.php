@@ -699,7 +699,7 @@ class Mitem extends Ci_Model {
         if ($storeId === 0) {
             return false;
         }
-        $sql = "SELECT id, title, price, satisfyScore, sellNum, mainThumbnail FROM item WHERE belongsTo = $storeId ORDER BY rating";
+        $sql = "SELECT id,attr, title, price, satisfyScore, sellNum, mainThumbnail FROM item WHERE belongsTo = $storeId ORDER BY rating";
         $res = $this->db->query($sql);
         if ($res->num_rows === 0) {
             return false;
@@ -707,6 +707,7 @@ class Mitem extends Ci_Model {
             $res = $res->result_array();
             for ($i = 0, $len = count($res); $i < $len; $i ++) {
                 $res[$i]['mainThumbnail'] = $this->_fixMainThumbnailPath($storeId, $res[$i]['mainThumbnail']);
+                $res[$i]['attr'] = $this->decodeAttr( $res[$i]['attr'] , $res[$i]['id']);
             }
             return $res;
         }

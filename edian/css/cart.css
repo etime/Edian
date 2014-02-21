@@ -3,8 +3,32 @@
     > Author  :      unasm
     > Mail :         douunasm@gmail.com
     > Last_Modified: 2013-09-17 21:25:42
+    //悬浮框购物车的css
  ************************************************************************/
-
+.attr span{
+    padding:2px 5px;
+}
+.attr img{
+    height:50px;
+    width:50px;
+    border-radius:2px;
+    margin:5px;
+}
+.attr li{
+    float:left;
+    margin:0 3px;
+}
+.attr img:hover{
+    border-radius:2px;
+    padding:0;
+    border:2px solid rgb(15, 179, 67);
+    cursor:pointer;
+}
+.attrChose , .attr span:hover{
+    border-radius:2px;
+    border:2px solid rgb(15, 179, 67);
+    cursor:pointer;
+}
 .dcart{
     width:300px;
     background-color:#c9c9c9;
@@ -60,9 +84,11 @@ td{
     float:right;
     margin-right:10px;
 }
+/*
 .price{
     color:#990002;
 }
+*/
 .con span{
     color:#990002;
     font-size:1.8em;

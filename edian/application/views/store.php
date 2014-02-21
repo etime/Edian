@@ -89,42 +89,67 @@
                 <input type="text" name="dprc"  value="12" />--
                 <input type="text" name="tprc"  value="12" />
                 <input type="submit" name="sub"  value="确定" />
-<!--
-                <div class="psplit">
-                    <span>1/3页</span>
-                    <span>第一页</span>
-                    <span>上一页</span>
-                    <span>下一页</span>
-                    <span>跳转到 <input type="text" name="pgNum" /></span>
-                    <span>尾页</span>
-                </div>
--->
             <?php
                 echo $pageNumFooter;
             ?>
             </div>
-            <ul class = "goodlist clearfix">
+            <ul class = "goodlist clearfix" id = "itemList">
             <?php for($i = 0,$len = ($item ? count($item) : 0); $i < $len; $i++): ?>
                 <?php
                     $val = $item[$i];
+                    if(is_array($val['attr'])){
+                        $str = json_encode($val['attr']['storePrc']);
+                        for($i = 0,$len = strlen($str) ; $i < $len ; $i++){
+                            if($str[$i] === '"')$str[$i] = '\'';
+                        }
+                    } else $str = ' ';
                 ?>
                 <li>
-                    <div class = "img">
-                        <a href = "<?php echo $siteUrl.'/item/index/' . $val['id'] ?>">
-                            <img class = "main" src = "<?php echo $val['mainThumbnail']?>" />
-                        </a>
-                        <span class = "cart" alt = "123"> Cart </span>
-                    </div>
-                    <div class = "info">
-                        <p>
-                            <span class = "right">评分<strong><?php echo $val['satisfyScore'] ?></strong></span>
-                            <a href = "<?php echo $siteUrl.'/item/index/' . $val['id'] ?>"><?php echo $val['title'] ?></a>
-                        </p>
-                        <p>
-                            <span class = "right">已售<strong><?php echo $val['sellNum'] ?></strong></span>
-                            <strong>￥<?php echo $val['price'] ?></strong>
-                        </p>
-                    </div>
+                    <form action="<?php echo $siteUrl . '/order/add/' . $val['id'] ?>" method="post" accept-charset="utf-8" name = "<?php echo $str ?>">
+                        <div class = "img">
+                            <a href = "<?php echo $siteUrl.'/item/index/' . $val['id'] ?>">
+                                <img class = "main" src = "<?php echo $val['mainThumbnail']?>" />
+                            </a>
+                            <span class = "cart" alt = "123"> Cart </span>
+                        </div>
+                        <div class = "info">
+                            <p>
+                                <span class = "right">评分<strong><?php echo $val['satisfyScore'] ?></strong></span>
+                                <a href = "<?php echo $siteUrl.'/item/index/' . $val['id'] ?>"><?php echo $val['title'] ?></a>
+                            </p>
+                            <p>
+                                <span class = "right">已售<strong><?php echo $val['sellNum'] ?></strong></span>
+                                <strong>￥<font class = "price"><?php echo $val['price'] ?></font></strong>
+                            </p>
+                        </div>
+                        <ul class = "icart" style = "display:none">
+                            <?php
+                            if(is_array($val['attr'])){
+                                $cnt = 0;
+                                foreach ($val['attr']['idx'] as $key => $value) {
+                                    $list = "<li class = 'clearfix'><span class = 'list' style = 'float:left'>" . $key . ":</span>";
+                                    $list.= "<ul class = 'attr' name = '" . $cnt. "'>";
+                                    for ($i = 0 , $len = count($value); $i < $len; $i++) {
+                                        $attr = $value[$i];
+                                         if(trim( $attr['img']) ){
+                                            $list .= "<li><img  class = 'attrValue' src = '" . $attr['img'] . "' alt = '" . $attr['font']. "' title = '" . $attr['font'] . "' name = '" . $i. "'><span class = 'attrValue' style = 'display:none' alt = '" . $attr['font'] . "' name = '" . $i . "'>" . $attr['font']. "</span></li>";
+                                        } else {
+                                            $list .= "<li><span class = 'attrValue' alt = '" . $attr['font'] . "' title = '" . $attr['font'] . "' name = '" . $i. "'>" . $attr['font']. "</span></li>";
+                                        }
+                                    }
+                                    $list.="</ul></li>";
+                                    echo $list;
+                                }
+                                $cnt ++;
+                            }
+                            ?>
+                            <li>
+                                <span>数量</span>
+                                <input type="text" name="buyNum"  value="1" />
+                                <input type="button" name="toCart"  class = "toCart" value="加入购物车" />
+                            </li>
+                        </ul>
+                    </form>
                 </li>
             <?php endfor?>
             <p><?php if($len === 0) echo '没有商品哦'?></p>

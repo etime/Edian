@@ -189,9 +189,13 @@ body{
     float:right;
     margin:0;
 }
-.goodlist li{
+.goodlist >li{
     float:left;
     margin:5px;
+    position:relative;
+}
+.goodlist >li:hover{
+    background-color:#B8B8B8;
 }
 .img{
     height:245px;
@@ -203,9 +207,6 @@ body{
     width:30px;
     position:absolute;
     height:30px;
-/*
-    background-color:red;
-    */
 }
 .cart{
     right:0;
@@ -224,7 +225,7 @@ body{
     font-size:1.6em;
 }
 .info p{
-    line-height:0.5em;
+    margin:7px 0 0 0;
 }
 .info .right{
     float:right;
@@ -249,6 +250,24 @@ body{
     right:10%;
     position:fixed;
 }
-
-
-
+.list{
+    text-align:center;
+    float:left;
+    display:inline-block;
+}
+.icart{
+    position:absolute;
+    background-color:#B8B8B8;
+    z-index:4;
+    width:100%;
+}
+.icart >li{
+    margin:10px 0;
+}
+.icart ul{
+    float:left;
+}
+.icart ul li{
+    float:left;
+    margin:0 5px;
+}
