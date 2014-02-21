@@ -173,8 +173,8 @@ class Shop extends BaseSearch {
      */
     public function queue()
     {
-        $this->load->view('storeList');
-        $this->test();
+        $data['pageNumFooter'] = ' ';
+        $this->load->view('shopList' , $data);
     }
 }
 ?>

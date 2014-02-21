@@ -1,0 +1,48 @@
+/**
+ * @name        ../../css/shoplist.css
+ * @author      unasm < 1264310280@qq.com >
+ * @since       2014-02-22 01:03:32
+*/
+.width{
+    width:1200px;
+    margin:0px auto;
+    overflow:hidden;
+    background-color:#e7e7e7;
+}
+li{
+    list-style:none;
+}
+ul{
+    padding:0;
+    margin:0;
+}
+.clearfix:after{
+    visibility:hidden;
+    display:block;
+    content:"";
+    height:0px;
+    clear:both;
+}
+.good{
+    padding:0 25px;
+}
+.good li{
+    width:480px;
+    height:185px;
+    float:left;
+    overflow:hidden;
+    padding:5px;
+    background-color:gray;
+    border-radius:3px;
+    margin:5px;
+}
+.good .img {
+    width:175px;
+    height:175px;
+    overflow:hidden;
+    float:left;
+}
+.deinfo{
+    float:left;
+    width:290px
+}
