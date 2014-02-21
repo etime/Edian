@@ -148,12 +148,10 @@ class Morder extends Ci_Model {
 
     /**
      * 获取制定商店的所有历史订单
-     * @param int $storeId      商店的编号
-     * @param int $pageId       页码号，
-     * @param int $pageSize     每页的数据
+     * @param int $storeId 商店的编号
      * @return boolean | array 商店的所有历史订单
      */
-    public function hist($storeId , $pageId  = -2, $pageSize  = -1) {
+    public function hist($storeId) {
         $storeId = (int)$storeId;
         if ($storeId === 0) {
             return false;
@@ -261,6 +259,26 @@ class Morder extends Ci_Model {
             for ($i = 0; $i < $len; $i ++) {
                 $res[$i]['info'] = $this->_decodeInfo($res[$i]['info']);
             }
+            return $res;
+        }
+    }
+
+    /**
+     * 获取指定编号用户的所有以确认订单
+     * @param int $userId 用户编号
+     * @return boolean | array
+     */
+    public function getMyOrder($userId) {
+        $userId = (int)$userId;
+        if ($userId == 0) {
+            return false;
+        }
+        $sql = "SELECT id, addr, info, seller, item_id, time, state FROM ord WHERE ordor = $userId && state <> 0";
+        $res = $this->db->query($sql);
+        if ($res->num_rows == 0) {
+            return false;
+        } else {
+            $res = $res->result_array();
             return $res;
         }
     }
