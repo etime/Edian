@@ -34,29 +34,37 @@ class item extends Home {
      * @param int $pageId
      */
     public function manage($pageId = 1) {
-        if ($this->_checkAuthority(site_url('bg/item/itemcom')) === false) {
+        if ($this->_checkAuthority(site_url('bg/item/manage')) === false) {
             return;
         }
+
         if (! ($this->storeId && $this->bossId)) {
-            $this->choseStore($this->bossId);
-            return;
+            $this->choseStore($this->bossId);return;
         }
         if (isset($_GET['pageId'])) {
-        	$pageId = $_GET['pageId'];
+        	$pageId = (int)$_GET['pageId'];
+        } else {
+            $pageId = (int)$pageId;
         }
+
+
         $data = array();
+
         $data['item'] = $this->mitem->getBgList($this->storeId);
         $data['stateMark'] = $this->config->item('itemState');
+
         if ($data['item']) {
             $temp = $this->pagesplit->split($data['item'], $pageId, $this->pageSize);
             $data['item'] = $temp['newData'];
             $commonUrl = site_url('/bg/item/manage');
             $data['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount']);
         }
+
         //$this->isAdmin = true;
         //$data['isAdmin'] = $this->isAdmin;
-        //$this->help->showArr($data);
-        $this->load->view('bgItemMan', $data);
+        $this->help->showArr($data);
+
+//        $this->load->view('bgItemMan', $data);
     }
 
     /**

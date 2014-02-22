@@ -54,7 +54,7 @@ class Mwrong extends Ci_Model {
     public function getAll() {
         $sql = "SELECT id, content, time FROM wrong";
         $res = $this->db->query($sql);
-        if ($res->num_rows) {
+        if ($res->num_rows != 0) {
             $res = $res->result_array();
             return $res;
         } else {

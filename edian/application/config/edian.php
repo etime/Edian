@@ -55,7 +55,7 @@ $config['adminCredit'] = 120;
 $config['imageSize'] = 5 * 1024 * 1024;
 
 // 确定 1:1 图片最小宽度，图片存在 main 中
-$config['mainLength'] = 400;
+$config['mainLength'] = 460;
 
 // 确定 thumb 图片中的 big 中的短边的宽度，图片存在 big 中
 $config['bigLength'] = 700;

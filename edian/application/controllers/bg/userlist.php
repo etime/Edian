@@ -80,10 +80,11 @@ class Userlist extends Home {
             $data['userList'] = $this->user->getCilnrsList($pageId);
             $data['state'] = $this->config->item('userState');
 
-            if (isset($_GET['$pageId'])) {
-                $pageId = $_GET['pageId'];
+            if (isset($_GET['pageId'])) {
+                $pageId = (int)$_GET['pageId'];
+            } else {
+                $pageId = (int)$pageId;
             }
-            $pageId = (int)$pageId;
 
             // 将所得的结果进行分页
             if ($data['userList'] != false) {

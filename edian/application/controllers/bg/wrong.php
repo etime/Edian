@@ -7,55 +7,54 @@
  *  @package    controllers
  *  @subpackage bg
  */
-class Wrong extends MY_Controller
-{
-    var $type,$user_id;
-    /**
-     * type是用户类型，也是权限的象征，type 3为管理员，1，2为用户和商家，但是都不允许进来
-     */
-    public function __construct()
-    {
+class Wrong extends MY_Controller {
+    // 用户类型，和权限相关
+    var $type;
+    // 用户编号
+    var $user_id;
+
+    public function __construct() {
         parent::__construct();
         $this->user_id = $this->getUserId();
-        $this->load->model("mwrong");//对wrong表操作集中的函数
+        $this->load->model("mwrong");
         $this->load->library('pagesplit');
+        $this->load->config('edian');
     }
+
     /**
      * 错误处理的入口函数，其他的操作的中心
      */
-    public function index($pageId = 1, $pageSize = 20)
-    {
-        if(!$this->user_id){
-            //检查是否登录
+    public function index($pageId = 1) {
+        // 检查是否登陆
+        if ($this->user_id == -1) {
             $this->noLogin(site_url("bg/wrong/index"));
             return;
         }
         $type = $this->getTp($this->user_id);
-        if((!$type) || ($type < 3)){
+        if ( (! $type) || ($type < 3)) {
             echo "抱歉，您没有权限浏览";
             return;
         }
         $wrong = $this->mwrong->getAll();
         $data = Array();
-        $this->load->model("user");
-        if($wrong && $wrong[0]["content"] &&array_key_exists("pntState",$wrong[0]["content"])){
-            //打印出错，是第一个错误,处理wrong不存在和content = null和pntstate不存在的情况
-                $len = count($wrong);
-                $data["flag"] = 1;
-                for($i = 0;$i < $len;$i++){
-                    $temp = $wrong[$i]["content"];
-                    $info = $temp["info"];
-                    $wrong[$i]["content"]["buyer"] = $this->user->getaddrCratById($temp["userId"]);
-                    $wrong[$i]["content"]["seller"] = $this->user->getaddrCratById($info[0]["seller"]);
-                }
-        }else $data["flag"] = 0;
+        $data["flag"] = 0;
         $data["wrong"] = $wrong;
-        if ($data['wrong']) {
-        	$temp = $this->pagesplit->split($data['wrong'], $pageId, $pageSize);
-        	$data['wrong'] = $temp['newData'];
-        	$data['pageAmount'] = $temp['pageAmount'];
-        	$data['pageId'] = $pageId;
+
+        if (isset($_GET['pageId'])) {
+            $pageId = (int)$_GET['pageId'];
+        } else {
+            $pageId = (int)$pageId;
         }
+
+        // 将所得的结果进行分页
+        if ($data['wrong'] != false) {
+            $temp = $this->pagesplit->split($data['wrong'], $pageId, $this->config->item('pageSize'));
+            $data['wrong'] = array();
+            $data['wrong'] = $temp['newData'];
+            $commonUrl = site_url('bg/wrong/index');
+            $data['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount']);
+        }
+        $this->showArr($data);
         $this->load->view("bgWrong",$data);
     }
     private function showArr($arr)

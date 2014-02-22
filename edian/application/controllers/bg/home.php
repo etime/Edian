@@ -137,7 +137,8 @@ class Home extends MY_Controller {
         // 将 storeId 存入 session 中
         $this->session->set_userdata('storeId', $storeId);
         // 对storeId初始化之后，开始选择进入后台，进行操作
-        $this->index();
+        $url = site_url('bg/item/manage');
+        header("location: $url");
     }
 
     /**
@@ -159,7 +160,8 @@ class Home extends MY_Controller {
         if ($data['len'] == 0 && $this->isAdmin === false) {
             $storeId = $this->store->insertStore($ownerId);
             $this->receiveStoreId($storeId);
-        } else if($data['len'] == 1) {
+        } else if ($data['len'] == 1) {
+            echo('-------------------------fadsfasdf-----------------------------------<br>');
             $this->receiveStoreId($data['store'][0]['id']);
         } else {
             $this->load->view('choseStore', $data);
