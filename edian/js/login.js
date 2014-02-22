@@ -57,7 +57,7 @@ function login(callBack){
         }
         event.preventDefault();
     });
-    $("#login .close").click(function () {
+    $("#login .shut").click(function () {
         login.fadeOut();
     })
     $("#gotoLogin").click(function (event) {

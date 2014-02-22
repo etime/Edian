@@ -38,8 +38,10 @@ class item extends Home {
             return;
         }
 
-        if (! ($this->storeId && $this->bossId)) {
-            $this->choseStore($this->bossId);return;
+        //管理员登录的时候会出问题
+        if ( (!$this->storeId) && $this->bossId) {
+            $this->choseStore($this->bossId);
+            return;
         }
         if (isset($_GET['pageId'])) {
         	$pageId = (int)$_GET['pageId'];
@@ -64,7 +66,7 @@ class item extends Home {
         //$data['isAdmin'] = $this->isAdmin;
         $this->help->showArr($data);
 
-//        $this->load->view('bgItemMan', $data);
+        $this->load->view('bgItemMan', $data);
     }
 
     /**
