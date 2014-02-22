@@ -12,6 +12,7 @@
 </script>
 </head>
 <body>
+<a href = "<?php echo site_url('/register/bossRegister') ?>">店铺注册</a>
     <table id="content"  class = "clearfix">
         <form action="<?php echo site_url("register/userRegisterCheck")?>" method="post" enctype = "multipart/form-data" accept-charset="utf-8">
             <tr>

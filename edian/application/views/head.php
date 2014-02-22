@@ -35,6 +35,7 @@
 </div>
 <script type="text/javascript" charset="utf-8">
     var userId = "<?php echo $this->session->userdata("userId") ?>";
+    var site_url =  "<?php  echo site_url()?>";
 </script>
 <!-- 以后这里做能内部嵌入js代码的 -->
 <script type="text/javascript" charset="utf-8" src = "<?php echo  base_url('js/login.js')?>"></script>
