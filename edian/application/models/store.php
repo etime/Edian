@@ -140,7 +140,6 @@ class Store extends CI_Model {
 
     /**
      * 在判断出 storeId 存在的情况下，提取它的分类列表
-     *
      * @param int $storeId
      * @return array
      */
