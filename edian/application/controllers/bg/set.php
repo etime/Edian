@@ -207,64 +207,80 @@ class set extends MY_Controller
      * </pre>
      * @param int   $storeId    选择的商店的id,添加这个接口，是为了方便其他的链接查看,目前在bg/userlist/index 使用
      */
-    public function setAct($storeId = -1){
-        $this->load->library("help");
-
+    public function setAct($storeId = -1) {
         //对用户权限进行检验
-        if($this->user_id == -1){
-            $this->noLogin( site_url("bg/set/setAct") );
+        if ($this->user_id == -1) {
+            $this->noLogin(site_url("bg/set/setAct"));
             return;
         }
-        $data['credit'] = $this->user->getCredit($this->user_id);//获取用户的类型，方便差异化处理
+        //获取用户的类型，方便差异化处理
+        $data['credit'] = $this->user->getCredit($this->user_id);
         $this->load->config('edian');
-        if($data['credit'] == $this->config->item("adminCredit")){
+        if ($data['credit'] == $this->config->item("adminCredit")) {
             $data["type"] = 2;
-        }else if($data['credit'] == $this->config->item("bossCredit")){
+        } else if($data['credit'] == $this->config->item("bossCredit")) {
             $data["type"] = 1;
-        }else exit("您没有权限进入本页面");
-        if(TEST)
+        } else {
+            exit("您没有权限进入本页面");
+        }
+        if (TEST) {
             $data["type"] = 2;
-
-
+        }
         //如果有管理员权限
-        if($data["type"] == 2){
-            if(TEST){
+        if ($data["type"] == 2) {
+            if (TEST) {
                 $data["store"] = array(
                     array('id' =>1,"name" =>"壮士店1" ),
                     array('id' =>2,"name" =>"壮士店2" ),
                     array('id' =>3,"name" =>"壮士店3" )
                 );
-            }else{
+            } else {
                 $data["store"] = $this->store->getStoreList();
             }
             //优先选择店，在没有的情况下选择一个默认的店 ,1号
-            if($storeId === -1){
-                $data["storeId"] = $this->input->post("storeId");
+            if ($storeId === -1) {
+                $data["storeId"] = (int)trim($this->input->post("storeId"));
             } else {
                 $data['storeId'] = (int)$storeId;
             }
-            if(!$data["storeId"]) $data["storeId"] = 1;
-        }else{
+            if (! $data["storeId"]) {
+                $data["storeId"] = 1;
+            }
+        } else {
             //强制转换，如果发现为0，报错
             $data["storeId"] = (int)$this->session->userdata("storeId");
         }
         //对提交的判断，数据的获取
-        if($this->input->post("sub") === '提交'){
+        if ($this->input->post("sub") === '提交') {
             $inputData = $this->setGet();
             $more['dtuName'] = $this->input->post('dtuName');
-            if($data["type"] == 2){
-                $more['dtuPassword'] = trim( $this->input->post("dtuPassword") );
-                $more['dtuId']       = trim($this->input->post('dtuId'));
+            if ($data["type"] == 2) {
+                $more['dtuPassword'] = trim($this->input->post("dtuPassword"));
+                $more['dtuId'] = trim($this->input->post('dtuId'));
             }
-            $flag = $this->store->update($inputData, $more ,$data["storeId"]);
-            //$data = array_merge($data,$inputData);
-            if(!$flag){
+            $flag = $this->store->update($inputData, $more, $data["storeId"]);
+            if (! $flag) {
                 exit("插入失败");
             }
         }
-        $data = array_merge($data , $this->store->getSetInfo($data['storeId'] ));
+        $temp = $this->store->getSetInfo($data['storeId']);
+        if ($temp == false) {
+            $temp = array();
+        } else {
+            for ($i = 0, $len = (int)count($temp['category']); $i < $len; $i ++) {
+                $name = $temp['category'][$i];
+                $temp['category'][$i] = array();
+                $temp['category'][$i]['name'] = $name;
+                $count = $this->mitem->getCountByStoreTag($data['storeId'], $name);
+                if ($count == false) {
+                    $count = 0;
+                }
+                $temp['category'][$i]['count'] = $count;
+            }
+        }
+        $data = array_merge($data, $temp);
         //之前为了和扩展，只在数据库中保存了名字，现在补全对应的路径,logo存放在mix文件架下面
-        if($data['logo']){
+        if ($data['logo']) {
             $data['logo']  = base_url('image/' . $this->user_id . '/mix/' . $data['logo']);
         }
         $this->help->showArr($data);

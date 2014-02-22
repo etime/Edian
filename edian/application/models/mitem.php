@@ -87,7 +87,7 @@ class Mitem extends Ci_Model {
     }
 
     /**
-     * $data 数组必须包含以下东西： keyi, keyj, keyk, category，将他们用 "keyi;keyj;keyk;category|" 的格式进行编码，然后返回
+     * $data 数组必须包含以下东西： keyi, keyj, keyk, category，将他们用 "keyi;keyj;keyk|category" 的格式进行编码，然后返回
      * @prama array $data
      * @return string
      */
@@ -816,6 +816,28 @@ class Mitem extends Ci_Model {
         $state = (int)$state;
         $sql = "UPDATE item SET state = $state WHERE id = $itemId";
         return $this->db->query($sql);
+    }
+
+    /**
+     * 获取指定编号的商店指定本店分类的商品数量
+     * @param int $storeId 商店编号
+     * @param string $key 商店的本店分类
+     * @return boolean | int
+     */
+    public function getCountByStoreTag($storeId, $key) {
+        $key = '%|' . $key;
+        $storeId = (int)$storeId;
+        if ($storeId == 0) {
+            return false;
+        }
+        $sql = "SELECT COUNT(*) FROM item WHERE belongsTo = $storeId && category LIKE '$key'";
+        $ans = $this->db->query($sql);
+        if ($ans->num_rows == 0) {
+            return false;
+        } else {
+            $ans = $ans->result_array();
+            return $ans[0]['COUNT(*)'];
+        }
     }
 /**********************************************************************************************************************/
 /**********************************************************************************************************************/
