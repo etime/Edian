@@ -203,4 +203,6 @@
         <p>蜀字132</p>
     </div>
 </body>
+<script type="text/javascript" charset="utf-8" src = "<?php echo $baseUrl . 'js/jquery.min.js' ?>"></script>
+<script type="text/javascript" charset="utf-8" src = "<?php echo $baseUrl . 'js/home2.js' ?>"></script>
 </html>

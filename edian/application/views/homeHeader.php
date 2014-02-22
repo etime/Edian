@@ -8,7 +8,7 @@
             <li>导航分类</li>
             <a href = "<?php echo site_url() ?>"><li>首页</li></a>
             <li>商城</li>
-            <li>店面</li>
+            <a href = "<?php echo site_url('shop/queue') ?>"><li>店面</li></a>
             <li>活动</li>
         </ul>
     </div>

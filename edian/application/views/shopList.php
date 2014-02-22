@@ -48,10 +48,10 @@
         <ul class = "good">
             <li class = "details">
                 <div class = "img">
-                    <img src="http://gi2.md.alicdn.com/bao/uploaded/i2/14183030232589888/T1rdMZFiRaXXXXXXXX_!!0-item_pic.jpg_360x360q90.jpg" alt="图片" class = "mainImg"/>
+                    <img src="http://p2008.zbjimg.com/task/2009-08/16/127085/middlezyh0eh04.jpg" alt="图片" class = "mainImg"/>
                 </div>
                 <div class = "deinfo">
-                    <h4>斯蒂芬阿斯顿发商店阿斯顿还是地方</h4>
+                    <h4>爱就思床垫</h4>
                     <p>
                         <span class="left">
                             <span class = "item">店铺评分</span>
@@ -79,50 +79,64 @@
             </li>
             <li class = "details">
                 <div class = "img">
-                    <img src="http://www.pkusky.com/upfile/images/MEI%20NV.jpg" alt="图片" class = "mainImg"/>
+                    <img src="http://www.jsshengda.net/upload/Y1IMOQd2bV4jaWs5WDIaQVs6aFJSUggFBRgPQVQ!W08JRlY.jpg" alt="图片" class = "mainImg"/>
                 </div>
                 <div class = "deinfo">
-                    <p>斯蒂芬阿斯顿发商店阿斯顿还是地方</p>
-                    <p class = "sep">
-                        <span>评分3.2</span>
-                        <strong>￥90.00</strong>
+                    <h4>江湖烤鱼</h4>
+                    <p>
+                        <span class="left">
+                            <span class = "item">店铺评分</span>
+                            <span class="cont">4.7</span>
+                        </span>
+                        <span class="right">
+                            <span class = "item">最低起送价</span>
+                            <span class="cont">19元</span>
+                        </span>
                     </p>
-                    <p class = "sep">
-                        <span>已售32</span>
-                        <span>奥蒂旗舰店</span>
+                    <p>
+                        <span class="left">
+                            <span class = "item">距离</span>
+                            <span class="cont">500米</span>
+                        </span>
+                        <span class="right">
+                            <span class = "item">送货速度</span>
+                            <span class="cont">41分钟</span>
+                        </span>
                     </p>
+                    <blockquote>
+                        把那拉拉吧是的发斯蒂芬阿斯顿发斯蒂芬啊但是和阿斯顿发商店
+                    </blockquote>
                 </div>
             </li>
             <li class = "details">
                 <div class = "img">
-                    <img src="http://gi2.md.alicdn.com/bao/uploaded/i2/T1.412Fh0hXXXXXXXX_!!0-item_pic.jpg_360x360q90.jpg" alt="图片" class = "mainImg"/>
+                    <img src="http://gi2.md.alicdn.com/bao/uploaded/i2/14183030232589888/T1rdMZFiRaXXXXXXXX_!!0-item_pic.jpg_360x360q90.jpg" alt="图片" class = "mainImg"/>
                 </div>
                 <div class = "deinfo">
-                    <p>斯蒂芬阿斯顿发商店阿斯顿还是地方</p>
-                    <p class = "sep">
-                        <span>评分3.2</span>
-                        <strong>￥90.00</strong>
+                    <h4>千娇白媚</h4>
+                    <p>
+                        <span class="left">
+                            <span class = "item">店铺评分</span>
+                            <span class="cont">4.7</span>
+                        </span>
+                        <span class="right">
+                            <span class = "item">最低起送价</span>
+                            <span class="cont">19元</span>
+                        </span>
                     </p>
-                    <p class = "sep">
-                        <span>已售32</span>
-                        <span>奥蒂旗舰店</span>
+                    <p>
+                        <span class="left">
+                            <span class = "item">距离</span>
+                            <span class="cont">500米</span>
+                        </span>
+                        <span class="right">
+                            <span class = "item">送货速度</span>
+                            <span class="cont">41分钟</span>
+                        </span>
                     </p>
-                </div>
-            </li>
-            <li class = "details">
-                <div class = "img">
-                    <img src="http://gi3.md.alicdn.com/bao/uploaded/i3/17136026493258869/T1TRX.FjXfXXXXXXXX_!!0-item_pic.jpg_360x360q90.jpg" alt="图片" class = "mainImg"/>
-                </div>
-                <div class = "deinfo">
-                    <p>斯蒂芬阿斯顿发商店阿斯顿还是地方</p>
-                    <p class = "sep">
-                        <span>评分3.2</span>
-                        <strong>￥90.00</strong>
-                    </p>
-                    <p class = "sep">
-                        <span>已售32</span>
-                        <span>奥蒂旗舰店</span>
-                    </p>
+                    <blockquote>
+                        把那拉拉吧是的发斯蒂芬阿斯顿发斯蒂芬啊但是和阿斯顿发商店
+                    </blockquote>
                 </div>
             </li>
         </ul>
