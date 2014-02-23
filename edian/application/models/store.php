@@ -11,7 +11,7 @@
  *      address:      商店的地址
  *      longtitude:   商店所在的经纬度
  *      latitude:     商店所在的经纬度
- *      category:     商店内部商品的分类,所有的分类都保存在一个字段里面，将一维数组以|分隔符分开
+ *      category:     商店内部商品的分类,所有的分类都保存在一个字段里面，将一维数组以 | 分隔符分开
  *      briefInfo:    商店的自身简介
  *      owerId:       对应的boss中的id，所属者的id
  *      deliveryTime: 商店的送货时间，营业时间
@@ -140,7 +140,6 @@ class Store extends CI_Model {
 
     /**
      * 在判断出 storeId 存在的情况下，提取它的分类列表
-     *
      * @param int $storeId
      * @return array
      */
@@ -209,7 +208,7 @@ class Store extends CI_Model {
         if ($storeId === 0) {
             return false;
         }
-        $sql = "SELECT briefInfo , name, logo, serviceQQ, servicePhone, address, longitude, latitude, category, more, deliveryTime, deliveryArea FROM store WHERE id = $storeId";
+        $sql = "SELECT briefInfo, name, logo, serviceQQ, servicePhone, address, longitude, latitude, category, more, deliveryTime, deliveryArea FROM store WHERE id = $storeId";
         $res = $this->db->query($sql);
         if ($res->num_rows === 0) {
             $sql = "在model/store/getSetInfo/中num_rows 位0，有人对不应该存在的storeId进行了索引,storeId = ".$storeId;

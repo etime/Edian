@@ -244,18 +244,5 @@ class item extends Home {
             redirect(site_url("bg/item/itemCom"));
         }
     }
-    /*
-    private function showArr($array)
-    {
-        echo "<br/>";
-        foreach($array as $index => $value){
-            var_dump($index);
-            echo "   =>   ";
-            var_dump($value);
-            echo "<br>";
-        }
-        echo "<br/>";
-    }
-     */
 }
 ?>

@@ -5,20 +5,21 @@
  * email:           douunasm@gmail.com
  * Last_modified:   2013-06-11 10:39:28
  **/
-class MY_Controller extends  CI_Controller {
-    public $part;//表示首页的菜单目录的关系
+class MY_Controller extends CI_Controller {
+
+    //表示首页的菜单目录的关系
+    public $part;
     public $adminMail;
-    protected $priAdd;//当运费不足的情况下,添加的运费
-    function __construct()
-    {
+    //当运费不足的情况下,添加的运费
+    protected $priAdd;
+
+    function __construct() {
         parent::__construct();
 
         header("Content-type: text/html; charset=utf-8");
         $this->load->library('help');
-
         session_start();
         date_default_timezone_set("Asia/Chongqing");
-        //$this->load->library("session");
         $this->adminMail = "1264310280@qq.com";
         //将来这里的先后顺序，就根据商品的多少和点击的多少来决定吧,目前暂定顺序如下,而且，觉得有必要给出二级连接呢,只是商品比较少的时候，就算了吧
         //$this->partMap = array(
@@ -124,8 +125,12 @@ class MY_Controller extends  CI_Controller {
          else return -1;
     }
 
-    public  function fb_unique($array2D)
-    {//将二维的数组转变成为一维数组,方便unique
+    /**
+     * 将二维的数组转变成为一维数组,方便unique
+     * @param array $array2D 待操作的二维数组
+     * @return array
+     */
+    public function fb_unique($array2D) {
         if(count($array2D) == 0)return $array2D;
         foreach ($array2D as $key) {
             $key = join(",",$key);
@@ -134,6 +139,7 @@ class MY_Controller extends  CI_Controller {
         $reg = array_unique($reg);
         return $reg;
     }
+
     /**
      * 排序函数，为有id 和value两种属性
      *

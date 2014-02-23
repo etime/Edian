@@ -7,15 +7,11 @@
  * @package     controller
  * @sub_package bg
  */
+require 'home.php';
 
-define("TEST",0);
-class set extends MY_Controller
-{
-    /** 来到这里的人必须有权限检查 */
-    var $user_id;
-    /**
-     * 进入后台的人必须有id，对应的model应该有model
-     */
+define("TEST", 0);
+class set extends Home {
+
     function __construct() {
         parent::__construct();
         $this->load->model('user');
@@ -23,18 +19,89 @@ class set extends MY_Controller
         $this->load->model('boss');
         $this->load->model('mitem');
         $this->load->model("mwrong");
-        $this->user_id = $this->getUserId();
+        $this->userId = $this->getUserId();
     }
 
+    /**
+     * 删除本店分类
+     * @param int $storeId 商店编号
+     * @param string $tag 商店的本店分类
+     */
+    public function deleteTag($storeId, $tag) {
+        $url = site_url('bg/set/deleteTag');
+        if ($this->userId == -1) {
+            $this->noLogin($url);
+            return;
+        }
+        if ($this->_checkAuthority($url)) {
+            return;
+        }
+        $storeId = (int)$storeId;
+        $tag = trim($tag);
+        $count = (int)$this->mitem->getCountByStoreTag($storeId, $tag);
+        if ($count != 0) {
+            echo('false');
+            return;
+        }
+        $key = $this->store->getCategoryByStoreId($storeId);
+        $ans = array();
+        for($i = 0, $len = (int)$key; $i < $len; $i ++) {
+            if ($key[$i] == $tag) {
+                continue;
+            } else {
+                array_push($ans, $key[$i]);
+            }
+        }
+        $ans = implode('|', $ans);
+        $this->store->updateCategoryByStoreId($ans, $storeId);
+        echo('true');
+    }
+
+    /**
+     * 修改本店分类的名字
+     * @param int $storeId 商店编号
+     * @param string $tag 待修改的本店分类名
+     */
+    public function changeTag($storeId, $tag) {
+        $url = site_url('bg/set/deleteTag');
+        if ($this->userId == -1) {
+            $this->noLogin($url);
+            return;
+        }
+        if ($this->_checkAuthority($url)) {
+            return;
+        }
+        $storeId = (int)$storeId;
+        $tag = trim($tag);
+        $newName = trim($this->input->post('newName'));
+        if ($newName == false) {
+            echo('false');
+            return;
+        }
+        $key = $this->store->getCategoryByStoreId($storeId);
+        $ans = array();
+        for($i = 0, $len = (int)$key; $i < $len; $i ++) {
+            if ($key[$i] == $tag) {
+                array_push($ans, $newName);
+
+                // @todo 将所有属于该店并且本店分类名为 $tag 的商品的本店分类名改成 $newName
+//                $this->mitem->upodateCategoryByStoreId($)
+            } else {
+                array_push($ans, $key[$i]);
+            }
+        }
+        $ans = implode('|', $ans);
+        $this->store->updateCategoryByStoreId($ans, $storeId);
+        echo('true');
+    }
 
     /**
      * 这里是添加商品类别列表的函数
-     b* 通过发送的POST提交中的字符串，添加到对应商户列表中
+     * 通过发送的POST提交中的字符串，添加到对应商户列表中
      * @param   string  $_POST["listName"]
      * @return  1/string 添加成功返回1，否则返回返回错误原因
      */
-    public function listAdd($name)
-    {
+    public function listAdd($name) {
         $name = trim( $this->input->post("listName") );
         if( preg_match("/[~!@#$%^&*_+`\\=\\|\\{\\}:\\\">\\?<\\[\\];',\/\\.\\\\]/", $name) ) {
             echo '包涵非法字符';
@@ -48,12 +115,10 @@ class set extends MY_Controller
     }
     /**
      * 这个是用来测试下面的listDelete的函数
-     *
      * @return void
      * @author unasm
      */
-    public function testListDelete()
-    {
+    public function testListDelete() {
         $this->load->library("help");
         $val = array("adb",'saf','sdba','sdfa');
         foreach ($val as $key) {
@@ -207,77 +272,84 @@ class set extends MY_Controller
      * </pre>
      * @param int   $storeId    选择的商店的id,添加这个接口，是为了方便其他的链接查看,目前在bg/userlist/index 使用
      */
-    public function setAct($storeId = -1){
-        $this->load->library("help");
-
+    public function setAct($storeId = -1) {
         //对用户权限进行检验
-        if($this->user_id == -1){
-            $this->noLogin( site_url("bg/set/setAct") );
+        if ($this->userId == -1) {
+            $this->noLogin(site_url("bg/set/setAct"));
             return;
         }
-        $data['credit'] = $this->user->getCredit($this->user_id);//获取用户的类型，方便差异化处理
+        //获取用户的类型，方便差异化处理
+        $data['credit'] = $this->user->getCredit($this->userId);
         $this->load->config('edian');
-        if($data['credit'] == $this->config->item("adminCredit")){
+        if ($data['credit'] == $this->config->item("adminCredit")) {
             $data["type"] = 2;
-        }else if($data['credit'] == $this->config->item("bossCredit")){
+        } else if($data['credit'] == $this->config->item("bossCredit")) {
             $data["type"] = 1;
-        }else exit("您没有权限进入本页面");
-        if(TEST)
+        } else {
+            exit("您没有权限进入本页面");
+        }
+        if (TEST) {
             $data["type"] = 2;
-
-
+        }
         //如果有管理员权限
-        if($data["type"] == 2){
-            if(TEST){
+        if ($data["type"] == 2) {
+            if (TEST) {
                 $data["store"] = array(
                     array('id' =>1,"name" =>"壮士店1" ),
                     array('id' =>2,"name" =>"壮士店2" ),
                     array('id' =>3,"name" =>"壮士店3" )
                 );
-            }else{
+            } else {
                 $data["store"] = $this->store->getStoreList();
             }
             //优先选择店，在没有的情况下选择一个默认的店 ,1号
-            if($storeId === -1){
-                $data["storeId"] = $this->input->post("storeId");
+            if ($storeId === -1) {
+                $data["storeId"] = (int)trim($this->input->post("storeId"));
             } else {
                 $data['storeId'] = (int)$storeId;
             }
-            if(!$data["storeId"]) $data["storeId"] = 1;
-        }else{
+            if (! $data["storeId"]) {
+                $data["storeId"] = 1;
+            }
+        } else {
             //强制转换，如果发现为0，报错
             $data["storeId"] = (int)$this->session->userdata("storeId");
         }
         //对提交的判断，数据的获取
-        if($this->input->post("sub") === '提交'){
+        if ($this->input->post("sub") === '提交') {
             $inputData = $this->setGet();
             $more['dtuName'] = $this->input->post('dtuName');
-            if($data["type"] == 2){
-                $more['dtuPassword'] = trim( $this->input->post("dtuPassword") );
-                $more['dtuId']       = trim($this->input->post('dtuId'));
+            if ($data["type"] == 2) {
+                $more['dtuPassword'] = trim($this->input->post("dtuPassword"));
+                $more['dtuId'] = trim($this->input->post('dtuId'));
             }
-            $flag = $this->store->update($inputData, $more ,$data["storeId"]);
-            //$data = array_merge($data,$inputData);
-            if(!$flag){
+            $flag = $this->store->update($inputData, $more, $data["storeId"]);
+            if (! $flag) {
                 exit("插入失败");
             }
         }
-        $data = array_merge($data , $this->store->getSetInfo($data['storeId'] ));
-        //之前为了和扩展，只在数据库中保存了名字，现在补全对应的路径,logo存放在mix文件架下面
-        if($data['logo']){
-            $data['logo']  = base_url('image/' . $this->user_id . '/mix/' . $data['logo']);
+        $temp = $this->store->getSetInfo($data['storeId']);
+        if ($temp == false) {
+            $temp = array();
+        } else {
+            for ($i = 0, $len = (int)count($temp['category']); $i < $len; $i ++) {
+                $name = $temp['category'][$i];
+                $temp['category'][$i] = array();
+                $temp['category'][$i]['name'] = $name;
+                $count = $this->mitem->getCountByStoreTag($data['storeId'], $name);
+                if ($count == false) {
+                    $count = 0;
+                }
+                $temp['category'][$i]['count'] = $count;
+            }
         }
-        //$this->help->showArr($data);
+        $data = array_merge($data, $temp);
+        //之前为了和扩展，只在数据库中保存了名字，现在补全对应的路径,logo存放在mix文件架下面
+        if ($data['logo']) {
+            $data['logo']  = base_url('image/' . $this->userId . '/mix/' . $data['logo']);
+        }
+        $this->help->showArr($data);
         $this->load->view("bgHomeSet",$data);
     }
-    /**
-     * 对用户没有登录的情况进行处理
-     */
-    protected function noLogin( $url )
-    {
-        $data["url"]  = $url;
-        $this->load->view("login", $data);
-    }
-
 }
 ?>
