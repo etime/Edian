@@ -20,17 +20,28 @@
         </form>
     </div>
 </div>
-<div id = "login" class = "login" style = "display:none">
+<div id = "login" class = "login">
     <form action="<?php echo site_url('login/loginCheck') ?>" method="post" accept-charset="utf-8">
-        <span class = "close">关闭</span>
+        <div class = "tab">
+            <span style = "background:#31b2ee">登录</span>
+            <a href = "<?php echo site_url('register/userRegister') ?>"><span>注册</span></a>
+        </div>
+        <span class = "shut"> </span>
         <p>
-            <input type="text" name="userName" placeholder = "用户名/手机号" />
+            <input type="text" name="userName" id = "userName" placeholder = "用户名/手机号" />
+            <label for="userName"></label>
         </p>
         <p>
-            <input type="password" name="password" placeholder = "密码" />
+            <input type="password" name="password" id = "password" placeholder = "密码" />
+            <label for="password"></label>
         </p>
         <p class = "atten"></p>
-        <input type="submit" name="sub"  value="登录" />
+        <p>
+            <input type="submit" name="sub"  value="登录"  class = "btn"/>
+            <span>没有帐号?
+                <a href = "<?php echo site_url('register/userRegister') ?>">马上注册</a>
+            </span>
+        </p>
     </form>
 </div>
 <script type="text/javascript" charset="utf-8">
@@ -41,25 +52,57 @@
 <script type="text/javascript" charset="utf-8" src = "<?php echo  base_url('js/login.js')?>"></script>
 <style type="text/css" media="all">
 .login{
-    position:fixed;
-    top:100px;
     width:100%;
+    height:100%;
     z-index:10;
+    background:rgba(0,0,0,0.5);
+    position:fixed;
+    top:0;
+}
+.tab{
+    font-size:1.5em;
+    border-bottom:2px solid #e3e3e3;
+    margin-bottom:40px;
+}
+.tab span{
+    width:120px;
+    text-align:center;
+    display:inline-block;
+    line-height:34px;
+}
+.tab span:before{
+    content:"\e00d";
+    font-family:"Flat-UI-Icons-24";
+    speak:none;
+    font-style:normal;
+    font-weight:normal;
+    line-height:1;
+    -webkit-font-smoothing:antialiased;
+}
+.btn{
+    -webkit-box-shadow:inset 0px 1px 0px rgba(255, 255, 255, 0.5), 0px 1px 2px rgba(0, 0, 0, 0.2);
+    -moz-box-shadow:inset 0px 1px 0px rgba(255, 255, 255, 0.5), 0px 1px 2px rgba(0, 0, 0, 0.2);
+    box-shadow:inset 0px 1px 0px rgba(255, 255, 255, 0.5), 0px 1px 2px rgba(0, 0, 0, 0.2);
+    background:-webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #fbfbfb), color-stop(100%, #e1e1e1));
+    background:-webkit-linear-gradient(top, #fbfbfb, #e1e1e1);
+    background:-moz-linear-gradient(top, #fbfbfb, #e1e1e1);
+    line-height:24px;
 }
 .login form{
-    width:250px;
-    background:rgb(241, 241, 241);
+    width:390px;
+    top:100px;
+    position:fixed;
+    background:white;
     margin:0px auto;
-    text-align:center;
     border-radius:5px;
-    padding:5px;
+    padding:30px;
     position:relative;
 }
 .login p{
-    margin:5px ;
+    margin:20px 0;
+    position:relative;
 }
 .login input[type = 'submit']{
-    background:#046F00;
     border:none;
     border-radius:5px;
     padding:7px 10px;
@@ -67,21 +110,43 @@
     box-shadow:3px 1px 2px #BBB7B7;
     width:120px;
 }
+label[for = 'userName']{
+    background:url( "<?php echo base_url('bgimage/login.png') ?>") 0 -2px no-repeat;
+    position:absolute;
+    top:9px;
+    right:6px;
+    width:18px;
+    height:19px;
+    content:' ';
+}
+label[for = 'password']{
+    background:url( "<?php echo base_url('bgimage/login.png') ?>") -17px -2px no-repeat;
+    position:absolute;
+    top:9px;
+    right:6px;
+    width:17px;
+    height:19px;
+    content:' ';
+}
 .login input[type = 'text'] , .login input[type = 'password']{
     padding:7px;
     border:1px solid rgb(221, 221, 221);
     box-shadow:2px 2px 3px rgb(196, 196, 196) inset;
     border-radius:5px;
-    width:90%;
+    width:376px;
 }
 .login input[type = 'text']:focus , .login input[type = 'password']:focus{
     border:1px solid gray;
     box-shadow:1px 1px 4px rgb(150, 150, 150) inset;
 }
-.login .close{
+.login .shut{
     position:absolute;
-    top:0;
-    right:0;
+    top:6px;
+    right:6px;
+    background:url( "<?php echo base_url('bgimage/login.png') ?>") -32px -2px no-repeat;
+    width:18px;
+    height:18px;
+    content:' ';
 }
 #header > div{
     margin:0 auto;
