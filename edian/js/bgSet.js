@@ -145,8 +145,7 @@ function fBusTime() {
         for (j = 0 ; j < 24; j+=1) {
             if(oneTime[0] === j){
                 dtime += '<option value = ' + j +' selected = selected> ' + j + '</option>';
-            }
-            else{
+            } else {
                 dtime += '<option value = ' + j +'> ' + j + '</option>';
             }
         }

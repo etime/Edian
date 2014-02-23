@@ -53,16 +53,20 @@
                     <span class = "item">店铺评分</span>
                     <strong class = "bc"><?php echo $credit ?></strong>
                 </p>
+<!--
                 <p><span class = "item">距离您</span>    <strong class = "bc">4.5</strong>km</p>
+-->
 
                 <p><span class = "item">电话</span><?php  echo $servicePhone?></p>
                 <p><span class = "item">客服 </span><?php  echo $serviceQQ?></p>
                 <div class = "bustime clearfix">
                     <span class = "item">营业时间</span>
-                    <ul alt = "<?php echo $deliveryTime ?>">
+                    <ul alt = "<?php echo $deliveryTime ?>" id = "busVal">
+                    <!--
                         <li>9:00-12:00</li>
                         <li>9:00-12:00</li>
                         <li>9:00-12:00</li>
+                    -->
                     </ul>
                 </div>
                 <p>

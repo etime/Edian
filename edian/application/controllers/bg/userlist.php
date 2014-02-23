@@ -42,7 +42,7 @@ class Userlist extends Home {
             $this->help->showArr($data);
             $this->load->view("bgStoreList" , $data);
         } else {
-            echo '权限不足';
+            show_404();
             return false;
         }
     }

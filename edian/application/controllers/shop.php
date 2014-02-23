@@ -26,7 +26,7 @@ class Shop extends BaseSearch {
         //$data1['pageNumFooter'] = $page;
         $data1['storeId'] = $store;
         $data1 = array_merge($good , $data1);
-        //$this->help->showArr($data1);
+        $this->help->showArr($data1);
         $this->load->view('store' , $data1);
     }
 
@@ -53,7 +53,6 @@ class Shop extends BaseSearch {
         $ans['key'] = false;
         $commonUrl = site_url('shop/index/' . $storeId);
         $ans['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount']);
-        //$this->help->showArr($ans);
         $this->_showView($ans, $storeId);
     }
 
