@@ -195,7 +195,6 @@ class Home extends MY_Controller {
             $storeId = (int)$this->session->userdata('storeId');
             if ($storeId == false) {
                 $this->choseStore($bossId);
-                echo('------------------------sdfsdafa--------------------------<br>');
                 return;
             }
         } else {
