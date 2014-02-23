@@ -33,7 +33,7 @@ class Order extends Home {
      */
     public function ontime() {
         // 检查权限
-        if ($this->_checkAuthority(site_url('bg/order/history')) === false) {
+        if ($this->_checkAuthority(site_url('bg/order/ontime')) === false) {
             return;
         }
         // 接受商店编号
@@ -116,12 +116,12 @@ class Order extends Home {
         if ($data['order']) {
             $data['order'] = $this->orderForm($data['order']);
         }
-        if ($data['order']) {
+//        if ($data['order']) {
             $temp = $this->pagesplit->split($data['order'], $pageId, $this->pageSize);
             $data['order'] = $temp['newData'];
             $commonUrl = site_url('/bg/order/history');
             $data['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount']);
-        }
+//        }
         $data['storeId'] =  $this->storeId;
         $this->load->view('histOrder2' , $data);
     }
