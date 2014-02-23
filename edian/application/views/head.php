@@ -7,7 +7,7 @@
         <p style="float:right">
             <!-- replace 中的是登录之后替换的东西-->
             <span class = "replace">
-                <a href = "#" id = "gotoLogin">登录</a>  |
+                <a href = "#" id = "gotoLogin" class = "gotoLogin">登录</a>  |
                 <a href = "<?php echo site_url('/register/userRegister/') ?>">注册</a>
             </span> |
             <a>帮助</a>
@@ -20,9 +20,9 @@
         </form>
     </div>
 </div>
-<div id = "login" class = "login">
+<div id = "login" class = "login" style = "display:none">
     <form action="<?php echo site_url('login/loginCheck') ?>" method="post" accept-charset="utf-8">
-        <div class = "tab">
+        <div class = "regd">
             <span style = "background:#31b2ee">登录</span>
             <a href = "<?php echo site_url('register/userRegister') ?>"><span>注册</span></a>
         </div>
@@ -39,7 +39,7 @@
         <p>
             <input type="submit" name="sub"  value="登录"  class = "btn"/>
             <span>没有帐号?
-                <a href = "<?php echo site_url('register/userRegister') ?>">马上注册</a>
+                <a href = "<?php echo site_url('register/userRegister') ?>" style = "color:#31b2ee">马上注册</a>
             </span>
         </p>
     </form>
@@ -59,18 +59,18 @@
     position:fixed;
     top:0;
 }
-.tab{
+.regd{
     font-size:1.5em;
     border-bottom:2px solid #e3e3e3;
     margin-bottom:40px;
 }
-.tab span{
+.regd span{
     width:120px;
     text-align:center;
     display:inline-block;
     line-height:34px;
 }
-.tab span:before{
+.regd span:before{
     content:"\e00d";
     font-family:"Flat-UI-Icons-24";
     speak:none;
