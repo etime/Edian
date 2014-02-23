@@ -19,7 +19,7 @@ class set extends Home {
         $this->load->model('boss');
         $this->load->model('mitem');
         $this->load->model("mwrong");
-        $this->userId = $this->getUserId();
+//        $this->userId = $this->getUserId();
     }
 
     /**
@@ -64,7 +64,7 @@ class set extends Home {
      */
     public function changeTag($storeId, $tag) {
         $url = site_url('bg/set/deleteTag');
-        if ($this->user_id == -1) {
+        if ($this->userId == -1) {
             $this->noLogin($url);
             return;
         }
@@ -85,7 +85,7 @@ class set extends Home {
                 array_push($ans, $newName);
 
                 // @todo 将所有属于该店并且本店分类名为 $tag 的商品的本店分类名改成 $newName
-                $this->mitem->upodateCategoryByStoreId($)
+//                $this->mitem->upodateCategoryByStoreId($)
             } else {
                 array_push($ans, $key[$i]);
             }
@@ -274,12 +274,12 @@ class set extends Home {
      */
     public function setAct($storeId = -1) {
         //对用户权限进行检验
-        if ($this->user_id == -1) {
+        if ($this->userId == -1) {
             $this->noLogin(site_url("bg/set/setAct"));
             return;
         }
         //获取用户的类型，方便差异化处理
-        $data['credit'] = $this->user->getCredit($this->user_id);
+        $data['credit'] = $this->user->getCredit($this->userId);
         $this->load->config('edian');
         if ($data['credit'] == $this->config->item("adminCredit")) {
             $data["type"] = 2;
@@ -346,19 +346,10 @@ class set extends Home {
         $data = array_merge($data, $temp);
         //之前为了和扩展，只在数据库中保存了名字，现在补全对应的路径,logo存放在mix文件架下面
         if ($data['logo']) {
-            $data['logo']  = base_url('image/' . $this->user_id . '/mix/' . $data['logo']);
+            $data['logo']  = base_url('image/' . $this->userId . '/mix/' . $data['logo']);
         }
-        //$this->help->showArr($data);
+        $this->help->showArr($data);
         $this->load->view("bgHomeSet",$data);
     }
-    /**
-     * 对用户没有登录的情况进行处理
-     */
-    protected function noLogin( $url )
-    {
-        $data["url"]  = $url;
-        $this->load->view("login", $data);
-    }
-
 }
 ?>
