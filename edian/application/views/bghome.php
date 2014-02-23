@@ -45,15 +45,9 @@ if($type === 2){
         <!-- 评论分为店家看的和管理员可以修改的部分-->
         <a href = "<?php  echo $siteUrl.('/bg/home/item')?>" target="content"><li name = 'addItem'>添加商品</li></a>
     </ul>
-<!--
-    <ul id = "img" class = "img">
-        <a href = "<?php echo site_url('bg/home/imglist')?>" target="content"><li>图片管理</li></a>
-        <a href = "<?php echo site_url('upload/index')?>" target="content"><li>上传图片</li></a>;
-    </ul>
--->
+
     <form action="<?php echo $siteUrl . '/bg/home/index/' ?>" method="post" accept-charset="utf-8">
         <select name = 'storeId'>
-        <option value="1">test sdf asd f asdf asd fa ds </option>
         <?php foreach ($storeList  as $value){
                 if($value['id'] == $storeId){
                     echo "<option value=" . $value['id'] . " selected = 'selected'>".$value['name'] ."</option>";

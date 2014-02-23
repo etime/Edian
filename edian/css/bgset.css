@@ -87,6 +87,7 @@ tr:hover{
 }
 td ,th{
     border:none;
+    text-align:center;
 }
 .cate p{
     text-align:right;
