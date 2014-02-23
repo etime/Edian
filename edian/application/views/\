@@ -38,8 +38,8 @@
         <p class = "atten"></p>
         <p>
             <input type="submit" name="sub"  value="登录"  class = "btn"/>
-            <span class = "reg">没有帐号?
-                <a href = "<?php echo site_url('register/userRegister') ?>"  style = "color:#31b2ee">马上注册</a>
+            <span>没有帐号?
+                <a href = "<?php echo site_url('register/userRegister') ?>" style = "color:#31b2ee;">马上注册</a>
             </span>
         </p>
     </form>
@@ -88,7 +88,6 @@
     border-radius:5px;
     padding:30px 47px;
     position:relative;
-    box-shadow:0 0 24px rgb(0, 0, 0);
 }
 .login p{
     margin:20px 0;
@@ -131,8 +130,8 @@ label[for = 'password']{
 }
 .login .shut{
     position:absolute;
-    top:15px;
-    right:15px;
+    top:6px;
+    right:6px;
     background:url( "<?php echo base_url('bgimage/login.png') ?>") -32px -2px no-repeat;
     width:18px;
     height:18px;
@@ -199,10 +198,5 @@ label[for = 'password']{
 }
 a{
     color:inherit;
-}
-.reg{
-    position:absolute;
-    bottom:0;
-    right:13px;
 }
 </style>
