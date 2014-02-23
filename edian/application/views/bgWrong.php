@@ -15,10 +15,10 @@
     $baseUrl = base_url();
     $siteUrl = site_url();
 ?>
-<?php foreach ($wrong as $value) :?>
+            <?php foreach ($wrong as $value) :?>
             <tr>
-            <td><?php echo $value['content'] ?></td>
-            <td><?php echo $value['time'] ?></td>
+                <td><?php echo $value['content'] ?></td>
+                <td><?php echo $value['time'] ?></td>
                 <td>
                     <a href = "<?php echo $siteUrl."/wrong/deleteLog/".$value["id"] ?>">
                         删除
@@ -29,6 +29,9 @@
         </table>
     </body>
 <style type="text/css" media="all">
+    tr:hover{
+        background:yellow;
+    }
     table{
         border-spacing:0px;
         width:100%;

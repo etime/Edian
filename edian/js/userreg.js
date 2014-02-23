@@ -71,10 +71,10 @@ function floginName() {
             $.get(site_url + "/register/checkLoginName?loginName=" + val,function(data,textStatus){
                 if(textStatus == "success"){
                     if(data.indexOf("false") == -1){
-                        $this._flag = 1;
+                        $this._flag = 0;
                         $($this._bro).addClass("success").text("");//或许这里的符号，可以成为等待符号
                     }else {
-                        $this._flag = 0;
+                        $this._flag = 1;
                          $($this._bro).addClass("failed").text("登录名重复");//或许这里的符号，可以成为等待符号
                     }
                 }
@@ -135,7 +135,7 @@ function funPhone(){
                 if(textStatus == "success"){
                     $($this._broCode).text("")
                     if(typeof data == "object"){
-                        $($this._broCode).text(data["failed"]).removeClass("success").addClass("failed");
+                        $($this._broPhone).text(data["failed"]).removeClass("success").addClass("failed");
                     }else{
                         smsCode = data;
                     }

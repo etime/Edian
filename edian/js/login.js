@@ -18,9 +18,31 @@ function login(callBack){
      * 目前就简单的替换成为注销，以后添加用户中心之类的
      */
     function replaceDom() {
-        var str = "<a href = '" + site_url + '/destory/zhuxiao'+ "'>注销</a>";
-        $('.replace').replaceWith(str);
+        var str = "<a href = '" + site_url + '/destory/zhuxiao'+ "' class = 'zhuxiao'>注销</a>";
+        $('.replace').html(str);
     }
+    //监测 注销和登录两种事情
+    $(".replace").delegate('a' , 'click' , function (event) {
+        var name = $(this).prop('class');
+        if(name === 'zhuxiao'){
+            event.preventDefault();
+            $.ajax({
+                url: $(this).prop('href'),
+                success: function (data, textStatus, jqXHR) {
+                    alet('注销成功');
+                    var str = "<a href = '#' id = 'gotoLogin' class = 'gotoLogin'>登录</a>  | <a href = '" + site_url + '/register/userRegister/' + "'>注册</a>";
+                    $('.replace').html(str);
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.log("出错了");
+                }
+            });
+        } else if(name === 'gotoLogin'){
+            login.fadeToggle();
+            event.preventDefault();
+        }
+
+    })
     //如果已经登录，就替换dom
     if(userId)replaceDom()
     $("#login form").submit(function (event) {
@@ -59,10 +81,6 @@ function login(callBack){
     });
     $("#login .shut").click(function () {
         login.fadeOut();
-    })
-    $("#gotoLogin").click(function (event) {
-        login.fadeToggle();
-        event.preventDefault();
     })
 }
 /**

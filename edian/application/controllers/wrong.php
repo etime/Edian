@@ -96,11 +96,9 @@ class Wrong extends MY_Controller {
      *  需要管理员权限才可以进行浏览的地方
      */
     public function showError() {
-/*
         if ($this->_checkAuthority(site_url('wrong/showError')) === false) {
             return;
         }
- */
         $data['wrong'] = $this->mwrong->getAll();
         //header("Content-type: text/html; charset=utf-8");
         //$this->help->showArr($data);
