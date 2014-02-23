@@ -38,7 +38,12 @@ class Shop extends BaseSearch {
     public function index($storeId, $pageId = 1) {
         header("Content-type: text/html; charset=utf-8");
         $storeId = (int)$storeId;
-        if ($storeId === 0) {
+        if (isset($_GET['pageId'])) {
+            $pageId = (int)$_GET['pageId'];
+        } else {
+            $pageId = (int)$pageId;
+        }
+        if ($storeId == 0) {
             show_404();
             return false;
         }
@@ -53,7 +58,6 @@ class Shop extends BaseSearch {
         $ans['key'] = false;
         $commonUrl = site_url('shop/index/' . $storeId);
         $ans['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount']);
-        //$this->help->showArr($ans);
         $this->_showView($ans, $storeId);
     }
 
