@@ -20,7 +20,7 @@
         </form>
     </div>
 </div>
-<div id = "login" class = "login" >
+<div id = "login" class = "login"  style = "display:none">
     <form action="<?php echo site_url('login/loginCheck') ?>" method="post" accept-charset="utf-8">
         <div class = "regd">
             <span style = "background:#31b2ee;color:white">登录</span>
@@ -195,6 +195,7 @@ label[for = 'password']{
 #header{
     background-color:#cc0001;
     overflow:hidden;
+    width:100%;
     position:relative;
 }
 a{
