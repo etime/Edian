@@ -61,7 +61,7 @@ $config['mainLength'] = 460;
 $config['bigLength'] = 700;
 
 // 确定 thumb 图片中的 small 中的短边的宽度，图片存在 small 中
-$config['smallLength'] = 400;
+$config['smallLength'] = 460;
 
 // 确定商店 logo 的长和宽
 $config['storeLogoH'] = 120;
