@@ -19,7 +19,7 @@ class set extends Home {
         $this->load->model('boss');
         $this->load->model('mitem');
         $this->load->model("mwrong");
-//        $this->userId = $this->getUserId();
+        $this->userId = $this->getUserId();
     }
 
     /**

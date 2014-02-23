@@ -28,67 +28,91 @@ class Order extends Home {
     }
 
     /**
-     * 处理今日订单
-     * @param int $pageId    当前的页号
+     * 显示后台当前正要处理的订单信息
+     * 为后台实时刷新的页面提供数据,显示正要处理的订单信息
      */
-    public function today($pageId = 1) {
-        if ($this->_checkAuthority(site_url('bg/order/today')) === false) {
+    public function ontime() {
+        // 检查权限
+        if ($this->_checkAuthority(site_url('bg/order/history')) === false) {
+            return;
+        }
+        // 接受商店编号
+        if (isset($_POST['storeId'])) {
+            $storeId = (int)trim($this->input->post('storeId'));
+            if ($storeId == -1 && $this->isBoss) {
+                show_404();
+                return;
+            }
+            if ($storeId == false) {
+                $storeId = $this->session->userdata('storeId');
+            }
+        } else {
+            $storeId = $this->session->userdata('storeId');
+        }
+
+        // 如果没有设置 storeId
+        if ($storeId == false) {
+            $this->choseStore($this->getBossId());
             return;
         }
 
-        // 通过 get 的方式获取 pageId
-        if (isset($_GET['pageId'])) {
-            $pageId = $_GET['pageId'];
-        }
+        $this->storeId = $storeId;
 
-        // 通过 storeId 获取今日订单
-        $ans = $this->morder->getToday($this->storeId);
-        if ($ans != false) {
-            // 对今日订单进行解码
-            for ($i = 0, $len = count($ans); $i < $len; $i ++) {
-                // 获取商品的标题
-                $temp = $this->mitem->getTitle($ans[$i]['item_id']);
-                // 商品不存在
-                if ($temp === false) {
-                    $temp = '******';
-                }
-                // 设置商品的标题
-                $ans[$i]['title'] = $temp;
-                // 获取购买者的昵称
-                $temp = $this->user->getNameById($ans[$i]['ordor']);
-                // 购买者不存在
-                if ($temp === false) {
-                    $temp = '******';
-                }
-                // 设置购买者的昵称
-                $ans[$i]['user_name'] = $temp;
-            }
+        $data = Array();
+        if ($this->isAdmin && $this->storeId == -1) {
+            $data['order'] = $this->morder->getAllOntime();
+        } else if ($this->storeId != -1) {
+            $data['order'] = $this->morder->getOntime($this->storeId, $this->config->item('infFailed'));
+            $data['order'] = $this->orderForm($data['order']);
+            $data['orderState'] = $this->config->item('orderState');
+            $data['storeId'] = $this->storeId;
         }
-        $data['today'] = $ans;
-        if ($data['today']) {
-            $temp = $this->pagesplit->split($data['today'], $pageId, $this->pageSize);
-            $data['today'] = $temp['newData'];
-            $commonUrl = site_url('bg/order/today');
-            $data['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount']);
-//            echo $data['pageNumFooter'];
-        }
-        $this->load->view('ordtoday', $data);
+        $this->load->view("onTimeOrder", $data);
     }
 
     /**
      * 历史订单的显示
-     *
-     * 通过登录者的id进行在后台查找用户的历史订单信息
+     * @param int $pageId 当前页号
      */
-    public function history($pageId = 1) {
+    public function history($pageId = -1) {
+        // 检查权限
         if ($this->_checkAuthority(site_url('bg/order/history')) === false) {
             return;
         }
-        // 通过 get 的方式得到页号
+        // 接受当前页号
         if (isset($_GET['pageId'])) {
-            $pageId = $_GET['pageId'];
+            $pageId = (int)$_GET['pageId'];
+        } else {
+            $pageId = (int)$pageId;
         }
-        $data['order'] = $this->morder->hist($this->storeId);
+        // 接受商店编号
+        if (isset($_POST['storeId'])) {
+            $storeId = (int)trim($this->input->post('storeId'));
+            if ($storeId == -1 && $this->isBoss) {
+                show_404();
+                return;
+            }
+            if ($storeId == false) {
+                $storeId = $this->session->userdata('storeId');
+            }
+        } else {
+            $storeId = $this->session->userdata('storeId');
+        }
+
+        // 如果没有设置 storeId
+        if ($storeId == false) {
+            $this->choseStore($this->getBossId());
+            return;
+        }
+
+        $this->storeId = $storeId;
+        if ($this->storeId != -1) {
+            $data['order'] = $this->morder->hist($this->storeId);
+        } else if ($this->isAdmin && $this->storeId == -1) {
+            $data['order'] = $this->morder->histAdmin();
+        } else {
+            $data['order'] = array();
+        }
         if ($data['order']) {
             $data['order'] = $this->orderForm($data['order']);
         }
@@ -98,9 +122,6 @@ class Order extends Home {
             $commonUrl = site_url('/bg/order/history');
             $data['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount']);
         }
-        //$this->help->showArr($data);
-
-        //$this->help->showArr($data['order']);
         $data['storeId'] =  $this->storeId;
         $this->load->view('histOrder2' , $data);
     }
@@ -164,39 +185,6 @@ class Order extends Home {
             $cnt++;
         }
         return $res;
-    }
-    /**
-     * 显示后台当前正要处理的订单信息
-     * 为后台实时刷新的页面提供数据,显示正要处理的订单信息
-     */
-    public function ontime() {
-        if ($this->_checkAuthority(site_url('bg/order/ontime')) == false) {
-            return;
-        }
-        //只是检验storeId,因为storeId才是决定一个商店最重要的角色
-        if(!$this->userId){
-            $this->nologin(site_url()."/order/ontime");
-            return;
-        }
-
-        $data = Array();
-        $type = $this->user->getCredit($this->userId);
-        $this->load->config("edian");
-        if($type == $this->config->item("adminCredit")){
-            $data["order"] = $this->morder->getAllOntime();
-        }else if($type == $this->config->item('bossCredit')){
-            //之所以这么处理，是因为考虑bg/home/index函数负责了店铺的选择和控制
-            if(!$this->storeId){
-                exit("登录失效，请刷新页面");
-            }else{
-                $data["order"] = $this->morder->getOntime($this->storeId , $this->config->item('infFailed'));
-                $data['order'] = $this->orderForm($data['order']);
-            }
-            $data['orderState'] = $this->config->item('orderState');
-            $data['storeId'] = $this->storeId;
-            //$this->help->showArr($data['order']);
-        }
-        $this->load->view("onTimeOrder",$data);
     }
 
     /**

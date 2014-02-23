@@ -171,6 +171,25 @@ class Morder extends Ci_Model {
     }
 
     /**
+     * admin 获取所有的历史订单
+     * @return boolean | array
+     */
+    public function histAmin() {
+        $sql = "SELECT id, addr, info, item_id, time, ordor, state FROM ord WHERE state ORDER BY time";
+        $res = $this->db->query($sql);
+        if ($res->num_rows === 0) {
+            return false;
+        } else {
+            $len = $res->num_rows;
+            $res = $res->result_array();
+            for ($i = 0; $i < $len; $i ++) {
+                $res[$i]['info'] = $this->_decodeInfo($res[$i]['info']);
+            }
+            return $res;
+        }
+    }
+
+    /**
      * 拼接info字段信息，插入数据库
      * more是后来单独处理的，真正下单的时候添加的内容
      * 必须保证所有的输入数据都没有&符号,目前针对insert的输入是检查过的
@@ -280,6 +299,24 @@ class Morder extends Ci_Model {
         } else {
             $res = $res->result_array();
             return $res;
+        }
+    }
+
+    /**
+     * @return boolean | array
+     */
+    public function getAllOntime() {
+        $sql = "select id,addr,info,item_id,time,ordor,state from ord where ( state = 1 or state = 2 )";
+        $res = $this->db->query($sql);
+        if ($res->num_rows != false) {
+            $len = $res->num_rows;
+            $res = $res->result_array();
+            for ($i = 0;$i < $len; $i ++) {
+                $res[$i]["info"] = $this->_decodeInfo($res[$i]["info"]);
+            }
+            return $res;
+        } else {
+            return false;
         }
     }
 
@@ -429,20 +466,6 @@ class Morder extends Ci_Model {
         $now -= 86400;
         $sql = "select id,addr,info,item_id,time,ordor,state from ord where state &&  seller = $storeId &&  UNIX_TIMESTAMP(time) > " . $now . ' && state < ' . $failed . ' || state = ' . $failed . ' order by time';
         $res = $this->db->query($sql);
-        if($res->num_rows){
-            $len = $res->num_rows;
-            $res = $res->result_array();
-            for($i = 0;$i < $len; $i++){
-                $res[$i]["info"] = $this->_decodeInfo($res[$i]["info"]);
-            }
-            return $res;
-        }
-        return false;
-    }
-    public function getAllOntime()
-    {
-        //管理员权限才可以浏览的文件，全部需要处理的订单
-        $res = $this->db->query("select id,addr,info,item_id,time,ordor,state from ord where ( state = 1 or state = 2 )");
         if($res->num_rows){
             $len = $res->num_rows;
             $res = $res->result_array();

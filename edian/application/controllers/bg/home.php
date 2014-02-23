@@ -124,7 +124,8 @@ class Home extends MY_Controller {
     /**
      * 初始化storeId,表示店家在选择了店铺的操作
      * 对应了直接页面提交和其他函数提交的两种情况
-     * @param int $storeId  表示选择的storId
+     * @param int $storeId
+     * @return bool
      */
     protected function receiveStoreId($storeId = -1) {
         $storeId = (int)$storeId;
@@ -162,7 +163,6 @@ class Home extends MY_Controller {
             $storeId = $this->store->insertStore($ownerId);
             $this->receiveStoreId($storeId);
         } else if ($data['len'] == 1) {
-            echo('-------------------------fadsfasdf-----------------------------------<br>');
             $this->receiveStoreId($data['store'][0]['id']);
         } else {
             $this->load->view('choseStore', $data);
