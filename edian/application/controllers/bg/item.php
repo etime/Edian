@@ -64,7 +64,7 @@ class item extends Home {
 
         //$this->isAdmin = true;
         //$data['isAdmin'] = $this->isAdmin;
-        $this->help->showArr($data);
+        //$this->help->showArr($data);
 
         $this->load->view('bgItemMan', $data);
     }
@@ -161,7 +161,7 @@ class item extends Home {
         $data['com'] = $comment;
         $data['isAdmin'] = $this->isAdmin ? 1 : 0;
         $data['title'] = $storeId . '号店的最近' . $day . '内的所有评论';
-        $this->help->showArr($data);
+        //$this->help->showArr($data);
         $this->load->view('bgcom', $data);
     }
 /**********************************************************************************************************************/

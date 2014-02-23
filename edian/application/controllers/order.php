@@ -280,7 +280,7 @@ class Order extends My_Controller{
         if ($type == 1) {
             echo json_encode($data);
         } else {
-            $this->help->showArr($data);
+            //$this->help->showArr($data);
             $this->load->view('order',$data);
         }
     }
@@ -662,7 +662,7 @@ class Order extends My_Controller{
         //$orderedState = $this->config->item('orderState');
         $idlist = Array();//保存打印处理商品的菜单id
         $this->load->model('store');
-        $this->help->showArr($ordInfo);
+        //$this->help->showArr($ordInfo);
         for($i = 0 ,$cnt = count($ordInfo) ;$i < $cnt;){
             $nowSeller = $ordInfo[$i]["seller"];
             $list   = "";

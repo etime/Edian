@@ -348,7 +348,7 @@ class set extends Home {
         if ($data['logo']) {
             $data['logo']  = base_url('image/' . $this->userId . '/mix/' . $data['logo']);
         }
-        $this->help->showArr($data);
+        //$this->help->showArr($data);
         $this->load->view("bgHomeSet",$data);
     }
 }
