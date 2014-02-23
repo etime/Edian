@@ -105,13 +105,6 @@
         </li>
         <li class = "clearfix">
             <span class="item" style = "float:left">商品类别:</span>
-            <!--
-            <ul class = "list clearfix" id = "list" title = "点击删除">
-                <?php foreach($category as $val):?>
-                <li> <?php echo $val?></li>
-                <?php endforeach?>
-            </ul>
-            -->
             <div class = "cate">
                 <table border="1">
 
@@ -122,8 +115,8 @@
                     </tr>
                     <?php foreach($category as $val):?>
                     <tr>
-                        <td><?php echo $val ?></td>
-                        <td>-1</td>
+                        <td><?php echo $val['name'] ?></td>
+                        <td> <?php echo $val['count'] ?></td>
                         <td><a>修改</a> <a>删除</a></td>
                     </tr>
                     <?php endforeach?>

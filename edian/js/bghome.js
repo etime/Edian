@@ -12,13 +12,13 @@ $(document).ready(function () {
 function toggleLi() {
     var side = $('#side');
     var href = window.location.href.split("#");
-    console.log(href);
-    if(href.length === 2  && href[1]){
-        var node = side.find('li[name = ' + href[1] +']');
-        $('iframe').attr('src' , $(node[0].parentNode).attr('href'));
-        side.find('.liCse').removeClass('liCse');
-        side.find('li[name = ' + href[1] +']').addClass("liCse");
+    if(href .length === 1){
+        href[1] = 'today';
     }
+    var node = side.find('li[name = ' + href[1] +']');
+    $('iframe').attr('src' , $(node[0].parentNode).attr('href'));
+    side.find('.liCse').removeClass('liCse');
+    side.find('li[name = ' + href[1] +']').addClass("liCse");
     side.delegate("li", 'click' , function () {
         var name = $(this).attr("name");
         side.find('.liCse').removeClass('liCse');
@@ -27,5 +27,4 @@ function toggleLi() {
         href = href.split('#');
         window.location.href = href[0] + '#' + name;
     })
-
 }

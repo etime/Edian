@@ -97,61 +97,8 @@ $baseUrl = base_url();
             </div>
         </li>
         <?php endfor ?>
-        <!--
-        <li>
-            <div class = "init">
-                <span class="state">打印失败</span>
-                <span class="order">1292832322</span>
-                <span>黄洁</span>
-                <span>￥23.00</span>
-                <span>1293-32-32 32:12:21</span>
-                <font class = "up"> </font>
-            </div>
-            <div class = "buyer clearfix">
-                <div class = "info">
-                    <ul>
-                        <li>
-                            <strong>金华火腿(2斤,红烧)</strong>
-                            <span>￥12.00 x 12</span>
-                            <span class = "note">要嫩猪肉</span>
-                        </li>
-                        <li>
-                            <strong>金华火腿</strong>
-                            <span>￥12.00 x 12</span>
-                            <span class = "note">要嫩猪肉</span>
-                        </li>
-                        <li>
-                            <strong>金华火腿</strong>
-                            <span>￥12.00 x 12</span>
-                            <span class = "note">要嫩猪肉</span>
-                        </li>
-                    </ul>
-                    <ul>
-                        <li>
-                            <span class="item">买家</span>
-                            <span class="user">黄洁</span>
-                        </li>
-                        <li>
-                            <span class="item">联系方式</span>
-                            <span class="phone">12832792288</span>
-                        </li>
-                        <li>
-                            <span class="item">地址</span>
-                            <span>东门大桥西侧</span>
-                        </li>
-                    </ul>
-                </div>
-                <div class = "oper">
-                    <a href = "">接单</a>
-                    <a href = "">打印</a>
-                    <a href = "">拒绝订单</a>
-                    <a href = "">恶意订单</a>
-                </div>
-            </div>
-        </li>
-        -->
     </ul>
-    <?php  echo $pageNumFooter;?>
+    <?php  echo @$pageNumFooter;?>
 </body>
 <script type="text/javascript" charset="utf-8" src = "<?php echo $baseUrl . 'js/jquery.min.js' ?>"></script>
 <script type="text/javascript" charset="utf-8" src = "<?php echo $baseUrl . 'js/histOrder.js'?>"></script>

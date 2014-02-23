@@ -413,12 +413,12 @@ class User extends CI_Model {
             $res = $res->result_array();
             $res = $res[0];
             $address = $this->decodeAddr($res['address']);
-            if($addrSub == 0 && count($address[0]) === 1){
-                $temp[0] = $res['loginName'];
-                $temp[1] = $res['phone'];
-                $temp[2] = $address[0][0];
-                return $temp;
-            } else if($addrSub === -1){
+            if(count($address[0]) === 1){
+                $address[0][1] = $res['phone'];
+                $address[0][2] = $address[0][0];
+                $address[0][0] = $res['loginName'];
+            }
+            if($addrSub === -1){
                 return $address;
             }else {
                 return $address[$addrSub];

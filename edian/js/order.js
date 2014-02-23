@@ -65,12 +65,6 @@ function forbid() {
             }
         }
     })
-    /*
-    $("textarea").keypress(function (event) {
-        console.log(event.which);
-        return false;
-    })
-    */
 }
 /**
  * 跟收件人地址和通讯方式有关的都在这里
@@ -88,11 +82,10 @@ function add(){
     })
     var nad = $("#nad");
     nad.find("input[type = 'button']").click(function (event) {
-        var geter = nad.find("input[name = 'geter']").val();
-        var addr = nad.find("textarea").val();
-        var phone = nad.find("input[name = 'phone']").val();
-        debugger;
-        if(geter && addr && phone){
+        var geter = $.trim( nad.find("input[name = 'geter']").val() );
+        var addr = $.trim( nad.find("textarea").val() );
+        var phone = $.trim( nad.find("input[name = 'phone']").val() );
+        if(geter && addr && (phone.length === 11 )){
             nad.find("input[name = 'geter']").val('');
             nad.find('textarea').val('');
             nad.find("input[name = 'phone']").val('');
@@ -163,7 +156,6 @@ function click() {
                 type: 'get',
                 dataType: 'json',
                 success: function (data, textStatus, jqXHR) {
-                    console.log(data);
                     if(data){
                         $.alet("删除成功");
                         var cls = $(node).attr("name");//从name中读取店家的id,在父节点的tr中有
