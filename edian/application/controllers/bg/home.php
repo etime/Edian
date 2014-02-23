@@ -92,13 +92,13 @@ class Home extends MY_Controller {
     /**
      * 获取老板的 bossId，并将其保存在 session 中
      */
-    private function _setBossId() {
+    protected function _setBossId() {
         $loginName = $this->session->userdata('loginName');
         $bossId = $this->boss->getBossIdByLoginName($loginName);
-        if ($bossId != false && $this->isAdmin === false) {
+        if ($bossId != false && $this->isBoss) {
             $this->session->set_userdata('bossId', $bossId);
         }
-        if ($this->isAdmin === true) {
+        if ($this->isAdmin) {
             $bossId = false;
         }
         return $bossId;
@@ -170,6 +170,16 @@ class Home extends MY_Controller {
     }
 
     /**
+     * 检查指定编号的商店是否属于某个boss
+     * @param int $bossId 老板编号
+     * @param int $storeId 商店编号
+     * @return boolean
+     */
+    protected function isStoreMatchBoss($bossId, $storeId) {
+        return $this->store->isMatch($storeId, $bossId);
+    }
+
+    /**
      * 后台的入口view函数
      * 进入后台页面后，立马将 bossId storeId 存储在 session 中
      * @param int $storeId 选择的店铺id
@@ -181,20 +191,20 @@ class Home extends MY_Controller {
         }
         $storeId = (int)$storeId;
         $bossId = $this->_setBossId();
-        if($storeId === 0){
+        if ($storeId == 0) {
             $storeId = (int)$this->session->userdata('storeId');
-            if(! $storeId){
+            if ($storeId == false) {
                 $this->choseStore($bossId);
                 return;
             }
-        }else{
-            $this->session->set_userdata('storeId' , $storeId);
+        } else {
+            $this->session->set_userdata('storeId', $storeId);
         }
         $data['type'] = $credit;
         $data['storeId'] = $storeId;
-        if($credit === 1){
+        if ($credit === 1) {
             $data['storeList'] = $this->store->getStoreList($bossId);
-        } else if($credit === 2){
+        } else if ($credit === 2) {
             $data['storeList'] = $this->store->getStoreList();
         }
         $this->load->view('bghome', $data);

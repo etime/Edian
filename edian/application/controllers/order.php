@@ -280,6 +280,7 @@ class Order extends My_Controller{
         if ($type == 1) {
             echo json_encode($data);
         } else {
+            $this->help->showArr($data);
             $this->load->view('order',$data);
         }
     }
@@ -292,9 +293,39 @@ class Order extends My_Controller{
             echo json_encode($res);
             return;
         }
-        $phone = $this->input->post('phone');
-        $addr = $this->input->post('addr');
-        $geter = $this->input->post('geter');
+        $phone = trim($this->input->post('phone'));
+        $addr = trim($this->input->post('addr'));
+        $geter = trim($this->input->post('geter'));
+
+        if ($phone == false) {
+            $res['flag'] = 0;
+            $res['atten'] = '请填写手机号码';
+            echo(json_encode($res));
+            return;
+        }
+
+        if ($addr == false) {
+            $res['flag'] = 0;
+            $res['atten'] = '请填写地址信息';
+            echo(json_encode($res));
+            return;
+        }
+
+        if ($geter == false) {
+            $res['flag'] = 0;
+            $res['atten'] = '请填写收货人';
+            echo(json_encode($res));
+            return;
+        }
+
+        // 验证手机格式
+        if (! preg_match("/^1[\d]{10,10}$/", $phone)) {
+            $res['flag'] = 0;
+            $res['atten'] = '手机格式非法';
+            echo(json_encode($res));
+            return;
+        }
+
         $ans = '&' . $geter . '|' . $phone . '|' . $addr;
         if ($this->user->appaddr($ans, $this->userId)) {
             $res['flag'] = 1;
