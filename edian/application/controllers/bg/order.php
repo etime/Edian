@@ -67,6 +67,7 @@ class Order extends Home {
             $data['orderState'] = $this->config->item('orderState');
             $data['storeId'] = $this->storeId;
         }
+        $this->help->showArr($data);
         $this->load->view("onTimeOrder", $data);
     }
 

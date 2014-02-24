@@ -42,9 +42,11 @@
         <div id = "side">
             <div class = "stCom block">
             <!-- 店铺评分，商店距离，-->
-                <h3>何氏专辑店</h3>
+            <h3><?php echo @$name ?></h3>
                 <blockquote>
-                    银鳞胸甲，蓝色品质，五金一件，先到先得
+                <?php
+                    echo @$briefInfo;
+                ?>
                 </blockquote>
                 <img src="<?php echo $logo?>" alt="商店logo" />
             </div>
@@ -53,16 +55,20 @@
                     <span class = "item">店铺评分</span>
                     <strong class = "bc"><?php echo $credit ?></strong>
                 </p>
+<!--
                 <p><span class = "item">距离您</span>    <strong class = "bc">4.5</strong>km</p>
+-->
 
                 <p><span class = "item">电话</span><?php  echo $servicePhone?></p>
                 <p><span class = "item">客服 </span><?php  echo $serviceQQ?></p>
                 <div class = "bustime clearfix">
                     <span class = "item">营业时间</span>
-                    <ul alt = "<?php echo $deliveryTime ?>">
+                    <ul alt = "<?php echo $deliveryTime ?>" id = "busVal">
+                    <!--
                         <li>9:00-12:00</li>
                         <li>9:00-12:00</li>
                         <li>9:00-12:00</li>
+                    -->
                     </ul>
                 </div>
                 <p>
@@ -86,8 +92,8 @@
             </h5>
             <div class="snav">
                 价格区间
-                <input type="text" name="dprc"  value="12" />--
-                <input type="text" name="tprc"  value="12" />
+                <input type="text" name="dprc"   />--
+                <input type="text" name="tprc"  />
                 <input type="submit" name="sub"  value="确定" />
             <?php
                 echo $pageNumFooter;
@@ -99,8 +105,8 @@
                     $val = $item[$i];
                     if(is_array($val['attr'])){
                         $str = json_encode($val['attr']['storePrc']);
-                        for($i = 0,$len = strlen($str) ; $i < $len ; $i++){
-                            if($str[$i] === '"')$str[$i] = '\'';
+                        for($j = 0,$lenj = strlen($str) ; $j < $lenj ; $j++){
+                            if($str[$j] === '"')$str[$j] = '\'';
                         }
                     } else $str = ' ';
                 ?>
@@ -129,12 +135,12 @@
                                 foreach ($val['attr']['idx'] as $key => $value) {
                                     $list = "<li class = 'clearfix'><span class = 'list' style = 'float:left'>" . $key . ":</span>";
                                     $list.= "<ul class = 'attr' name = '" . $cnt. "'>";
-                                    for ($i = 0 , $len = count($value); $i < $len; $i++) {
-                                        $attr = $value[$i];
+                                    for ($k = 0 , $lenk = count($value); $k < $lenk; $k++) {
+                                        $attr = $value[$k];
                                          if(trim( $attr['img']) ){
-                                            $list .= "<li><img  class = 'attrValue' src = '" . $attr['img'] . "' alt = '" . $attr['font']. "' title = '" . $attr['font'] . "' name = '" . $i. "'><span class = 'attrValue' style = 'display:none' alt = '" . $attr['font'] . "' name = '" . $i . "'>" . $attr['font']. "</span></li>";
+                                            $list .= "<li><img  class = 'attrValue' src = '" . $attr['img'] . "' alt = '" . $attr['font']. "' title = '" . $attr['font'] . "' name = '" . $k. "'><span class = 'attrValue' style = 'display:none' alt = '" . $attr['font'] . "' name = '" . $k . "'>" . $attr['font']. "</span></li>";
                                         } else {
-                                            $list .= "<li><span class = 'attrValue' alt = '" . $attr['font'] . "' title = '" . $attr['font'] . "' name = '" . $i. "'>" . $attr['font']. "</span></li>";
+                                            $list .= "<li><span class = 'attrValue' alt = '" . $attr['font'] . "' title = '" . $attr['font'] . "' name = '" . $k. "'>" . $attr['font']. "</span></li>";
                                         }
                                     }
                                     $list.="</ul></li>";
@@ -152,89 +158,16 @@
                     </form>
                 </li>
             <?php endfor?>
-            <p><?php if($len === 0) echo '没有商品哦'?></p>
-                <li>
-                    <div class = "img">
-                        <span class = "flag">新</span>
-                        <img class = "main" src="http://gd3.alicdn.com/bao/uploaded/i3/T1.mvOXjFqXXXSjdfX_114544.jpg_460x460.jpg_.webp" alt="蛋糕"/>
-                        <!-- cart中的数值是id -->
-                        <span class = "cart" alt = "123"> Cart </span>
-                    </div>
-                    <div class = "info">
-                        <p>
-                            <span class = "right">评分<strong>4.7</strong></span>
-                            <a>巧克力牧师蛋糕</a>
-                        </p>
-                        <p>
-                            <span class = "right">已售<strong>123</strong></span>
-                            <strong>￥99.00</strong>
-                        </p>
-                    </div>
-                </li>
-                <li>
-                    <div class = "img">
-                        <img class = "main" src="http://gd1.alicdn.com/bao/uploaded/i1/10348039655176187/T1lXmGFc8bXXXXXXXX_!!0-item_pic.jpg_460x460.jpg_.webp" alt="蛋糕" />
-                    </div>
-                    <div class = "info">
-                        <p>
-                            <span class = "right">评分<strong>4.7</strong></span>
-                            <a>巧克力牧师蛋糕</a>
-                        </p>
-                        <p>
-                            <span class = "right">已售<strong>123</strong></span>
-                            <strong>￥99.00</strong>
-                        </p>
-                    </div>
-                </li>
-                <li>
-                    <div class = "img">
-                        <img class = "main" src="http://gd3.alicdn.com/bao/uploaded/i3/T1.mvOXjFqXXXSjdfX_114544.jpg_460x460.jpg_.webp" alt="蛋糕" />
-                    </div>
-                    <div class = "info">
-                        <p>
-                            <span class = "right">评分<strong>4.7</strong></span>
-                            <a>巧克力牧师蛋糕</a>
-                        </p>
-                        <p>
-                            <span class = "right">已售<strong>123</strong></span>
-                            <strong>￥99.00</strong>
-                        </p>
-                    </div>
-                </li>
-                <li>
-                    <div class = "img">
-                        <img class = "main" src="http://gd3.alicdn.com/bao/uploaded/i3/T1.mvOXjFqXXXSjdfX_114544.jpg_460x460.jpg_.webp" alt="蛋糕" />
-                    </div>
-                    <div class = "info">
-                        <p>
-                            <span class = "right">评分<strong>4.7</strong></span>
-                            <a>巧克力牧师蛋糕</a>
-                        </p>
-                        <p>
-                            <span class = "right">已售<strong>123</strong></span>
-                            <strong>￥99.00</strong>
-                        </p>
-                    </div>
-                </li>
             </ul>
+            <p><?php if($len === 0) echo '没有商品哦'?></p>
             <div class="snav">
                 价格区间
-                <input type="text" name="dprc"  value="12" />--
-                <input type="text" name="tprc"  value="12" />
+                <input type="text" name="dprc"   />--
+                <input type="text" name="tprc"  />
                 <input type="submit" name="sub"  value="确定" />
-                <!--
-                                <div class="psplit">
-                                    <span>1/3页</span>
-                                    <span>第一页</span>
-                                    <span>上一页</span>
-                                    <span>下一页</span>
-                                    <span>跳转到 <input type="text" name="pgNum" /></span>
-                                    <span>尾页</span>
-                                </div>
-                -->
-                <?php
-                    echo $pageNumFooter;
-                ?>
+            <?php
+                echo $pageNumFooter;
+            ?>
             </div>
         </div>
     </div>

@@ -46,6 +46,58 @@ function iCartShow() {
     })
 }
 /**
+ * 显示营业时间
+ * @todo 需要讨论怎么显示不再营业时间里面
+ */
+function bustime() {
+    //添加必要的时间
+    var bus = $("#busVal");
+    var str = bus.attr('alt');
+    str = str.split('&');
+    var html = "";
+    for (var i = 0, l = str.length; i < l; i ++) {
+        html+="<li>" + str[i] + "</li>";
+        str[i] = str[i].split('-');
+        str[i][0] = str[i][0].split(":");
+        str[i][1] = str[i][1].split(":");
+    }
+    /*
+     * 检查时间，判断时候在营业时间内
+     * 获得本地的时间"2013-4-6 20:27:32"的形式
+     * @return flag为0的时候是在营业时间里面
+     */
+    function checkTime() {
+        var time=new Date();
+        var hour = time.getHours()
+        var min = time.getMinutes()
+        var flag = 1;
+        for (var i = 0, l = str.length; i < l; i ++) {
+            if(equel(str[i][0] , true  , hour ,  min) && equel(str[i][1] , false , hour , min)){
+                flag = 0;
+                break;
+            }
+        }
+    }
+    /**
+     * 对比当前时间的大小
+     * @param {array}   arr     时间的数组
+     * @param {flag}    flag    比大还是比小的标志位
+     * @param {int}     hour    小时
+     * @param {int}      min    分钟
+     */
+    function equel(arr , flag , hour ,min) {
+        if(arr[0] < hour){
+            return flag;
+        } else if(arr[0] == hour && arr[1] < min){
+            return flag;
+        }
+        return !flag;
+    }
+    checkTime();
+    bus.append(html);
+    //控制下单
+}
+/**
  * 显示地图，
  * @param {int} storeid  在.php页面，通过php传入的数值
  */
@@ -69,4 +121,5 @@ $(document).ready(function () {
     showMap();
     pageDisable();
     iCartShow();
+    bustime();
 })
