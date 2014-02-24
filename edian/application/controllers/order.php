@@ -742,6 +742,10 @@ class Order extends My_Controller{
         }
         return false;
     }
+    public function test()
+    {
+        $this->printInform("这里是个测试" ,  '2050' , 308001300146);
+    }
     /**
      *  通过短信进行通知。
      *

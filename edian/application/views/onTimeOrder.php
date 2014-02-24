@@ -78,8 +78,10 @@ $baseUrl = base_url();
                         <a href = "<?php echo $siteUrl .'bg/order/rePrint/' . $orderNum?>">重新打印</a>
                     <?php $val = 11;?>
                         <a name = 'reject' href = "<?php echo $siteUrl .'/bg/order/changeNote/' . "$orderNum/$val"?>"><?php echo $orderState[$val] ?></a>
+<!--
                     <?php $val = 12;?>
                         <a name = 'evil' href = "<?php echo $siteUrl .'/bg/order/changeNote/' . "$orderNum/$val"?>"><?php echo $orderState[$val] ?></a>
+-->
                     </div>
                 </div>
                 <form action = "<?php echo $siteUrl .'/bg/order/changeNote/' . "$orderNum/$val"?>" method="post" accept-charset="utf-8" class = "reject" style = "display:none" >

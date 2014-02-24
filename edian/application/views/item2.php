@@ -123,7 +123,7 @@ if(is_array($item['attr'])){
                 <div class = 'storelogo'>
                     <img src = "<?php echo $store['logo'] ?>" alt = "图片" id = "logo"/>
                     <p>
-                        <a class="button" href = "<?php echo $siteUrl . '/shop/index/' . $store['storeId'] ?>"> <?php echo $store['name'] ?></a>
+                        <a class="bton" href = "<?php echo $siteUrl . '/shop/index/' . $store['storeId'] ?>"> <?php echo $store['name'] ?></a>
                     </p>
                 </div>
                 <p>

@@ -190,10 +190,12 @@
             </div>
 
             <li class = "col"><span class = "item">商品描述<span>*</span>:</span></li>
-            <tr id = "tcont">
+            <tr id = "tcont" >
                 <td><textarea name="detail" id = "cont" style = "width:100%"> <?php echo @$detail ?></textarea></td>
             </tr>
-         <input type="submit" name = "sub" class = "button" value="发表" />
+            <p>
+                <input type="submit" name = "sub" class = "button" value="发表" />
+            </p>
         </form>
     </div>
     <!--对属性描述和thumb的两处图片的上传-->

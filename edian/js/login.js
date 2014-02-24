@@ -14,7 +14,7 @@
  */
 function fpasswd(){
     var $this = this;
-    $this._bro = null ,$this._flag = 2 ,$this.self = $("input[type = 'password']");
+    $this._bro = null ,$this._flag = 2 ,$this.self = $(".r input[type = 'password']");
     $this.self.blur(function  () {
         var value = $(this).val();
         if(!value)return false;

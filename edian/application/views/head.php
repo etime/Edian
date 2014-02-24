@@ -7,8 +7,11 @@
         <p style="float:right">
             <!-- replace 中的是登录之后替换的东西-->
             <span class = "replace">
-                <a href = "#" id = "gotoLogin" class = "gotoLogin">登录</a>  |
+                <a href = "#" id = "gotoLogin" class = "gotoLogin">登录</a>
+    <!--
+                |
                 <a href = "<?php echo site_url('/register/userRegister/') ?>">注册</a>
+    -->
             </span> |
             <a>帮助</a>
         </p>
@@ -37,7 +40,7 @@
                 <label for="password"></label>
             </p>
             <p style = "text-align:center">
-                <input type="submit" name="sub"  value="登录"  class = "btn"/>
+                <input type="submit" name="sub"  value="登录"  class = "btn button glow button-flat"/>
             <!--
                 <span class = "reg">没有帐号?
                     <a href = "<?php echo site_url('register/userRegister') ?>"  style = "color:#31b2ee">马上注册</a>
@@ -53,7 +56,7 @@
             </p>
             <p>
                 <input type="password" name="password" placeholder = "密码" />
-                <span class = "atten success"></span>
+                <span class = "atten"></span>
                 <label for="password"></label>
             </p>
             <p>
@@ -68,10 +71,10 @@
             </p>
             <p>
                 <input type="text" name="checkNum" />
-                <input type="button"  id="smschk" value="发送验证码"  class = "btn"/>
+                <input type="button"  id="smschk" value="发送验证码"  class = "btn button glow button-flat"/>
             </p>
             <p>
-                <input type="submit" name="sub"  value="注册" />
+                <input type="submit" name="sub"  value="注册"  class = "btn button glow button-flat"/>
                 <span class = "reg">
                     <a href = "<?php echo site_url('/register/bossRegister') ?>">
                         店家入口
@@ -109,6 +112,7 @@
     text-align:center;
     display:inline-block;
     line-height:34px;
+    cursor:pointer;
 }
 .regd .focus{
     background:#31b2ee;
@@ -141,11 +145,6 @@
     height:40px;
 }
 .login input[type = 'submit']{
-    border:none;
-    border-radius:2px;
-    padding:7px 10px;
-    color:#F5DFB5;
-    box-shadow:3px 1px 2px #BBB7B7;
     width:110px;
 }
 label[for = 'userName']{
@@ -285,4 +284,132 @@ a{
 .atten{
     color:green;
 }
+.button-flat:hover {
+    background: #fbfbfb;
+}
+.button-flat:active {
+  background: #eeeeee;
+  color: #bbbbbb;
+}
+.button-flat {
+  -webkit-transition-property: background, color;
+  -moz-transition-property: background, color;
+  -o-transition-property: background, color;
+  transition-property: background, color;
+  -webkit-transition-duration: 0.3s;
+  -moz-transition-duration: 0.3s;
+  -o-transition-duration: 0.3s;
+  transition-duration: 0.3s;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  background: #e9e9e9;
+  border: none;
+  text-shadow: none;
+}
+.button:active {
+      -webkit-box-shadow: inset 0px 1px 3px rgba(0, 0, 0, 0.3), 0px 1px 0px white;
+      -moz-box-shadow: inset 0px 1px 3px rgba(0, 0, 0, 0.3), 0px 1px 0px white;
+      box-shadow: inset 0px 1px 3px rgba(0, 0, 0, 0.3), 0px 1px 0px white;
+      text-shadow: 0px 1px 0px rgba(255, 255, 255, 0.4);
+      background: #eeeeee;
+      color: #bbbbbb;
+}
+.button:hover {
+  background-color: #eeeeee;
+  background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #ffffff), color-stop(100%, #dcdcdc));
+  background: -webkit-linear-gradient(top, #ffffff, #dcdcdc);
+  background: -moz-linear-gradient(top, #ffffff, #dcdcdc);
+  background: -o-linear-gradient(top, #ffffff, #dcdcdc);
+  background: linear-gradient(top, #ffffff, #dcdcdc);
+}
+.button {
+  -webkit-box-shadow: inset 0px 1px 0px rgba(255, 255, 255, 0.5), 0px 1px 2px rgba(0, 0, 0, 0.2);
+  -moz-box-shadow: inset 0px 1px 0px rgba(255, 255, 255, 0.5), 0px 1px 2px rgba(0, 0, 0, 0.2);
+  box-shadow: inset 0px 1px 0px rgba(255, 255, 255, 0.5), 0px 1px 2px rgba(0, 0, 0, 0.2);
+  background-color: #eeeeee;
+  background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #fbfbfb), color-stop(100%, #e1e1e1));
+  background: -webkit-linear-gradient(top, #fbfbfb, #e1e1e1);
+  background: -moz-linear-gradient(top, #fbfbfb, #e1e1e1);
+  background: -o-linear-gradient(top, #fbfbfb, #e1e1e1);
+  background: linear-gradient(top, #fbfbfb, #e1e1e1);
+  display: -moz-inline-stack;
+  display: inline-block;
+  vertical-align: middle;
+  *vertical-align: auto;
+  zoom: 1;
+  *display: inline;
+  border: 1px solid #d4d4d4;
+  height: 32px;
+  line-height: 32px;
+  padding: 0px 25.6px;
+  font-weight: 300;
+  font-size: 14px;
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+  color: #666666;
+  text-shadow: 0 1px 1px white;
+  margin: 0;
+  text-decoration: none;
+  text-align: center;
+}
+.button {
+  -webkit-box-shadow: inset 0px 1px 0px rgba(255, 255, 255, 0.5), 0px 1px 2px rgba(0, 0, 0, 0.2);
+  -moz-box-shadow: inset 0px 1px 0px rgba(255, 255, 255, 0.5), 0px 1px 2px rgba(0, 0, 0, 0.2);
+  box-shadow: inset 0px 1px 0px rgba(255, 255, 255, 0.5), 0px 1px 2px rgba(0, 0, 0, 0.2);
+  background-color: #eeeeee;
+  background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #fbfbfb), color-stop(100%, #e1e1e1));
+  background: -webkit-linear-gradient(top, #fbfbfb, #e1e1e1);
+  background: -moz-linear-gradient(top, #fbfbfb, #e1e1e1);
+  background: -o-linear-gradient(top, #fbfbfb, #e1e1e1);
+  background: linear-gradient(top, #fbfbfb, #e1e1e1);
+  display: -moz-inline-stack;
+  display: inline-block;
+  vertical-align: middle;
+  *vertical-align: auto;
+  zoom: 1;
+  *display: inline;
+  border: 1px solid #d4d4d4;
+  height: 32px;
+  line-height: 32px;
+  padding: 0px 25.6px;
+  font-weight: 300;
+  font-size: 14px;
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+  color: #666666;
+  text-shadow: 0 1px 1px white;
+  margin: 0;
+  text-decoration: none;
+  text-align: center;
+}
+.button.glow {
+  -webkit-animation-duration: 3s;
+  -moz-animation-duration: 3s;
+  -ms-animation-duration: 3s;
+  -o-animation-duration: 3s;
+  animation-duration: 3s;
+  -webkit-animation-iteration-count: infinite;
+  -khtml-animation-iteration-count: infinite;
+  -moz-animation-iteration-count: infinite;
+  -ms-animation-iteration-count: infinite;
+  -o-animation-iteration-count: infinite;
+  animation-iteration-count: infinite;
+  -webkit-animation-name: glowing;
+  -khtml-animation-name: glowing;
+  -moz-animation-name: glowing;
+  -ms-animation-name: glowing;
+  -o-animation-name: glowing;
+  animation-name: glowing;
+}
+/* line 250, ../scss/button.scss */
+.button.glow:active {
+  -webkit-animation-name: none;
+  -moz-animation-name: none;
+  -ms-animation-name: none;
+  -o-animation-name: none;
+  animation-name: none;
+  -webkit-box-shadow: inset 0px 1px 3px rgba(0, 0, 0, 0.3), 0px 1px 0px white;
+  -moz-box-shadow: inset 0px 1px 3px rgba(0, 0, 0, 0.3), 0px 1px 0px white;
+  box-shadow: inset 0px 1px 3px rgba(0, 0, 0, 0.3), 0px 1px 0px white;
+}
+
 </style>

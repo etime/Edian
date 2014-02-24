@@ -13,27 +13,30 @@ a{
 }
 html{
     margin:0px;
+    /*
     height:100%;
+    */
     font:15px/1.5 tahoma,arial,宋体b8b\4f53;
 }
 body{
     max-width:1180px;
+    /*
     width:100%;
     min-height:100%;
+    */
     margin:0px auto;
 }
 
 /****************content start**************************/
 #content{
     overflow:auto;
-    height:100%;
     margin:0 auto;
     max-width:780px;
     padding:0 5px 20px;
 }
 #cont{
     display:inline;
-    height:500px;
+    height:100px;
 }
 .button:active{
     background:rgb(44, 44, 44);
@@ -58,6 +61,7 @@ td{
     background:#193047;
     border:none;
     height:29px;
+    margin-bottom:80px;
 }
 label{
     position:absolute;
