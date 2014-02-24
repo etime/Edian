@@ -180,6 +180,10 @@ label[for = 'phoneNum']{
     border-radius:2px;
     width:265px;
 }
+.login input[type = 'text']:hover , .login input[type = 'password']:hover{
+    border:1px solid #0099ff;
+    outline:none;
+}
 .login input[type = 'text']:focus , .login input[type = 'password']:focus{
     border:1px solid #ffb464;
     outline:none;
@@ -192,6 +196,7 @@ label[for = 'phoneNum']{
     width:18px;
     height:18px;
     content:' ';
+    cursor:pointer;
 }
 #header > div{
     margin:0 auto;

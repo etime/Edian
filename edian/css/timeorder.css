@@ -41,6 +41,7 @@ li{
     display:inline-block;
     position:absolute;
     left:50px;
+    display:none;
 }
 .clearfix:after{
     visibility:hidden;

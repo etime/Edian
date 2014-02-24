@@ -19,6 +19,19 @@ $baseUrl = base_url();
 </script>
 </head>
 <body>
+    <form action="" method="post" accept-charset="utf-8">
+        <span>选择店铺</span>
+        <select name="storeId">
+    <?php
+        $list = "";
+        foreach ($storeList as $store) {
+            $list .="<option  value = '" .$store['id']. "'>" . $store['name']. "</option>";
+            }
+            echo $list;
+    ?>
+        </select>
+        <input type="submit" name="sub"  value="确定选择" />
+    </form>
     <h3>
         <span class = "state">状态</span>
         <span class = "order">订单号</span>

@@ -2,8 +2,8 @@
 <html lang = "en">
 <head>
 <?php
-$siteUrl = site_url();
-$baseUrl = base_url();
+    $siteUrl = site_url();
+    $baseUrl = base_url();
 ?>
     <meta http-equiv = "content-type" content = "text/html;charset = utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.8 ,maximum-scale= 1.2 user-scalable=yes" />
@@ -72,7 +72,7 @@ $idx = -1;
                 ?>
             <tr name = "<?php echo $cnt ?>">
                 <td class = "chose">
-                <input type="checkbox" name="chose" class = "clk" checked = "null" id = "<?php echo $cart[$cnt]["id"] ?>"/>
+                <input type="checkbox" name="orderId[]" class = "clk" checked = "checked" id = "<?php echo $cart[$cnt]["id"] ?>" value = "<?php echo $cart[$cnt]["id"] ?>"/>
                 </td>
                 <td class = "tmb">
                     <img src = "<?php echo $item['mainThumbnail']?>" class = "thumb">
@@ -87,12 +87,12 @@ $idx = -1;
                 <td class = "num">库存<span class = "tS"><?php echo $item["storeNum"]?></span></td>
                 <td class="num">
                     <input type = "button" name = 'dec' class = "clk" value = "-" />
-                    <input type="text" name="buyNum" class = "buyNum"  value="<?php echo $info["orderNum"]?>" />
+                    <input type="text" name="buyNum[]" class = "buyNum"  value="<?php echo $info["orderNum"]?>" />
                     <input type = "button" name = 'inc' class = "clk" value = "+" />
                 </td>
                 <td class="price">￥<span class = "pri"><?php echo $info["price"]?></span></td>
                 <td class = "note" title = "给店家的留言，说明你的特殊需求">
-                    <textarea name="note" placeholder = "备注,特殊需求说明"></textarea>
+                    <textarea name="more[]" placeholder = "备注,特殊需求说明" maxlength = "40"></textarea>
                 </td>
                 <td class = "del" name = "<?php echo $nows.'tab'?>"><a  name = "del" class = "clk" href = "<?php echo $siteUrl.'/order/del/'.$cart[$cnt]["id"] ?>">删除</a></td>
             </tr>
@@ -115,7 +115,7 @@ $idx = -1;
             <span class = "aten">收货地址</span>
         </div>
     <?php endfor ?>
-       <div class = "addr nad" id = "nad">
+        <div class = "addr nad" id = "nad" name = "<?php echo $len ?>">
             <textarea name="naddr" class = "naddr" placeholder = "新地址,尽量精确到房间哦"></textarea>
             <p>
                 <span>手机号码</span><input type="text" name="phone" />
@@ -127,17 +127,14 @@ $idx = -1;
             <span class = "aten">新地址</span>
         </div>
     </div>
-    <input type="hidden" name="addr" id="addr" value="<?php if($len > -1)echo "0" ?>" />
-    <input type="hidden" name="orderId" id="orderId"  />
-    <input type="hidden" name="more" id="more"  />
-    <input type="hidden" name="buyNums" id="buyNums"  />
+    <input type="hidden" name="addr" id="addr" value="<?php echo $len ? 0 : -1 ?>" />
    <div class = "tBt">
         全选 <input type="checkbox" name="allChe" id="allChe" checked = "checked" />
         <span class = "money">总计:￥<span id = "calAl"></span>(元)</span>
         <input type="submit" name="sub" id="sub" value="提交订单" />
     </div>
 </form>
-<script type="text/javascript" charset="utf-8" src = "<?php echo $baseUrl.'js/jquery.js' ?>"></script>
+<script type="text/javascript" charset="utf-8" src = "<?php echo $baseUrl.'js/jquery.min.js' ?>"></script>
 <script type="text/javascript" charset="utf-8" src = "<?php echo $baseUrl.'js/order.js' ?>"></script>
 </body>
 </html>

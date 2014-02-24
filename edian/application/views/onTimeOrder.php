@@ -19,6 +19,30 @@ $baseUrl = base_url();
 </script>
 </head>
 <body>
+    <form action="" method="post" accept-charset="utf-8">
+        <span>选择店铺</span>
+        <select name="storeId">
+    <?php
+        $list = "";
+        if($isadmin){
+            if($storeId === -1){
+                $list = "<option   value = '-1' selected = 'selected'>全部</option>";
+            } else {
+                $list = "<option   value = '-1' >全部</option>";
+            }
+        }
+        foreach ($storeList as $store) {
+            if($store['id'] == $storeId){
+                $list .="<option  value = '" .$store['id']. "' selected = 'selected'>" . $store['name']. "</option>";
+            } else {
+                $list .="<option  value = '" .$store['id']. "'>" . $store['name']. "</option>";
+            }
+        }
+        echo $list;
+    ?>
+        </select>
+        <input type="submit" name="sub"  value="确定选择" />
+    </form>
     <h3>
         <span class = "state">状态</span>
         <span class = "order">订单号</span>
@@ -35,7 +59,7 @@ $baseUrl = base_url();
             <div class = "init">
                 <span class="state"><?php echo $orderState[$value['state']] ?></span>
                 <span class="order"><?php echo $orderNum?></span>
-                <span><?php  echo $value['user'][0]?></span>
+                <span><?php  echo @$value['user'][0]?></span>
                 <span>￥<?php echo $value['total'] ?></span>
                 <span><?php echo $value['time'] ?></span>
                 <font class = "down"> </font>
@@ -60,15 +84,15 @@ $baseUrl = base_url();
                         <ul>
                             <li>
                                 <span class="item">买家:</span>
-                                <span class="user"><?php echo $value['user'][0] ?></span>
+                                <span class="user"><?php echo @$value['user'][0] ?></span>
                             </li>
                             <li>
                                 <span class="item">联系方式:</span>
-                                <span class="phone"> <?php echo $value['user'][1]?></span>
+                                <span class="phone"> <?php echo @$value['user'][1]?></span>
                             </li>
                             <li>
                                 <span class="item">地址:</span>
-                                <span><?php echo $value['user'][2] ?></span>
+                                <span><?php echo @$value['user'][2] ?></span>
                             </li>
                         </ul>
                     </div>

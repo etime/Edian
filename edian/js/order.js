@@ -36,14 +36,6 @@ jQuery.alet = function (cont) {//给出各种提示的函数，和alert不同，
 $(document).ready(function(){
     click();
     add();
-    $("#sub").click(function(event){
-        var val = $("#addr").val();
-        console.log(val);
-        if(val == ""){
-            $.alet("请选择/添加收货地址");
-            return false;
-        }
-    })
     sub();//提交的时候的操作
     forbid();
     calAll();
@@ -77,8 +69,12 @@ function add(){
     adiv.delegate(".addr","click",function () {
         adiv.find(".addCse").removeClass("addCse");
         $(this).addClass("addCse");
-        val = $(this).attr("name");
-        addr.val(val);
+        //如果这里不是需要新添加的值，而是旧的就可以
+        if(!$(this).find("textarea")){
+            debugger;
+            val = $(this).attr("name");
+            addr.val(val);
+        }
     })
     var nad = $("#nad");
     nad.find("input[type = 'button']").click(function (event) {
@@ -94,9 +90,7 @@ function add(){
                 type: 'POST',dataType: 'json',
                 data: {"addr":addr,"geter":geter,"phone":phone},
                 success: function (data, textStatus, jqXHR) {
-                    console.log(data);
                     if(data["flag"]){
-                        console.log(data["atten"]);
                         var str = "<div class = 'fir'><span>"+geter+"</span>(收)<span>"+phone+"</span></div><div>"+addr+"</div><span class = 'aten'>收货地址</span>";
                         nad.empty().append(str);
                     }else{
@@ -130,8 +124,8 @@ function click() {
     var dir,node;
     $("body").delegate(".clk","click",function(event){
         dir = $(this).attr("name");
-        if(dir == "chose"){
-            //当选择某一个商品的时候
+        //当选择某一个商品的时候
+        if(dir == "orderId[]"){
             calAll();
         }else if(dir == "inc"){
             //增加购买数量
@@ -180,8 +174,8 @@ function click() {
             });
             event.preventDefault();
         }
-    }).delegate(".buyNum","change",function(){
-        var num = Math.max(parseInt($(this).val()),1);
+    }).delegate("input[name = 'buyNum[]']","change",function(){
+        $(this).val( Math.max(parseInt($(this).val()),1) );
         calAll();
     })
     $("#allChe").click(function(){
@@ -205,64 +199,15 @@ function parFind(node) {
     return node;
 }
 /**
- * 下单的函数
- * 对下单之后的事情进行处理
+ * 对下单之后的事情进行处理,正式提交之前
+ * 检查地址时候选择
+ * @todo 当年好幼稚....
  */
 function sub(){
     $("form").submit(function(event){
-        var chose = $("input[name = 'chose']"),tr,temp,buyNum,choseId,more;
-        for (var i = 0, l = chose.length; i < l; i ++) {
-            //下单之前，对数据的处理，拼接
-            temp = chose[i];
-            if($(temp).attr("checked")){
-                tr = parFind(temp);
-                var now = $(tr).find(".buyNum");
-                if(choseId == undefined || ( !choseId)){
-                    buyNum = $(tr).find(".buyNum").val();
-                    choseId = $(temp).attr("id");
-                    more = $.trim($(tr).find("textarea").val());
-                }else{
-                    buyNum += "&"+$(tr).find(".buyNum").val();
-                    choseId += "&"+$(temp).attr("id");
-                    more += "&"+$.trim($(tr).find("textarea").val());
-                }
-            }
+        if(parseInt($("input[name = 'addr']").val() , 10) === -1){
+            event.preventDefault();
         }
-        var addr  = $("#addr").val();
-        var url = site_url+"/order/set";
-        //进行信息的传输
-        //是不是取消，要看后台怎么实现的，
-        /*
-       $.ajax({
-            url: url,
-            type: 'POST',
-            dataType: 'json',
-            data: {"buyNums":buyNum,"orderId":choseId,"addr":addr,"more":more},
-            success: function (data, textStatus,jqXHR) {
-                $.alet("下单成功");
-                self.location = site_url+"/order/myorder";
-                $("#cart").empty();
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                $.alet("下单失败了");
-            }
-        })
-        url = site_url+"/order/setPrint";
-        $.ajax({
-            //设置打印，不反馈
-            url: url,
-            type: 'POST',
-            data: {"buyNums":buyNum,"orderId":choseId,"addr":addr,"more":more},
-            success: function (data, textStatus, jqXHR) {
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-            }
-        });
-        */
-        $("#orderId").val(choseId);
-        $("#buyNums").val(buyNum);
-        $("#more").val(more);
-        //event.preventDefault();
     })
 }
 /**
@@ -274,12 +219,12 @@ function calAll(){
     var ordlist = $(".ordlist");
     var total = 0;
     for(var i = ordlist.length - 1;i >= 0 ;i--){
-        var chose = $(ordlist[i]).find("input[name = 'chose']");
-        var buyNums = $(ordlist[i]).find("input[name = 'buyNum']");
+        var chose = $(ordlist[i]).find("input[name = 'orderId[]']");
+        var buyNums = $(ordlist[i]).find("input[name = 'buyNum[]']");
         var price = $(ordlist[i]).find(".pri");//需要转换成为float，目前是text
         var cal = 0;
         for(var j = chose.length - 1;j >= 0;j--){
-            if($(chose[j]).attr("checked")){
+            if($(chose[j]).prop('checked')){
                 cal += parseFloat($(price[j]).text())*parseInt($(buyNums[j]).val());
             }
         }

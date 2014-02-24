@@ -36,7 +36,7 @@ body{
 }
 #cont{
     display:inline;
-    height:100px;
+    height:600px;
 }
 .button:active{
     background:rgb(44, 44, 44);

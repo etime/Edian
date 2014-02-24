@@ -23,7 +23,7 @@ function getCart() {
             buyer = buyer[0];
             return "<div class = 'cinfo clearfix'><p class = 'addr'>" + buyer[2]+ "</p><div class = 'buyer'><p>" +buyer[0]+ "</p><p>"+buyer[1]+"</p></div></div>";
         } else{
-            return false;
+            return ' ';
         }
     }
     /**
@@ -59,8 +59,14 @@ function getCart() {
     /**
      * 构成底部的控制区域
      */
-    function formCon() {
-        return "<div class = 'con clearfix'><div><p>共计<span>￥<strong id = 'total'></strong></span></p><p><a href='" + site_url +'/order/index' + "'>查看详情</a></p></div><input type = 'submit' name = 'cart' value = '立即下单' /></div>";
+    function formCon(buyer , len) {
+        console.log(len);
+        if(buyer.length === 0){
+            return "<div class = 'con clearfix'><div><p>共计<span>￥<strong id = 'total'></strong></span></p><p><a href='" + site_url +'/order/index' + "'>查看详情</a></p></div></div>";
+            //return "<div class = 'con clearfix'><div><p>共计<span>￥<strong id = 'total'></strong></span></p><p><a href='" + site_url +'/order/index' + "'>查看详情</a></p></div><input type = 'submit' name = 'cart' value = '立即下单' /></div>";
+        } else {
+            return "<div class = 'con clearfix'><div><p>共计<span>￥<strong id = 'total'></strong></span></p><p><a href='" + site_url +'/order/index' + "'>查看详情</a></p></div><input type = 'submit' name = 'cart' value = '立即下单' /></div>";
+        }
     }
     if(userId){
         getData();
@@ -70,10 +76,13 @@ function getCart() {
             url: site_url + '/order/index/1',
             dataType: 'json',
             success: function (data, textStatus, jqXHR) {
+                console.log(data);
                 if(data){
                     var str =  "<form action=" + site_url + '/order/setPrint' +" method='post' accept-charset='utf-8' id = 'dcart' class = 'dcart'><div class = 'tohide' id = 'tohide' style = 'display:none'>" + formBuyer(data['buyer']);
                     str += formCart(data['cart'] , data['lsp']) + '</div>';
-                    str += formCon();
+                    var len = 0;
+                    if(data['cart'])len = data['cart'].length;
+                    str += formCon(data['buyer'] , len);
                     str += "</form>";
                     $('body').append(str);
                     var box = $("#dcart").find("input[type = 'checkbox']");
@@ -124,8 +133,16 @@ function calTot() {
                     captmp += parseFloat($(price[j]).text()) *  parseInt($(num[j]).val());
                 }
             }
-            $(temp).find('.cntNum').text(captmp);
-            totalPrc += captmp;
+            var lestPrc = parseFloat($(temp).find('.listPrc').text());
+            lestPrc = 40;
+            if(lestPrc < captmp){
+                $(temp).find('.cntNum').text(captmp);
+                totalPrc += captmp;
+            } else {
+                $(temp).find('.cntNum').text('(' + captmp + '+2)');
+                totalPrc += captmp  + 2;
+            }
+
         }
         $("#total").text(totalPrc).attr("name",totalPrc);
     }

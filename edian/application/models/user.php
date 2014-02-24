@@ -413,7 +413,7 @@ class User extends CI_Model {
             $res = $res->result_array();
             $res = $res[0];
             $address = $this->decodeAddr($res['address']);
-            if(count($address[0]) === 1){
+            if(count($address) && count($address[0]) === 1){
                 $address[0][1] = $res['phone'];
                 $address[0][2] = $address[0][0];
                 $address[0][0] = $res['loginName'];

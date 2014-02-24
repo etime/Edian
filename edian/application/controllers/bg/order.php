@@ -65,7 +65,6 @@ class Order extends Home {
             $data['order'] = $this->morder->getOntime($this->storeId, $this->config->item('infFailed'));
             $data['order'] = $this->orderForm($data['order']);
             $data['orderState'] = $this->config->item('orderState');
-            $data['storeId'] = $this->storeId;
         }
 
         if ($this->isBoss) {
@@ -73,6 +72,9 @@ class Order extends Home {
         } else if ($this->isAdmin) {
             $data['storeList'] = $this->store->getStoreList();
         }
+        $data['storeId'] = $this->storeId;
+        $data['isadmin'] = $this->isAdmin;
+        $this->help->showArr($data);
         $this->load->view("onTimeOrder", $data);
     }
 
@@ -133,6 +135,8 @@ class Order extends Home {
             $data['storeList'] = $this->store->getStoreList();
         }
         $data['storeId'] =  $this->storeId;
+        $data['isadmin'] = $this->isAdmin;
+        //$this->help->showArr($data);
         $this->load->view('histOrder2' , $data);
     }
 

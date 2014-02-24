@@ -60,6 +60,9 @@ table tr:nth-child(odd){
     border:1px solid #e0e0e0;
     height:100%;
 }
+textarea{
+    resize:none;
+}
 .num,.tmb{
     width:85px;
     padding:0px;

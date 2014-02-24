@@ -203,6 +203,7 @@ button[name = 'instant']{
 }
 button[name = 'toCart']{
     background-color:#f46a39;
+    cursor:pointer;
 }
 #detail{
     clear:both;
