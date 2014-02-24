@@ -714,6 +714,39 @@ class Mitem extends Ci_Model {
     }
 
     /**
+     * 获取指定编号商店指定价格区间的所有商品
+     * @param int $storeId 商店编号
+     * @param double $low 价格区间的一个端点，一般来讲是较小的一个，但是没有关系，在具体实现的时候会进行相应的检验和纠正
+     * @param double $high 价格区间的一个端点，一般来讲是较大的一个
+     * @return boolean | array
+     */
+    public function priceInterval($storeId, $low, $high) {
+        $storeId = (int)$storeId;
+        $low = (double)$low;
+        $high = (double)$high;
+        if ($low > $high) {
+            $tmp = $low;
+            $low = $high;
+            $high = $tmp;
+        }
+        if ($storeId == 0) {
+            return false;
+        }
+        $sql = "SELECT id,attr, title, price, satisfyScore, sellNum, mainThumbnail FROM item WHERE belongsTo = $storeId  && price >= $low && price <= $high ORDER BY rating";
+        $res = $this->db->query($sql);
+        if ($res->num_rows === 0) {
+            return false;
+        } else {
+            $res = $res->result_array();
+            for ($i = 0, $len = count($res); $i < $len; $i ++) {
+                $res[$i]['mainThumbnail'] = $this->_fixMainThumbnailPath($storeId, $res[$i]['mainThumbnail']);
+                $res[$i]['attr'] = $this->decodeAttr( $res[$i]['attr'] , $res[$i]['id']);
+            }
+            return $res;
+        }
+    }
+
+    /**
      * 与店外搜索对应，在商品的标题和分类中进行
      * @param string $key 要搜索的关键字
      * @return boolean | array

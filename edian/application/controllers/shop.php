@@ -36,9 +36,13 @@ class Shop extends BaseSearch {
      * @return boolean
      */
     public function index($storeId, $pageId = 1) {
-        header("Content-type: text/html; charset=utf-8");
         $storeId = (int)$storeId;
-        if ($storeId === 0) {
+        if (isset($_GET['pageId'])) {
+            $pageId = (int)$_GET['pageId'];
+        } else {
+            $pageId = (int)$pageId;
+        }
+        if ($storeId == 0) {
             show_404();
             return false;
         }
@@ -50,6 +54,9 @@ class Shop extends BaseSearch {
         $temp = $this->pagesplit->split($ans, $pageId, $this->config->item('pageSize'));
         $ans = array();
         $ans['item'] = $temp['newData'];
+
+        $this->help->showArr($ans['item']);
+
         $ans['key'] = false;
         $commonUrl = site_url('shop/index/' . $storeId);
         $ans['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount']);
@@ -170,10 +177,55 @@ class Shop extends BaseSearch {
     /**
      * 店铺列表页面
      */
-    public function queue()
-    {
+    public function queue() {
         $data['pageNumFooter'] = ' ';
         $this->load->view('shopList' , $data);
+    }
+
+    /**
+     * 选择价格区间呈现商品，需要用户提供价格区间，价格区间存在 session 中，我认为页面显示的默认区间就应该从 session 中读取，用户输入的价格区间通过 GET 的方式获取，对应是 $low 和 $high，他们的大小关系可以随意，后台会进行相应的检验和修正
+     * @param int $storeId 商店编号，可以通过 GET 的方式获取
+     * @param int $pageId 当前页号
+     */
+    public function price($storeId = 0, $pageId = 1) {
+        if (isset($_GET['low'])) {
+            $low = (int)$_GET['low'];
+            $this->session->set_userdata('low', $low);
+        } else {
+            $low = (int)$this->session->userdata('low');
+        }
+        if (isset($_GET['high'])) {
+            $high = (int)$_GET['hith'];
+            $this->session->set_userdata('high', $high);
+        } else {
+            $high = (int)$this->session->userdata('high');
+        }
+        if (isset($_GET['pageId'])) {
+            $pageId = (int)$_GET['pageId'];
+        } else {
+            $pageId = (int)$pageId;
+        }
+        if ($low > $high) {
+            $tmp = $high;
+            $high = $low;
+            $low = $tmp;
+        }
+        $storeId = (int)$storeId;
+        if ($storeId == 0) {
+            show_404();
+            return;
+        }
+        $ans = $this->mitem->priceInterval($storeId, $low, $high);
+        if ($ans === false) {
+            $ans = array();
+        }
+        $temp = $this->pagesplit->split($ans, $pageId, $this->config->item('pageSize'));
+        $ans = array();
+        $ans['item'] = $temp['newData'];
+        $ans['key'] = false;
+        $commonUrl = site_url('shop/price/' . $storeId);
+        $ans['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount']);
+        $this->_showView($ans, $storeId);
     }
 }
 ?>

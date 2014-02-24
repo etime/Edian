@@ -118,7 +118,7 @@ class item extends MY_Controller {
         $data['item_id'] = (int)$itemId;
         $data['user_id'] = (int)$this->userId;
         $data['text'] = $temp;
-        $this->help->showArr($data);
+        //$this->help->showArr($data);
         $ans = $this->comitem->insert($data);
         if ($ans) {
             echo '1';

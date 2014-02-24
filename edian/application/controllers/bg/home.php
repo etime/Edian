@@ -157,7 +157,7 @@ class Home extends MY_Controller {
         } else {
             $data['store'] = $this->store->getIdNameAll();
         }
-        $this->help->showArr($data);
+        //$this->help->showArr($data);
         $data['len'] = count($data['store']);
         if ($data['len'] == 0 && $this->isAdmin === false) {
             $storeId = $this->store->insertStore($ownerId);

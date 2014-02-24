@@ -39,7 +39,7 @@ class Userlist extends Home {
             }
 
             $data['state'] = $this->config->item("storeState");
-            $this->help->showArr($data);
+            //$this->help->showArr($data);
             $this->load->view("bgStoreList" , $data);
         } else {
             show_404();
@@ -95,7 +95,7 @@ class Userlist extends Home {
                 $data['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount']);
             }
 
-            $this->help->showArr($data);
+            //$this->help->showArr($data);
             $this->load->view('bgUserList' , $data);
         } else {
             exit('权限不足');
