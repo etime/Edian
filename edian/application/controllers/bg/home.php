@@ -138,7 +138,7 @@ class Home extends MY_Controller {
         // 将 storeId 存入 session 中
         $this->session->set_userdata('storeId', $storeId);
         // 对storeId初始化之后，开始选择进入后台，进行操作
-        $url = site_url('bg/item/manage');
+        $url = site_url('bg/home/index');
         header("location: $url");
     }
 

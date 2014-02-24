@@ -320,6 +320,21 @@ class Morder extends Ci_Model {
         }
     }
 
+    /**
+     * 允许店铺老板修改自己店铺的商品订单状态;
+     * @param   int     $id     订单的编号 ,实际上是时间戳
+     * @param   int     $state  想要修改的状态
+     * @param   int     $storeId 店铺的id
+     * @todo 其实应该只是允许店铺老板修改几个特定的状态，现在赶时间，先不做
+     */
+    public function setStateByStore($id, $state, $storeId, $context) {
+        $id     = (int)$id;
+        $state  = (int)$state;
+        $storeId= (int)$storeId ;
+        $context = mysql_real_escape_string($context);
+        return $this->db->query("update ord set state = $state , info = '" . $context . "' where UNIX_TIMESTAMP(time) = $id && seller = $storeId ");
+    }
+
 /**********************************************************************************************************************/
 /**********************************************************************************************************************/
 /**********************************************************************************************************************/
@@ -419,21 +434,6 @@ class Morder extends Ci_Model {
         return $this->db->query("update ord set state = $state where id = $id && state < ". $state);
     }
 
-    /**
-     * 允许店铺老板修改自己店铺的商品订单状态;
-     * @param   int     $id     订单的编号 ,实际上是时间戳
-     * @param   int     $state  想要修改的状态
-     * @param   int     $storeId 店铺的id
-     * @todo 其实应该只是允许店铺老板修改几个特定的状态，现在赶时间，先不做
-     */
-    public function setStateByStore($id , $state , $storeId , $context )
-    {
-        $id     = (int)$id;
-        $state  = (int)$state;
-        $storeId= (int)$storeId ;
-        $context = mysql_real_escape_string($context);
-        return $this->db->query("update ord set state = $state , note = '" . $context . "' where UNIX_TIMESTAMP(time) = $id && seller = $storeId ");
-    }
     /**
      * 修改下单之前得到要修改的信息
      *   查找下单时候，要修改的内容,目前仅为order set 效力

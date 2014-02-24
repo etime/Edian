@@ -205,14 +205,13 @@ class Order extends Home {
      * @param   string  $goto       完成之后要跳转去的地方 ,默认是今日订单
      * @param   post    $context    投诉或者是拒绝时候输入的内容
      */
-    public function changeNote($orderId = -1 , $state , $goto = 'ontime')
-    {
-        if($this->_checkAuthority(site_url('bg/order/ontime')) === false){
+    public function changeNote($orderId = -1, $state, $goto = 'ontime') {
+        if($this->_checkAuthority(site_url('bg/order/ontime')) === false) {
             return;
         }
         $orderId = explode('_' , $orderId);
-        if(count($orderId) === 2){
-            //$storeId = $this->session->userdata('storeId');
+        if (count($orderId) === 2) {
+            $storeId = $this->session->userdata('storeId');
             $stateArr = $this->config->item('orderState');
             if(array_key_exists($state , $stateArr)){
                 //管理员并没有拒绝订单和举报恶意订单的功能
