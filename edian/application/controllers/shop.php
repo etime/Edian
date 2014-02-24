@@ -55,8 +55,6 @@ class Shop extends BaseSearch {
         $ans = array();
         $ans['item'] = $temp['newData'];
 
-        $this->help->showArr($ans['item']);
-
         $ans['key'] = false;
         $commonUrl = site_url('shop/index/' . $storeId);
         $ans['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount']);
@@ -147,11 +145,12 @@ class Shop extends BaseSearch {
             $key = trim($_GET['name']);
             //将返回的数组变成字符串，方便下次接着索引 by unasm 2014-02-16 01:49:05
             $categoryName = implode($this->_filterKeywords($key) , ',');
-            $getString = '?key=' . $categoryName;
+            $getString = '?name=' . $categoryName;
         } else {
             $categoryName = '';
-            $getString = '?key=';
+            $getString = '?name=';
         }
+
         // 获取筛选得到的所有商品的编号
         $ans = $this->mitem->selectInStore($categoryName, $storeId);
         // 通过商品编号获取所有商品的详细信息
@@ -186,6 +185,7 @@ class Shop extends BaseSearch {
      * 选择价格区间呈现商品，需要用户提供价格区间，价格区间存在 session 中，我认为页面显示的默认区间就应该从 session 中读取，用户输入的价格区间通过 GET 的方式获取，对应是 $low 和 $high，他们的大小关系可以随意，后台会进行相应的检验和修正
      * @param int $storeId 商店编号，可以通过 GET 的方式获取
      * @param int $pageId 当前页号
+     * @author farmerjian<chengfeng1992@hotmail.com>
      */
     public function price($storeId = 0, $pageId = 1) {
         if (isset($_GET['low'])) {

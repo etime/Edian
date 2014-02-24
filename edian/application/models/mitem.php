@@ -365,7 +365,9 @@ class Mitem extends Ci_Model {
      *  </pre>
      */
     public function decodeAttr($attr, $itemId) {
-        if (! $attr) return '';
+        if (! $attr) {
+            return '';
+        }
         $temp = explode('|', $attr);
         $attrIdx = explode(',', $temp[0]);//将索引关键值保存到attrIdx中
         $num = explode(';', $temp[1]);
@@ -409,12 +411,12 @@ class Mitem extends Ci_Model {
      * @return bool
      */
     public function getItemInfo($itemId) {
-        $sql = "SELECT title, detail, price, belongsTo, mainThumbnail, thumbnail, satisfyScore, attr, storeNum, " .
-            "putawayTime FROM item WHERE id = $itemId";
         $itemId = (int)$itemId;
         if ($itemId === 0) {
             return false;
         }
+        $sql = "SELECT title, detail, price, belongsTo, mainThumbnail, thumbnail, satisfyScore, attr, storeNum, " .
+            "putawayTime FROM item WHERE id = $itemId";
         $res = $this->db->query($sql);
         // 如果没有筛选到相应的商品
         if ($res->num_rows === 0) {
@@ -424,18 +426,7 @@ class Mitem extends Ci_Model {
         $res = $res[0];
         // 对attr的解码
         $res['attr'] = $this->decodeAttr($res['attr'] , $itemId);
-        // 获取相应老板的 userId
-        /*
-        $this->load->model('store');
-        $bossId = $this->store->getOwnerIdByStoreId($res['belongsTo']);
 
-        $this->load->model('boss');
-        $loginName = $this->boss->getLoginNameByBossId($bossId);
-
-        $this->load->model('user');
-        $userId = $this->user->getUserIdByLoginName($loginName);
-
-        */
         $userId = $this->getUserByBelongsTo($res['belongsTo']);
         if (is_array($res['attr']) && array_key_exists('idx', $res['attr'])) {
             $this->fixAttrImg($res['attr']['idx'], $userId);
@@ -676,7 +667,7 @@ class Mitem extends Ci_Model {
         if ($itemId === 0) {
             return false;
         }
-        $sql = "SELECT title, price, satisfyScore, sellNum, mainThumbnail, belongsTo FROM item WHERE id = $itemId ORDER BY rating";
+        $sql = "SELECT title, attr, price, satisfyScore, sellNum, mainThumbnail, belongsTo FROM item WHERE id = $itemId ORDER BY rating";
         $res = $this->db->query($sql);
         if ($res->num_rows === 0) {
             return false;
@@ -685,6 +676,14 @@ class Mitem extends Ci_Model {
             $res = $res[0];
             $res['id'] = $itemId;
             $res['mainThumbnail'] = $this->_fixMainThumbnailPath($res['belongsTo'], $res['mainThumbnail']);
+
+            $res['attr'] = $this->decodeAttr($res['attr'] , $itemId);
+
+            $userId = $this->getUserByBelongsTo($res['belongsTo']);
+            if (is_array($res['attr']) && array_key_exists('idx', $res['attr'])) {
+                $this->fixAttrImg($res['attr']['idx'], $userId);
+            }
+
             return $res;
         }
     }
@@ -707,7 +706,12 @@ class Mitem extends Ci_Model {
             $res = $res->result_array();
             for ($i = 0, $len = count($res); $i < $len; $i ++) {
                 $res[$i]['mainThumbnail'] = $this->_fixMainThumbnailPath($storeId, $res[$i]['mainThumbnail']);
-                $res[$i]['attr'] = $this->decodeAttr( $res[$i]['attr'] , $res[$i]['id']);
+                $res[$i]['attr'] = $this->decodeAttr($res[$i]['attr'] , $res[$i]['id']);
+
+                $userId = $this->getUserByBelongsTo($storeId);
+                if (is_array($res[$i]['attr']) && array_key_exists('idx', $res[$i]['attr'])) {
+                    $this->fixAttrImg($res[$i]['attr']['idx'], $userId);
+                }
             }
             return $res;
         }
@@ -741,6 +745,10 @@ class Mitem extends Ci_Model {
             for ($i = 0, $len = count($res); $i < $len; $i ++) {
                 $res[$i]['mainThumbnail'] = $this->_fixMainThumbnailPath($storeId, $res[$i]['mainThumbnail']);
                 $res[$i]['attr'] = $this->decodeAttr( $res[$i]['attr'] , $res[$i]['id']);
+                $userId = $this->getUserByBelongsTo($storeId);
+                if (is_array($res[$i]['attr']) && array_key_exists('idx', $res[$i]['attr'])) {
+                    $this->fixAttrImg($res[$i]['attr']['idx'], $userId);
+                }
             }
             return $res;
         }
@@ -805,7 +813,7 @@ class Mitem extends Ci_Model {
         if ($storeId === 0) {
             return false;
         }
-        $sql = "SELECT id FROM item WHERE category LIKE '%;" . $categoryName .  "|' AND belongsTo = $storeId";
+        $sql = "SELECT id FROM item WHERE category LIKE '%|" . $categoryName .  "' AND belongsTo = $storeId";
         $res = $this->db->query($sql);
         if ($res->num_rows === 0) {
             return false;
@@ -872,6 +880,34 @@ class Mitem extends Ci_Model {
             return $ans[0]['COUNT(*)'];
         }
     }
+
+    /**
+     *  获得的都是上传时候的信息，现在重新获取，然后修改
+     *  @param int $itemId  想要修改的商品的编号
+     */
+    public function getInfoToChange($itemId) {
+        $itemId = (int)$itemId;
+        $sql = 'SELECT title , detail , belongsTo , storeNum , price , thumbnail , attr , mainThumbnail , category  FROM item WHERE id = ' . $itemId;
+        $res = $this->db->query($sql);
+        if($res->num_rows){
+            $res = $res->result_array();
+            $res = $res[0];
+            $userId = $this->getUserByBelongsTo($res['belongsTo']);
+            $res['mainThumbnail'] = $this->fixImg($res['mainThumbnail'], $userId, 'main');
+            $res['thumbnail'] = $this->formThumb($res['thumbnail'], $userId);
+            $res['attr'] = $this->decodeAttr($res['attr'] , $itemId);
+
+            $userId = $this->getUserByBelongsTo($res['belongsTo']);
+            if (is_array($res['attr']) && array_key_exists('idx', $res['attr'])) {
+                $this->fixAttrImg($res['attr']['idx'], $userId);
+            }
+
+            $res['category'] = $this->_decodeCategory($res['category'] , $itemId);
+            return $res;
+        }
+        return false;
+    }
+
 /**********************************************************************************************************************/
 /**********************************************************************************************************************/
 /**********************************************************************************************************************/
@@ -1072,7 +1108,7 @@ class Mitem extends Ci_Model {
             }
             $infoToSet = $infoToSet[0]["attr"];//attr为0的情况
             if($infoToSet){
-                $attr = $this->decodeAttr($infoToSet,$itemId);
+                $attr = $this->decodeAttr($infoToSet, $itemId);
                 $idxNum = $this->getIdx($attr["idx"],$info);
                 $len = count($idxNum);
                 if($len == 1){
@@ -1209,27 +1245,6 @@ class Mitem extends Ci_Model {
             }
         }
         return $re;
-    }
-    /**
-     *  获得的都是上传时候的信息，现在重新获取，然后修改
-     *  @param int $itemId  想要修改的商品的编号
-     */
-    public function getInfoToChange($itemId)
-    {
-        $itemId = (int)$itemId;
-        $sql = 'SELECT title , detail , belongsTo , storeNum , price , thumbnail , attr , mainThumbnail , category  FROM item WHERE id = ' . $itemId;
-        $res = $this->db->query($sql);
-        if($res->num_rows){
-            $res = $res->result_array();
-            $res = $res[0];
-            $userId = $this->getUserByBelongsTo($res['belongsTo']);
-            $res['mainThumbnail'] = $this->fixImg($res['mainThumbnail'], $userId, 'main');
-            $res['thumbnail'] = $this->formThumb($res['thumbnail'], $userId);
-            $res['attr'] = $this->decodeAttr($res['attr'] , $itemId);
-            $res['category'] = $this->_decodeCategory($res['category'] , $itemId);
-            return $res;
-        }
-        return false;
     }
 }
 ?>
