@@ -21,28 +21,66 @@
     </div>
 </div>
 <div id = "login" class = "login"  style = "display:none">
-    <form action="<?php echo site_url('login/loginCheck') ?>" method="post" accept-charset="utf-8">
-        <div class = "regd">
-            <span style = "background:#31b2ee;color:white">登录</span>
-            <a href = "<?php echo site_url('register/userRegister') ?>"><span>注册</span></a>
-        </div>
+    <div class = "wrap">
         <span class = "shut"> </span>
-        <p>
-            <input type="text" name="userName" id = "userName" placeholder = "用户名/手机号" />
-            <label for="userName"></label>
-        </p>
-        <p>
-            <input type="password" name="password" id = "password" placeholder = "密码" />
-            <label for="password"></label>
-        </p>
-        <p class = "atten"></p>
-        <p>
-            <input type="submit" name="sub"  value="登录"  class = "btn"/>
-            <span class = "reg">没有帐号?
-                <a href = "<?php echo site_url('register/userRegister') ?>"  style = "color:#31b2ee">马上注册</a>
-            </span>
-        </p>
-    </form>
+        <div class = "regd" id = "regd">
+            <span class = "focus" name = 'l'>登录</span>
+            <span name = "r">注册</span>
+        </div>
+        <form action="<?php echo site_url('login/loginCheck') ?>" method="post" accept-charset="utf-8" class = "l">
+            <p>
+                <input type="text" name="userName" id = "userName" placeholder = "用户名/手机号" />
+                <label for="userName"></label>
+            </p>
+            <p>
+                <input type="password" name="password" id = "password" placeholder = "密码" />
+                <label for="password"></label>
+            </p>
+            <p style = "text-align:center">
+                <input type="submit" name="sub"  value="登录"  class = "btn"/>
+            <!--
+                <span class = "reg">没有帐号?
+                    <a href = "<?php echo site_url('register/userRegister') ?>"  style = "color:#31b2ee">马上注册</a>
+                </span>
+            -->
+            </p>
+        </form>
+        <form action="" method="post" accept-charset="utf-8" class = "r" style = "display:none" >
+            <p>
+                <input type="text" name="loginName" id = "userName" placeholder = "用户名/手机号" />
+                <span class = "atten">撒旦发商店</span>
+                <label for="userName"></label>
+            </p>
+            <p>
+                <input type="password" name="password" placeholder = "密码" />
+                <span class = "atten success">sdf</span>
+                <label for="password"></label>
+            </p>
+            <p>
+                <input type="password" name="confirm" placeholder = "密码" />
+                <span class = "atten"></span>
+                <label for="password"></label>
+            </p>
+            <p>
+                <input type="text" name="phoneNum" placeholder = "手机号" />
+                <span class = "atten"></span>
+                <label for="phoneNum"></label>
+            </p>
+            <p>
+                <input type="text" name="checkNum" />
+                <input type="button"  id="smschk" value="发送验证码"  class = "btn"/>
+            </p>
+            <p>
+                <input type="submit" name="sub"  value="注册" />
+                <span class = "reg">
+                    开个店，一起赚钱吧!
+                    <a href = "<?php echo site_url('/register/bossRegister') ?>">
+                        开店
+                    </a>
+                </span>
+            </p>
+        </form>
+    </div>
 </div>
 <script type="text/javascript" charset="utf-8">
     var userId = "<?php echo $this->session->userdata("userId") ?>";
@@ -59,16 +97,23 @@
     position:fixed;
     top:0;
 }
+#login input[name = 'checkNum']{
+    width:80px;
+}
 .regd{
     font-size:1.5em;
     border-bottom:2px solid #e3e3e3;
-    margin-bottom:32px;
+    margin-bottom:26px;
 }
 .regd span{
     width:120px;
     text-align:center;
     display:inline-block;
     line-height:34px;
+}
+.regd .focus{
+    background:#31b2ee;
+    color:white
 }
 .btn{
     -webkit-box-shadow:inset 0px 1px 0px rgba(255, 255, 255, 0.5), 0px 1px 2px rgba(0, 0, 0, 0.2);
@@ -78,8 +123,10 @@
     background:-webkit-linear-gradient(top, #fbfbfb, #e1e1e1);
     background:-moz-linear-gradient(top, #fbfbfb, #e1e1e1);
     line-height:24px;
+    border:none;
+    border-radius:2px;
 }
-.login form{
+.wrap{
     width:282px;
     top:100px;
     position:fixed;
@@ -91,8 +138,8 @@
     box-shadow:0 0 24px rgb(0, 0, 0);
 }
 .login p{
-    margin:20px 0;
     position:relative;
+    height:40px;
 }
 .login input[type = 'submit']{
     border:none;
@@ -100,7 +147,7 @@
     padding:7px 10px;
     color:#F5DFB5;
     box-shadow:3px 1px 2px #BBB7B7;
-    width:120px;
+    width:110px;
 }
 label[for = 'userName']{
     background:url( "<?php echo base_url('bgimage/login.png') ?>") 0 -2px no-repeat;
@@ -203,7 +250,29 @@ a{
 }
 .reg{
     position:absolute;
-    bottom:0;
-    right:13px;
+    bottom:7px;
+    font-size:14px;
+    right:0;
+}
+.reg a{
+    color:#31b2ee;
+}
+.atten{
+    font-size:12px;
+    margin-left:9px;
+}
+.success{
+    position:absolute;
+    right:-23px;
+    top:12px;
+    background:green;
+    width:20px;
+    height:20px;
+}
+.failed{
+    color:red;
+}
+.atten{
+    color:green;
 }
 </style>
