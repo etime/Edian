@@ -36,7 +36,6 @@ class Shop extends BaseSearch {
      * @return boolean
      */
     public function index($storeId, $pageId = 1) {
-        header("Content-type: text/html; charset=utf-8");
         $storeId = (int)$storeId;
         if (isset($_GET['pageId'])) {
             $pageId = (int)$_GET['pageId'];
@@ -55,6 +54,9 @@ class Shop extends BaseSearch {
         $temp = $this->pagesplit->split($ans, $pageId, $this->config->item('pageSize'));
         $ans = array();
         $ans['item'] = $temp['newData'];
+
+        $this->help->showArr($ans['item']);
+
         $ans['key'] = false;
         $commonUrl = site_url('shop/index/' . $storeId);
         $ans['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount']);
