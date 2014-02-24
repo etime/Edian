@@ -173,7 +173,7 @@ function login(callBack){
                 }
             });
         } else if(name === 'gotoLogin'){
-            login.fadeToggle();
+            login.fadeIn();
             event.preventDefault();
         }
 

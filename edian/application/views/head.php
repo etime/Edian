@@ -48,12 +48,12 @@
         <form action="" method="post" accept-charset="utf-8" class = "r" style = "display:none" >
             <p>
                 <input type="text" name="loginName" id = "userName" placeholder = "用户名/手机号" />
-                <span class = "atten">撒旦发商店</span>
+                <span class = "atten"></span>
                 <label for="userName"></label>
             </p>
             <p>
                 <input type="password" name="password" placeholder = "密码" />
-                <span class = "atten success">sdf</span>
+                <span class = "atten success"></span>
                 <label for="password"></label>
             </p>
             <p>
@@ -73,9 +73,8 @@
             <p>
                 <input type="submit" name="sub"  value="注册" />
                 <span class = "reg">
-                    开个店，一起赚钱吧!
                     <a href = "<?php echo site_url('/register/bossRegister') ?>">
-                        开店
+                        店家入口
                     </a>
                 </span>
             </p>
@@ -150,7 +149,7 @@
     width:110px;
 }
 label[for = 'userName']{
-    background:url( "<?php echo base_url('bgimage/login.png') ?>") 0 -2px no-repeat;
+    background:url( "<?php echo base_url('bgimage/login.png') ?>") -2px -5px no-repeat;
     position:absolute;
     top:9px;
     right:6px;
@@ -159,7 +158,16 @@ label[for = 'userName']{
     content:' ';
 }
 label[for = 'password']{
-    background:url( "<?php echo base_url('bgimage/login.png') ?>") -17px -2px no-repeat;
+    background:url( "<?php echo base_url('bgimage/login.png') ?>") -20px -6px no-repeat;
+    position:absolute;
+    top:9px;
+    right:6px;
+    width:17px;
+    height:19px;
+    content:' ';
+}
+label[for = 'phoneNum']{
+    background:url( "<?php echo base_url('bgimage/login.png') ?>") -105px -7px no-repeat;
     position:absolute;
     top:9px;
     right:6px;
@@ -174,13 +182,14 @@ label[for = 'password']{
     width:265px;
 }
 .login input[type = 'text']:focus , .login input[type = 'password']:focus{
-    border:1px solid #31b2ee;
+    border:1px solid #ffb464;
+    outline:none;
 }
 .login .shut{
     position:absolute;
     top:15px;
     right:15px;
-    background:url( "<?php echo base_url('bgimage/login.png') ?>") -32px -2px no-repeat;
+    background:url( "<?php echo base_url('bgimage/login.png') ?>") -36px -5px no-repeat;
     width:18px;
     height:18px;
     content:' ';
@@ -262,14 +271,15 @@ a{
     margin-left:9px;
 }
 .success{
+    right:-33px;
+    top:4px;
+    width:25px;
+    height:25px;
+    background:url( "<?php echo base_url('bgimage/login.png') ?>") -55px -1px no-repeat;
     position:absolute;
-    right:-23px;
-    top:12px;
-    background:green;
-    width:20px;
-    height:20px;
+    content:' ';
 }
-.failed{
+.login .failed{
     color:red;
 }
 .atten{
