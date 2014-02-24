@@ -333,6 +333,102 @@ class Order extends My_Controller{
         }
         echo json_encode($res);
     }
+
+    /**
+     *  通过ajax得到数据，进行打印，短信和报错处理
+     *
+     *  这里必须通过ajax提交，
+     *  提交订单之后，修改状态和打印同步进行,（为了效率和不等待），一种一面是者set ，另一面是setPrint
+     *  setPrint 首先进行打印，不行或者没有打印机的话，就短信，失败之后就宣布通知失败，
+     * 下单的时候，格式控制，只发送一次就好，不然的会重复下单，也会多打印的
+     *
+     * @todo    过一段时间，加上在线验证吧,就是当用户在线的时候，就不发送，用户不在线的时候，就发送短信，
+     * @todo    订购了这个短信服务的人才可以接收短信，
+     * @todo    之后添加一个在线即时聊天的功能，或许也可以截流一部分短信
+     */
+    public function setPrint() {
+        $res["flag"]  = 0;
+        if ($this->userId == -1) {
+            $res["atten"] = "没有登录";
+            echo json_encode($res);
+            return false;
+        }
+        $data = $this->getData();
+        if (array_key_exists("failed", $data)) {
+            echo "请返回<br/>";
+            echo $data["failed"];
+            return false;
+        }
+        //保存打印者,下单的人信息
+        $ordInfo = $this->getOrderInfo($data["orderId"], $data["buyNum"], $data["more"]);
+        $quoto = "e点工作室竭诚为您服务";//口号
+        $time = date("Y-m-d H:i:s");
+        $user = $this->user->getAplById($this->userId, $data['addr']);
+        $idlist = Array();//保存打印处理商品的菜单id
+        $this->load->model('store');
+        for ($i = 0, $cnt = count($ordInfo); $i < $cnt; ) {
+            $nowSeller = $ordInfo[$i]["seller"];
+            $list   = "";
+            $cntAl  = 0;    //将要打印的清单和总和
+            $cntPnt = 0;    //将要打印的item_id array长度，为了在打印成功之后，进行处理
+            while (($i < $cnt) && ($ordInfo[$i]["seller"] == $nowSeller)) {
+                $this->getPrintReady($ordInfo[$i], $list ,$cntAl);
+                $ordInfo[$i]['orderNum']  = $ordInfo[$i]['buyNum'];
+                $idlist[$cntPnt ++] = $i ++;
+            }
+            $sellerName = $this->user->getNameById($nowSeller);  //获取店家的名字
+            //需要打印的字符串
+            $text = "\n顾客: ".$user[0]."\n".
+                "手机号: ".$user[1]."\n".
+                "地址: "  .$user[2]."\n".
+                "店家: "  .$sellerName["user_name"]."\n".
+                "清单:\n" .$list.
+                "合计: \t￥\x1B\x21\x08".$cntAl."\x1B\x21\x00(元)\n".
+                "下单时间: ".$time."\n".
+                "\t".$quoto."\n\n\n\n";
+            $store = $this->store->informInfo($nowSeller);
+
+            //接下来的几项 , smsed , printed , failed要和config中的orderstate严格对应
+            if (array_key_exists('dtuId' , $store['more']) && array_key_exists('dtuNum' , $store['more'])) {
+                $flag = $this->printInform($text, $store["more"]["dtuId"], $store["more"]["dtuNum"]);  //这里首先进行打印，之后尝试短信
+                if ($flag == "pr") {                        //打印成功
+                    $printed = 2; //打印完毕
+                    for ($k = 0; $k < $cntPnt; $k ++) {
+                        $this->morder->setOrder($data['addr'], $ordInfo[$idlist[$k]]['ordId'], $ordInfo[$idlist[$k]], $printed);
+                    }
+                    continue;
+                }
+            }
+
+            if (array_key_exists("smsOrd" , $store)) {
+                $flag = $this->smsInform($text,$store["servicePhone"]);
+                if ($flag == "sms") {                              //成功发送短信
+                    $smsed = 3; //短信发送完毕
+                    for ($k = 0; $k < $cntPnt; $k ++) {
+                        $this->morder->setOrder($data['addr'], $ordInfo[$idlist[$k]]['ordId'], $ordInfo[$idlist[$k]], $smsed);
+                    }
+                }
+                continue;
+            }
+            $failed = 9;//其他的通知方式都失败
+            for ($k = 0; $k < $cntPnt; $k ++) {
+                $this->morder->setOrder($data['addr'], $ordInfo[$idlist[$k]]['ordId'], $ordInfo[$idlist[$k]], $failed);
+            }
+        }
+        echo "下单完成";
+    }
+
+    public function rePrint() {
+        if (! (isset($_SERVER["HTTP_X_REQUESTED_WITH"]) && strtolower($_SERVER["HTTP_X_REQUESTED_WITH"]) == 'xmlhttprequest')) {
+            show_404();
+            return;
+        }
+        $storeId = (int)trim($this->input->post('storeId'));
+        $buyerId = (int)trim($this->input->post('buyerId'));
+        $time = (int)trim($this->input->post('time'));
+        $time = date("Y-m-d H:i:s", $time);
+
+    }
 /**********************************************************************************************************************/
 /**********************************************************************************************************************/
 /**********************************************************************************************************************/
@@ -625,95 +721,7 @@ class Order extends My_Controller{
             $this->mwrong->insert($temp);
         }
     }
-    /**
-     *  通过ajax得到数据，进行打印，短信和报错处理
-     *
-     *  这里必须通过ajax提交，
-     *  提交订单之后，修改状态和打印同步进行,（为了效率和不等待），一种一面是者set ，另一面是setPrint
-     *  setPrint 首先进行打印，不行或者没有打印机的话，就短信，失败之后就宣布通知失败，
-     * 下单的时候，格式控制，只发送一次就好，不然的会重复下单，也会多打印的
-     *
-     * @todo    过一段时间，加上在线验证吧,就是当用户在线的时候，就不发送，用户不在线的时候，就发送短信，
-     * @todo    订购了这个短信服务的人才可以接收短信，
-     * @todo    之后添加一个在线即时聊天的功能，或许也可以截流一部分短信
-     */
-    public function setPrint()
-    {
-        $res["flag"]  = 0;
-        if(!$this->userId){
-            $res["atten"] = "没有登录";
-            echo json_encode($res);
-            return false;
-        }
-        $data = $this->getData();
-        if(array_key_exists("failed" , $data)){
-            //如果输入数据出错的时候
-            echo "请返回<br/>";
-            echo $data["failed"];
-            return false;
-        }
-        //保存打印者,下单的人信息
-        $ordInfo = $this->getOrderInfo( $data["orderId"] ,$data["buyNum"] ,$data["more"]);
-        $quoto = "e点工作室竭诚为您服务";//口号
-        $time  = date("Y-m-d H:i:s");
-        //$user  = $this->_getUser($data["addr"]);//取得用户的信息，$user中有名字，地址和联系方式，
-        $user = $this->user->getAplById($this->userId , $data['addr']);
-        //$this->load->config("edian");                    //根据对应状态修改对应的商品的状态
-        //$orderedState = $this->config->item('orderState');
-        $idlist = Array();//保存打印处理商品的菜单id
-        $this->load->model('store');
-        //$this->help->showArr($ordInfo);
-        for($i = 0 ,$cnt = count($ordInfo) ;$i < $cnt;){
-            $nowSeller = $ordInfo[$i]["seller"];
-            $list   = "";
-            $cntAl  = 0;    //将要打印的清单和总和
-            $cntPnt = 0;    //将要打印的item_id array长度，为了在打印成功之后，进行处理
-            while(($i < $cnt) && ($ordInfo[$i]["seller"] == $nowSeller)){
-                $this->getPrintReady($ordInfo[$i], $list ,$cntAl);
-                $ordInfo[$i]['orderNum']  = $ordInfo[$i]['buyNum'];
-                $idlist[$cntPnt++] = $i++;
-            }
-            $sellerName = $this->user->getNameById($nowSeller);  //获取店家的名字
-            //需要打印的字符串
-            $text = "\n顾客: ".$user[0]."\n".
-                    "手机号: ".$user[1]."\n".
-                    "地址: "  .$user[2]."\n".
-                    "店家: "  .$sellerName["user_name"]."\n".
-                    "清单:\n" .$list.
-                    "合计: \t￥\x1B\x21\x08".$cntAl."\x1B\x21\x00(元)\n".
-                    "下单时间: ".$time."\n".
-                    "\t".$quoto."\n\n\n\n";
-            $store = $this->store->informInfo($nowSeller);
 
-            //接下来的几项 , smsed , printed , failed要和config中的orderstate严格对应
-            if(array_key_exists('dtuId' , $store['more']) && array_key_exists('dtuNum' , $store['more'])){
-                $flag = $this->printInform($text , $store["more"]["dtuId"] , $store["more"]["dtuNum"]);  //这里首先进行打印，之后尝试短信
-                if($flag == "pr"){                        //打印成功
-                    $printed = 2; //打印完毕
-                    for($k = 0;$k < $cntPnt ;$k ++){
-                        $this->morder->setOrder($data['addr'] , $ordInfo[$idlist[$k]]['ordId'] , $ordInfo[$idlist[$k]],$printed);
-                    }
-                    continue;
-                }
-            }
-
-            if(array_key_exists("smsOrd" , $store)){
-                $flag = $this->smsInform($text,$store["servicePhone"]);
-                if($flag == "sms"){                              //成功发送短信
-                    $smsed = 3; //短信发送完毕
-                    for($k = 0;$k < $cntPnt ;$k ++){
-                        $this->morder->setOrder( $data['addr'] ,$ordInfo[$idlist[$k]]['ordId'] , $ordInfo[$idlist[$k]],$smsed);
-                    }
-                }
-                continue;
-            }
-            $failed = 9;//其他的通知方式都失败
-            for($k = 0 ;$k < $cntPnt ;$k ++){
-                $this->morder->setOrder( $data['addr'] , $ordInfo[$idlist[$k]]['ordId'] , $ordInfo[$idlist[$k]],$failed);
-            }
-        }
-        echo "下单完成";
-    }
     /**
      * printInform是通知系统，在用户下单之后进行的多种联络通知手段
      *
