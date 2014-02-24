@@ -63,7 +63,7 @@ class item extends MY_Controller {
      */
     public function index($itemId = -1) {
         $itemInfo = $this->mitem->getItemInfo($itemId);
-        $this->help->showArr($itemInfo);
+        //$this->help->showArr($itemInfo);
         // 商品不存在
         if ($itemInfo === false) {
             show_404();
