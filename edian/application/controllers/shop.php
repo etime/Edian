@@ -55,8 +55,6 @@ class Shop extends BaseSearch {
         $ans = array();
         $ans['item'] = $temp['newData'];
 
-        $this->help->showArr($ans['item']);
-
         $ans['key'] = false;
         $commonUrl = site_url('shop/index/' . $storeId);
         $ans['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount']);
@@ -147,11 +145,12 @@ class Shop extends BaseSearch {
             $key = trim($_GET['name']);
             //将返回的数组变成字符串，方便下次接着索引 by unasm 2014-02-16 01:49:05
             $categoryName = implode($this->_filterKeywords($key) , ',');
-            $getString = '?key=' . $categoryName;
+            $getString = '?name=' . $categoryName;
         } else {
             $categoryName = '';
-            $getString = '?key=';
+            $getString = '?name=';
         }
+
         // 获取筛选得到的所有商品的编号
         $ans = $this->mitem->selectInStore($categoryName, $storeId);
         // 通过商品编号获取所有商品的详细信息

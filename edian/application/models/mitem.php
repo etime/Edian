@@ -667,7 +667,7 @@ class Mitem extends Ci_Model {
         if ($itemId === 0) {
             return false;
         }
-        $sql = "SELECT title, price, satisfyScore, sellNum, mainThumbnail, belongsTo FROM item WHERE id = $itemId ORDER BY rating";
+        $sql = "SELECT title, attr, price, satisfyScore, sellNum, mainThumbnail, belongsTo FROM item WHERE id = $itemId ORDER BY rating";
         $res = $this->db->query($sql);
         if ($res->num_rows === 0) {
             return false;
@@ -676,6 +676,14 @@ class Mitem extends Ci_Model {
             $res = $res[0];
             $res['id'] = $itemId;
             $res['mainThumbnail'] = $this->_fixMainThumbnailPath($res['belongsTo'], $res['mainThumbnail']);
+
+            $res['attr'] = $this->decodeAttr($res['attr'] , $itemId);
+
+            $userId = $this->getUserByBelongsTo($res['belongsTo']);
+            if (is_array($res['attr']) && array_key_exists('idx', $res['attr'])) {
+                $this->fixAttrImg($res['attr']['idx'], $userId);
+            }
+
             return $res;
         }
     }
@@ -805,7 +813,7 @@ class Mitem extends Ci_Model {
         if ($storeId === 0) {
             return false;
         }
-        $sql = "SELECT id FROM item WHERE category LIKE '%;" . $categoryName .  "|' AND belongsTo = $storeId";
+        $sql = "SELECT id FROM item WHERE category LIKE '%|" . $categoryName .  "' AND belongsTo = $storeId";
         $res = $this->db->query($sql);
         if ($res->num_rows === 0) {
             return false;
