@@ -42,9 +42,11 @@
         <div id = "side">
             <div class = "stCom block">
             <!-- 店铺评分，商店距离，-->
-                <h3>何氏专辑店</h3>
+            <h3><?php echo @$name ?></h3>
                 <blockquote>
-                    银鳞胸甲，蓝色品质，五金一件，先到先得
+                <?php
+                    echo @$briefInfo;
+                ?>
                 </blockquote>
                 <img src="<?php echo $logo?>" alt="商店logo" />
             </div>
@@ -157,6 +159,7 @@
                 </li>
             <?php endfor?>
             </ul>
+            <p><?php if($len === 0) echo '没有商品哦'?></p>
             <div class="snav">
                 价格区间
                 <input type="text" name="dprc"   />--
@@ -166,7 +169,6 @@
                 echo $pageNumFooter;
             ?>
             </div>
-            <p><?php if($len === 0) echo '没有商品哦'?></p>
         </div>
     </div>
 <!--
