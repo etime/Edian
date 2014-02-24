@@ -67,7 +67,12 @@ class Order extends Home {
             $data['orderState'] = $this->config->item('orderState');
             $data['storeId'] = $this->storeId;
         }
-        $this->help->showArr($data);
+
+        if ($this->isBoss) {
+            $data['storeList'] = $this->store->getStoreList($this->session->userdata('bossId'));
+        } else if ($this->isAdmin) {
+            $data['storeList'] = $this->store->getStoreList();
+        }
         $this->load->view("onTimeOrder", $data);
     }
 
@@ -117,12 +122,16 @@ class Order extends Home {
         if ($data['order']) {
             $data['order'] = $this->orderForm($data['order']);
         }
-//        if ($data['order']) {
-            $temp = $this->pagesplit->split($data['order'], $pageId, $this->pageSize);
-            $data['order'] = $temp['newData'];
-            $commonUrl = site_url('/bg/order/history');
-            $data['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount']);
-//        }
+        $temp = $this->pagesplit->split($data['order'], $pageId, $this->pageSize);
+        $data['order'] = $temp['newData'];
+        $commonUrl = site_url('/bg/order/history');
+        $data['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount']);
+
+        if ($this->isBoss) {
+            $data['storeList'] = $this->store->getStoreList($this->session->userdata('bossId'));
+        } else if ($this->isAdmin) {
+            $data['storeList'] = $this->store->getStoreList();
+        }
         $data['storeId'] =  $this->storeId;
         $this->load->view('histOrder2' , $data);
     }
