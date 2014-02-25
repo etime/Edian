@@ -13,6 +13,7 @@ class Home extends MY_Controller {
         parent::__construct();
         $this->load->model('art');
         $this->load->model('user');
+        $this->load->model('mitem');
         $this->load->library('session');
     }
 
@@ -70,7 +71,16 @@ class Home extends MY_Controller {
         $this->load->view('home', $data);
     }
 
+    /**
+     * 首页入口
+     * @author farmerjian<chengfeng1992@hotmail.com>
+     * @since 2014-02-25 13:23:24
+     */
     public function index() {
+        $data['itemList'] = $this->mitem->getItemInHome();
+        $data['storeList'] = $this->store->getStoreInHome();
+        $data['tag'] = $this->part;
+        $this->help->showArr($data);
         $this->load->view("home2");
     }
 

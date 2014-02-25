@@ -908,6 +908,26 @@ class Mitem extends Ci_Model {
         return false;
     }
 
+    /**
+     * 为网站首页提供附近外卖的五件商品
+     * @author farmerjian<chengfeng1992@hotmail.com>
+     * @since 2014-02-25 12:34:09
+     */
+    public function getItemInHome() {
+        $sql = "SELECT id, title, price, sellNum, mainThumbnail, belongsTo FROM item ORDER BY rating LIMIT 0, 5";
+        $ans = $this->db->query($sql);
+        if ($ans->num_rows == false) {
+            return false;
+        } else {
+            $ans = $ans->result_array();
+            for ($i = 0, $len = (int)count($ans); $i < $len; $i ++) {
+                $userId = $this->getUserByBelongsTo($ans[$i]['belongsTo']);
+                $ans[$i]['mainThumbnail'] = $this->fixImg($ans[$i]['mainThumbnail'], $userId, 'main');
+            }
+            return $ans;
+        }
+    }
+
 /**********************************************************************************************************************/
 /**********************************************************************************************************************/
 /**********************************************************************************************************************/
