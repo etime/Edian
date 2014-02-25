@@ -193,8 +193,7 @@ class set extends Home {
      * 当一个数值不符合规定的时候，就赋值位false，表示表示不再修改,和change的特殊用法有关系
      * @todo logo 还没有做，复用fj代码
      */
-    public function setGet()
-    {
+    public function setGet() {
         $data["name"]         = trim( $this->input->post("storeName"));
         $data["deliveryTime"] = trim( $this->input->post("businessTime") );
         $data["deliveryArea"] = trim( $this->input->post("distance"));
@@ -305,19 +304,19 @@ class set extends Home {
             }
             //优先选择店，在没有的情况下选择一个默认的店 ,1号
             if ($storeId === -1) {
-                $data["storeId"] = (int)trim($this->input->post("storeId"));
+                $data['storeId'] = (int)trim($this->input->post('storeId'));
             } else {
                 $data['storeId'] = (int)$storeId;
             }
-            if (! $data["storeId"]) {
-                $data["storeId"] = 1;
+            if (! $data['storeId']) {
+                $data['storeId'] = 1;
             }
         } else {
             //强制转换，如果发现为0，报错
-            $data["storeId"] = (int)$this->session->userdata("storeId");
+            $data['storeId'] = (int)$this->session->userdata('storeId');
         }
         //对提交的判断，数据的获取
-        if ($this->input->post("sub") === '提交') {
+        if ($this->input->post('sub') === '提交') {
             $inputData = $this->setGet();
             $more['dtuName'] = $this->input->post('dtuName');
             if ($data["type"] == 2) {
@@ -333,6 +332,7 @@ class set extends Home {
         if ($temp == false) {
             $temp = array();
         } else {
+            $temp['lestPrc'] = $temp['sendPrice'];
             for ($i = 0, $len = (int)count($temp['category']); $i < $len; $i ++) {
                 $name = $temp['category'][$i];
                 $temp['category'][$i] = array();
@@ -350,7 +350,7 @@ class set extends Home {
             $data['logo']  = base_url('image/' . $this->userId . '/mix/' . $data['logo']);
         }
         //$this->help->showArr($data);
-        $this->load->view("bgHomeSet",$data);
+        $this->load->view("bgHomeSet", $data);
     }
 }
 ?>
