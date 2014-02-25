@@ -8,10 +8,8 @@
             <!-- replace 中的是登录之后替换的东西-->
             <span class = "replace">
                 <a href = "#" id = "gotoLogin" class = "gotoLogin">登录</a>
-    <!--
                 |
-                <a href = "<?php echo site_url('/register/userRegister/') ?>">注册</a>
-    -->
+                <a href = "<?php echo site_url('/register/userRegister/') ?>" class = "register">注册</a>
             </span> |
             <a>帮助</a>
         </p>
@@ -27,8 +25,8 @@
     <div class = "wrap">
         <span class = "shut"> </span>
         <div class = "regd" id = "regd">
-            <span class = "focus" name = 'l'>登录</span>
-            <span name = "r">注册</span>
+            <span class = "focus" name = 'l' >登录</span>
+            <span name = "r" >注册</span>
         </div>
         <form action="<?php echo site_url('login/loginCheck') ?>" method="post" accept-charset="utf-8" class = "l">
             <p>

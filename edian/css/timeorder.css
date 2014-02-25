@@ -43,6 +43,9 @@ li{
     left:50px;
     display:none;
 }
+font{
+    cursor:pointer;
+}
 .clearfix:after{
     visibility:hidden;
     display:block;

@@ -136,3 +136,10 @@ input[name = 'ordNum']{
     overflow:hidden;
     text-overflow:ellipsis;
 }
+input[name = 'buyNum']{
+    width:50px;
+    border-radius:5px;
+}
+input[name = 'toCart']{
+    padding:2px 10px;
+}

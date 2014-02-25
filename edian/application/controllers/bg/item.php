@@ -187,7 +187,7 @@ class item extends Home {
         $data['dir'] = $this->part;
         $data['update'] = 1;
         $data['itemId'] = $itemId;
-        //$this->help->showArr($data);
+        $this->help->showArr($data);
         $this->load->view("mBgItemAdd" , $data);
     }
     public function set($state = -1,$itemId = -1)

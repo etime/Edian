@@ -413,16 +413,24 @@ class User extends CI_Model {
             $res = $res->result_array();
             $res = $res[0];
             $address = $this->decodeAddr($res['address']);
-            if(count($address) && count($address[0]) === 1){
+            $length = count($address);
+            if($length && count($address[0]) === 1){
                 $address[0][1] = $res['phone'];
                 $address[0][2] = $address[0][0];
                 $address[0][0] = $res['loginName'];
             }
-            if($addrSub === -1){
-                return $address;
+            //判断下单地址时候存在
+            if($length > $addrSub){
+                if($addrSub === -1){
+                    return $address;
+                }else {
+                    return $address[$addrSub];
+                }
             }else {
-                return $address[$addrSub];
+                $this->load->model("mwrong");
+                $this->mwrong->insert("userid= $userId 的用户使用了不存在的地址下单购买了，地址下表为$addrSub");
             }
+
         } else {
             return false;
         }

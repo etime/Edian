@@ -75,10 +75,10 @@ $now = $item[$i];
                 <?php
                 if($stateMark){
                     foreach ($stateMark  as $key => $val) {
-                        echo "<a href = '$siteUrl/bg/item/set/$key' " . $now['id'] . ">$val</a>";
+                        echo "<a href = '$siteUrl/bg/item/set/$key/" . $now['id'] . "' >$val</a>";
                     }
                 }
-                    echo '<a href = ' . $siteUrl .'/bg/item/update/' . $now['id'] . '>修改</a>';
+                echo '<a href = ' . $siteUrl .'/bg/item/update/' . $now['id'] . '>修改</a>';
                 ?>
             </td>
         </tr>

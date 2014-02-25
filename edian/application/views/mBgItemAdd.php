@@ -147,7 +147,9 @@
                                 <?php foreach($value as $liAtr):?>
                                     <tr>
                                     <td><input type = "text" name = "proVal" class = "liVal" placeholder = "红色XL等属性值" value="<?php  echo @$liAtr['font']?>"></td>
+            <!--
                                         <td><a class = "choseImg" href = "#">选择图片</a></td>
+            -->
                                         <td><a class = "uploadImg" href = "#">上传图片</a></td>
                                         <td><a class = "uploadImg" href = "#">删除</a></td>
                                         <td><img class = "chosedImg" src = "<?php echo @$liAtr['img'] ?>"/></td>

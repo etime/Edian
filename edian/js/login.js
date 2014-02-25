@@ -174,6 +174,11 @@ function login(callBack){
             });
         } else if(name === 'gotoLogin'){
             login.fadeIn();
+            show(false);
+            event.preventDefault();
+        } else if(name === 'register'){
+            login.fadeIn();
+            show(true);
             event.preventDefault();
         }
 
@@ -232,17 +237,31 @@ function login(callBack){
     $("#login .shut").click(function () {
         login.fadeOut();
     })
+
     var regd = $("#regd");
-    regd.delegate('span' , 'click' , function () {
+    /**
+     * 显示登录框中不同的区域
+     * @param {boolen} flag 当为true的时候显示注册，false的时候显示登录
+     */
+    function show(flag) {
         regd.find('.focus').removeClass('focus');
-        $(this).addClass('focus');
-        var name = $(this).attr('name');
-        if(name === 'r'){
+        if(flag){
+            regd.find("span[name = 'r']").addClass('focus');
             login.find('.l').css('display','none');
             login.find('.r').fadeIn();
-        }else {
+        } else {
+            regd.find("span[name = 'l']").addClass('focus');
             login.find('.r').css('display','none');
             login.find('.l').fadeIn();
+        }
+
+    }
+    regd.delegate('span' , 'click' , function () {
+        var name = $(this).attr('name');
+        if(name === 'r'){
+            show(true);
+        }else {
+            show(false);
         }
     })
 }

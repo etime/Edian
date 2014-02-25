@@ -88,7 +88,7 @@
                 <a href = "<?php echo $siteUrl .'/shop/index/' .$storeId ?>">指尖蛋糕店</a>
                 >>
                 <?php if($key) echo $key ;else echo "全部"?>
-                <span>共35件商品</span>
+                <span>共<?php $len = $item ? count($item) : 0; echo $len;?>件商品</span>
             </h5>
             <div class="snav">
                 价格区间

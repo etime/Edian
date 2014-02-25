@@ -317,7 +317,7 @@ function proAdd () {
     var pro = $("#pro"),ichose = $("#ichose"),vpar;
     //vpar 目前是指proVal的下一级别table
     var proBl = $(".proBl").clone();
-    var tr = "<tr ><td><input type = 'text' name = 'proVal' class = 'liVal' placeholder = '红色XL等属性值'></td><td><a class = 'choseImg' href = '#'>选择图片</a></td><td><a class = 'uploadImg' href = 'javascript:javascript'>上传图片</a></td><td><img class = 'chosedImg' /></td></tr>"
+    var tr = "<tr ><td><input type = 'text' name = 'proVal' class = 'liVal' placeholder = '红色XL等属性值'></td><td><a class = 'uploadImg' href = 'javascript:javascript'>上传图片</a></td><td><img class = 'chosedImg' /></td></tr>"
     $(".proK").change(function(){
         //复制第二个属性框
         $(".proBl").after(proBl);
@@ -486,11 +486,6 @@ function store() {
         // proKey提高到全局变量的级别
         $(".proBl").each(function(){
             var ans = [[],[]];
-            /*
-            var ans =  new Array(
-                new Array(),new  Array()
-            );
-            */
             var temp = $.trim($(this).find("input[name = 'proKey']").val()),temp;
             if(temp){
                 prokey[cntkey++] = temp;
@@ -509,7 +504,6 @@ function store() {
             }
             if((flag == 0)&&(ans[0].length)){
                 proans[flag] = ans;//保存到全局变量，以便提交
-                console.log(proans);
                 table = getTab(ans);//还是需要做一个单独的header
                 flag++;
             }else if((flag == 1)&&(ans[0].length)){
@@ -534,7 +528,6 @@ function store() {
             var temp = "<table ><tr><td><table><tr><th class = 'attrB'>"+prokey[0]+"</th><th class = 'intxt'>库存</th><th class = 'intxt'>价格</th></tr></table></td></tr></table>"+table;
             table = temp;
         }
-        console.log(prokey);
         var store = $("#store");
         store.empty();
         store.append(table);
