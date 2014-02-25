@@ -80,7 +80,11 @@ class Home extends MY_Controller {
         $data['itemList'] = $this->mitem->getItemInHome();
         $data['storeList'] = $this->store->getStoreInHome();
         $data['tag'] = $this->part;
-        $this->help->showArr($data);
+        $data['keyi'] = array();
+        foreach ($data['tag'] as $key => $val) {
+            $data['keyi'][$key] = $this->mitem->getItemInKeyi($key);
+        }
+//        $this->help->showArr($data);
         $this->load->view("home2");
     }
 

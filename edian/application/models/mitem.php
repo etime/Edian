@@ -910,11 +910,36 @@ class Mitem extends Ci_Model {
 
     /**
      * 为网站首页提供附近外卖的五件商品
+     * @return boolean | array
      * @author farmerjian<chengfeng1992@hotmail.com>
      * @since 2014-02-25 12:34:09
      */
     public function getItemInHome() {
         $sql = "SELECT id, title, price, sellNum, mainThumbnail, belongsTo FROM item ORDER BY rating LIMIT 0, 5";
+        $ans = $this->db->query($sql);
+        if ($ans->num_rows == false) {
+            return false;
+        } else {
+            $ans = $ans->result_array();
+            for ($i = 0, $len = (int)count($ans); $i < $len; $i ++) {
+                $userId = $this->getUserByBelongsTo($ans[$i]['belongsTo']);
+                $ans[$i]['mainThumbnail'] = $this->fixImg($ans[$i]['mainThumbnail'], $userId, 'main');
+            }
+            return $ans;
+        }
+    }
+
+    /**
+     * 为首页提供附近外卖中每个一级分类中排名前 5 的商品
+     * @param string $key
+     * @return boolean | array
+     * @author farmerjian<chengfeng1992@hotmail.com>
+     * @since 2014-02-25 18:59:46
+     */
+    public function getItemInKeyi($key) {
+        $key = $key . ';%';
+        $key = mysql_real_escape_string($key);
+        $sql = "SELECT id, title, price, sellNum, mainThumbnail, belongsTo FROM item WHERE category LIKE '$key' ORDER BY rating LIMIT 0, 5";
         $ans = $this->db->query($sql);
         if ($ans->num_rows == false) {
             return false;
