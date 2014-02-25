@@ -60,7 +60,9 @@ class Order extends Home {
 
         $data = Array();
         if ($this->isAdmin && $this->storeId == -1) {
-            $data['order'] = $this->morder->getAllOntime();
+            $data['order'] = $this->morder->getAllOntime($this->config->item('infFailed'));
+            $data['order'] = $this->orderForm($data['order']);
+            $data['orderState'] = $this->config->item('orderState');
         } else if ($this->storeId != -1) {
             $data['order'] = $this->morder->getOntime($this->storeId, $this->config->item('infFailed'));
             $data['order'] = $this->orderForm($data['order']);
@@ -136,7 +138,7 @@ class Order extends Home {
         }
         $data['storeId'] =  $this->storeId;
         $data['isadmin'] = $this->isAdmin;
-        //$this->help->showArr($data);
+//        $this->help->showArr($data);
         $this->load->view('histOrder2' , $data);
     }
 
@@ -164,18 +166,16 @@ class Order extends Home {
      *  @param  array   $data 包含了各种各样需要修缮的订单信息，
      *  @todo 需要检验各个同一时间的订单的state是否相同
      */
-    protected function orderForm($data)
-    {
+    protected function orderForm($data) {
         $cnt = 0;
         $res = Array();
-        for($i = 0, $len = $data ? count($data) : 0; $i < $len ;){
+        for ($i = 0, $len = $data != false ? count($data) : 0; $i < $len ;) {
             $buyer = $data[$i]['ordor'];
             $time = $data[$i]['time'];
             $order = Array();
             if(array_key_exists('addr' , $data[$i])){
                 $user = $this->user->getAplById($data[$i]['ordor'], $data[$i]['addr']);
                 $user['id'] = $data[$i]['ordor'];
-                //$res[$cnt]['order'] = $temp;
             }
             $res[$cnt]['item'] = Array();
             $res[$cnt]['state'] = $data[$i]['state'];

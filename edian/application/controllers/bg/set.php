@@ -258,6 +258,7 @@ class set extends Home {
      *      营业时间 ：deliverytime  拼接成的字符串,对应了两种情况，一个时间段，两个时间段
      *                          格式为9:0-19:0&21:0-23:0 和 9:0-19:0两种
      *      客服qq   ：serviceQQ      纯数字
+     *      最低起送价 ：lestPrc       小数
      *      客服电话 ：servicePhone   11位或者座机，这里应该允许座机的出现了吧
      *      商店logo ：logo          这个的限制再说吧
      *      商店列表 ：list          在禁用的字符中选一个作为拼接符号，传入的字符串
@@ -273,7 +274,7 @@ class set extends Home {
      * @param int   $storeId    选择的商店的id,添加这个接口，是为了方便其他的链接查看,目前在bg/userlist/index 使用
      */
     public function setAct($storeId = -1) {
-        //对用户权限进行检验
+        // 用户未登录
         if ($this->userId == -1) {
             $this->noLogin(site_url("bg/set/setAct"));
             return;
