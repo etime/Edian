@@ -20,7 +20,7 @@ $siteUrl = site_url();
 <?php
 if($type === 2){
     echo "<ul id = 'wrong' class = 'wrong'>".
-        "<a href = ".$siteUrl.('/wrong/showError')." target = 'content' ><li name = 'wrong'>错误意外处理</li></a>".
+        "<a href = ".$siteUrl.('/wrong/showError')." target = 'content' ><li name = 'error'>错误意外处理</li></a>".
         "<a href = ".$siteUrl.('/bg/userlist')." target='content'><li  name = 'shop'>商店管理</li></a>".
         "<a href = ".$siteUrl.('/bg/userlist/user')." target='content'><li  name = 'user'>用户管理</li></a>".
         "<a href = ".$siteUrl.('/bg/info/add')." target = 'content'><li  name = 'cast'>添加公告</li></a>".

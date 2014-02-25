@@ -11,6 +11,47 @@
             <li>活动</li>
         </ul>
     </div>
+    <ul style = "display:none">
+        <ul>
+            <span class = "one">零食饮料</span>
+            <li>
+                <ul>
+                    <span class = "two">素材</span>
+                    <li> dfa </li>
+                    <li> dfa </li>
+                    <li> dfa </li>
+                </ul>
+            </li>
+            <li>
+                <ul>
+                    <span class = "two">素材</span>
+                    <li> dfa </li>
+                    <li> dfa </li>
+                    <li> dfa </li>
+                </ul>
+            </li>
+        </ul>
+        <ul>
+            <li>
+                <ul>
+                    <span class = "two">素材</span>
+                    <li> dfa </li>
+                    <li> dfa </li>
+                    <li> dfa </li>
+                </ul>
+            </li>
+        </ul>
+        <ul>
+            <li>
+                <ul>
+                    <span class = "two">素材</span>
+                    <li> dfa </li>
+                    <li> dfa </li>
+                    <li> dfa </li>
+                </ul>
+            </li>
+        </ul>
+    </ul>
 <style type="text/css" media="all">
 body{
 margin:0;

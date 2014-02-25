@@ -5,4 +5,12 @@
 */
 $(document).ready(function () {
     login();
+    itemToggle();
 })
+function itemToggle() {
+    var lis = $("#itemLi");
+    lis.delegate("li" , 'click' , function (event) {
+        lis.find(".chose").removeClass('chose');
+        $(this).addClass("chose");
+    })
+}

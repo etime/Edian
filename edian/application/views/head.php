@@ -9,7 +9,10 @@
             <span class = "replace">
                 <a href = "#" id = "gotoLogin" class = "gotoLogin">登录</a>
                 |
+                <!--
                 <a href = "<?php echo site_url('/register/userRegister/') ?>" class = "register">注册</a>
+                -->
+                <a href = "#" class = "register">注册</a>
             </span> |
             <a>帮助</a>
         </p>
