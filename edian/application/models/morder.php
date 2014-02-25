@@ -305,13 +305,42 @@ class Morder extends Ci_Model {
     /**
      * @return boolean | array
      */
-    public function getAllOntime() {
-        $sql = "select id,addr,info,item_id,time,ordor,state from ord where ( state = 1 or state = 2 )";
+    public function getAllOntime($failed) {
+        $now = time();
+        $now -= 86400;
+        $sql = "select id,addr,info,item_id,time,ordor,state from ord where state &&  UNIX_TIMESTAMP(time) > " . $now . ' && state < ' . $failed . ' || state = ' . $failed . ' order by time';
         $res = $this->db->query($sql);
         if ($res->num_rows != false) {
             $len = $res->num_rows;
             $res = $res->result_array();
-            for ($i = 0;$i < $len; $i ++) {
+            for ($i = 0; $i < $len; $i ++) {
+                $res[$i]["info"] = $this->_decodeInfo($res[$i]["info"]);
+            }
+            return $res;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * 需要即时处理的订单,状态为未打印,打印失败的和未发货
+     * 搜索店家刚刚得到的下单
+     * @param int $storeId      商家的id，其实是店铺的id
+     * @param int $failed       错误状态的编号
+     */
+    public function getOntime($storeId , $failed){
+        $storeId = (int)$storeId;
+        if ($storeId == false) {
+            return false;
+        }
+        $now = time();
+        $now -= 86400;
+        $sql = "select id,addr,info,item_id,time,ordor,state from ord where state &&  seller = $storeId &&  UNIX_TIMESTAMP(time) > " . $now . ' && state < ' . $failed . ' || state = ' . $failed . ' order by time';
+        $res = $this->db->query($sql);
+        if ($res->num_rows != false) {
+            $len = $res->num_rows;
+            $res = $res->result_array();
+            for($i = 0;$i < $len; $i++){
                 $res[$i]["info"] = $this->_decodeInfo($res[$i]["info"]);
             }
             return $res;
@@ -453,28 +482,6 @@ class Morder extends Ci_Model {
         }
         return false;
     }
-    /**
-     * 需要即时处理的订单,状态为未打印,打印失败的和未发货
-     * 搜索店家刚刚得到的下单
-     * @param int $storeId      商家的id，其实是店铺的id
-     * @param int $failed       错误状态的编号
-     */
-    public function getOntime($storeId , $failed){
-        $storeId = (int)$storeId;
-        if(!$storeId)return false;
-        $now = time();
-        $now -= 86400;
-        $sql = "select id,addr,info,item_id,time,ordor,state from ord where state &&  seller = $storeId &&  UNIX_TIMESTAMP(time) > " . $now . ' && state < ' . $failed . ' || state = ' . $failed . ' order by time';
-        $res = $this->db->query($sql);
-        if($res->num_rows){
-            $len = $res->num_rows;
-            $res = $res->result_array();
-            for($i = 0;$i < $len; $i++){
-                $res[$i]["info"] = $this->_decodeInfo($res[$i]["info"]);
-            }
-            return $res;
-        }
-        return false;
-    }
+
 }
 ?>

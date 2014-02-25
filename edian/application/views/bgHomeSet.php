@@ -61,7 +61,7 @@
         </li>
         <li>
             <span class = "item">最低起送价:</span>
-            <input type="text" name="lestPrc" id="lestPrc"/>
+            <input type="text" name="lestPrc" id="lestPrc" value="<?php echo $lestPrc?>"/>
         </li>
         <li>
             <span class="item">店铺简介</span>

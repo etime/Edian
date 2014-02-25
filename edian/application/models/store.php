@@ -102,21 +102,21 @@ class Store extends CI_Model {
      * @author  unasm
      * @since   2013-12-13 20:38:16
      */
-    public function update($arr , $more ,$storeId) {
+    public function update($arr, $more, $storeId) {
         $sql = 'update store set ';
         $cnt = false;
-        $arr["more"] = $this->formMore($more,$storeId);
+        $arr['more'] = $this->formMore($more, $storeId);
         foreach ($arr as $key => $val) {
-            if($val){
+            if ($val != false) {
                 $val = mysql_real_escape_string($val);
-                if($cnt){
-                    $cnt .= ', ' .$key . '=' . '\''. $val . '\'';
-                }else{
+                if ($cnt != false) {
+                    $cnt .= ', ' . $key . '=' . '\''. $val . '\'';
+                } else {
                     $cnt = $key . '=' .'\'' . $val . '\'';
                 }
             }
         }
-        $sql .= $cnt . ' where id = ' .$storeId;
+        $sql .= $cnt . ' where id = ' . $storeId;
         return $this->db->query($sql);
     }
 
@@ -208,7 +208,7 @@ class Store extends CI_Model {
         if ($storeId === 0) {
             return false;
         }
-        $sql = "SELECT briefInfo, name, logo, serviceQQ, servicePhone, address, longitude, latitude, category, more, deliveryTime, deliveryArea FROM store WHERE id = $storeId";
+        $sql = "SELECT briefInfo, name, logo, sendPrice, serviceQQ, servicePhone, address, longitude, latitude, category, more, deliveryTime, deliveryArea FROM store WHERE id = $storeId";
         $res = $this->db->query($sql);
         if ($res->num_rows === 0) {
             $sql = "在model/store/getSetInfo/中num_rows 位0，有人对不应该存在的storeId进行了索引,storeId = ".$storeId;
@@ -567,5 +567,36 @@ class Store extends CI_Model {
          }
          return false;
      }
+
+    /**
+     * 提供给首页附近商店的 5 个商店
+     * @author farmerjian<chengfeng1992@hotmail.com>
+     * @since 2014-02-25 13:43:34
+     */
+    public function getStoreInHome() {
+        $sql = "SELECT id, name, logo, credit, duration FROM store ORDER BY credit LIMIT 0, 5";
+        $ans = $this->db->query($sql);
+        if ($ans->num_rows == false) {
+            return false;
+        } else {
+            $ans = $ans->result_array();
+            for ($i = 0, $len = (int)count($ans); $i < $len; $i ++) {
+                $storeId = $ans[$i]['id'];
+                $sql = "SELECT ownerId FROM store WHERE id = $storeId";
+                $bossId = $this->db->query($sql);
+                $bossId = $bossId->result_array();
+                $bossId = $bossId[0]['ownerId'];
+
+                $this->load->model('boss');
+                $loginName = $this->boss->getLoginNameByBossId($bossId);
+
+                $this->load->model('user');
+                $userId = $this->user->getUserIdByLoginName($loginName);
+
+                $ans[$i]['logo'] = base_url('image/' . $userId . '/mix/' . $ans[$i]['logo']);
+            }
+            return $ans;
+        }
+    }
 }
 ?>

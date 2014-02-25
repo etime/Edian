@@ -193,8 +193,7 @@ class set extends Home {
      * 当一个数值不符合规定的时候，就赋值位false，表示表示不再修改,和change的特殊用法有关系
      * @todo logo 还没有做，复用fj代码
      */
-    public function setGet()
-    {
+    public function setGet() {
         $data["name"]         = trim( $this->input->post("storeName"));
         $data["deliveryTime"] = trim( $this->input->post("businessTime") );
         $data["deliveryArea"] = trim( $this->input->post("distance"));
@@ -258,6 +257,7 @@ class set extends Home {
      *      营业时间 ：deliverytime  拼接成的字符串,对应了两种情况，一个时间段，两个时间段
      *                          格式为9:0-19:0&21:0-23:0 和 9:0-19:0两种
      *      客服qq   ：serviceQQ      纯数字
+     *      最低起送价 ：lestPrc       小数
      *      客服电话 ：servicePhone   11位或者座机，这里应该允许座机的出现了吧
      *      商店logo ：logo          这个的限制再说吧
      *      商店列表 ：list          在禁用的字符中选一个作为拼接符号，传入的字符串
@@ -273,7 +273,7 @@ class set extends Home {
      * @param int   $storeId    选择的商店的id,添加这个接口，是为了方便其他的链接查看,目前在bg/userlist/index 使用
      */
     public function setAct($storeId = -1) {
-        //对用户权限进行检验
+        // 用户未登录
         if ($this->userId == -1) {
             $this->noLogin(site_url("bg/set/setAct"));
             return;
@@ -304,19 +304,19 @@ class set extends Home {
             }
             //优先选择店，在没有的情况下选择一个默认的店 ,1号
             if ($storeId === -1) {
-                $data["storeId"] = (int)trim($this->input->post("storeId"));
+                $data['storeId'] = (int)trim($this->input->post('storeId'));
             } else {
                 $data['storeId'] = (int)$storeId;
             }
-            if (! $data["storeId"]) {
-                $data["storeId"] = 1;
+            if (! $data['storeId']) {
+                $data['storeId'] = 1;
             }
         } else {
             //强制转换，如果发现为0，报错
-            $data["storeId"] = (int)$this->session->userdata("storeId");
+            $data['storeId'] = (int)$this->session->userdata('storeId');
         }
         //对提交的判断，数据的获取
-        if ($this->input->post("sub") === '提交') {
+        if ($this->input->post('sub') === '提交') {
             $inputData = $this->setGet();
             $more['dtuName'] = $this->input->post('dtuName');
             if ($data["type"] == 2) {
@@ -332,6 +332,7 @@ class set extends Home {
         if ($temp == false) {
             $temp = array();
         } else {
+            $temp['lestPrc'] = $temp['sendPrice'];
             for ($i = 0, $len = (int)count($temp['category']); $i < $len; $i ++) {
                 $name = $temp['category'][$i];
                 $temp['category'][$i] = array();
@@ -349,7 +350,7 @@ class set extends Home {
             $data['logo']  = base_url('image/' . $this->userId . '/mix/' . $data['logo']);
         }
         //$this->help->showArr($data);
-        $this->load->view("bgHomeSet",$data);
+        $this->load->view("bgHomeSet", $data);
     }
 }
 ?>
