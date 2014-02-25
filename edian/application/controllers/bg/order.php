@@ -74,7 +74,7 @@ class Order extends Home {
         }
         $data['storeId'] = $this->storeId;
         $data['isadmin'] = $this->isAdmin;
-        $this->help->showArr($data);
+        //$this->help->showArr($data);
         $this->load->view("onTimeOrder", $data);
     }
 
