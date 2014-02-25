@@ -8,9 +8,13 @@ $(document).ready(function () {
     itemToggle();
 })
 function itemToggle() {
-    var lis = $("#itemLi");
+    var lis = $("#itemLi") ,main = $("#main");
     lis.delegate("li" , 'click' , function (event) {
-        lis.find(".chose").removeClass('chose');
+        var name = lis.find(".chose").attr("name");
+        main.find('.' + name).css("display","none");
+        lis.find(".chose").removeClass("chose");
         $(this).addClass("chose");
+        name = $(this).attr("name");
+        main.find('.' + name).fadeIn();
     })
 }

@@ -28,20 +28,65 @@
         </ul>
     </div>
     <div id="main" class = "width">
-        <div>
+        <div >
             <div class = "bar">
                 <span class = "title">热卖商品</span>
                 <ul id = "itemLi">
-                    <li class = "chose">中式快餐</li>
-                    <li>西式快餐</li>
-                    <li>特色小吃</li>
-                    <li>粉面</li>
-                    <li>甜食</li>
-                    <li>小炒</li>
-                    <a href = "<?php echo site_url()?>"><li>查看更多</li></a>
+                    <li class = "chose" name = "0">中式快餐</li>
+                    <li name = "1">西式快餐</li>
+                    <li name = "2">特色小吃</li>
+                    <li name = "3">粉面</li>
+                    <li name = "4">甜食</li>
+                    <li name = "5">小炒</li>
                 </ul>
             </div>
-            <ul class = "item clearfix">
+            <ul class = "item clearfix 0">
+                <li>
+                    <img src = "http://cache.wowsai.com/data/files/groupidea/201401111807143824.jpg">
+                    <p class = "nowrap">
+                        <a href = "<?php echo $siteUrl . '/item/index/' . 56 ?>">
+                            茶菇老鸦汤，鲜美营养，上好调料，来自黑龙江的黑木耳
+                        </a>
+                    </p>
+                    <p >
+                        <strong>￥4.00</strong>
+                        <span class = "det">已售1200</span>
+                    </p>
+                </li>
+                <li>
+                    <img src = "http://uestc.0xiao.com/Public/upload/shop/commodity/menu/image/uestc/5145a99e3ab05.jpg"  />
+                    <p class = "nowrap">茶菇老鸦汤，鲜美营养，上好调料，来自黑龙江的黑木耳</p>
+                    <p >
+                        <strong>￥4.00</strong>
+                        <span class = "det">已售1200</span>
+                    </p>
+                </li>
+                <li>
+                    <img src = "http://gi1.md.alicdn.com/bao/uploaded/i1/12128021278700757/T1TYN5XwJaXXXXXXXX_!!0-item_pic.jpg_460x460q90.jpg">
+                    <p class = "nowrap">茶菇老鸦汤，鲜美营养，上好调料，来自黑龙江的黑木耳</p>
+                    <p >
+                        <strong>￥4.00</strong>
+                        <span class = "det">已售1200</span>
+                    </p>
+                </li>
+                <li>
+                    <img src = "http://uestc.0xiao.com/Public/upload/shop/commodity/menu/image/uestc/52a293a5430cd.jpg" />
+                    <p class = "nowrap">茶菇老鸦汤，鲜美营养，上好调料，来自黑龙江的黑木耳</p>
+                    <p >
+                        <strong>￥4.00</strong>
+                        <span class = "det">已售1200</span>
+                    </p>
+                </li>
+                <li>
+                    <img src = "http://uestc.0xiao.com/Public/upload/shop/commodity/menu/image/uestc/5145a60e708b3.jpg">
+                    <p class = "nowrap">茶菇老鸦汤，鲜美营养，上好调料，来自黑龙江的黑木耳</p>
+                    <p >
+                        <strong>￥4.00</strong>
+                        <span class = "det">已售1200</span>
+                    </p>
+                </li>
+            </ul>
+            <ul class = "item clearfix 1" style = 'display:none'>
                 <li>
                     <img src = "http://cache.wowsai.com/data/files/groupidea/201401111807143824.jpg">
                     <p class = "nowrap">
@@ -140,7 +185,7 @@
             <div class = "bar">
                 <span class = "title">身边活动</span>
                 <ul>
-                    <li class = "chose">团购</li>
+                    <li class = "chose" >团购</li>
                     <li>促销</li>
                     <li>清仓</li>
                     <li>热卖</li>
