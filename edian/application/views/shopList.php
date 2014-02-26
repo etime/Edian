@@ -54,21 +54,21 @@
                     <h4>爱就思床垫</h4>
                     <p>
                         <span class="left">
-                            <span class = "item">店铺评分</span>
+                            <span class = "item">店铺评分:</span>
                             <span class="cont">4.7</span>
                         </span>
                         <span class="right">
-                            <span class = "item">最低起送价</span>
+                            <span class = "item">最低起送价:</span>
                             <span class="cont">19元</span>
                         </span>
                     </p>
                     <p>
                         <span class="left">
-                            <span class = "item">距离</span>
-                            <span class="cont">500米</span>
+                            <span class = "item">销量:</span>
+                            <span class="cont">500</span>
                         </span>
                         <span class="right">
-                            <span class = "item">送货速度</span>
+                            <span class = "item">送货速度:</span>
                             <span class="cont">41分钟</span>
                         </span>
                     </p>
@@ -85,21 +85,21 @@
                     <h4>江湖烤鱼</h4>
                     <p>
                         <span class="left">
-                            <span class = "item">店铺评分</span>
+                            <span class = "item">店铺评分:</span>
                             <span class="cont">4.7</span>
                         </span>
                         <span class="right">
-                            <span class = "item">最低起送价</span>
+                            <span class = "item">最低起送价:</span>
                             <span class="cont">19元</span>
                         </span>
                     </p>
                     <p>
                         <span class="left">
-                            <span class = "item">距离</span>
-                            <span class="cont">500米</span>
+                            <span class = "item">销量:</span>
+                            <span class="cont">500</span>
                         </span>
                         <span class="right">
-                            <span class = "item">送货速度</span>
+                            <span class = "item">平均送货速度:</span>
                             <span class="cont">41分钟</span>
                         </span>
                     </p>

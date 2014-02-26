@@ -61,23 +61,42 @@
                     <li class="seller">dianpu mingz+</li>
                     <li class="orderId"><?php echo  $seller .'_' . strtotime($time) ?></li>
                     <li class="time"><?php  echo $time?></li>
-                    <li class="comment"> ping lun  cic+gouma+</li>
+                    <li class="comment">
+                        <input type="button" name="toreply"  class = "btn button glow button-flat" value="huifu bencipinglun" />
+                        <div class="reply" id = "reply" style = "display:none">
+                            <p class = "clearfix">
+                                <span class="item">送货速度 :</span>
+                                <span class = "star sec"></span>
+                            </p>
+                            <p class = "clearfix">
+                                <span class="item">服务态度 :</span>
+                                <span class = "star sec"></span>
+                            </p>
+                            <div class = "clearfix">
+                                <span class="item">评价 :</span>
+                                <textarea name="content" class = "sec"></textarea>
+                            </div>
+                        </div>
+                    </li>
                 </ul>
                 <table border="none" class = "det">
                     <tr class = "tr">
                         <td class="state">yingjia </td>
                         <td class="cnt">$20.21 </td>
-                        <td class = "good">
+                        <td class = "li">
                             <table border="none">
                             <?php while(($order[$i]['time'] === $time )&& ($order[$i]['seller'] === $seller )):?>
                                 <tr>
                                     <td> <img src="" alt="store Img" /></td>
-                                    <td>
+                                    <td class = "good">
                                          <p> sheng fan chuli tuan tuan zhang</p>
                                         <p> note </p>
                                     </td>
-                                    <td class="orderNum">123</td>
-                                    <td class="sp">dan ping lun</td>
+                                    <td class="num">123</td>
+                                    <td class="price">dan ping lun</td>
+                                    <td class = "oper">
+                                        <input type="button" name="signal"  class = "btn button glow button-flat" value="shang pin pinglun" />
+                                    </td>
                                 </tr>
                             <?php
                                 $i++;
@@ -85,26 +104,23 @@
                             <?php  endwhile?>
                             </table>
                         </td>
-                       <td class="num">sdfa sadfas sdf</td>
-                       <td class="price">sdfa sadfas sdf</td>
-                        <td class="oper">dasd sdf as</td>
                     </tr>
                 </table>
             </div>
             <?php endfor?>
         </div>
     </div>
-    <div class="reply" id = "reply">
-        <p>
-            <span class="item">songhuo sudu :</span>
+    <div class="reply" id = "reply" style = "display:none">
+        <p class = "clearfix">
+            <span class="item">送货速度 :</span>
             <span class = "star sec"></span>
         </p>
-        <p>
-            <span class="item">songhuo sudu :</span>
+        <p class = "clearfix">
+            <span class="item">服务态度 :</span>
             <span class = "star sec"></span>
         </p>
-        <div>
-            <span class="item"></span>
+        <div class = "clearfix">
+            <span class="item">评价 :</span>
             <textarea name="content" class = "sec"></textarea>
         </div>
     </div>
