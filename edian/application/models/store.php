@@ -574,7 +574,37 @@ class Store extends CI_Model {
      * @since 2014-02-25 13:43:34
      */
     public function getStoreInHome() {
-        $sql = "SELECT id, name, logo, credit, duration FROM store ORDER BY credit LIMIT 0, 5";
+        $sql = "SELECT id, name, logo, credit, duration FROM store WHERE state = 1 ORDER BY credit LIMIT 0, 5";
+        $ans = $this->db->query($sql);
+        if ($ans->num_rows == false) {
+            return false;
+        } else {
+            $ans = $ans->result_array();
+            for ($i = 0, $len = (int)count($ans); $i < $len; $i ++) {
+                $storeId = $ans[$i]['id'];
+                $sql = "SELECT ownerId FROM store WHERE id = $storeId";
+                $bossId = $this->db->query($sql);
+                $bossId = $bossId->result_array();
+                $bossId = $bossId[0]['ownerId'];
+
+                $this->load->model('boss');
+                $loginName = $this->boss->getLoginNameByBossId($bossId);
+
+                $this->load->model('user');
+                $userId = $this->user->getUserIdByLoginName($loginName);
+
+                $ans[$i]['logo'] = base_url('image/' . $userId . '/mix/' . $ans[$i]['logo']);
+            }
+            return $ans;
+        }
+    }
+
+    /**
+     * provide data for /shop/queue
+     * @return boolean | array
+     */
+    public function getShopList() {
+        $sql = "SELECT id, name, logo, credit, sendPrice, duration FROM store WHERE state = 1 ORDER BY credit LIMIT 0, 8";
         $ans = $this->db->query($sql);
         if ($ans->num_rows == false) {
             return false;
