@@ -43,10 +43,10 @@ class Order extends My_Controller{
      * @param array $order 购物车中的商品
      * @return array  整理后的购物车
      */
-    private function _dealCart($order) {
+    protected function _dealCart($order) {
         // 订单中无信息
         if ($order === false) {
-            return;
+            return false;
         }
         $seller = array();
         for ($i = 0, $len = count($order); $i < $len; $i++) {

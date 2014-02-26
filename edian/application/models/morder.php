@@ -315,12 +315,15 @@ class Morder extends Ci_Model {
         if ($userId == 0) {
             return false;
         }
-        $sql = "SELECT id, addr, info, seller, item_id, time, state FROM ord WHERE ordor = $userId && state <> 0";
+        $sql = "SELECT id, info, seller, item_id, time, state FROM ord WHERE ordor = $userId && state <> 0";
         $res = $this->db->query($sql);
         if ($res->num_rows == 0) {
             return false;
         } else {
             $res = $res->result_array();
+            for ($i = 0, $len = (int)$res; $i < $len; $i ++) {
+                $res[$i]['info'] = $this->_decodeInfo($res[$i]['info']);
+            }
             return $res;
         }
     }
