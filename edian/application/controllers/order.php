@@ -285,8 +285,13 @@ class Order extends My_Controller{
         }
     }
 
+    /**
+     * 处理上传的地址信息,通过ajax提交
+     * @param post      phone   手机号码
+     * @param string    addr    地址号码
+     * @param string    geter   收件人的名字
+     */
     public function addr() {
-        //处理上传的地址信息,通过ajax提交
         $res['flag'] = 0;
         if ($this->userId == -1) {
             $res['atten'] = '请首先登录';
@@ -360,10 +365,53 @@ class Order extends My_Controller{
             return false;
         }
         //保存打印者,下单的人信息
-        $ordInfo = $this->getOrderInfo($data["orderId"], $data["buyNum"], $data["more"]);
+
+        echo "下单完成";
+    }
+
+
+/**********************************************************************************************************************/
+/**********************************************************************************************************************/
+/**********************************************************************************************************************/
+
+    /**
+     *  向打印机发送打印请求
+     *  @param  post/int    storeId     店铺的id
+     *  @param  post/int    buyerId     买家的id
+     *  @param  post/int    time        时间戳，代表了店铺的时间
+     */
+    public function rePrint() {
+        //必须通过ajax访问
+        if (! (isset($_SERVER["HTTP_X_REQUESTED_WITH"]) && strtolower($_SERVER["HTTP_X_REQUESTED_WITH"]) == 'xmlhttprequest')) {
+            show_404();
+            return;
+        }
+        $storeId = (int)trim($this->input->post('storeId'));
+        $buyerId = (int)trim($this->input->post('buyerId'));
+        $time = (int)trim($this->input->post('time'));
+        $data = $this->morder->getOrderByTime($time , $storeId , $buyerId);
+        $order = array();
+        $cnt = 0;
+        foreach ($data as $order) {
+            $order[$cnt++] = $order['id'];
+        }
+        $this->printDataForm($order['addr'] ,$order  , false , false , $buyerId);
+    }
+    /**
+     * 具体打印 , 根据提供信息，组织下单信息
+     * @param   int     addr        地址的下标
+     * @param   array   $orderId    订单的编号
+     * @param   array   $buyNums    购买的数量
+     * @param   array   $more       备注信息的集合
+     * @param   int     userId      下单者的id
+     */
+    public function printDataForm($addr  , $orderId , $buyNums , $more , $userId)
+    {
+        $ordInfo = $this->getOrderInfo($orderId, $buyNums, $more);
         $quoto = "e点工作室竭诚为您服务";//口号
         $time = date("Y-m-d H:i:s");
-        $user = $this->user->getAplById($this->userId, $data['addr']);
+        //$user = $this->user->getAplById($this->userId, $data['addr']);
+        $user = $this->user->getAplById($userId , $addr );
         $idlist = Array();//保存打印处理商品的菜单id
         $this->load->model('store');
         for ($i = 0, $cnt = count($ordInfo); $i < $cnt; ) {
@@ -394,7 +442,7 @@ class Order extends My_Controller{
                 if ($flag == "pr") {                        //打印成功
                     $printed = 2; //打印完毕
                     for ($k = 0; $k < $cntPnt; $k ++) {
-                        $this->morder->setOrder($data['addr'], $ordInfo[$idlist[$k]]['ordId'], $ordInfo[$idlist[$k]], $printed);
+                        $this->morder->setOrder($addr, $ordInfo[$idlist[$k]]['ordId'], $ordInfo[$idlist[$k]], $printed);
                     }
                     continue;
                 }
@@ -405,34 +453,17 @@ class Order extends My_Controller{
                 if ($flag == "sms") {                              //成功发送短信
                     $smsed = 3; //短信发送完毕
                     for ($k = 0; $k < $cntPnt; $k ++) {
-                        $this->morder->setOrder($data['addr'], $ordInfo[$idlist[$k]]['ordId'], $ordInfo[$idlist[$k]], $smsed);
+                        $this->morder->setOrder($addr , $ordInfo[$idlist[$k]]['ordId'], $ordInfo[$idlist[$k]], $smsed);
                     }
                 }
                 continue;
             }
             $failed = 9;//其他的通知方式都失败
             for ($k = 0; $k < $cntPnt; $k ++) {
-                $this->morder->setOrder($data['addr'], $ordInfo[$idlist[$k]]['ordId'], $ordInfo[$idlist[$k]], $failed);
+                $this->morder->setOrder($addr , $ordInfo[$idlist[$k]]['ordId'], $ordInfo[$idlist[$k]], $failed);
             }
         }
-        echo "下单完成";
     }
-
-    public function rePrint() {
-        if (! (isset($_SERVER["HTTP_X_REQUESTED_WITH"]) && strtolower($_SERVER["HTTP_X_REQUESTED_WITH"]) == 'xmlhttprequest')) {
-            show_404();
-            return;
-        }
-        $storeId = (int)trim($this->input->post('storeId'));
-        $buyerId = (int)trim($this->input->post('buyerId'));
-        $time = (int)trim($this->input->post('time'));
-        $time = date("Y-m-d H:i:s", $time);
-
-    }
-/**********************************************************************************************************************/
-/**********************************************************************************************************************/
-/**********************************************************************************************************************/
-
 
     private function formOrdor($addrNum, $userId) {
         $res = Array();
@@ -664,8 +695,8 @@ class Order extends My_Controller{
     /**
      * 通过清单id获得清单的信息
      * @param array $orderId 清单的id
-     * @param array $buyNums 购买的数量
-     * @param array $more 备注信息
+     * @param array/boolean $buyNums 购买的数量
+     * @param array/boolean  $more 备注信息
      * @retrun array 包含清单详细信息的数组
      */
     protected function getOrderInfo($orderId,$buyNums,$more)
@@ -676,14 +707,22 @@ class Order extends My_Controller{
             $id = $orderId[$i];//将所有的进行打印
             $ordInfo[$cnt]= $this->morder->getChange($id);
             if($ordInfo[$cnt]){
-                $temp = explode("&",$ordInfo[$cnt]["info"]);
                 $seller[$cnt] = $ordInfo[$cnt]["seller"];
-                //这个顺序要进行测试
+                if($buyNums)
                 $ordInfo[$cnt]["buyNum"] = $buyNums[$i];
-                $ordInfo[$cnt]["more"]   = $more[$i];
-                $ordInfo[$cnt]["price"]  = $temp[2];
-                $ordInfo[$cnt]["info"]   = $temp[1];
-                $ordInfo[$cnt]["ordId"]  = $id;
+                $ordInfo[$cnt]['more']   = $more[$i];
+                /*
+                    $ordInfo[$cnt][""]  = $ordInfo[$cnt]['info']['price'];
+                    $ordInfo[$cnt]["ordId"]  = $id;
+                */
+                /*
+                    $temp = explode("&",$ordInfo[$cnt]["info"]);
+                    //这个顺序要进行测试
+                    $ordInfo[$cnt]["buyNum"] = $buyNums[$i];
+                    $ordInfo[$cnt]["more"]   = $more[$i];
+                    $ordInfo[$cnt]["price"]  = $temp[2];
+                    $ordInfo[$cnt]["info"]   = $temp[1];
+                */
                 $cnt++;
             }else{
                 $temp["text"] = "在order.php/".__LINE__."行没有检测到需要修改订单状态的订单，请检查数据ordId = ".$id;

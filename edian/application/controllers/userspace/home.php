@@ -19,11 +19,12 @@ class Home extends MY_Controller {
             $this->noLogin(site_url('userspace/home/myOrder'));
             return;
         }
-        $order = $this->morder->getMyOrder($userId);
-        if ($order == false) {
-            $order = array();
+        $data['order'] = $this->morder->getMyOrder($userId);
+        if ($data['order'] == false) {
+            $data['order'] = array();
         }
-        $this->help->showArr($order);
+        //$this->help->showArr($data);
+        $this->load->view("uMyOrder" , $data);
     }
 }
 ?>

@@ -1,0 +1,122 @@
+/**
+ * @name        ../../css/myorder.css
+ * @author      unasm < 1264310280@qq.com >
+ * @since       2014-02-26 13:27:33
+*/
+li{
+    list-style:none;
+}
+ul{
+    padding:0;
+    margin:0;
+}
+.width{
+    margin:0px auto;
+    width:1200px;
+}
+.clearfix:after{
+    visibility:hidden;
+    display:block;
+    content:"";
+    height:0px;
+    clear:both;
+}
+.dir{
+    width:190px;
+    box-shadow:0 1px 3px #333333;
+    float:left;
+}
+.dir li{
+    text-indent:30px;
+    padding:6px 0;
+}
+.dir li:hover{
+    box-shadow:0 0 6px #999 inset ;
+    border-radius:2px;
+}
+.title{
+    background-color:#e7e7e7;
+    width:100%;
+    padding:10px 0;
+    margin:0;
+    text-indent:10px;
+}
+.cart{
+    width:980px;
+    float:left;
+    margin-left:20px;
+    box-shadow: 0 1px 3px #333333;
+    border-radius:3px;
+}
+.header li{
+    float:left;
+    text-align:center;
+    padding:5px 0;
+    display:inline-block;
+}
+.state{
+    width:108px;
+   text-align:center;
+}
+.cnt{
+    text-align:center;
+    width:90px;
+}
+.good{
+    width:414px;
+}
+.num{
+    text-align:center;
+    width:117px;
+}
+.price{
+    width:108px;
+    text-align:center;
+}
+.oper{
+    width:120px;
+    text-align:center;
+}
+.header{
+    padding:4px 0;
+}
+.det > li{
+    float:left;
+}
+.user{
+    background-color:#cfe9f5;
+    line-height:24px;
+}
+.user li{
+    float:left;
+    margin-left:20px;
+}
+table{
+    border-spacing:0;
+    border:none;
+}
+.good  table td{
+    border:none;
+    border-bottom:1px solid blue;
+}
+.tr > td{
+    border:none;
+    border-right:1px solid gray;
+}
+.tr > td:last-child{
+    border:none;
+}
+.good  table{
+    border:none;
+    width:100%;
+}
+.good tr:last-child td{
+    border:none;
+}
+.reply{
+    width;500px;
+    height:500px;
+    position:absolute;
+    background-color:white;
+    box-shadow:0 1px  3px #333333;
+}

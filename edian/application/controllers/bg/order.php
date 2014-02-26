@@ -239,5 +239,6 @@ class Order extends Home {
         $this->load->view('jump2' , $data);
         //Header('Location: ' . site_url('bg/order/' . $goto));
     }
+
 }
 ?>

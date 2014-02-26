@@ -32,153 +32,84 @@
             <div class = "bar">
                 <span class = "title">热卖商品</span>
                 <ul id = "itemLi">
-                    <li class = "chose" name = "0">中式快餐</li>
-                    <li name = "1">西式快餐</li>
-                    <li name = "2">特色小吃</li>
-                    <li name = "3">粉面</li>
-                    <li name = "4">甜食</li>
-                    <li name = "5">小炒</li>
+                    <li class = "chose" name = "0">综合</li>
+                    <?php
+                        $cnt = 1;
+                    ?>
+                    <?php foreach($keyi as $idx => $val): ?>
+                        <li name = "<?php  echo $cnt++ ?>"> <?php echo $idx ?></li>
+                    <?php endforeach?>
                 </ul>
             </div>
-            <ul class = "item clearfix 0">
+            <ul class = "item clearfix 0" >
+                <?php foreach ($itemList as $value) :?>
                 <li>
-                    <img src = "http://cache.wowsai.com/data/files/groupidea/201401111807143824.jpg">
+                    <a href = "<?php echo $siteUrl . '/item/index/' . $value['id']?>">
+                        <img src = "<?php  echo $value['mainThumbnail']?>">
+                    </a>
                     <p class = "nowrap">
-                        <a href = "<?php echo $siteUrl . '/item/index/' . 56 ?>">
-                            茶菇老鸦汤，鲜美营养，上好调料，来自黑龙江的黑木耳
+                        <a href = "<?php echo $siteUrl . '/item/index/' . $value['id']?>">
+                        <?php
+                            echo $value['title'];
+                        ?>
                         </a>
                     </p>
                     <p >
-                        <strong>￥4.00</strong>
-                        <span class = "det">已售1200</span>
+                        <strong><?php echo $value['price'] ?></strong>
+                        <span class = "det">已售<?php echo $value['sellNum'] ?></span>
                     </p>
                 </li>
-                <li>
-                    <img src = "http://uestc.0xiao.com/Public/upload/shop/commodity/menu/image/uestc/5145a99e3ab05.jpg"  />
-                    <p class = "nowrap">茶菇老鸦汤，鲜美营养，上好调料，来自黑龙江的黑木耳</p>
-                    <p >
-                        <strong>￥4.00</strong>
-                        <span class = "det">已售1200</span>
-                    </p>
-                </li>
-                <li>
-                    <img src = "http://gi1.md.alicdn.com/bao/uploaded/i1/12128021278700757/T1TYN5XwJaXXXXXXXX_!!0-item_pic.jpg_460x460q90.jpg">
-                    <p class = "nowrap">茶菇老鸦汤，鲜美营养，上好调料，来自黑龙江的黑木耳</p>
-                    <p >
-                        <strong>￥4.00</strong>
-                        <span class = "det">已售1200</span>
-                    </p>
-                </li>
-                <li>
-                    <img src = "http://uestc.0xiao.com/Public/upload/shop/commodity/menu/image/uestc/52a293a5430cd.jpg" />
-                    <p class = "nowrap">茶菇老鸦汤，鲜美营养，上好调料，来自黑龙江的黑木耳</p>
-                    <p >
-                        <strong>￥4.00</strong>
-                        <span class = "det">已售1200</span>
-                    </p>
-                </li>
-                <li>
-                    <img src = "http://uestc.0xiao.com/Public/upload/shop/commodity/menu/image/uestc/5145a60e708b3.jpg">
-                    <p class = "nowrap">茶菇老鸦汤，鲜美营养，上好调料，来自黑龙江的黑木耳</p>
-                    <p >
-                        <strong>￥4.00</strong>
-                        <span class = "det">已售1200</span>
-                    </p>
-                </li>
+            <?php endforeach?>
             </ul>
-            <ul class = "item clearfix 1" style = 'display:none'>
+            <?php
+                $cnt = 1;
+            ?>
+            <?php foreach($keyi as $idx => $val): ?>
+            <ul class = "item clearfix <?php echo $cnt++ ?>" style = "display:none">
+                <?php
+                    if(!$val)continue;
+                ?>
+                <?php foreach ($val as $value) :?>
                 <li>
-                    <img src = "http://cache.wowsai.com/data/files/groupidea/201401111807143824.jpg">
+                    <a href = "<?php echo $siteUrl . '/item/index/' . $value['id']?>">
+                        <img src = "<?php  echo $value['mainThumbnail']?>">
+                    </a>
                     <p class = "nowrap">
-                        <a href = "<?php echo $siteUrl . '/item/index/' . 56 ?>">
-                            茶菇老鸦汤，鲜美营养，上好调料，来自黑龙江的黑木耳
+                        <a href = "<?php echo $siteUrl . '/item/index/' . $value['id']?>">
+                        <?php
+                            echo $value['title'];
+                        ?>
                         </a>
                     </p>
                     <p >
-                        <strong>￥4.00</strong>
-                        <span class = "det">已售1200</span>
+                        <strong><?php echo $value['price'] ?></strong>
+                        <span class = "det">已售<?php echo $value['sellNum'] ?></span>
                     </p>
                 </li>
-                <li>
-                    <img src = "http://uestc.0xiao.com/Public/upload/shop/commodity/menu/image/uestc/5145a99e3ab05.jpg"  />
-                    <p class = "nowrap">茶菇老鸦汤，鲜美营养，上好调料，来自黑龙江的黑木耳</p>
-                    <p >
-                        <strong>￥4.00</strong>
-                        <span class = "det">已售1200</span>
-                    </p>
-                </li>
-                <li>
-                    <img src = "http://gi1.md.alicdn.com/bao/uploaded/i1/12128021278700757/T1TYN5XwJaXXXXXXXX_!!0-item_pic.jpg_460x460q90.jpg">
-                    <p class = "nowrap">茶菇老鸦汤，鲜美营养，上好调料，来自黑龙江的黑木耳</p>
-                    <p >
-                        <strong>￥4.00</strong>
-                        <span class = "det">已售1200</span>
-                    </p>
-                </li>
-                <li>
-                    <img src = "http://uestc.0xiao.com/Public/upload/shop/commodity/menu/image/uestc/52a293a5430cd.jpg" />
-                    <p class = "nowrap">茶菇老鸦汤，鲜美营养，上好调料，来自黑龙江的黑木耳</p>
-                    <p >
-                        <strong>￥4.00</strong>
-                        <span class = "det">已售1200</span>
-                    </p>
-                </li>
-                <li>
-                    <img src = "http://uestc.0xiao.com/Public/upload/shop/commodity/menu/image/uestc/5145a60e708b3.jpg">
-                    <p class = "nowrap">茶菇老鸦汤，鲜美营养，上好调料，来自黑龙江的黑木耳</p>
-                    <p >
-                        <strong>￥4.00</strong>
-                        <span class = "det">已售1200</span>
-                    </p>
-                </li>
+                <?php endforeach ?>
             </ul>
+            <?php endforeach?>
         </div>
         <div>
             <div class = "bar">
                 <span class = "title">周围商店</span>
             </div>
             <ul class = "item clearfix">
+            <?php foreach($storeList as $store): ?>
                 <li>
-                    <img src = "http://cache.wowsai.com/data/files/groupidea/201401111812209161.jpg">
-                    <p class = "nowrap">茶菇老鸦汤，鲜美营养，上好调料，来自黑龙江的黑木耳</p>
+                    <a href = "<?php echo site_url('/shop/index/' . $store['id']) ?>">
+                        <img src = "<?php echo $store['logo'] ?>">
+                    </a>
+                    <a href = "<?php echo site_url('/shop/index/' . $store['id']) ?>">
+                        <p class = "nowrap"><?php  echo $store['name']?></p>
+                    </a>
                     <p class = "det">
-                        <span><strong>￥4.00</strong></span>
-                        <span>已售1200</span>
+                        <span>评分<strong><?php  echo $store['credit']?></strong></span>
+                        <span>送货时间<?php echo $store['duration'] ?></span>
                     </p>
 
                 </li>
-                <li>
-                    <img src = "http://cache.wowsai.com/data/files/store_5278/goods_118/wgood_201208082228386543.jpg">
-                    <p class = "nowrap">茶菇老鸦汤，鲜美营养，上好调料，来自黑龙江的黑木耳</p>
-                    <p class = "det">
-                        <span><strong>￥4.00</strong></span>
-                        <span>已售1200</span>
-                    </p>
-                </li>
-                <li>
-                    <img src = "http://cache.wowsai.com/data/files/groupidea/201401111811239620.jpg">
-                    <p class = "nowrap">茶菇老鸦汤，鲜美营养，上好调料，来自黑龙江的黑木耳</p>
-                    <p class = "det">
-                        <span><strong>￥4.00</strong></span>
-                        <span>已售1200</span>
-                    </p>
-                </li>
-                <li>
-                    <img src = "http://gd2.alicdn.com/bao/uploaded/i2/13752026681275362/T146efFfVdXXXXXXXX_!!0-item_pic.jpg_460x460.jpg_.webp">
-                    <p class = "nowrap">茶菇老鸦汤，鲜美营养，上好调料，来自黑龙江的黑木耳</p>
-                    <p class = "det">
-                        <span><strong>￥4.00</strong></span>
-                        <span>已售1200</span>
-                    </p>
-                </li>
-                <li>
-                    <img src = "http://gd1.alicdn.com/imgextra/i1/745663752/T29JgWXd0XXXXXXXXX_!!745663752.jpg_540x540.jpg_.webp">
-                    <p class = "nowrap">茶菇老鸦汤，鲜美营养，上好调料，来自黑龙江的黑木耳</p>
-                    <p class = "det">
-                        <span><strong>￥4.00</strong></span>
-                        <span>已售1200</span>
-                    </p>
-                </li>
+            <?php  endforeach?>
             </ul>
         </div>
         <div>

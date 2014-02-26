@@ -66,6 +66,7 @@ class Morder extends Ci_Model {
         $res['more'] = (count($temp) === 4) ? $temp[3] : '';
         $res['price'] = $temp[2];
         $res['info'] = '';
+        //对info 进行解码，准备显示用
         if ($temp[1]) {
             $temp = explode('|', $temp[1]);
             for ($i = 0, $len = count($temp); $i < $len; $i ++) {
@@ -128,6 +129,28 @@ class Morder extends Ci_Model {
         }
     }
 
+    /**
+     * 获取指定用户在指定时间，指定时间的店铺的订单
+     * addr id , info
+     * @param int $storeId 商店编号
+     * @return boolean | array  商店的今日订单
+     */
+    public function getAiiByTime($time , $storeId , $buyer) {
+        $storeId = (int)$storeId;
+        $buyer   = (int)$buyer;
+        $time    = (int)$time;
+        if ($storeId === 0) {
+            return false;
+        }
+        $sql = "SELECT id , addr FROM ord WHERE seller = $storeId AND unix_timestamp(time) = $time  AND  ordor = $buyer";
+        $res = $this->db->query($sql);
+        if ($res) {
+            return $res->result_array();
+            //return $this->_today($res->result_array());
+        } else {
+            return false;
+        }
+    }
     /**
      * 获取所有的历史订单
      * @return boolean | array
@@ -471,14 +494,15 @@ class Morder extends Ci_Model {
      *  @param int $id 订单ord 的主键id
      *  @param array $res 因为主键代表唯一，返回包含info，seller,item_id信息的数组
      */
-    public function getChange($id)
-    {
+    public function getChange($id){
         $idInt = (int)$id;
         if($idInt == 0)return false;
         $res = $this->db->query("select info,seller,item_id from ord where id = $idInt");
         if($res->num_rows){
             $res = $res->result_array();
-            return $res[0];
+            $res = $res[0];
+            $res['info'] = $this->_decodeInfo($res['info']);
+            return $res;
         }
         return false;
     }
