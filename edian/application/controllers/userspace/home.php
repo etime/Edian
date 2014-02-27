@@ -53,8 +53,10 @@ class Home extends MY_Controller {
         if ($data['order'] == false) {
             $data['order'] = array();
         }
+        $this->load->config('edian');
+        $data['orderState'] = $this->config->item('orderState');
         $this->help->showArr($data);
-        $this->load->view("uMyOrder" , $data);
+        $this->load->view("uMyOrder", $data);
     }
 }
 ?>
