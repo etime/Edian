@@ -30,7 +30,6 @@
             <a href = "<?php echo $siteUrl . '/search/searchAction?key=' . $key ?>">综合</a>
             <?php
              $snav = array(
-                2 => array('font' => '价格' , 'initState' => 2),
                 3 => array('font' => '销量' , 'initState' => 1),
                 4 => array('font' => '销量' , 'initState' => 1),
                 6 => array('font' => '送货速度' , 'initState' => 2)
@@ -46,30 +45,36 @@
             </div>
         </div>
         <ul class = "good">
+        <?php
+            if(!$shopList)$shopList = array();
+        ?>
+        <?php foreach($shopList as $store):?>
             <li class = "details">
                 <div class = "img">
-                    <img src="http://p2008.zbjimg.com/task/2009-08/16/127085/middlezyh0eh04.jpg" alt="图片" class = "mainImg"/>
+                <img src="<?php echo $store['logo'] ?>" alt="图片" class = "mainImg"/>
                 </div>
                 <div class = "deinfo">
-                    <h4>爱就思床垫</h4>
+                    <a href = "<?php echo $siteUrl . '/shop/index/' .$store['id'] ?>">
+                        <h4><?php echo $store['name'] ?></h4>
+                    </a>
                     <p>
                         <span class="left">
                             <span class = "item">店铺评分:</span>
-                            <span class="cont">4.7</span>
+                            <span class="cont"><?php echo $store['credit'] ?></span>
                         </span>
                         <span class="right">
                             <span class = "item">最低起送价:</span>
-                            <span class="cont">19元</span>
+                            <span class="cont"><?php echo $store['sendPrice'] ?>元</span>
                         </span>
                     </p>
                     <p>
                         <span class="left">
                             <span class = "item">销量:</span>
-                            <span class="cont">500</span>
+                            <span class="cont">300</span>
                         </span>
                         <span class="right">
                             <span class = "item">送货速度:</span>
-                            <span class="cont">41分钟</span>
+                            <span class="cont"><?php echo $store['duration'] ?>分钟</span>
                         </span>
                     </p>
                     <blockquote>
@@ -77,6 +82,7 @@
                     </blockquote>
                 </div>
             </li>
+            <?php endforeach ?>
             <li class = "details">
                 <div class = "img">
                     <img src="http://www.jsshengda.net/upload/Y1IMOQd2bV4jaWs5WDIaQVs6aFJSUggFBRgPQVQ!W08JRlY.jpg" alt="图片" class = "mainImg"/>
