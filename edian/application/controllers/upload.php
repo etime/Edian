@@ -10,14 +10,69 @@
  */
 class Upload extends MY_Controller {
 
-    /**
-     * imgMain /thumb 功能如此接近的上传函数，居然没有复用
-     * @author      unasm
-     */
+    // isBoss 用于判断是否具有老板权限，isAdmin 用于判断是否具有管理员权限
+    protected $isBoss, $isAdmin, $userId;
+
     function __construct() {
         parent::__construct();
         $this->load->model('img');
         $this->load->config('edian');
+        $this->load->model('user');
+        $this->isAdmin = false;
+        $this->isBoss = false;
+        $this->userId = $this->getUserId();
+    }
+
+    /**
+     * 检查用户是否具有老板或者管理员权限
+     * @param string $url 如果没有登陆需要跳转的 url
+     * @return boolean 如果有老板或者管理员权限，返回 true，否则返回 false
+     * @author farmerjian<chengfeng1992@hotmail.com>
+     * @since 2014-02-27 12:56:46
+     */
+    protected function _checkAuthority($url = false) {
+        if ($url === false) {
+            $url = site_url();
+        }
+        $this->isBoss = false;
+        $this->isAdmin = false;
+        // 用户未登录
+        if ($this->userId === -1) {
+            $this->isAdmin = false;
+            $this->isBoss = false;
+            $this->noLogin($url);
+            return false;
+        }
+        $credit = $this->user->getCredit($this->userId);
+        // 不是管理员或者老板权限
+        if ($credit == $this->config->item('bossCredit')) {
+            $this->isBoss = true;
+            $this->isAdmin = false;
+            return true;
+        } else if ($credit == $this->config->item('adminCredit')) {
+            $this->isBoss = false;
+            $this->isAdmin = true;
+            return true;
+        } else {
+            $this->isAdmin = false;
+            $this->isBoss = false;
+            return false;
+        }
+    }
+
+    /**
+     * 根据 path 创建文件夹，以 index.php 为参考点，例如：$path = 'image/56'
+     * @param string $path
+     * @author farmerjian<chengfeng1992@hotmail.com>
+     */
+    protected function _makeFolder($path = '') {
+        $path = explode('/', $path);
+        for ($i = 0, $len = (int)count($path), $cur = '.'; $i < $len; $i ++) {
+            if (! is_dir($cur . '/' . $path[$i])) {
+                mkdir($cur . '/' . $path[$i]);
+            }
+            $cur .= '/' . $path[$i];
+        }
     }
 
     /**
@@ -25,7 +80,7 @@ class Upload extends MY_Controller {
      * @param string $type 上传文件的类型，通过 $_FILES 获取
      * @return bool 如果是图片，返回 true，否则返回 false
      */
-    private function _isImg($type) {
+    protected function _isImg($type) {
         if ($type == 'image/gif') return true;
         if ($type == 'image/jpeg') return true;
         if ($type == 'image/pjpeg') return true;
@@ -44,7 +99,7 @@ class Upload extends MY_Controller {
      * @param string   $name        图片的名字
      * @param int      $flag        用于判断图片的格式：1 代表 jpg；2 代表 png；3 代表 gif
      */
-    private function _shrinkImage($oldW, $oldH, $newW, $newH, $oldPath, $newPath, $name, $flag) {
+    protected function _shrinkImage($oldW, $oldH, $newW, $newH, $oldPath, $newPath, $name, $flag) {
         // 确定原始图片和剪切后图片的路径
         $oldImage = $oldPath . '/' . $name;
         $newImage = $newPath . '/' . $name;
@@ -135,9 +190,6 @@ class Upload extends MY_Controller {
         }
 
         // 删除图片
-        /*
-         * 我只是给了你名字而已，还有路径呢,这个要根据我们制订的保存规则删除
-         */
         if (file_exists($imageName)) {
             unlink($imageName);
         }
@@ -149,7 +201,6 @@ class Upload extends MY_Controller {
      *     长宽比为 1:1
      *     最少为 400*400 像素
      *     文件不得大于 5Mb
-     * @todo 处理用户权限不够的问题
      */
     public function imgMain() {
         // 用户没有登录
@@ -160,7 +211,10 @@ class Upload extends MY_Controller {
         }
 
         // 用户的权限不够
-        ;
+        if ($this->_checkAuthority() == false) {
+            show_404();
+            return;
+        }
 
         // 跳转的 url 和 urlName
         $url = site_url('upload/index/1');
@@ -193,19 +247,22 @@ class Upload extends MY_Controller {
         } else {
             $fileName .= '.jpg';
         }
+//
+//        // 创建 image/"userId"
+//        if (! is_dir('./image/' . $userId)) {
+//            mkdir('./image/' . $userId);
+//        }
+//
+//        // 创建 image/"userId"/main 文件夹
+//        if (! is_dir('./image/' . $userId . '/main')) {
+//            mkdir('./image/' . $userId . '/main');
+//        }
 
-        // 创建 image/"userId"
-        if (! is_dir('./image/' . $userId)) {
-            mkdir('./image/' . $userId);
-        }
-
-        // 创建 image/"userId"/main 文件夹
-        if (! is_dir('./image/' . $userId . '/main')) {
-            mkdir('./image/' . $userId . '/main');
-        }
+        $path = 'image/' . $userId . '/main';
+        $this->_makeFolder($path);
 
         // 定义用户上传的图片的存储地址和名字
-        $path = './image/' . $userId . '/main/' . $fileName;
+        $path = './' . $path . '/' . $fileName;
 
         // 上传图片
         move_uploaded_file($_FILES['userfile']['tmp_name'], $path);
@@ -247,7 +304,10 @@ class Upload extends MY_Controller {
         }
 
         // 用户权限不够
-        ;
+        if ($this->_checkAuthority() == false) {
+            show_404();
+            return;
+        }
 
         // 获取文件的类型和大小
         $type = $_FILES['userfile']['type'];
@@ -272,7 +332,6 @@ class Upload extends MY_Controller {
         }
 
         // 对上传的文件进行重命名
-        $flag = -1;
         $fileName = $userId . '_' . date('Y-m-d_H-i-s');
         if ($type == 'image/gif') {
             $fileName .= '.gif';
@@ -285,22 +344,27 @@ class Upload extends MY_Controller {
             $flag = 1;
         }
 
-        // 创建 image/"userId" 文件夹
-        if (! is_dir('./image/' . $userId)) {
-            mkdir('./image/' . $userId);
-        }
-        // 创建 image/"userId"/thumb 文件夹
-        if (! is_dir('./image/' . $userId . '/thumb')) {
-            mkdir('./image/' . $userId . '/thumb');
-        }
-        // 创建 image/"userId"/thumb/big 文件夹
-        if (! is_dir('./image/' . $userId . '/thumb/big')) {
-            mkdir('./image/' . $userId . '/thumb/big');
-        }
-        // 创建 image/"userId"/thumb/small 文件夹
-        if (! is_dir('./image/' . $userId . '/thumb/small')) {
-            mkdir('./image/' . $userId . '/thumb/small');
-        }
+//        // 创建 image/"userId" 文件夹
+//        if (! is_dir('./image/' . $userId)) {
+//            mkdir('./image/' . $userId);
+//        }
+//        // 创建 image/"userId"/thumb 文件夹
+//        if (! is_dir('./image/' . $userId . '/thumb')) {
+//            mkdir('./image/' . $userId . '/thumb');
+//        }
+//        // 创建 image/"userId"/thumb/big 文件夹
+//        if (! is_dir('./image/' . $userId . '/thumb/big')) {
+//            mkdir('./image/' . $userId . '/thumb/big');
+//        }
+//        // 创建 image/"userId"/thumb/small 文件夹
+//        if (! is_dir('./image/' . $userId . '/thumb/small')) {
+//            mkdir('./image/' . $userId . '/thumb/small');
+//        }
+
+        $path = 'image/' . $userId . '/thumb/big';
+        $this->_makeFolder($path);
+        $path = 'image/' . $userId . '/thumb/small';
+        $this->_makeFolder($path);
 
         // 定义用户上传的图片的存储地址和名字
         $path = './image/' . $userId . '/' . $fileName;
@@ -364,8 +428,6 @@ class Upload extends MY_Controller {
         $this->index(0);
     }
 
-    /**
-     */
     public function uploadStoreLogo() {
         // 用户没有登录
         $userId = $this->getUserId();
@@ -374,8 +436,11 @@ class Upload extends MY_Controller {
             return;
         }
 
-        // 用户权限不够
-        ;
+//        // 用户权限不够
+//        if ($this->_checkAuthority() == false) {
+//            show_404();
+//            return;
+//        }
 
         // 跳转页面的 url 和 urlName
         $url = site_url('upload/index/2');
@@ -393,7 +458,6 @@ class Upload extends MY_Controller {
         }
 
         // 对上传的文件进行重命名
-        $flag = -1;
         $fileName = $userId . '_' . date('Y-m-d_H-i-s');
         if ($type == 'image/gif') {
             $fileName .= '.gif';
@@ -406,14 +470,17 @@ class Upload extends MY_Controller {
             $flag = 1;
         }
 
-        // 创建 image/"userId" 文件夹
-        if (! is_dir('./image/' . $userId)) {
-            mkdir('./image/' . $userId);
-        }
-        // 创建 image/"userId"/mix 文件夹
-        if (! is_dir('./image/' . $userId . '/mix')) {
-            mkdir('./image/' . $userId . '/mix');
-        }
+//        // 创建 image/"userId" 文件夹
+//        if (! is_dir('./image/' . $userId)) {
+//            mkdir('./image/' . $userId);
+//        }
+//        // 创建 image/"userId"/mix 文件夹
+//        if (! is_dir('./image/' . $userId . '/mix')) {
+//            mkdir('./image/' . $userId . '/mix');
+//        }
+
+        $path = 'image/' . $userId . '/mix';
+        $this->_makeFolder($path);
 
         // 定义用户上传的图片的存储地址和名字
         $path = './image/' . $userId . '/' . $fileName;

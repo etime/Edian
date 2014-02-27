@@ -276,6 +276,7 @@ class Home extends MY_Controller {
         //得到属于该用户的图片，方便二次添加,另议
         $this->load->model("img");
         $data["img"] = $this->img->getImgName($this->userId);
+        $this->help->showArr($data);
         $this->load->view("mBgItemAdd",$data);
     }
     /**
