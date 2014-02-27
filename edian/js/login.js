@@ -121,7 +121,7 @@ function funPhone(){
                     interval = false;
                 }else {
                     smsCnt --;
-                    $($this._broCode).text(smsCnt + "秒后可重新发送");
+                    $($this._broCode).text(smsCnt + "秒");
                 }
             },1000)//2s之后，重新发送一次短信验证码
         }
@@ -148,6 +148,7 @@ function funPhone(){
  */
 
 function login(callBack){
+    showNav();
     var login = $("#login");
     /**
      * 目前就简单的替换成为注销，以后添加用户中心之类的
@@ -267,9 +268,10 @@ function login(callBack){
 }
 /**
  * 弹出框，一定时间后自动小时
+ * 给出各种提示的函数，和alert不同，这个过1s就消失
  * @param {string} cont 通过弹出框想要说的内容
  */
-function alet(cont) {//给出各种提示的函数，和alert不同，这个过1s就消失
+function alet(cont) {
     var alet = document.createElement("div");
     var p = document.createElement("p");
     var css = {
@@ -296,6 +298,20 @@ function alet(cont) {//给出各种提示的函数，和alert不同，这个过1
     },3999);
 }
 
+/**
+ * 控制nav的显示和控制
+ */
+function showNav() {
+    var nav = $("#nav");
+    $("#tonav").mouseenter(function (event) {
+        nav.fadeIn();
+        event.preventDefault();
+    })
+    $("#tab").mouseleave(function (event) {
+        nav.fadeOut();
+        event.preventDefault();
+    })
+}
 /**
  * 检测登录名的唯一性和合法性
  * @todo 有待检验get唯一性
@@ -334,3 +350,4 @@ function floginName() {
         }
     })
 }
+

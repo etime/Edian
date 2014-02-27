@@ -163,7 +163,7 @@ eod;
             <div id="allmap"></div>
         </li>
     </ul>
-    <input type="submit" name="sub" id="sub" value="提交" />
+    <input type="submit" name="sub" id="sub" value="提交" style = "margin-bottom:80px" />
     </form>
 </body>
 
