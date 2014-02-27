@@ -181,7 +181,7 @@ class Shop extends BaseSearch {
     public function queue() {
         $data['pageNumFooter'] = ' ';
         $data['shopList'] = $this->store->getShopList();
-        $this->help->showArr($data);
+        //$this->help->showArr($data);
         $this->load->view('shopList' , $data);
     }
 
@@ -230,6 +230,17 @@ class Shop extends BaseSearch {
         $commonUrl = site_url('shop/price/' . $storeId);
         $ans['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount']);
         $this->_showView($ans, $storeId);
+    }
+    /**
+     * 添加订单评论
+     * @param   string      context     评价的内容
+     * @param   int         storeId     评价的店铺的id
+     * @param   int         speed       送货速度
+     * @param   int         score       服务态度
+     * @param   int         time        时间戳，标记某个商品时候评论过
+     */
+    public function addComment()
+    {
     }
 }
 ?>

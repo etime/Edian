@@ -85,6 +85,7 @@ class Home extends MY_Controller {
         foreach ($data['tag'] as $key => $val) {
             $data['keyi'][$key] = $this->mitem->getItemInKeyi($key);
         }
+        $data['dir'] = $this->part;
         //$this->help->showArr($data);
         $this->load->view("home2" , $data);
     }

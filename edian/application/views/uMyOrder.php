@@ -146,20 +146,6 @@
             <?php endfor?>
         </div>
     </div>
-    <div class="reply" id = "reply" style = "display:none">
-        <p class = "clearfix">
-            <span class="item">送货速度 :</span>
-            <span class = "star sec"></span>
-        </p>
-        <p class = "clearfix">
-            <span class="item">服务态度 :</span>
-            <span class = "star sec"></span>
-        </p>
-        <div class = "clearfix">
-            <span class="item">评价 :</span>
-            <textarea name="content" class = "sec"></textarea>
-        </div>
-    </div>
 </body>
 <script src="<?php echo $baseUrl . '/js/jquery.min.js' ?>" type="text/javascript" charset="utf-8"></script>
 <script src="<?php echo $baseUrl . '/js/myorder.js' ?>" type="text/javascript" charset="utf-8"></script>

@@ -42,11 +42,11 @@
                 </ul>
             </div>
             <ul class = "item clearfix 0" >
-<?php
-    if(!$itemList){
-        $itemList = array();
-    }
-?>
+            <?php
+                if(!$itemList){
+                    $itemList = array();
+                }
+            ?>
                 <?php foreach ($itemList as $value) :?>
                 <li>
                     <a href = "<?php echo $siteUrl . '/item/index/' . $value['id']?>">

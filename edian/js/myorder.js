@@ -5,6 +5,7 @@
 */
 $(document).ready(function () {
     showStore();
+    login();
 })
 /**
  * 对店铺进行评论

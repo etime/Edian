@@ -55,7 +55,8 @@ class Home extends MY_Controller {
         }
         $this->load->config('edian');
         $data['orderState'] = $this->config->item('orderState');
-        $this->help->showArr($data);
+        $data['dir'] = $this->part;
+        //$this->help->showArr($data);
         $this->load->view("uMyOrder", $data);
     }
 }
