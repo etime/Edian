@@ -58,7 +58,7 @@
             ?>
             <div class="store">
                 <ul class = "user clearfix">
-                    <li class="seller">dianpu mingz+</li>
+                <li class="seller"><?php echo $order[$i]['selinf']['nickname'] ?></li>
                     <li class="orderId"><?php echo  $seller .'_' . strtotime($time) ?></li>
                     <li class="time"><?php  echo $time?></li>
                     <li class="comment">
@@ -81,19 +81,38 @@
                 </ul>
                 <table border="none" class = "det">
                     <tr class = "tr">
-                        <td class="state">yingjia </td>
-                        <td class="cnt">$20.21 </td>
+                    <td class="state"><?php  echo $order[$i]['state']?> </td>
+                    <?php
+                        $ori = $i;
+                        $cnt = 0;
+                        while( ($len > $i ) && ($order[$i]['time'] === $time )&& ($order[$i]['seller'] === $seller )){
+                            $cnt += (int)($order[$i]['info']['orderNum'] ) * (float)$order[$i]['item']['price'];
+                            $i++;
+                        }
+                        $i = $ori;
+                    ?>
+                        <td class="cnt"><?php echo $cnt?> </td>
                         <td class = "li">
                             <table border="none">
-                            <?php while(($order[$i]['time'] === $time )&& ($order[$i]['seller'] === $seller )):?>
+                            <?php while( ($len > $i ) && ($order[$i]['time'] === $time )&& ($order[$i]['seller'] === $seller )):?>
+                                <?php
+                                    $val = $order[$i];
+                                ?>
                                 <tr>
-                                    <td> <img src="" alt="store Img" /></td>
+                                <td> <img src="<?php echo $val['item']['mainThumbnail'] ?>" alt="store Img" /></td>
                                     <td class = "good">
-                                         <p> sheng fan chuli tuan tuan zhang</p>
-                                        <p> note </p>
+                                    <p><?php echo $val['item']['title'] . $val['info']['info'] ?> </p>
+                                    <p>
+                                    <?php
+                                    if($val['info']['more'])
+                                        echo '备注:' . $val['info']['more']
+                                    ?>
+                                    </p>
                                     </td>
-                                    <td class="num">123</td>
-                                    <td class="price">dan ping lun</td>
+                                    <td class="num"><?php echo $val['info']['orderNum'] ?></td>
+                                    <td class="price">
+                                        <?php echo $val['item']['price'] ?>
+                                    </td>
                                     <td class = "oper">
                                         <input type="button" name="signal"  class = "btn button glow button-flat" value="shang pin pinglun" />
                                     </td>

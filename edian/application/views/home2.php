@@ -101,8 +101,8 @@
             </div>
             <ul class = "item clearfix">
 <?php
-    if(!$itemList){
-        $itemList = array();
+    if(!$storeList){
+        $storeList = array();
     }
 ?>
             <?php foreach($storeList as $store): ?>
@@ -182,7 +182,7 @@
             </ul>
         </div>
     </div>
-    <div id="footer">
+    <div id="footer" style = "display:none">
         <p>蜀字132</p>
     </div>
 </body>

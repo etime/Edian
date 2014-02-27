@@ -107,6 +107,11 @@ table{
 .li td:last-child {
     border-right:none;
 }
+td img{
+    width:50px;
+    height:50px;
+    border:none;
+}
 .reply{
     width:508px;
     position:absolute;

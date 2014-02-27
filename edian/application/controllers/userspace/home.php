@@ -8,6 +8,8 @@ class Home extends MY_Controller {
     function __construct() {
         parent::__construct();
         $this->load->model('morder');
+        $this->load->model('user');
+        $this->load->model('mitem');
     }
 
     /**
