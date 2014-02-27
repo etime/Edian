@@ -42,6 +42,11 @@
                 </ul>
             </div>
             <ul class = "item clearfix 0" >
+<?php
+    if(!$itemList){
+        $itemList = array();
+    }
+?>
                 <?php foreach ($itemList as $value) :?>
                 <li>
                     <a href = "<?php echo $siteUrl . '/item/index/' . $value['id']?>">
@@ -95,6 +100,11 @@
                 <span class = "title">周围商店</span>
             </div>
             <ul class = "item clearfix">
+<?php
+    if(!$itemList){
+        $itemList = array();
+    }
+?>
             <?php foreach($storeList as $store): ?>
                 <li>
                     <a href = "<?php echo site_url('/shop/index/' . $store['id']) ?>">
