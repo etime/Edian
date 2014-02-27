@@ -175,9 +175,13 @@ class Shop extends BaseSearch {
 
     /**
      * 店铺列表页面
+     * @author farmerjian<chengfeng1992@hotmail.com>
+     * @since 2014-02-26 22:33:36
      */
     public function queue() {
         $data['pageNumFooter'] = ' ';
+        $data['shopList'] = $this->store->getShopList();
+        $this->help->showArr($data);
         $this->load->view('shopList' , $data);
     }
 

@@ -14,6 +14,7 @@ class Home extends MY_Controller {
         $this->load->model('art');
         $this->load->model('user');
         $this->load->model('mitem');
+        $this->load->model('store');
         $this->load->library('session');
     }
 
