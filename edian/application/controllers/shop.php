@@ -181,7 +181,10 @@ class Shop extends BaseSearch {
     public function queue() {
         $data['pageNumFooter'] = ' ';
         $data['shopList'] = $this->store->getShopList();
-        //$this->help->showArr($data);
+        for ($i = 0, $len = (int)count($data['shopList']); $i < $len; $i ++) {
+            $data['shopList'][$i]['sellNum'] = $this->morder->getSellNum($data['shopList'][$i]['id']);
+        }
+        $this->help->showArr($data);
         $this->load->view('shopList' , $data);
     }
 

@@ -604,7 +604,7 @@ class Store extends CI_Model {
      * @return boolean | array
      */
     public function getShopList() {
-        $sql = "SELECT id, name, logo, credit, sendPrice, duration FROM store WHERE state = 1 ORDER BY credit LIMIT 0, 8";
+        $sql = "SELECT id, name, logo, credit, sendPrice, address, briefInfo, duration FROM store WHERE state = 1 ORDER BY credit LIMIT 0, 8";
         $ans = $this->db->query($sql);
         if ($ans->num_rows == false) {
             return false;

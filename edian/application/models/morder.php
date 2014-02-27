@@ -22,14 +22,15 @@
  * item_id 购买的商品货号
  * 关于退货中，几个商品中，接受几个商品的状态，退几个商品，之后在处理
  * time 下订单的时间
- * state 状态：0，尚在购物车中
- *              1,下单完成
- *              2,打印完订单，开始准备发货
- *              3,已经发货
- *              4 已经签收
- *              5:下单前删除(暂时不真正删除，算是作为数据研究吧)
- *              6:退货
- *              7:下单后删除,要不要真正删除
+ * $config['orderState']  = array(
+ *      1 => '下单完成' ,
+ *      2 => '打印完毕' ,
+ *      3 => '短信发送完毕' ,
+ *      8 => '接单' , //定义为在通知失败之后,不再通过任何软件的方式追求打印，而只是手动记录进行接单的方式
+ *      9 => '各种通知均告失败' ,
+ *      11=> '拒绝订单' ,
+//店家在网页端已经查看 ， 以后需要加的状态
+);
  * 付款方式：(目前必然是货到付款，之后就再说吧,这个，目前没有为它设置字段，放到info中去吧
  * ordor 下订单的人
  * 所谓的购物车，就是order中state为0的东西
@@ -390,6 +391,24 @@ class Morder extends Ci_Model {
         return $this->db->query("update ord set state = $state , info = '" . $context . "' where UNIX_TIMESTAMP(time) = $id && seller = $storeId ");
     }
 
+    /**
+     * 获取指定编号商店的销量
+     * @param int $storeId 商店编号
+     * @return boolean | int 如果销量为 0 ，返回 false，否则返回具体的销量
+     */
+    public function getSellNum($storeId) {
+        $this->load->config('edian');
+        $reject = $this->config->item('rejectOrder');
+        $isfFailed = $this->config->item('infFailed');
+        $sql = "SELECT COUNT(*) FROM ord WHERE seller = $storeId && state <> 0 && state <> $reject && state <> $isfFailed";
+        $ans = $this->db->query($sql);
+        if ($ans->num_rows == 0) {
+           return false;
+        } else {
+            $ans = $ans->result_array();
+            return $ans[0]['COUNT(*)'];
+        }
+    }
 /**********************************************************************************************************************/
 /**********************************************************************************************************************/
 /**********************************************************************************************************************/
