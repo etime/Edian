@@ -18,6 +18,7 @@ $config["printed"] = 2;//打印完毕
 $config["smsed"] = 3;//短信发送完毕
  */
 $config["infFailed"] = 9;//各种通知方式失败，推荐联系店家,这个保留，处理通知失败情况
+$config['rejectOrder'] = 11;
 //下面的好处是将内容和信息对应出来，除了在更改状态的时候需要注意之外，其他的时候，只是需要一个对应而已
 $config['orderState']  = array(
     1 => '下单完成' ,
