@@ -194,6 +194,31 @@ class item extends MY_Controller {
             echo '评论失败';
         }
     }
+
+    /**
+     * 筛选指定级别分类的所有商品，结果分页显示
+     * @param int $flag 级别编号 $flag = 1 表示 1 级，2 表示 2 级，3 表示 3 级
+     * @param int $pageId 当前页号
+     */
+    public function select($flag = 0, $pageId = 1) {
+        $flag = (int)$flag;
+        $pageId = (int)$pageId;
+        if (! isset($_GET['key']) || $flag < 1 || $flag > 3) {
+            show_404();
+            return;
+        } else {
+            $key = trim($_GET['key']);
+        }
+
+        $itemList = $this->mitem->selectItemByTag($flag, $key);
+        // 将所得的结果进行分页
+        $temp = $this->pagesplit->split($itemList, $pageId, $this->config->item('pageSize'));
+        $data = array();
+        $itemList['item'] = $temp['newData'];
+        $ans['key'] = $keyBackUp;
+        $commonUrl = site_url('shop/search/' . $storeId);
+        $ans['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount'], $getString);
+    }
 /**********************************************************************************************************************/
 /**********************************************************************************************************************/
 /**********************************************************************************************************************/

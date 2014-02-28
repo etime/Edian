@@ -698,7 +698,7 @@ class Mitem extends Ci_Model {
         if ($storeId === 0) {
             return false;
         }
-        $sql = "SELECT id, attr, title, price, satisfyScore, sellNum, mainThumbnail FROM item WHERE belongsTo = $storeId ORDER BY rating";
+        $sql = "SELECT id, attr, title, price, satisfyScore, sellNum, mainThumbnail FROM item WHERE belongsTo = $storeId AND state = 0 ORDER BY rating";
         $res = $this->db->query($sql);
         if ($res->num_rows === 0) {
             return false;
@@ -736,7 +736,7 @@ class Mitem extends Ci_Model {
         if ($storeId == 0) {
             return false;
         }
-        $sql = "SELECT id,attr, title, price, satisfyScore, sellNum, mainThumbnail FROM item WHERE belongsTo = $storeId  && price >= $low && price <= $high ORDER BY rating";
+        $sql = "SELECT id, attr, title, price, satisfyScore, sellNum, mainThumbnail FROM item WHERE belongsTo = $storeId  && price >= $low && price <= $high AND state = 0 ORDER BY rating";
         $res = $this->db->query($sql);
         if ($res->num_rows === 0) {
             return false;
@@ -761,7 +761,7 @@ class Mitem extends Ci_Model {
      */
     public function searchOutStore($key) {
         $key = mysql_real_escape_string($key);
-        $sql = "SELECT id FROM item WHERE title LIKE '%" . $key . "%' OR category LIKE '%" . $key . "%' ORDER BY id";
+        $sql = "SELECT id FROM item WHERE (title LIKE '%" . $key . "%' OR category LIKE '%" . $key . "%') AND state = 0  ORDER BY id";
         $res = $this->db->query($sql);
         if ($res->num_rows === 0) {
             return false;
@@ -787,7 +787,7 @@ class Mitem extends Ci_Model {
         if ($storeId === 0) {
             return false;
         }
-        $sql = "SELECT id FROM item WHERE belongsTo = $storeId AND (title LIKE '%" . $key . "%' OR category LIKE '%" . $key . "%') ORDER BY id";
+        $sql = "SELECT id FROM item WHERE belongsTo = $storeId AND state = 0 AND (title LIKE '%" . $key . "%' OR category LIKE '%" . $key . "%') ORDER BY id";
         $res = $this->db->query($sql);
         if ($res->num_rows === 0) {
             return false;
@@ -813,7 +813,7 @@ class Mitem extends Ci_Model {
         if ($storeId === 0) {
             return false;
         }
-        $sql = "SELECT id FROM item WHERE category LIKE '%|" . $categoryName .  "' AND belongsTo = $storeId";
+        $sql = "SELECT id FROM item WHERE category LIKE '%|" . $categoryName .  "' AND belongsTo = $storeId AND state = 0";
         $res = $this->db->query($sql);
         if ($res->num_rows === 0) {
             return false;
@@ -949,6 +949,35 @@ class Mitem extends Ci_Model {
                 $userId = $this->getUserByBelongsTo($ans[$i]['belongsTo']);
                 $ans[$i]['mainThumbnail'] = $this->fixImg($ans[$i]['mainThumbnail'], $userId, 'main');
             }
+            return $ans;
+        }
+    }
+
+    /**
+     * 通过选择获取相应的物品分类
+     * @param int $flag 如果 $flag = 1 表示 1 级菜单，2 表示 2 级菜单，3 表示 3 级菜单
+     * @param string $key 商品的分类名
+     * @return boolean | array
+     */
+    public function selectItemByTag($flag = 0, $key) {
+        $flag = (int)$flag;
+        if ($flag < 1 || $flag > 3) {
+            return false;
+        }
+        if ($flag == 1) {
+            $key = $key . ';%';
+        } else if ($flag == 2) {
+            $key = '%;' . $key . ';%';
+        } else if ($flag == 3) {
+            $key = '%;' . $key . '|%';
+        }
+        $key = mysql_real_escape_string($key);
+        $sql = "SELECT id FROM item WHERE category LIKE $key AND state = 0 ORDER BY rating";
+        $ans = $this->db->query($sql);
+        if ($ans->num_rows == 0) {
+            return false;
+        } else {
+            $ans = $ans->result_array();
             return $ans;
         }
     }
