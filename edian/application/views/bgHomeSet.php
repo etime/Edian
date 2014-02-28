@@ -147,15 +147,7 @@ echo <<<eod
 eod;
     }
 ?>
-<!--
-        <li>
-            <span class="item">简介图片:</span>
-        </li>
-        <li>
-            <span class="item">地址:</span>
-            <input type="text" name="address" maxlength = "250"/>
-        </li>
--->
+
         <li>
         <p>店铺位置和送货范围 <input type="text" name="distance" id="distance" value=" <?php echo $deliveryArea ? $deliveryArea :1500 ?>" />米 <input type="button" name="but" id="but" value="确定" />:</p>
             <input type="hidden" name="latitude" value = " <?php echo $latitude ?>"/>

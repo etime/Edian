@@ -1,5 +1,4 @@
-
-<body>
+<div>
     <?php
         $this->load->view("head");
     ?>
@@ -11,55 +10,32 @@
             <li>活动</li>
         </ul>
         <ul  class = "nav" id = "nav"  style = "display:none">
+        <?php
+            $siteUrl = site_url();
+        ?>
+        <?php  foreach($dir as $idx1 => $key1):?>
             <ul class = "one clearfix">
-                <h4>零食饮料</h4>
+                <h4> <a href = "<?php  echo $siteUrl . '/item/select/1?key=' . $idx1 ?>"><?php echo $idx1 ?></a></h4>
+                <?php foreach($key1 as $idx2 => $key2): ?>
                 <li>
                     <ul class = "two clearfix">
-                        <li class = "bold">素材</li>
-                        <li> dfa </li>
-                        <li> dfa </li>
-                        <li> dfa </li>
+                        <li class = "bold"><a href = "<?php  echo $siteUrl . '/item/select/2?key=' . $idx2?>"><?php echo $idx2?></a></li>
+                        <?php foreach($key2 as $key3):?>
+                        <li>
+                            <a href = "<?php echo $siteUrl .'/item/select/3?key=' . $key3 ?>">
+                                <?php echo $key3 ?>
+                            </a>
+                        </li>
+                        <?php  endforeach?>
                     </ul>
                 </li>
-                <li>
-                    <ul class = "two clearfix">
-                        <li class = "bold">素材</li>
-                        <li> dfa </li>
-                        <li> dfa </li>
-                        <li> dfa </li>
-                    </ul>
-                </li>
-                <li>
-                    <ul class = "two clearfix">
-                        <li class = "bold">素材</li>
-                        <li> dfa </li>
-                        <li> dfa </li>
-                        <li> dfa </li>
-                    </ul>
-                </li>
+                <?php endforeach ?>
             </ul>
-            <ul class = "one clearfix">
-                <h4>零食饮料</h4>
-                <li>
-                    <ul class = "two clearfix">
-                        <li class = "bold">素材</li>
-                        <li> dfa </li>
-                        <li> dfa </li>
-                        <li> dfa </li>
-                    </ul>
-                </li>
-                <li>
-                    <ul class = "two clearfix">
-                        <li class = "bold">素材</li>
-                        <li> dfa </li>
-                        <li> dfa </li>
-                        <li> dfa </li>
-                    </ul>
-                </li>
-            </ul>
+        <?php endforeach ?>
         </ul>
     </div>
 
+</div>
 <style type="text/css" media="all">
 body{
     margin:0;
@@ -80,7 +56,7 @@ body{
 .tab li:hover{
     background:rgb(125,3,3);
 }
-#tab ,  #tab a{
+#tab ,  #tab> a{
     background:#990002;
     color:white;
 }
@@ -123,4 +99,3 @@ body{
     margin-left:25px;
 }
 </style>
-</html>

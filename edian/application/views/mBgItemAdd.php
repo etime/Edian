@@ -15,7 +15,6 @@
 <script type="text/javascript" src = "<?php echo base_url('js/jquery.js')?>"> </script>
 <script type="text/javascript" src = "<?php echo base_url('js/cookie.js')?>"> </script>
 <script type="text/javascript" >
-    var admin = "<?php echo $this->adminMail?>";
     var dir = <?php  echo @json_encode($dir)?>;
 </script>
 <body class = "clearfix">
@@ -214,19 +213,6 @@
             <iframe border = "none" id = "mainImg"  name = "img" src = " <?php echo site_url('upload/index/1') ?>"></iframe>
         </div>
     </div>
-    <!-- 选择图片，添加到对应的地方-->
-<!--
-    <div id="ichose"  class = "ichose" style = "display:none">
-        <div>
-            <a class = "close" id = "iclose" href = "#">关闭</a>
-                <div>
-                    <?php foreach ($img as $temp):?>
-                    <img src = " <?php echo $baseUrl.'upload/'.$temp['img_name'] ?>">
-                    <?php endforeach?>
-                </div>
-        </div>
-    </div>
--->
 <script type="text/javascript" src = "<?php echo base_url('js/xheditor.min.js')?>"></script>
 <script type="text/javascript" src = "<?php echo base_url('js/zh-cn.js')?>"></script>
 <script type="text/javascript" >
@@ -237,6 +223,7 @@ function pageInit()
     $.extend(XHEDITOR.settings,{shortcuts:{'ctrl+enter':submitForm}});
     $('#cont').xheditor({upImgUrl:site_url+"/write/imgAns?immediate=1",upImgExt:"jpg,jpeg,gif,png"});
 }
+//wenjia,shang chu上传图片出bug了
 function insertUpload(arrMsg)
 {
     var i,msg;

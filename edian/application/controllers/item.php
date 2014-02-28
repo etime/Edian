@@ -93,7 +93,10 @@ class item extends MY_Controller {
      *      user_id    评论者编号，通过 session 获取
      *      item_id    被评论商品编号，通过 url 参数传递获取
      * </pre>
-     * @param int $itemId 商品编号
+     //* @param int $itemId 商品编号
+     * @param  int      orderId 订单的编号
+     * @param  string   context 评价的内容
+     * @param  int      score 评分
      * @todo 吐槽一句，感觉实现好蛋疼，itemid,date,userid居然有三处重复，
      */
     public function addComment($itemId = -1) {

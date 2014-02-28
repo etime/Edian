@@ -322,7 +322,7 @@ class Morder extends Ci_Model {
             return false;
         } else {
             $res = $res->result_array();
-            for ($i = 0, $len = (int)$res; $i < $len; $i ++) {
+            for ($i = 0, $len = (int)count($res); $i < $len; $i ++) {
                 $res[$i]['info'] = $this->_decodeInfo($res[$i]['info']);
             }
             return $res;
