@@ -93,11 +93,10 @@ class item extends MY_Controller {
      *      user_id    评论者编号，通过 session 获取
      *      item_id    被评论商品编号，通过 url 参数传递获取
      * </pre>
-     //* @param int $itemId 商品编号
+     * @param  int $itemId 商品编号
      * @param  int      orderId 订单的编号
      * @param  string   context 评价的内容
      * @param  int      score 评分
-     * @todo 吐槽一句，感觉实现好蛋疼，itemid,date,userid居然有三处重复，
      */
     public function addComment($itemId = -1) {
         $itemId = (int)$itemId;
@@ -202,6 +201,8 @@ class item extends MY_Controller {
      * 筛选指定级别分类的所有商品，结果分页显示
      * @param int $flag 级别编号 $flag = 1 表示 1 级，2 表示 2 级，3 表示 3 级
      * @param int $pageId 当前页号
+     * @author farmerjian<chengfeng1992@hotmail.com>
+     * @todo 调用指定的 view 页面
      */
     public function select($flag = 0, $pageId = 1) {
         $flag = (int)$flag;
@@ -217,10 +218,17 @@ class item extends MY_Controller {
         // 将所得的结果进行分页
         $temp = $this->pagesplit->split($itemList, $pageId, $this->config->item('pageSize'));
         $data = array();
-        $itemList['item'] = $temp['newData'];
-        $ans['key'] = $keyBackUp;
-        $commonUrl = site_url('shop/search/' . $storeId);
+        $data['item'] = $temp['newData'];
+        for ($i = 0, $len = (int)count($data['item']); $i < $len; $i ++) {
+            $data['item'][$i] = $this->mitem->getItemByItemId($data['item'][$i]['id']);
+        }
+        $data['key'] = $key;
+        $commonUrl = site_url('item/select/' . $flag);
+        $getString = '?key=' . $key;
         $ans['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount'], $getString);
+
+        $storeId = 0;
+        $this->_showView($ans, $storeId);
     }
 /**********************************************************************************************************************/
 /**********************************************************************************************************************/
