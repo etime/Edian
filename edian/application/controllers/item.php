@@ -79,6 +79,7 @@ class item extends MY_Controller {
         $data['comment'] = $this->comitem->getItemComment($itemId);
         $data['item'] = $itemInfo;
         $data['store'] = $storeInfo;
+        $data['dir'] = $this->part;
         $this->mitem->addvisitor($itemId);
 //        $this->help->showArr($data);
         $this->load->view('item2', $data);
@@ -94,7 +95,7 @@ class item extends MY_Controller {
      *      item_id    被评论商品编号，通过 url 参数传递获取
      * </pre>
      //* @param int $itemId 商品编号
-     * @param  int      orderId 订单的编号
+     * @param  int      orderId 订单的编号 ,这个似乎没有怎么使用
      * @param  string   context 评价的内容
      * @param  int      score 评分
      * @todo 吐槽一句，感觉实现好蛋疼，itemid,date,userid居然有三处重复，
@@ -125,9 +126,9 @@ class item extends MY_Controller {
         //$this->help->showArr($data);
         $ans = $this->comitem->insert($data);
         if ($ans) {
-            echo '1';
+            echo json_encode('1');
         } else {
-            echo '评论失败';
+            echo json_encode('评论失败');
         }
     }
 

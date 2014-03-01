@@ -2,8 +2,8 @@
     <?php
         $this->load->view("head");
     ?>
-    <div id = "tab">
-        <ul class="clearfix tab">
+    <div id = "htab">
+        <ul class="clearfix htab">
             <li id = "tonav">导航分类</li>
             <a href = "<?php echo site_url() ?>"><li>首页</li></a>
             <a href = "<?php echo site_url('shop/queue') ?>"><li>店铺</li></a>
@@ -34,17 +34,16 @@
         <?php endforeach ?>
         </ul>
     </div>
-
 </div>
 <style type="text/css" media="all">
 body{
     margin:0;
 }
-.tab{
+.htab{
     margin-left:200px;
     width:50%;
 }
-.tab li{
+.htab li{
     float:left;
     width:20%;
     text-align:center;
@@ -53,10 +52,10 @@ body{
     font-size:1.2em;
 }
 
-.tab li:hover{
+.htab li:hover{
     background:rgb(125,3,3);
 }
-#tab ,  #tab> a{
+#htab ,  #htab> a{
     background:#990002;
     color:white;
 }

@@ -2,17 +2,10 @@
 <html>
     <head>
         <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" href="<?php  echo base_url() . 'css/fa.min.css'?>" type="text/css" media="all" />
         <title>test</title>
     </head>
     <body>
-
-<form action="" method="post" accept-charset="utf-8">
-    <input type="checkbox" name="test[]" value="1" />
-    <input type="checkbox" name="test[]" value="2" />
-    <input type="checkbox" name="test[]" value="3" />
-    <input type="checkbox" name="test[]" value="4" />
-<input type="submit" name="sub"  value="提交" />
-</form>
-
+        <i class = "fa fa-camera-retro fa-5x">sdfasdf</i>
     </body>
 </html>

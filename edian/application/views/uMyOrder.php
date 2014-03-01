@@ -35,7 +35,7 @@
             <ul>
                 <p class="title">我的E点</p>
                 <li>已完成订单</li>
-                <li>购物车</li>
+                <a href = "<?php echo $siteUrl . '/order/index' ?>"><li>购物车</li></a>
                 <li>设置</li>
                 <li>我的收藏</li>
                 <li>我的积分</li>
@@ -64,20 +64,25 @@
                     <li class="time"><?php  echo $time?></li>
                     <li class="comment">
                         <input type="button" name="toreply"  class = "btn button glow button-flat re" value="对本次购买评论" />
-                        <div class="reply" id = "reply" style = "display:none">
+                        <form action="<?php echo $siteUrl . '/shop/addComment' ?>" method="post" accept-charset="utf-8" class = "reply" style = "display:none" >
                             <p class = "clearfix">
                                 <span class="item">送货速度 :</span>
                                 <span class = "star sec"></span>
+                                <input type="text" name="speed" style = "display:none" />
                             </p>
                             <p class = "clearfix">
                                 <span class="item">服务态度 :</span>
                                 <span class = "star sec"></span>
+                                <input type="text" name="score" style = "display:none" />
                             </p>
                             <div class = "clearfix">
                                 <span class="item">评价 :</span>
-                                <textarea name="content" class = "sec"></textarea>
+                                <textarea name="context" class = "sec"></textarea>
                             </div>
-                        </div>
+                            <input type="text" name="time"  value="<?php echo strtotime($time)?>"  style = "display:none"/>
+                            <input type="text" name="storeId"  value="<?php echo $seller?>"  style = "display:none"/>
+                            <input type="submit" name="sub"  value="提交"  class = "btn button glow button-flat re"/>
+                        </form>
                     </li>
                 </ul>
                 <table border="none" class = "det">
@@ -122,16 +127,18 @@
                                     </td>
                                     <td class = "oper">
                                         <input type="button" name="signal"  class = "btn button glow button-flat re" value="单品评论" />
-                                        <div class="reply" id = "reply" style = "display:none">
+                                        <form action="<?php echo $siteUrl . '/item/addComment/' . $val['item_id'] ?>" method="post" accept-charset="utf-8" class = "reply" style = "display:none">
                                             <p class = "clearfix">
                                                 <span class="item">商品质量 :</span>
                                                 <span class = "star sec"></span>
+                                                <input type="text" name="score" style = "display:none"/>
                                             </p>
                                             <div class = "clearfix">
                                                 <span class="item">评价 :</span>
-                                                <textarea name="content" class = "sec"></textarea>
+                                                <textarea name="context" class = "sec"></textarea>
                                             </div>
-                                        </div>
+                                            <input type="submit" name="sub"  value="提交" class = "btn button glow button-flat re" />
+                                        </form>
                                     </td>
                                 </tr>
                             <?php
