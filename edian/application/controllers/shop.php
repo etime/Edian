@@ -11,6 +11,7 @@ class Shop extends BaseSearch {
 
     function __construct() {
         parent::__construct();
+        $this->load->model('comStore');
     }
 
     /**
@@ -235,15 +236,38 @@ class Shop extends BaseSearch {
         $this->_showView($ans, $storeId);
     }
     /**
-     * 添加订单评论
+     * 添加商店评论
      * @param   string      context     评价的内容
      * @param   int         storeId     评价的店铺的id
      * @param   int         speed       送货速度
      * @param   int         score       服务态度
      * @param   int         time        时间戳，标记某个商品时候评论过
+     *
+     * @todo 完成对商店 送货速度 以及商店评分的处理
      */
-    public function addComment()
-    {
+    public function addComment() {
+        $context = trim($this->input->post('context'));
+        $storeId = (int)trim($this->input->post('storeId'));
+        $speed = (int)trim($this->input->post('speed'));
+        $score = (int)trim($this->input->post('score'));
+        $time = (int)trim($this->input->post('time'));
+
+        // 设置评论数组
+        $temp[0] = $this->getUserId();
+        if ($temp[0] == -1) {
+            show_404();
+            return;
+        }
+        $temp[1] = (int)$storeId;
+        $temp[2] = date('Y-m-d H:i:s', $time);
+        $temp[3] = $context;
+
+        // 设置参数数组
+        $data['storeId'] = $storeId;
+        $data['userId'] = $temp[0];
+        $data['context'] = $temp;
+        $data['time'] = $time;
+        $this->comStore->insert($data);
     }
 }
 ?>
