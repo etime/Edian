@@ -67,8 +67,11 @@
                         <form action="<?php echo $siteUrl . '/shop/addComment' ?>" method="post" accept-charset="utf-8" class = "reply" style = "display:none" >
                             <p class = "clearfix">
                                 <span class="item">送货速度 :</span>
+                                <input type="text" name="speed"/>
+                                分钟
+<!--
                                 <span class = "star sec"></span>
-                                <input type="text" name="speed" style = "display:none" />
+-->
                             </p>
                             <p class = "clearfix">
                                 <span class="item">服务态度 :</span>
@@ -87,7 +90,36 @@
                 </ul>
                 <table border="none" class = "det">
                     <tr class = "tr">
-                    <td class="state"><?php  echo $order[$i]['state']?> </td>
+                    <td class="state">
+                    <?php
+                echo $order[$i]['state'];
+                        $flag = 1;
+                        foreach ($orderState['accept'] as $state) {
+                            if($state == $order[$i]['state']){
+                                echo "<span style = 'color:green'>已受理</span>";
+                                $flag = 0;
+                                break;
+                            }
+                        }
+                        foreach ($orderState['unaccept'] as $state) {
+                            if($state == $order[$i]['state']){
+                                echo "<span style = 'color:black'>未受理</span>";
+                                $flag = 0;
+                                break;
+                            }
+                        }
+                        foreach ($orderState['refuse'] as $state) {
+                            if($state == $order[$i]['state']){
+                                echo "<span style = 'color:red'>未受理</span>";
+                                $flag = 0;
+                                break;
+                            }
+                        }
+                        if($flag){
+                            echo @$orderState[$order[$i]['state']];
+                        }
+                    ?>
+                    </td>
                     <?php
                         $ori = $i;
                         $cnt = 0;
@@ -97,7 +129,7 @@
                         }
                         $i = $ori;
                     ?>
-                        <td class="cnt"><?php echo $cnt?> </td>
+                        <td class="cnt"><?php echo $cnt?>元 </td>
                         <td class = "li">
                             <table border="none">
                             <?php while( ($len > $i ) && ($order[$i]['time'] === $time )&& ($order[$i]['seller'] === $seller )):?>

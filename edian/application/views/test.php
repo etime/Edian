@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-        <link rel="stylesheet" href="<?php  echo base_url() . 'css/fa.min.css'?>" type="text/css" media="all" />
+        <link rel="stylesheet" href="<?php  echo base_url('css/font/css/font-awesome.min.css')?>" type="text/css" media="all" />
         <title>test</title>
     </head>
     <body>

@@ -19,19 +19,19 @@ function fpasswd(){
         var value = $(this).val();
         if(!value)return false;
         if(value.length<6){
-            $($this._bro).text("密码太短，不安全哦").addClass("failed").removeClass("success");
+            $($this._bro).text("密码太短，不安全哦").addClass("failed").removeClass("success fa fa-check");
             return false;
         }else if(value.length > 20){
-            $($this._bro).text("密码过长").addClass("failed").removeClass("success");
+            $($this._bro).text("密码过长").addClass("failed").removeClass("success fa fa-check");
         }else if($this._flag === 1 || $this._flag === 0){
             checkPasswdSame();
         }else{
             $this._flag = 1;
-            $($this._bro).addClass("success").text("");
+            $($this._bro).addClass("success fa fa-check").text("");
         }
     }).focus(function () {
         $this._bro = $(this.parentNode).find(".atten");
-        $($this._bro).text("请输入6-20位中英文字符").removeClass("success").removeClass("failed");
+        $($this._bro).text("请输入6-20位中英文字符").removeClass("success fa fa-check").removeClass("failed");
     });
     var passNode1 = $($this.self[0].parentNode).find("span");
     var passNode2 = $($this.self[1].parentNode).find("span");
@@ -41,12 +41,12 @@ function fpasswd(){
         var pa2 = $($this.self[1]).val();
         if(pa1 === pa2){
             $this._flag = 0;//为2的时候，代表检验完成
-            passNode1.removeClass("failed").addClass("success").text("");
-            passNode2.removeClass("failed").addClass("success").text("");
+            passNode1.removeClass("failed").addClass("success fa fa-check").text("");
+            passNode2.removeClass("failed").addClass("success fa fa-check").text("");
         }else{
             $this._flag = 1;
-            passNode1.removeClass("success").text("");
-            passNode2.removeClass("success").text("");
+            passNode1.removeClass("success fa fa-check").text("");
+            passNode2.removeClass("success fa fa-check").text("");
             $($this._bro).addClass("failed").text("两次密码不同");
         }
     }
@@ -71,14 +71,14 @@ function funPhone(){
         var reg = /^1[\d]{10}$/;
         if(reg.exec(value)){
             $this._flag = 1;
-            $($this._broPhone).text("").addClass("success");
+            $($this._broPhone).text("").addClass("success fa fa-check");
         }else {
             $this._flag = 2;
             $($this._broPhone).text("请输入正确手机号").addClass("failed");
         }
     }).focus(function  (event){
-        $this._broPhone = $(this.parentNode).find("span");
-        $($this._broPhone).text("请输入11位手机号码").removeClass("success").removeClass("failed");
+        $this._broPhone = $(this.parentNode).find(".atten");
+        $($this._broPhone).text("请输入11位手机号码").removeClass("success fa fa-check").removeClass("failed");
         $(this).keypress(function  (event) {
             if( (event.which<48) || (event.which>57) ){
                 return false;
@@ -94,8 +94,8 @@ function funPhone(){
         event.preventDefault();
         var phNum = $.trim($("input[name = 'phoneNum']").val());
         if(smsCnt === 0){
-            $this._broCode = $(this.parentNode).find("span");
-            $($this._broPhone).removeClass("failed").addClass("success");//防止用户change之后，点击phone
+            $this._broCode = $(this.parentNode).find(".atten");
+            $($this._broPhone).removeClass("failed").addClass("success fa fa-check");//防止用户change之后，点击phone
             smsCode = false, smsCnt = 30;
             //应该将检验手机号码的和合格性和验证码放一起，这样如果合适的话，就发送短信，不合适的话，就放弃
             $.getJSON(site_url + "/register/smssend/" + phNum ,function(data,textStatus){
@@ -103,7 +103,7 @@ function funPhone(){
                 if(textStatus == "success"){
                     $($this._broCode).text("")
                     if(typeof data == "object"){
-                        $($this._broPhone).text(data["failed"]).removeClass("success").addClass("failed");
+                        $($this._broPhone).text(data["failed"]).removeClass("success fa fa-check").addClass("failed");
                     }else{
                         smsCode = data;
                     }
@@ -113,7 +113,7 @@ function funPhone(){
                     console.log("发送失败");//向后台报告这种错误的情况吧
                 }
             })
-            $($this._broCode).removeClass("success").removeClass("failed");
+            $($this._broCode).removeClass("success fa fa-check").removeClass("failed");
             interval = setInterval(function () {
                 if(smsCnt=== 0){
                     $($this._broCode).text("");
@@ -130,7 +130,7 @@ function funPhone(){
         if(smsCode){
             var phoneCode = $.trim($(this).val());
             if(smsCode == phoneCode){
-                $($this._broCode).text("").addClass("success").removeClass("failed");
+                $($this._broCode).text("").addClass("success fa fa-check").removeClass("failed");
                 if(interval){
                     smsCnt = 0;
                     $this._flag = 0;
@@ -306,8 +306,11 @@ function showNav() {
     $("#tonav").mouseenter(function (event) {
         nav.fadeIn();
         event.preventDefault();
+    }).click(function (event) {
+        nav.fadeToggle();
+        event.preventDefault();
     })
-    $("#tab").mouseleave(function (event) {
+    $("#htab").mouseleave(function (event) {
         nav.fadeOut();
         event.preventDefault();
     })
@@ -321,8 +324,8 @@ function floginName() {
     var $this = this;
     $this_bro = null , $this._flag = 1 ,$this.self = $("input[name = 'loginName']");
     $this.self.focus(function () {
-        $this._bro = $(this.parentNode).find("span");
-        $($this._bro).text("请输入20位以内中英文字符或数字").removeClass("success").removeClass("failed");
+        $this._bro = $(this.parentNode).find(".atten");
+        $($this._bro).text("请输入20位以内中英文字符或数字").removeClass("success fa fa-check").removeClass("failed");
     }).blur(function () {
         var val = $.trim($(this).val());
         if(!val)return false;
@@ -331,13 +334,13 @@ function floginName() {
             $this._flag = 1;
             $($this._bro).text("请用中文英文数字").addClass("failed");
         }else if(val.length > 20){
-            $($this._bro).text("清不要超过20位").addClass("failed").removeClass("success");
+            $($this._bro).text("清不要超过20位").addClass("failed").removeClass("success fa fa-check");
         }else{
             $.get(site_url + "/register/checkLoginName?loginName=" + val,function(data,textStatus){
                 if(textStatus == "success"){
                     if(data.indexOf("false") == -1){
                         $this._flag = 0;
-                        $($this._bro).addClass("success").text("");//或许这里的符号，可以成为等待符号
+                        $($this._bro).addClass("success fa fa-check").text("");//或许这里的符号，可以成为等待符号
                     }else {
                         $this._flag = 1;
                          $($this._bro).addClass("failed").text("登录名重复");//或许这里的符号，可以成为等待符号

@@ -1,4 +1,5 @@
 <!-- 这里是作为网页的一部分出现的，是网站的头部,css和html在一起-->
+<link rel="stylesheet" href="<?php  echo base_url('css/font/css/font-awesome.min.css')?>" type="text/css" media="all" />
 <div id = "header" class="clearfix" >
     <div>
         <div class = "logo">
@@ -52,23 +53,23 @@
         <form action="<?php echo site_url('register/userRegister') ?>" method="post" accept-charset="utf-8" class = "r" style = "display:none" >
             <p>
                 <input type="text" name="loginName" id = "userName" placeholder = "用户名/手机号" />
-                <span class = "atten"></span>
-                <label for="userName"></label>
+                <i class = "atten"></i>
+                <label for="userName"><i class = "fa fa-user"></i></label>
             </p>
             <p>
                 <input type="password" name="password" placeholder = "密码" />
                 <span class = "atten"></span>
-                <label for="password"></label>
+                <label for="password"><i class = "fa fa-unlock-alt"></i></label>
             </p>
             <p>
                 <input type="password" name="confirm" placeholder = "密码" />
                 <span class = "atten"></span>
-                <label for="password"></label>
+                <label for="password"><i class = "fa fa-unlock-alt"></i></label>
             </p>
             <p>
                 <input type="text" name="phoneNum" placeholder = "手机号" />
                 <span class = "atten"></span>
-                <label for="phoneNum"></label>
+                <label for="phoneNum"><i class = "fa fa-phone"></i></label>
             </p>
             <p>
                 <input type="text" name="checkNum" />
@@ -150,7 +151,6 @@
     width:110px;
 }
 label[for = 'userName']{
-    background:url( "<?php echo base_url('bgimage/login.png') ?>") -2px -5px no-repeat;
     position:absolute;
     top:9px;
     right:6px;
@@ -159,7 +159,6 @@ label[for = 'userName']{
     content:' ';
 }
 label[for = 'password']{
-    background:url( "<?php echo base_url('bgimage/login.png') ?>") -20px -6px no-repeat;
     position:absolute;
     top:9px;
     right:6px;
@@ -168,7 +167,6 @@ label[for = 'password']{
     content:' ';
 }
 label[for = 'phoneNum']{
-    background:url( "<?php echo base_url('bgimage/login.png') ?>") -105px -7px no-repeat;
     position:absolute;
     top:9px;
     right:6px;
@@ -260,7 +258,7 @@ label[for = 'phoneNum']{
     width:100%;
     position:relative;
 }
-a{
+#header a , #htab a{
     color:inherit;
 }
 .reg{
@@ -281,9 +279,9 @@ a{
     top:4px;
     width:25px;
     height:25px;
-    background:url( "<?php echo base_url('bgimage/login.png') ?>") -55px -1px no-repeat;
     position:absolute;
     content:' ';
+    font-size:20px;
 }
 .login .failed{
     color:red;

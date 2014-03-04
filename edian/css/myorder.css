@@ -36,6 +36,9 @@ ul{
     text-indent:30px;
     padding:6px 0;
 }
+.dir a{
+    color:inherit;
+}
 .dir li:hover{
     box-shadow:0 0 6px #999 inset ;
     border-radius:2px;
@@ -103,6 +106,10 @@ table{
     border:1px solid #CCC;
     border-top:none;
 }
+.li  table{
+    border-bottom:none;
+    border-right:none;
+}
 .tr > td{
     border:none;
 }
@@ -112,6 +119,9 @@ table{
 }
 .li td ,.cart .state{
     border-right:1px solid #ccc;
+}
+.li tr:last-child td{
+    border-bottom :none;
 }
 .li td:last-child {
     border-right:none;
