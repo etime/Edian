@@ -65,11 +65,7 @@
                     <li class="comment">
                         <input type="button" name="toreply"  class = "btn button glow button-flat re" value="对本次购买评论" />
                         <form action="<?php echo $siteUrl . '/shop/addComment' ?>" method="post" accept-charset="utf-8" class = "reply" style = "display:none" >
-                            <p class = "clearfix">
-                                <span class="item">送货速度 :</span>
-                                <input type="text" name="speed"/>
-                                分钟
-                            </p>
+
                             <p class = "clearfix">
                                 <span class="item">服务态度 :</span>
                                 <span class = "fa fa-star star" name = "0" ></span>
@@ -78,10 +74,11 @@
                                 <?php endfor ?>
                                 <input type="text" name="score" style = "display:none" />
                             </p>
-                            <div class = "clearfix">
-                                <span class="item">评价 :</span>
-                                <textarea name="context" class = "sec"></textarea>
-                            </div>
+                            <p class = "clearfix">
+                                <span class="item">送货速度 :</span>
+                                <input type="text" name="speed"/>
+                                分钟
+                            </p>
                             <input type="text" name="time"  value="<?php echo strtotime($time)?>"  style = "display:none"/>
                             <input type="text" name="storeId"  value="<?php echo $seller?>"  style = "display:none"/>
                             <input type="submit" name="sub"  value="提交"  class = "btn button glow button-flat re"/>
