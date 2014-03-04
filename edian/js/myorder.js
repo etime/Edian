@@ -8,7 +8,37 @@ $(document).ready(function () {
     login();
     add();
     star();
+    lineScore();
 })
+/**
+ * 通过线滑动给分
+ */
+function lineScore() {
+    var doc = document;
+    var line = $("#line");
+
+    var last = null;
+    $("#cart").delegate('.point' , 'mousedown', function () {
+        var point = this;
+        var le = $(point).siblings(".le");
+        var ri = $(point).siblings(".ri");
+        //var ri = $().find(".ri");
+        var len = $(line).width();
+        $(doc).mousemove(function (event) {
+            console.log(last);
+            if(last){
+               var dis =  event.clientX - last;
+               var width = Math.min($(le).width() + dis , len);
+               $(le).width(width);
+               $(ri).width(len - width);
+            }
+            last = event.clientX;
+        })
+    })
+    $(doc).mouseup(function () {
+        $(doc).unbind("mousemove");
+    })
+}
 /**
  * 对店铺进行评论
  */

@@ -64,7 +64,7 @@
                     <li class="time"><?php  echo $time?></li>
                     <li class="comment">
                         <input type="button" name="toreply"  class = "btn button glow button-flat re" value="对本次购买评论" />
-                        <form action="<?php echo $siteUrl . '/shop/addComment' ?>" method="post" accept-charset="utf-8" class = "reply" style = "display:none" >
+                        <form action="<?php echo $siteUrl . '/shop/addComment' ?>" method="post" accept-charset="utf-8" class = "reply"  >
 
                             <p class = "clearfix">
                                 <span class="item">服务态度 :</span>
@@ -76,6 +76,11 @@
                             </p>
                             <p class = "clearfix">
                                 <span class="item">送货速度 :</span>
+                                <span class="line" id = "line">
+                                    <span class="le"></span>
+                                    <span class="point" ></span>
+                                    <span class="ri"></span>
+                                </span>
                                 <input type="text" name="speed"/>
                                 分钟
                             </p>
