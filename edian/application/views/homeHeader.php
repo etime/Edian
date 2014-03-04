@@ -56,7 +56,7 @@ body{
     background:rgb(125,3,3);
 }
 #htab ,  #htab> a{
-    background:#990002;
+    background:url("<?php  echo base_url('bgimage/topbar.jpg') ?>") repeat-x;
     color:white;
 }
 .nav{

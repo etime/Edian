@@ -27,7 +27,7 @@
 </div>
 <div id = "login" class = "login"  style = "display:none">
     <div class = "wrap">
-        <span class = "shut"> </span>
+        <span class = "shut"><i class = "fa fa-times"> </i></span>
         <div class = "regd" id = "regd">
             <span class = "focus" name = 'l' >登录</span>
             <span name = "r" >注册</span>
@@ -192,11 +192,8 @@ label[for = 'phoneNum']{
     position:absolute;
     top:15px;
     right:15px;
-    background:url( "<?php echo base_url('bgimage/login.png') ?>") -36px -5px no-repeat;
-    width:18px;
-    height:18px;
-    content:' ';
     cursor:pointer;
+    color:#D6d6d6;
 }
 #header > div{
     margin:0 auto;
@@ -385,6 +382,12 @@ label[for = 'phoneNum']{
   margin: 0;
   text-decoration: none;
   text-align: center;
+}
+label i{
+    color:#BBB;
+}
+label:focus{
+    color:red;
 }
 .button.glow {
   -webkit-animation-duration: 3s;

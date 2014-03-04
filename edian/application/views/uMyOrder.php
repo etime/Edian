@@ -69,13 +69,13 @@
                                 <span class="item">送货速度 :</span>
                                 <input type="text" name="speed"/>
                                 分钟
-<!--
-                                <span class = "star sec"></span>
--->
                             </p>
                             <p class = "clearfix">
                                 <span class="item">服务态度 :</span>
-                                <span class = "star sec"></span>
+                                <span class = "fa fa-star star" name = "0" ></span>
+                                <?php for($j = 1;$j < 5;$j++): ?>
+                                <span class = "fa fa-star-o star" name = "<?php echo $j ?>" ></span>
+                                <?php endfor ?>
                                 <input type="text" name="score" style = "display:none" />
                             </p>
                             <div class = "clearfix">
@@ -92,7 +92,7 @@
                     <tr class = "tr">
                     <td class="state">
                     <?php
-                echo $order[$i]['state'];
+                    //echo $order[$i]['state'];
                         $flag = 1;
                         foreach ($orderState['accept'] as $state) {
                             if($state == $order[$i]['state']){
@@ -162,7 +162,10 @@
                                         <form action="<?php echo $siteUrl . '/item/addComment/' . $val['item_id'] ?>" method="post" accept-charset="utf-8" class = "reply" style = "display:none">
                                             <p class = "clearfix">
                                                 <span class="item">商品质量 :</span>
-                                                <span class = "star sec"></span>
+                                                <span class = "fa fa-star star" name = "0" ></span>
+                                                <?php for($j = 1;$j < 5;$j++): ?>
+                                                <span class = "fa fa-star-o star" name = "<?php echo $j ?>" ></span>
+                                                <?php endfor ?>
                                                 <input type="text" name="score" style = "display:none"/>
                                             </p>
                                             <div class = "clearfix">

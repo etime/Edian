@@ -7,6 +7,7 @@ $(document).ready(function () {
     showStore();
     login();
     add();
+    star();
 })
 /**
  * 对店铺进行评论
@@ -16,7 +17,20 @@ function showStore() {
         $(this.parentNode).find(".reply").fadeToggle();
     })
 }
-
+function star() {
+    //鼠标划过星星，更改状态和修改对应的数值
+    $("#cart").delegate('.star' , 'mouseenter' , function () {
+        var stars = $(this.parentNode).find(".star");
+        var len = parseInt($(this).attr('name') , 10);
+        $(this.parentNode).find("input[name = 'score']").val(len);
+        for (var i = 0; i <= len; i ++) {
+            $(stars[i]).removeClass("fa-star-o").addClass('fa-star');
+        }
+        for (l = len+1 ,len = stars.length; l < len;l++) {
+            $(stars[l]).removeClass("fa-star").addClass('fa-star-o');
+        }
+    })
+}
 /**
  * 向数据库添加数据
  */
