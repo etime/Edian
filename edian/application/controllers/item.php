@@ -245,7 +245,7 @@ class item extends BaseSearch {
 
         $data['item'] = $ans;
         $data['key'] = $key;
-        $commonUrl = site_url('item/select/' . $flag);
+        $commonUrl = site_url('item/select/' . $flag . '/' . $button . '/' . $order);
         $getString = '?key=' . $key;
         $data['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount'], $getString);
         $data['type'] = $button;

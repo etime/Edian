@@ -397,6 +397,10 @@ class Morder extends Ci_Model {
      * @return boolean | int 如果销量为 0 ，返回 false，否则返回具体的销量
      */
     public function getSellNum($storeId) {
+        $storeId = (int)$storeId;
+        if ($storeId == false) {
+            return false;
+        }
         $this->load->config('edian');
         $reject = $this->config->item('rejectOrder');
         $isfFailed = $this->config->item('infFailed');

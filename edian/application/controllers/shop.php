@@ -11,7 +11,8 @@ class Shop extends BaseSearch {
 
     function __construct() {
         parent::__construct();
-        $this->load->model('comStore');
+        $this->load->model('comstore');
+        $this->load->model('morder');
     }
 
     /**
@@ -49,8 +50,7 @@ class Shop extends BaseSearch {
         }
         $ans = $this->mitem->getItemByStoreId($storeId);
         if ($ans === false) {
-            show_404();
-            return false;
+            $ans = array();
         }
         $temp = $this->pagesplit->split($ans, $pageId, $this->config->item('pageSize'));
         $ans = array();
