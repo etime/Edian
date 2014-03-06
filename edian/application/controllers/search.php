@@ -96,7 +96,7 @@ class Search extends BaseSearch {
         //$this->help->showArr($ans);
         $ans['type'] = $button;
         $ans['desc'] = $order;
-//        $this->load->view("search" , $ans);
+        $this->load->view("search" , $ans);
     }
 }
 ?>
