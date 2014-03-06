@@ -69,6 +69,7 @@ class Upload extends MY_Controller {
         $path = explode('/', $path);
         for ($i = 0, $len = (int)count($path), $cur = '.'; $i < $len; $i ++) {
             if (! is_dir($cur . '/' . $path[$i])) {
+                echo $cur . '/' . $path[$i];
                 mkdir($cur . '/' . $path[$i]);
             }
             $cur .= '/' . $path[$i];
@@ -149,7 +150,7 @@ class Upload extends MY_Controller {
      * 显示上传商品图片的具体页面，传递给 view 处理上传的图片的处理函数
      * @param int $flag
      *              $flag 为 1 表示上传的是 1:1 的 mainThumbnail
-     *              $falg 为 2 表示上传到mis文件夹中的图片，目前针对的是logo
+     *              $falg 为 2 表示上传到mix文件夹中的图片，目前针对的是logo
      *              $flag 为 0 的情况是商品的缩略图的文件
      */
     public function index($flag = 0) {
@@ -247,16 +248,6 @@ class Upload extends MY_Controller {
         } else {
             $fileName .= '.jpg';
         }
-//
-//        // 创建 image/"userId"
-//        if (! is_dir('./image/' . $userId)) {
-//            mkdir('./image/' . $userId);
-//        }
-//
-//        // 创建 image/"userId"/main 文件夹
-//        if (! is_dir('./image/' . $userId . '/main')) {
-//            mkdir('./image/' . $userId . '/main');
-//        }
 
         $path = 'image/' . $userId . '/main';
         $this->_makeFolder($path);
@@ -344,23 +335,6 @@ class Upload extends MY_Controller {
             $flag = 1;
         }
 
-//        // 创建 image/"userId" 文件夹
-//        if (! is_dir('./image/' . $userId)) {
-//            mkdir('./image/' . $userId);
-//        }
-//        // 创建 image/"userId"/thumb 文件夹
-//        if (! is_dir('./image/' . $userId . '/thumb')) {
-//            mkdir('./image/' . $userId . '/thumb');
-//        }
-//        // 创建 image/"userId"/thumb/big 文件夹
-//        if (! is_dir('./image/' . $userId . '/thumb/big')) {
-//            mkdir('./image/' . $userId . '/thumb/big');
-//        }
-//        // 创建 image/"userId"/thumb/small 文件夹
-//        if (! is_dir('./image/' . $userId . '/thumb/small')) {
-//            mkdir('./image/' . $userId . '/thumb/small');
-//        }
-
         $path = 'image/' . $userId . '/thumb/big';
         $this->_makeFolder($path);
         $path = 'image/' . $userId . '/thumb/small';
@@ -436,11 +410,11 @@ class Upload extends MY_Controller {
             return;
         }
 
-//        // 用户权限不够
-//        if ($this->_checkAuthority() == false) {
-//            show_404();
-//            return;
-//        }
+        // 用户权限不够
+        if ($this->_checkAuthority() == false) {
+            show_404();
+            return;
+        }
 
         // 跳转页面的 url 和 urlName
         $url = site_url('upload/index/2');
