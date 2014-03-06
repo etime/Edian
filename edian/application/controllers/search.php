@@ -10,19 +10,6 @@ class Search extends BaseSearch {
     }
 
     /**
-     * 获取返回的商品中的的某一个子数组
-     * @param array $data mysql 查询返回的数组
-     * @return array
-     */
-    protected function _getSubArray($data, $name) {
-        $ans = array();
-        foreach ($data as $key => $val) {
-            $ans[$key] = $val["$name"];
-        }
-        return $ans;
-    }
-
-    /**
      * 获取每个商品对应的商店的送货时间
      * @param array $data mysql 查询返回的数组
      * @return array
@@ -33,86 +20,6 @@ class Search extends BaseSearch {
             $ans[$i] = $this->store->getDuration($ans[$i]);
         }
         return $ans;
-    }
-
-    /**
-     * 对店外搜索的结果进行排序
-     * @param int $button 排序方式，默认 1
-     * <pre>
-     *      1  表示按照综合排名，对应 item 中的 rating
-     *      2  表示按照价格排序，对应 item 中的 price
-     *      3  表示按照销量排序，对应 item 中的 sellNum
-     *      4  表示按照商品评分，需要选出 item 中的 satisfyScore
-     *      5  表示按照距离排序，需要选出 item 中的 belongsTo 对应的商店的坐标计算出距离该用户现在坐标的距离
-     *      6  表示按照送货速度排序，需要选出 item 中的 belongsTo 对应的商店的 duration
-     * </pre>
-     * @param int $order 升序或降序，默认 1
-     * <pre>
-     *      1  表示按照 降序 排序
-     *      2  表示按照 升序 排序
-     * </pre>
-     * @retutn array 排好序的数组
-     * @todo 目前 $button = 5 和 6 的时候都是按照送货速度排序的，需要将 $button = 5 的时候进行处理
-     * @todo 提供选取价格区间的功能
-     */
-    protected function _sort($data, $button = 1, $order = 1) {
-        // 对意外情况进行默认设置
-        if ($button < 1 || $button > 6) {
-            $button = 1;
-        }
-        if ($order < 1 || $order > 2) {
-            $order = 1;
-        }
-
-        if ($button == 1) {
-            if ($order == 1) {
-                array_multisort($this->_getSubArray($data, 'rating'), SORT_DESC, $data);
-                return $data;
-            } else if ($order == 2) {
-                array_multisort($this->_getSubArray($data, 'rating'), SORT_ASC, $data);
-                return $data;
-            }
-        } else if ($button ==2) {
-            if ($order == 1) {
-                array_multisort($this->_getSubArray($data, 'price'), SORT_DESC, $data);
-                return $data;
-            } else {
-                array_multisort($this->_getSubArray($data, 'price'), SORT_ASC, $data);
-                return $data;
-            }
-        } else if ($button == 3) {
-            if ($order == 1) {
-                array_multisort($this->_getSubArray($data, 'sellNum'), SORT_DESC, $data);
-                return $data;
-            } else {
-                array_multisort($this->_getSubArray($data, 'sellNum'), SORT_ASC, $data);
-                return $data;
-            }
-        } else if ($button == 4) {
-            if ($order == 1) {
-                array_multisort($this->_getSubArray($data, 'satisfyScore'), SORT_DESC, $data);
-                return $data;
-            } else {
-                array_multisort($this->_getSubArray($data, 'satisfyScore'), SORT_ASC, $data);
-                return $data;
-            }
-        } else if ($button == 5) {
-            if ($order == 1) {
-                array_multisort($this->_getDuration($data), SORT_DESC, $data);
-                return $data;
-            } else {
-                array_multisort($this->_getDuration($data), SORT_ASC, $data);
-                return $data;
-            }
-        } else if ($button == 6) {
-            if ($order == 1) {
-                array_multisort($this->_getDuration($data), SORT_DESC, $data);
-                return $data;
-            } else {
-                array_multisort($this->_getDuration($data), SORT_ASC, $data);
-                return $data;
-            }
-        }
     }
 
     public function testSearch() {
@@ -177,6 +84,7 @@ class Search extends BaseSearch {
             }
         }
         // 将所得结果按照指定顺序排序
+        //$this->help->showArr($ans);
         $ans = $this->_sort($ans, $button, $order);
         // 将所得的结果进行分页
         $temp = $this->pagesplit->split($ans, $pageId, $this->config->item('pageSize'));
@@ -188,7 +96,7 @@ class Search extends BaseSearch {
         //$this->help->showArr($ans);
         $ans['type'] = $button;
         $ans['desc'] = $order;
-        $this->load->view("search" , $ans);
+//        $this->load->view("search" , $ans);
     }
 }
 ?>

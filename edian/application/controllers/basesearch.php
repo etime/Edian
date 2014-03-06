@@ -151,5 +151,99 @@ class BaseSearch extends MY_Controller {
         $key = $this->_safeFilter($key);
         return explode(' ', $key);
     }
+
+    /**
+     * 获取返回的商品中的的某一个子数组
+     * @param array $data mysql 查询返回的数组
+     * @return array
+     */
+    protected function _getSubArray($data, $name) {
+        $ans = array();
+        foreach ($data as $key => $val) {
+            $ans[$key] = $val["$name"];
+        }
+        return $ans;
+    }
+
+    /**
+     * 对店外搜索的结果进行排序
+     * @param int $button 排序方式，默认 1
+     * <pre>
+     *      1  表示按照综合排名，对应 item 中的 rating
+     *      2  表示按照价格排序，对应 item 中的 price
+     *      3  表示按照销量排序，对应 item 中的 sellNum
+     *      4  表示按照商品评分，需要选出 item 中的 satisfyScore
+     *      5  表示按照距离排序，需要选出 item 中的 belongsTo 对应的商店的坐标计算出距离该用户现在坐标的距离
+     *      6  表示按照送货速度排序，需要选出 item 中的 belongsTo 对应的商店的 duration
+     * </pre>
+     * @param int $order 升序或降序，默认 1
+     * <pre>
+     *      1  表示按照 降序 排序
+     *      2  表示按照 升序 排序
+     * </pre>
+     * @retutn array 排好序的数组
+     * @todo 目前 $button = 5 和 6 的时候都是按照送货速度排序的，需要将 $button = 5 的时候进行处理
+     * @todo 提供选取价格区间的功能
+     */
+    protected function _sort($data, $button = 1, $order = 1) {
+        //$this->help->showArr($data);
+        // 对意外情况进行默认设置
+        if ($button < 1 || $button > 6) {
+            $button = 1;
+        }
+        if ($order < 1 || $order > 2) {
+            $order = 1;
+        }
+
+        if ($button == 1) {
+            if ($order == 1) {
+                array_multisort($this->_getSubArray($data, 'rating'), SORT_DESC, $data);
+                return $data;
+            } else if ($order == 2) {
+                array_multisort($this->_getSubArray($data, 'rating'), SORT_ASC, $data);
+                return $data;
+            }
+        } else if ($button ==2) {
+            if ($order == 1) {
+                array_multisort($this->_getSubArray($data, 'price'), SORT_DESC, $data);
+                return $data;
+            } else {
+                array_multisort($this->_getSubArray($data, 'price'), SORT_ASC, $data);
+                return $data;
+            }
+        } else if ($button == 3) {
+            if ($order == 1) {
+                array_multisort($this->_getSubArray($data, 'sellNum'), SORT_DESC, $data);
+                return $data;
+            } else {
+                array_multisort($this->_getSubArray($data, 'sellNum'), SORT_ASC, $data);
+                return $data;
+            }
+        } else if ($button == 4) {
+            if ($order == 1) {
+                array_multisort($this->_getSubArray($data, 'satisfyScore'), SORT_DESC, $data);
+                return $data;
+            } else {
+                array_multisort($this->_getSubArray($data, 'satisfyScore'), SORT_ASC, $data);
+                return $data;
+            }
+        } else if ($button == 5) {
+            if ($order == 1) {
+                array_multisort($this->_getDuration($data), SORT_DESC, $data);
+                return $data;
+            } else {
+                array_multisort($this->_getDuration($data), SORT_ASC, $data);
+                return $data;
+            }
+        } else if ($button == 6) {
+            if ($order == 1) {
+                array_multisort($this->_getDuration($data), SORT_DESC, $data);
+                return $data;
+            } else {
+                array_multisort($this->_getDuration($data), SORT_ASC, $data);
+                return $data;
+            }
+        }
+    }
 }
 ?>

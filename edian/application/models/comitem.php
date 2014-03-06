@@ -259,6 +259,10 @@ class ComItem extends CI_Model {
      * @return boolean | int 如果有人评论，返回评论数量，否则返回 false
      */
     public function getCommenterAmount($itemId) {
+        $itemId = (int)$itemId;
+        if ($itemId == false) {
+            return false;
+        }
         $sql = "SELECT COUNT(*) FROM comItem WHERE item_id = $itemId";
         $ans = $this->db->query($sql);
         if ($ans->num_rows == 0) {

@@ -644,6 +644,10 @@ class Mitem extends Ci_Model {
      * @return boolean | array
      */
     public function getDetailInfo($itemId) {
+        $itemId = (int)$itemId;
+        if ($itemId == false) {
+            return false;
+        }
         $sql = "SELECT id, title, price, satisfyScore, sellNum, mainThumbnail, belongsTo, rating FROM item WHERE id = $itemId";
         $res = $this->db->query($sql);
         if ($res->num_rows === 0) {
@@ -972,7 +976,7 @@ class Mitem extends Ci_Model {
             $key = '%;' . $key . '|%';
         }
         $key = mysql_real_escape_string($key);
-        $sql = "SELECT id FROM item WHERE category LIKE $key AND state = 0 ORDER BY rating";
+        $sql = "SELECT id FROM item WHERE category LIKE '$key' AND state = 0 ORDER BY rating";
         $ans = $this->db->query($sql);
         if ($ans->num_rows == 0) {
             return false;

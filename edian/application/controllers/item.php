@@ -5,10 +5,11 @@
     > Mail :          douunasm@gmail.com
     > Last_Modified : 2013-07-23 14:07:41
  ************************************************************************/
+require 'basesearch.php';
 /*
  * 这个作为前台item.php 的操作合集了
  */
-class item extends MY_Controller {
+class item extends BaseSearch {
     // 存储用户的 userId
     protected $userId;
 
@@ -205,11 +206,11 @@ class item extends MY_Controller {
      * @author farmerjian<chengfeng1992@hotmail.com>
      * @todo 调用指定的 view 页面
      */
-    public function select($flag = 0, $pageId = 1) {
+    public function select($flag = 0, $button = 1, $order = 1, $pageId = 1) {
         $flag = (int)$flag;
         $pageId = (int)$pageId;
         if (! isset($_GET['key']) || $flag < 1 || $flag > 3) {
-            show_404();
+            echo $flag;
             return;
         } else {
             $key = trim($_GET['key']);
@@ -219,17 +220,37 @@ class item extends MY_Controller {
         // 将所得的结果进行分页
         $temp = $this->pagesplit->split($itemList, $pageId, $this->config->item('pageSize'));
         $data = array();
-        $data['item'] = $temp['newData'];
-        for ($i = 0, $len = (int)count($data['item']); $i < $len; $i ++) {
-            $data['item'][$i] = $this->mitem->getItemByItemId($data['item'][$i]['id']);
+        $ans = $temp['newData'];
+        $item = array();
+        for ($i = 0, $len = (int)count($ans); $i < $len; $i ++) {
+            $id = $ans[$i]['id'];
+            array_push($temp, $id);
         }
+        $ans = $item;
+        if ($ans == false) {
+            $ans = array();
+        } else {
+            for ($i = 0, $len = (int)count($ans); $i < $len; $i ++) {
+                $itemId = $ans[$i];
+                $ans[$i] = $this->mitem->getDetailInfo($itemId);
+                $commenterAmount = $this->comitem->getCommenterAmount($itemId);
+                $ans[$i]['storeName'] = $this->store->getStoreName($ans[$i]['belongsTo']);
+                if ($commenterAmount != false && $commenterAmount != 0) {
+                    $ans[$i]['satisfyScore'] = $ans[$i]['satisfyScore'] / $commenterAmount;
+                }
+            }
+        }
+//        $this->help->showArr($ans);
+        $ans = $this->_sort($ans, $button, $order);
+
+        $data['item'] = $ans;
         $data['key'] = $key;
         $commonUrl = site_url('item/select/' . $flag);
         $getString = '?key=' . $key;
-        $ans['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount'], $getString);
-
-        $storeId = 0;
-        $this->_showView($ans, $storeId);
+        $data['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount'], $getString);
+        $data['type'] = $button;
+        $data['desc'] = $order;
+        $this->load->view("search" , $data);
     }
 /**********************************************************************************************************************/
 /**********************************************************************************************************************/
