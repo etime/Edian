@@ -50,7 +50,7 @@
             -->
             </p>
         </form>
-        <form action="<?php echo site_url('register/userRegister') ?>" method="post" accept-charset="utf-8" class = "r" style = "display:none" >
+        <form action="<?php echo site_url('register/userRegisterCheck') ?>" method="post" accept-charset="utf-8" class = "r" style = "display:none" >
             <p>
                 <input type="text" name="loginName" id = "userName" placeholder = "用户名/手机号" />
                 <i class = "atten"></i>
