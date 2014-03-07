@@ -116,10 +116,12 @@ function showMap() {
         $(this.parentNode).fadeOut();
     })
 }
+//以后添加悬浮效果
 $(document).ready(function () {
     fixpos();
     showMap();
     pageDisable();
     iCartShow();
     bustime();
+    login();
 })

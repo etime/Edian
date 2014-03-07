@@ -250,6 +250,7 @@ class item extends BaseSearch {
         $data['pageNumFooter'] = $this->pagesplit->setPageUrl($commonUrl, $pageId, $temp['pageAmount'], $getString);
         $data['type'] = $button;
         $data['desc'] = $order;
+        $data['dir'] = $this->part;
         $this->load->view("search" , $data);
     }
 /**********************************************************************************************************************/

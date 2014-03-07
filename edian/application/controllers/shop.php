@@ -28,6 +28,7 @@ class Shop extends BaseSearch {
         //$data1['pageNumFooter'] = $page;
         $data1['storeId'] = $store;
         $data1 = array_merge($good , $data1);
+        $data['dir'] = $this->part;
         //$this->help->showArr($data1);
         $this->load->view('store' , $data1);
     }
@@ -185,7 +186,8 @@ class Shop extends BaseSearch {
         for ($i = 0, $len = (int)count($data['shopList']); $i < $len; $i ++) {
             $data['shopList'][$i]['sellNum'] = $this->morder->getSellNum($data['shopList'][$i]['id']);
         }
-        $this->help->showArr($data);
+        $data['dir'] = $this->part;
+        //$this->help->showArr($data);
         $this->load->view('shopList' , $data);
     }
 

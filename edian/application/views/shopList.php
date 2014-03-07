@@ -47,6 +47,7 @@
         <ul class = "good">
         <?php
             if(!$shopList)$shopList = array();
+             //var_dump($shopList);
         ?>
         <?php foreach($shopList as $store):?>
             <li class = "details">
@@ -148,4 +149,7 @@
         </ul>
     </div>
 </body>
+<script type="text/javascript" charset="utf-8" src = "<?php echo $baseUrl . 'js/jquery.min.js' ?>"></script>
+<script type="text/javascript" charset="utf-8" src = "<?php echo $baseUrl . 'js/login.js' ?>"></script>
+<script type="text/javascript" charset="utf-8" src = "<?php echo $baseUrl . 'js/shoplist.js' ?>"></script>
 </html>

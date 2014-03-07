@@ -276,6 +276,7 @@
     var storeId = "<?php echo $storeId ?>";
 </script>
 <script type="text/javascript" charset="utf-8" src = "<?php echo $baseUrl . 'js/jquery.min.js' ?>"></script>
+<script type="text/javascript" charset="utf-8" src = "<?php echo $baseUrl . 'js/login.js' ?>"></script>
 <script type="text/javascript" charset="utf-8" src = "<?php echo $baseUrl . 'js/shop.js' ?>"></script>
 <script type="text/javascript" charset="utf-8" src = "<?php echo $baseUrl . 'js/cart3.js' ?>"></script>
 </html>
