@@ -365,7 +365,7 @@ class Register extends CI_Controller {
 
         // 存储用户的 usrId，便于检验用户是否登录及一系列和登录用户有关的信息
         $this->session->set_userdata('userId', $this->user->getUserIdByLoginName($data['loginName']));
-        $this->session->set_userdata('loginName', $this->user->$data['loginName']);
+        $this->session->set_userdata('loginName', $data['loginName']);
 
         // 跳转到网站首页
         $this->_errorJump('恭喜！您已经成功注册！', site_url(), '首页');
