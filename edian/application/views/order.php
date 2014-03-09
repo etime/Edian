@@ -87,7 +87,7 @@ $idx = -1;
                 <td class = "num">库存<span class = "tS"><?php echo $item["storeNum"]?></span></td>
                 <td class="num">
                     <input type = "button" name = 'dec' class = "clk" value = "-" />
-                    <input type="text" name="buyNum[]" class = "buyNum"  value="<?php echo $info["orderNum"]?>" />
+                    <input type="text" name="buyNums[]" class = "buyNum"  value="<?php echo $info["orderNum"]?>" />
                     <input type = "button" name = 'inc' class = "clk" value = "+" />
                 </td>
                 <td class="price">￥<span class = "pri"><?php echo $info["price"]?></span></td>

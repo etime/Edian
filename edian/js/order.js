@@ -2,7 +2,7 @@
     > File Name :  ../../js/order.js
     > Author  :      unasm
     > Mail :         douunasm@gmail.com
-    > Last_Modified: 2013-09-21 21:37:29
+    > Last_Modified: 2014-03-09 10:47:03
     //之前计算总和，是通过保存数组进行的，目前还是实验一下从dom加吧，这样更容易维护一点。
  ************************************************************************/
 jQuery.alet = function (cont) {//给出各种提示的函数，和alert不同，这个过1s就消失
@@ -206,6 +206,7 @@ function parFind(node) {
 function sub(){
     $("form").submit(function(event){
         if(parseInt($("input[name = 'addr']").val() , 10) === -1){
+            $.alet("请选择或者输入地址及收货人信息");
             event.preventDefault();
         }
     })
@@ -220,7 +221,7 @@ function calAll(){
     var total = 0;
     for(var i = ordlist.length - 1;i >= 0 ;i--){
         var chose = $(ordlist[i]).find("input[name = 'orderId[]']");
-        var buyNums = $(ordlist[i]).find("input[name = 'buyNum[]']");
+        var buyNums = $(ordlist[i]).find("input[name = 'buyNums[]']");
         var price = $(ordlist[i]).find(".pri");//需要转换成为float，目前是text
         var cal = 0;
         for(var j = chose.length - 1;j >= 0;j--){

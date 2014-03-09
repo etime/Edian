@@ -10,10 +10,7 @@ class Test extends MY_Controller{
     }
     public function mem()
     {
-        $ab = "斯蒂芬";
-        echo $ab;
-        echo $ab[0];
-        echo "<br/>sdf";
+        phpinfo();
     }
     public function sec()
     {
